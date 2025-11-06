@@ -37,7 +37,7 @@ namespace Nolvus.Core.Interfaces
         void NexusAccount(string Value);
         void AccountType(string Value);
         void LoadAccountImage(string Url);
-        void LoadAccountImage(System.Drawing.Image Image);
+        void LoadAccountImage(SixLabors.ImageSharp.Image Image);
         void ClearInfo();
         void EnableSettings();
         void DisableSettings();

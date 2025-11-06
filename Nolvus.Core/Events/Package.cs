@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using Nolvus.Core.Enums;
 using Nolvus.Core.Interfaces;
+using SixLabors.ImageSharp;
 
 namespace Nolvus.Core.Events
 {    

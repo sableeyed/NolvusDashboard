@@ -53,7 +53,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nolvus.Instance", "Nolvus.I
 	ProjectSection(ProjectDependencies) = postProject
 		{764BEFCF-574A-41A6-A408-BA57CFCF1386} = {764BEFCF-574A-41A6-A408-BA57CFCF1386} #Instace requires Installer
 		{4362C36C-314C-46FB-96BC-77993820EE89} = {4362C36C-314C-46FB-96BC-77993820EE89} #Instance requires Core
-
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nolvus.Launcher", "Nolvus.Launcher\Nolvus.Launcher.csproj", "{92B3ED5B-4E91-455F-BE5D-BAE2F2BD771C}"

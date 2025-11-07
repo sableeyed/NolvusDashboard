@@ -15,6 +15,7 @@ The current state of this README is for my sanity
 
 - Nolvus.Core
 - Nolvus.Components (UI heavy - will be broken but it compiles)
+- Nolvus.Services
 
 # Not Implemented
 
@@ -24,4 +25,3 @@ The current state of this README is for my sanity
 - Nolvus.GrassCache
 - Nolvus.Instance
 - Nolvus.Launcher
-- Nolvus.Services

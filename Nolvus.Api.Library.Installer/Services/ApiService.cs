@@ -208,32 +208,25 @@ namespace Nolvus.Api.Installer.Services
         {
             T Result = default(T);
 
+            var token = await _TokenService.GetAuthenticationToken();
             
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            // var token = await _TokenService.GetAuthenticationToken();
+            var response = await Client.GetAsync($"{ApiMethod}/{Id}");
 
-            // Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            if (!response.IsSuccessStatusCode)
+            {
+                ExceptionHandler.ThrowWebApiException(response);
+                return default;
+            }
 
-            // var Response = await Client.GetAsync(ApiMethod + "/" + Id);
+            var json = await response.Content.ReadAsStringAsync();
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            };
 
-            // if (Response.IsSuccessStatusCode)
-            // {
-            //     var json = Response.Content.ReadAsStringAsync().Result;
-
-            //     var formatter = new JsonMediaTypeFormatter
-            //     {
-            //         SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
-            //     };
-
-            //     Result = await Response.Content.ReadAsAsync<T>(
-            //         new List<MediaTypeFormatter> { formatter });
-            // }
-            // else
-            // {
-            //     ExceptionHandler.ThrowWebApiException(Response);
-            // }
-
-
+            Result = JsonConvert.DeserializeObject<T>(json, settings);
             return Result;
         }
 

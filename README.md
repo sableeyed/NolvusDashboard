@@ -6,10 +6,10 @@ The current state of this README is for my sanity
 
 # Fully Implemented but not tested
 
-- Nolvus.Api.Library.Installer
-- Nolvus.NexusApi
-- Nolvus.Package 
-- Nolvus.StockGame
+- Nolvus.Api.Library.Installer (Compiles without error)
+- Nolvus.NexusApi (Compiles without error) 
+- Nolvus.Package (Need to dig)
+- Nolvus.StockGame (PatchManager may need reworked)
 
 # Partially Implemented
 

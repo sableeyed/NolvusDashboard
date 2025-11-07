@@ -6,4 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- <PackageReference Include="QuestPDF" Version="2025.7.4" /> -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="Avalonia" Version="11.3.8" />
+    <PackageReference Include="System.Reactive" Version="7.0.0-preview.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nolvus.Core\Nolvus.Core.csproj" />
+    <ProjectReference Include="..\Nolvus.Api.Library.Installer\Nolvus.Api.Installer.csproj" />
+  </ItemGroup>
+
 </Project>

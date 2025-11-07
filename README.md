@@ -14,11 +14,11 @@ The current state of this README is for my sanity
 # Partially Implemented
 
 - Nolvus.Core
+- Nolvus.Components (UI heavy - will be broken but it compiles)
 
 # Not Implemented
 
 - Nolvus.Browser
-- Nolvus.Components
 - Nolvus.Dashboard
 - Nolvus.Downgrader
 - Nolvus.GrassCache

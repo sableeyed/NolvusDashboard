@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Nolvus.Api.Installer.Core;
@@ -142,24 +141,40 @@ namespace Nolvus.Api.Installer.Services
 
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var Response = await Client.GetAsync(ApiMethod);
+            using var Response = await Client.GetAsync(ApiMethod);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
+                var json = await Response.Content.ReadAsStringAsync();
 
-                var formatter = new JsonMediaTypeFormatter
+                Result = JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
                 {
-                    SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
-                };
-
-                Result = await Response.Content.ReadAsAsync<T>(
-                    new List<MediaTypeFormatter> { formatter });
+                    TypeNameHandling = TypeNameHandling.Auto
+                });
             }
             else
             {
                 ExceptionHandler.ThrowWebApiException(Response);
             }
+
+            // var Response = await Client.GetAsync(ApiMethod);
+
+            // if (Response.IsSuccessStatusCode)
+            // {
+            //     var json = Response.Content.ReadAsStringAsync().Result;
+
+            //     var formatter = new JsonMediaTypeFormatter
+            //     {
+            //         SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+            //     };
+
+            //     Result = await Response.Content.ReadAsAsync<T>(
+            //         new List<MediaTypeFormatter> { formatter });
+            // }
+            // else
+            // {
+            //     ExceptionHandler.ThrowWebApiException(Response);
+            // }
 
 
             return Result;
@@ -193,28 +208,30 @@ namespace Nolvus.Api.Installer.Services
         {
             T Result = default(T);
 
-            var token = await _TokenService.GetAuthenticationToken();
+            
 
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            // var token = await _TokenService.GetAuthenticationToken();
 
-            var Response = await Client.GetAsync(ApiMethod + "/" + Id);
+            // Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            if (Response.IsSuccessStatusCode)
-            {
-                var json = Response.Content.ReadAsStringAsync().Result;
+            // var Response = await Client.GetAsync(ApiMethod + "/" + Id);
 
-                var formatter = new JsonMediaTypeFormatter
-                {
-                    SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
-                };
+            // if (Response.IsSuccessStatusCode)
+            // {
+            //     var json = Response.Content.ReadAsStringAsync().Result;
 
-                Result = await Response.Content.ReadAsAsync<T>(
-                    new List<MediaTypeFormatter> { formatter });
-            }
-            else
-            {
-                ExceptionHandler.ThrowWebApiException(Response);
-            }
+            //     var formatter = new JsonMediaTypeFormatter
+            //     {
+            //         SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+            //     };
+
+            //     Result = await Response.Content.ReadAsAsync<T>(
+            //         new List<MediaTypeFormatter> { formatter });
+            // }
+            // else
+            // {
+            //     ExceptionHandler.ThrowWebApiException(Response);
+            // }
 
 
             return Result;
@@ -259,15 +276,25 @@ namespace Nolvus.Api.Installer.Services
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
+                var json = await Response.Content.ReadAsStringAsync();
 
-                var formatter = new JsonMediaTypeFormatter
+                var formatter = new JsonSerializerSettings
                 {
-                    SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+                    TypeNameHandling = TypeNameHandling.Auto
                 };
 
-                Result = await Response.Content.ReadAsAsync<T>(
-                    new List<MediaTypeFormatter> { formatter });
+                Result = JsonConvert.DeserializeObject<T>(json, formatter);
+
+
+                // var json = Response.Content.ReadAsStringAsync().Result;
+
+                // var formatter = new JsonMediaTypeFormatter
+                // {
+                //     SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+                // };
+
+                // Result = await Response.Content.ReadAsAsync<T>(
+                //     new List<MediaTypeFormatter> { formatter });
             }
             else
             {
@@ -282,143 +309,281 @@ namespace Nolvus.Api.Installer.Services
             T Result = default(T);
 
             var token = await _TokenService.GetAuthenticationToken();
-           
+
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
+            var jsonContent = JsonConvert.SerializeObject(Object, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            });
 
-            Response = await Client.PostAsJsonAsync(ApiMethod, Object);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            var Response = await Client.PostAsync(ApiMethod, content);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
-                Result = JsonConvert.DeserializeObject<T>(json);
+                var json = await Response.Content.ReadAsStringAsync();
+                Result = JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.Auto
+                });
             }
             else
             {
                 ExceptionHandler.ThrowWebApiException(Response);
             }
-            
+
+            // HttpResponseMessage Response = new HttpResponseMessage();
+
+            // Response = await Client.PostAsJsonAsync(ApiMethod, Object);
+
+            // if (Response.IsSuccessStatusCode)
+            // {
+            //     var json = Response.Content.ReadAsStringAsync().Result;
+            //     Result = JsonConvert.DeserializeObject<T>(json);
+            // }
+            // else
+            // {
+            //     ExceptionHandler.ThrowWebApiException(Response);
+            // }
+
             return Result;
         }
 
         public async Task<T> PostPolyMorphic<T>(string ApiMethod, T Object)
         {
-            T Result = default(T);
+            T Result = default;
 
             var token = await _TokenService.GetAuthenticationToken();
-
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
+            // Serialize with TypeNameHandling.All for polymorphic support
+            string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
 
-            string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
+            var content = new StringContent(jsonTypeNameAll, Encoding.UTF8, "application/json");
+            var response = await Client.PostAsync(ApiMethod, content);
+
+            if (response.IsSuccessStatusCode)
             {
-                TypeNameHandling = TypeNameHandling.All
-            });
-
-            Response = await Client.PostAsJsonAsync(ApiMethod, jsonTypeNameAll);
-
-            if (Response.IsSuccessStatusCode)
-            {
-                var json = Response.Content.ReadAsStringAsync().Result;
-
-                var formatter = new JsonMediaTypeFormatter
-                {
-                    SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
-                };
-
-                Result = await Response.Content.ReadAsAsync<T>(
-                    new List<MediaTypeFormatter> { formatter });
+                string json = await response.Content.ReadAsStringAsync();
+                Result = JsonConvert.DeserializeObject<T>(json,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
             }
             else
             {
-                ExceptionHandler.ThrowWebApiException(Response);
+                ExceptionHandler.ThrowWebApiException(response);
             }
 
             return Result;
         }
 
+
+        // public async Task<T> PostPolyMorphic<T>(string ApiMethod, T Object)
+        // {
+        //     T Result = default(T);
+
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
+        //     {
+        //         TypeNameHandling = TypeNameHandling.All
+        //     });
+
+        //     Response = await Client.PostAsJsonAsync(ApiMethod, jsonTypeNameAll);
+
+        //     if (Response.IsSuccessStatusCode)
+        //     {
+        //         var json = Response.Content.ReadAsStringAsync().Result;
+
+        //         var formatter = new JsonMediaTypeFormatter
+        //         {
+        //             SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+        //         };
+
+        //         Result = await Response.Content.ReadAsAsync<T>(
+        //             new List<MediaTypeFormatter> { formatter });
+        //     }
+        //     else
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+        //     return Result;
+        // }
+
+        // public async Task<T> Post<T>(string ApiMethod, Dictionary<string, object> Object)
+        // {
+        //     T Result = default(T);
+
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     Response = await Client.PostAsJsonAsync(ApiMethod, Object);
+
+        //     if (Response.IsSuccessStatusCode)
+        //     {
+        //         var json = Response.Content.ReadAsStringAsync().Result;
+        //         Result = JsonConvert.DeserializeObject<T>(json);
+        //     }
+        //     else
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+
+        //     return Result;
+        // }
+        
         public async Task<T> Post<T>(string ApiMethod, Dictionary<string, object> Object)
         {
             T Result = default(T);
 
             var token = await _TokenService.GetAuthenticationToken();
-
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
+            string json = JsonConvert.SerializeObject(Object, Formatting.Indented);
 
-            Response = await Client.PostAsJsonAsync(ApiMethod, Object);
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var Response = await Client.PostAsync(ApiMethod, content);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
-                Result = JsonConvert.DeserializeObject<T>(json);
+                var responseJson = await Response.Content.ReadAsStringAsync();
+                Result = JsonConvert.DeserializeObject<T>(responseJson);
             }
             else
             {
                 ExceptionHandler.ThrowWebApiException(Response);
             }
 
-
             return Result;
         }
+
 
         public async Task<T> PostPolyMorphic<T>(string ApiMethod, Dictionary<string, object> Object)
         {
             T Result = default(T);
 
             var token = await _TokenService.GetAuthenticationToken();
-
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
-
+            // Serialize with TypeNameHandling.All for polymorphic support
             string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             });
 
-            Response = await Client.PostAsJsonAsync(ApiMethod, Object);
+            using var content = new StringContent(jsonTypeNameAll, Encoding.UTF8, "application/json");
+            var Response = await Client.PostAsync(ApiMethod, content);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
+                var responseJson = await Response.Content.ReadAsStringAsync();
 
-                var formatter = new JsonMediaTypeFormatter
+                // Deserialize preserving type information
+                Result = JsonConvert.DeserializeObject<T>(responseJson, new JsonSerializerSettings
                 {
-                    SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
-                };
-
-                Result = await Response.Content.ReadAsAsync<T>(
-                    new List<MediaTypeFormatter> { formatter });
+                    TypeNameHandling = TypeNameHandling.Auto
+                });
             }
             else
             {
                 ExceptionHandler.ThrowWebApiException(Response);
             }
 
-
             return Result;
         }
+
+
+        // public async Task<T> PostPolyMorphic<T>(string ApiMethod, Dictionary<string, object> Object)
+        // {
+        //     T Result = default(T);
+
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
+        //     {
+        //         TypeNameHandling = TypeNameHandling.All
+        //     });
+
+        //     Response = await Client.PostAsJsonAsync(ApiMethod, Object);
+
+        //     if (Response.IsSuccessStatusCode)
+        //     {
+        //         var json = Response.Content.ReadAsStringAsync().Result;
+
+        //         var formatter = new JsonMediaTypeFormatter
+        //         {
+        //             SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+        //         };
+
+        //         Result = await Response.Content.ReadAsAsync<T>(
+        //             new List<MediaTypeFormatter> { formatter });
+        //     }
+        //     else
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+
+        //     return Result;
+        // }
+
+        // public async Task<T2> Post<T1, T2>(string ApiMethod, T1 Object)
+        // {
+        //     T2 Result = default(T2);
+
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     Response = await Client.PostAsJsonAsync(ApiMethod, Object);
+
+        //     if (Response.IsSuccessStatusCode)
+        //     {
+        //         var json = Response.Content.ReadAsStringAsync().Result;
+        //         Result = JsonConvert.DeserializeObject<T2>(json);
+        //     }
+        //     else
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+        //     return Result;
+        // }
 
         public async Task<T2> Post<T1, T2>(string ApiMethod, T1 Object)
         {
             T2 Result = default(T2);
 
             var token = await _TokenService.GetAuthenticationToken();
-
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
+            // Serialize the object to JSON
+            string json = JsonConvert.SerializeObject(Object, Formatting.Indented);
 
-            Response = await Client.PostAsJsonAsync(ApiMethod, Object);
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var Response = await Client.PostAsync(ApiMethod, content);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
-                Result = JsonConvert.DeserializeObject<T2>(json);
+                var responseJson = await Response.Content.ReadAsStringAsync();
+                Result = JsonConvert.DeserializeObject<T2>(responseJson);
             }
             else
             {
@@ -427,75 +592,144 @@ namespace Nolvus.Api.Installer.Services
 
             return Result;
         }
+
+
+        // public async Task<T2> PostPolyMorphic<T1, T2>(string ApiMethod, T1 Object, Dictionary<string, object> Parameters)
+        // {
+        //     T2 Result = default(T2);
+
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
+        //     {
+        //         TypeNameHandling = TypeNameHandling.All
+        //     });
+
+        //     string Params = ParametersBuilder.GetQueryStringFromParameters(Parameters);
+
+        //     Response = await Client.PostAsJsonAsync(ApiMethod + Params, jsonTypeNameAll);
+
+        //     if (Response.IsSuccessStatusCode)
+        //     {
+        //         var json = Response.Content.ReadAsStringAsync().Result;
+
+        //         var formatter = new JsonMediaTypeFormatter
+        //         {
+        //             SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+        //         };
+
+        //         Result = await Response.Content.ReadAsAsync<T2>(
+        //             new List<MediaTypeFormatter> { formatter });
+        //     }
+        //     else
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+
+        //     return Result;
+        // }
 
         public async Task<T2> PostPolyMorphic<T1, T2>(string ApiMethod, T1 Object, Dictionary<string, object> Parameters)
         {
             T2 Result = default(T2);
 
             var token = await _TokenService.GetAuthenticationToken();
-
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
-
+            // Serialize the object with TypeNameHandling.All for polymorphic support
             string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             });
 
+            // Build query string from parameters
             string Params = ParametersBuilder.GetQueryStringFromParameters(Parameters);
 
-            Response = await Client.PostAsJsonAsync(ApiMethod + Params, jsonTypeNameAll);
+            using var content = new StringContent(jsonTypeNameAll, Encoding.UTF8, "application/json");
+            var Response = await Client.PostAsync(ApiMethod + Params, content);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
-
-                var formatter = new JsonMediaTypeFormatter
+                var responseJson = await Response.Content.ReadAsStringAsync();
+                Result = JsonConvert.DeserializeObject<T2>(responseJson, new JsonSerializerSettings
                 {
-                    SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
-                };
-
-                Result = await Response.Content.ReadAsAsync<T2>(
-                    new List<MediaTypeFormatter> { formatter });
+                    TypeNameHandling = TypeNameHandling.Auto
+                });
             }
             else
             {
                 ExceptionHandler.ThrowWebApiException(Response);
             }
 
-
             return Result;
         }
-        
+
+
+        // public async Task<T2> PostPolyMorphic<T1, T2>(string ApiMethod, T1 Object)
+        // {
+        //     T2 Result = default(T2);
+
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
+        //     {
+        //         TypeNameHandling = TypeNameHandling.All
+        //     });
+
+        //     Response = await Client.PostAsJsonAsync(ApiMethod, jsonTypeNameAll);
+
+        //     if (Response.IsSuccessStatusCode)
+        //     {
+        //         var json = Response.Content.ReadAsStringAsync().Result;
+
+        //         var formatter = new JsonMediaTypeFormatter
+        //         {
+        //             SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+        //         };
+
+        //         Result = await Response.Content.ReadAsAsync<T2>(
+        //             new List<MediaTypeFormatter> { formatter });
+        //     }
+        //     else
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+        //     return Result;
+        // }
+
         public async Task<T2> PostPolyMorphic<T1, T2>(string ApiMethod, T1 Object)
         {
             T2 Result = default(T2);
 
             var token = await _TokenService.GetAuthenticationToken();
-
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
-
+            // Serialize the object with TypeNameHandling.All for polymorphic support
             string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             });
 
-            Response = await Client.PostAsJsonAsync(ApiMethod, jsonTypeNameAll);
+            using var content = new StringContent(jsonTypeNameAll, Encoding.UTF8, "application/json");
+            var Response = await Client.PostAsync(ApiMethod, content);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
-
-                var formatter = new JsonMediaTypeFormatter
+                var responseJson = await Response.Content.ReadAsStringAsync();
+                Result = JsonConvert.DeserializeObject<T2>(responseJson, new JsonSerializerSettings
                 {
-                    SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
-                };
-
-                Result = await Response.Content.ReadAsAsync<T2>(
-                    new List<MediaTypeFormatter> { formatter });
+                    TypeNameHandling = TypeNameHandling.Auto
+                });
             }
             else
             {
@@ -505,87 +739,170 @@ namespace Nolvus.Api.Installer.Services
             return Result;
         }
 
-        public async Task<HttpResponseMessage> PostPolyMorphic(string ApiMethod, Dictionary<string, object> Parameters)
-        {            
-            var token = await _TokenService.GetAuthenticationToken();
 
+        // public async Task<HttpResponseMessage> PostPolyMorphic(string ApiMethod, Dictionary<string, object> Parameters)
+        // {            
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     Response = await Client.PostAsJsonAsync(ApiMethod, Parameters);
+
+        //     if (!Response.IsSuccessStatusCode)
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+        //     return Response;         
+        // }
+
+        public async Task<HttpResponseMessage> PostPolyMorphic(string ApiMethod, Dictionary<string, object> Parameters)
+        {
+            var token = await _TokenService.GetAuthenticationToken();
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
+            // Serialize the dictionary to JSON
+            string jsonContent = JsonConvert.SerializeObject(Parameters, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
 
-            Response = await Client.PostAsJsonAsync(ApiMethod, Parameters);
+            using var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var Response = await Client.PostAsync(ApiMethod, content);
 
             if (!Response.IsSuccessStatusCode)
             {
                 ExceptionHandler.ThrowWebApiException(Response);
             }
 
-            return Response;         
+            return Response;
         }
+
+
+        // public async Task<T2> Put<T1, T2>(string ApiMethod, string Id, T1 Object)
+        // {
+        //     T2 Result = default(T2);
+
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     Response = await Client.PutAsJsonAsync(ApiMethod + "/" + Id, Object);
+
+        //     if (Response.IsSuccessStatusCode)
+        //     {
+        //         var json = Response.Content.ReadAsStringAsync().Result;
+        //         Result = JsonConvert.DeserializeObject<T2>(json);
+        //     }
+        //     else
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+
+        //     return Result;
+        // }
 
         public async Task<T2> Put<T1, T2>(string ApiMethod, string Id, T1 Object)
         {
             T2 Result = default(T2);
 
             var token = await _TokenService.GetAuthenticationToken();
-
-            
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
+            // Serialize the object to JSON
+            string jsonContent = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
 
-            Response = await Client.PutAsJsonAsync(ApiMethod + "/" + Id, Object);
+            using var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var Response = await Client.PutAsync($"{ApiMethod}/{Id}", content);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
+                var json = await Response.Content.ReadAsStringAsync();
                 Result = JsonConvert.DeserializeObject<T2>(json);
             }
             else
             {
                 ExceptionHandler.ThrowWebApiException(Response);
             }
-           
 
             return Result;
         }
 
-        public async Task<T2> PutPolyMorphic<T1, T2>(string ApiMethod, string Id, T1 Object)
+
+        // public async Task<T2> PutPolyMorphic<T1, T2>(string ApiMethod, string Id, T1 Object)
+        // {
+        //     T2 Result = default(T2);
+
+        //     var token = await _TokenService.GetAuthenticationToken();
+
+        //     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //     HttpResponseMessage Response = new HttpResponseMessage();
+
+        //     string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
+        //     {
+        //         TypeNameHandling = TypeNameHandling.All
+        //     });            
+
+        //     Response = await Client.PutAsJsonAsync(ApiMethod + "/" + Id, jsonTypeNameAll);
+
+        //     if (Response.IsSuccessStatusCode)
+        //     {
+        //         var json = Response.Content.ReadAsStringAsync().Result;
+
+        //         var formatter = new JsonMediaTypeFormatter
+        //         {
+        //             SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
+        //         };
+
+        //         Result = await Response.Content.ReadAsAsync<T2>(
+        //             new List<MediaTypeFormatter> { formatter });
+        //     }
+        //     else
+        //     {
+        //         ExceptionHandler.ThrowWebApiException(Response);
+        //     }
+
+
+        //     return Result;
+        // }      
+
+         public async Task<T2> PutPolyMorphic<T1, T2>(string ApiMethod, string Id, T1 Object)
         {
             T2 Result = default(T2);
 
             var token = await _TokenService.GetAuthenticationToken();
-
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            HttpResponseMessage Response = new HttpResponseMessage();
-
-            string jsonTypeNameAll = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
+            // Serialize the object with TypeNameHandling.All for polymorphic support
+            string jsonContent = JsonConvert.SerializeObject(Object, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
-            });            
+            });
 
-            Response = await Client.PutAsJsonAsync(ApiMethod + "/" + Id, jsonTypeNameAll);
+            using var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var Response = await Client.PutAsync($"{ApiMethod}/{Id}", content);
 
             if (Response.IsSuccessStatusCode)
             {
-                var json = Response.Content.ReadAsStringAsync().Result;
-
-                var formatter = new JsonMediaTypeFormatter
-                {
-                    SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
-                };
-
-                Result = await Response.Content.ReadAsAsync<T2>(
-                    new List<MediaTypeFormatter> { formatter });
+                var json = await Response.Content.ReadAsStringAsync();
+                Result = JsonConvert.DeserializeObject<T2>(json);
             }
             else
             {
                 ExceptionHandler.ThrowWebApiException(Response);
             }
 
-
             return Result;
-        }       
+        }
     }
 }

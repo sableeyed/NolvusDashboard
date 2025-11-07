@@ -1,0 +1,108 @@
+using System;
+using System.Collections.Generic;
+using System.Xml;
+using System.Linq;
+using System.Text;
+using System.IO;
+using System.Threading.Tasks;
+using Nolvus.Core.Services;
+using Nolvus.StockGame.Patcher;
+
+namespace Nolvus.Package.Patchers
+{
+    public class PatchFile
+    {
+        public string OriginFileName { get; set; }
+        public string DestinationFileName { get; set; }
+        public string PatchFileName { get; set; }
+        public string HashBefore { get; set; }
+        public string HashAfter { get; set; }
+        public string Directory { get; set; }
+
+        public void Load(XmlNode Node)
+        {
+            OriginFileName = Node["OriginFileName"].InnerText;
+            DestinationFileName = Node["DestinationFileName"].InnerText;
+            PatchFileName = Node["PatchFileName"].InnerText;
+            HashBefore = Node["HashBefore"].InnerText;
+            HashAfter = Node["HashAfter"].InnerText;
+
+            Directory = string.Empty;
+
+            if (Node["Directory"] != null)
+            {
+                Directory = Node["Directory"].InnerText;
+            }            
+        }
+
+        private FileInfo CopyPatchedFile(FileInfo Source, FileInfo Destination)
+        {
+            FileInfo Result;
+
+            if (Source.Name == Destination.Name)
+            {
+                Destination.CopyTo(Source.FullName, true);
+                Result = new FileInfo(Source.FullName);
+            }
+            else
+            {
+                Destination.CopyTo(Path.Combine(Source.DirectoryName, DestinationFileName), true);
+                Result = new FileInfo(Path.Combine(Source.DirectoryName, DestinationFileName));
+            }
+
+            return Result;
+        }
+        public async Task Patch(string ModDir, string GameDir, string ExtractDir)
+        {            
+            var Tsk = Task.Run(async ()=>
+            {
+                try
+                {
+                    var PatcherManager = new PatcherManager(ServiceSingleton.Folders.DownloadDirectory, ServiceSingleton.Folders.LibDirectory, ServiceSingleton.Folders.PatchDirectory);
+
+                    var Dir = ModDir;
+
+                    if (!System.IO.Directory.Exists(ModDir))
+                    {
+                        Dir = GameDir;
+                    }
+
+                    FileInfo SourceFileToPatch = null;
+
+                    if (Directory == string.Empty)
+                    {
+                        SourceFileToPatch = ServiceSingleton.Files.GetFiles(Dir).Where(x => x.Name == DestinationFileName).Where(y => ServiceSingleton.Files.GetHash(y.FullName) == HashBefore).FirstOrDefault();
+                    }
+                    else
+                    {
+                        SourceFileToPatch = ServiceSingleton.Files.GetFiles(Dir).Where(x => x.FullName == Path.Combine(Dir, Directory, DestinationFileName)).Where(y => ServiceSingleton.Files.GetHash(y.FullName) == HashBefore).FirstOrDefault();
+                    }                    
+
+                    if (SourceFileToPatch != null)
+                    {
+                        ServiceSingleton.Logger.Log(string.Format("Patching file {0}", SourceFileToPatch.Name));
+
+                        var DestinationFileToPatch = new FileInfo(Path.Combine(ExtractDir, DestinationFileName));
+
+                        await PatcherManager.PatchFile(SourceFileToPatch.FullName, DestinationFileToPatch.FullName, Path.Combine(ExtractDir, PatchFileName));
+
+                        if (ServiceSingleton.Files.GetHash(CopyPatchedFile(SourceFileToPatch, DestinationFileToPatch).FullName) != HashAfter)
+                        {
+                            throw new Exception("Hash for file : " + DestinationFileName + " does not match!");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("File name to patch does not exist (" + DestinationFileName + ") hash : " + HashBefore + " in " + Dir);
+                    }
+                }
+                catch(Exception ex)
+                {                    
+                    throw ex;
+                }
+            });
+
+            await Tsk;
+        }
+    }
+}

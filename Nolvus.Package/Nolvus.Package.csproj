@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nolvus.Core\Nolvus.Core.csproj" />
+    <ProjectReference Include="..\Nolvus.NexusApi\Nolvus.NexusApi.csproj" />
+    <ProjectReference Include="..\Nolvus.StockGame\Nolvus.StockGame.csproj" />
   </ItemGroup>
 
 </Project>

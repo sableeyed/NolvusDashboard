@@ -1,0 +1,27 @@
+# Welcome
+
+This project is not done.
+
+The current state of this README is for my sanity
+
+# Fully Implemented but not tested
+
+- Nolvus.Api.Library.Installer
+- Nolvus.NexusApi
+- Nolvus.Package 
+- Nolvus.StockGame
+
+# Partially Implemented
+
+- Nolvus.Core
+
+# Not Implemented
+
+- Nolvus.Browser
+- Nolvus.Components
+- Nolvus.Dashboard
+- Nolvus.Downgrader
+- Nolvus.GrassCache
+- Nolvus.Instance
+- Nolvus.Launcher
+- Nolvus.Services

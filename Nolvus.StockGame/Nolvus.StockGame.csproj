@@ -6,4 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nolvus.Core\Nolvus.Core.csproj" />
+    <ProjectReference Include="..\Nolvus.Api.Library.Installer\Nolvus.Api.Installer.csproj" />
+    <!-- <ProjectReference Include="..\Nolvus.NexusApi\Nolvus.NexusApi.csproj" /> -->
+  </ItemGroup>
+
 </Project>

@@ -60,5 +60,7 @@ for proj in "${EXE_PROJECTS[@]}"; do
         -o "$BIN_DIR"
 done
 
+mv $BIN_DIR/Nolvus.Dashboard $BIN_DIR/NolvusDashboard
+mv $BIN_DIR/Nolvus.Updater $BIN_DIR/NolvusUpdater
 
 echo "Build complete! All DLLs and executables are in $BIN_DIR"

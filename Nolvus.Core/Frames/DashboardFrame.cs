@@ -1,110 +1,110 @@
-// using System;
-// using System.Collections.Concurrent;
-// using System.Collections.Generic;
-// using System.ComponentModel;
-// using System.Drawing;
-// using System.Data;
-// using System.Linq;
-// using System.Text;
-// using System.Threading.Tasks;
-// using System.Windows.Forms;
-// using Nolvus.Core.Interfaces;
+//completely untested
 
-// namespace Nolvus.Core.Frames
-// {
-//     public partial class DashboardFrame : UserControl, IDashboardFrame
-//     {       
-//         protected FrameParameters Parameters;
-//         IDashboard DashBoardInstance;
-//         public DashboardFrame()
-//         {
-//             InitializeComponent();            
-//         }
+using System;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using Nolvus.Core.Interfaces;
 
-//         public DashboardFrame(IDashboard Dashboard, FrameParameters Params)
-//         {            
-//             InitializeComponent();
-//             DashBoardInstance = Dashboard;
-//             DashBoardInstance.OnFrameLoaded += OnFrameLoaded;
-//             DashBoardInstance.OnFrameLoadedAsync += OnFrameLoadedSync;
+namespace Nolvus.Core.Frames
+{
+    public partial class DashboardFrame : UserControl, IDashboardFrame
+    {
+        protected FrameParameters Parameters;
+        protected IDashboard DashBoardInstance;
 
-//             Parameters = Params;
+        public DashboardFrame()
+        {
+            InitializeComponent();
+        }
 
-//             if (Parameters == null)
-//             {
-//                 Parameters = new FrameParameters();
-//             }
-//         }
+        public DashboardFrame(IDashboard dashboard, FrameParameters parameters)
+        {
+            InitializeComponent();
 
-//         private void OnFrameLoadedSync(object sender, EventArgs e)
-//         {
-//             Task.CompletedTask.ContinueWith(async T => { await OnLoadedAsync(); }, TaskScheduler.FromCurrentSynchronizationContext());
-//         }
+            DashBoardInstance = dashboard;
+            DashBoardInstance.OnFrameLoaded += OnFrameLoaded;
+            DashBoardInstance.OnFrameLoadedAsync += OnFrameLoadedSync;
 
-//         private void OnFrameLoaded(object sender, EventArgs e)
-//         {
-//             OnLoaded();
-//         }
+            Parameters = parameters ?? new FrameParameters();
+        }
 
-//         protected virtual Task OnLoadAsync()
-//         {
-//             return Task.CompletedTask;
-//         }
+        private void OnFrameLoadedSync(object sender, EventArgs e)
+        {
+            Dispatcher.UIThread.Post(async () => await OnLoadedAsync());
+        }
 
-//         protected virtual void OnLoad()
-//         {            
-//         }
+        private void OnFrameLoaded(object sender, EventArgs e)
+        {
+            OnLoaded();
+        }
 
-//         protected virtual Task OnLoadedAsync()
-//         {
-//             return Task.CompletedTask;
-//         }
+        protected virtual Task OnLoadAsync()
+        {
+            return Task.CompletedTask;
+        }
 
-//         protected virtual void OnLoaded()
-//         {
-            
-//         }
+        protected virtual void OnLoad()
+        {
+        }
 
-//         protected virtual async Task<T> InitializeAsync<T>() where T : DashboardFrame
-//         {            
-//             await OnLoadAsync();            
-//             return (T)this;
-//         }
+        protected virtual Task OnLoadedAsync()
+        {
+            return Task.CompletedTask;
+        }
 
-//         protected virtual T Initialize<T>() where T : DashboardFrame
-//         {            
-//             OnLoad();
-//             return (T)this;
-//         }
+        protected virtual void OnLoaded()
+        {
+        }
 
-//         public static Task<T> CreateAsync<T>() where T : DashboardFrame
-//         {
-//             return (Activator.CreateInstance(typeof(T)) as T).InitializeAsync<T>();
-//         }
+        protected virtual async Task<T> InitializeAsync<T>() where T : DashboardFrame
+        {
+            await OnLoadAsync();
+            return (T)this;
+        }
 
-//         public static Task<T> CreateAsync<T>(object[] Args) where T : DashboardFrame
-//         {
-//             return (Activator.CreateInstance(typeof(T), Args) as T).InitializeAsync<T>();
-//         }
+        protected virtual T Initialize<T>() where T : DashboardFrame
+        {
+            OnLoad();
+            return (T)this;
+        }
 
-//         public static T Create<T>(object[] Args) where T : DashboardFrame
-//         {
-//             return (Activator.CreateInstance(typeof(T), Args) as T).Initialize<T>();
-//         }
+        public static Task<T> CreateAsync<T>() where T : DashboardFrame, new()
+        {
+            var instance = new T();
+            return instance.InitializeAsync<T>();
+        }
 
-//         public void Close()
-//         {
-//             if (InvokeRequired)
-//             {
-//                 Invoke((System.Action)Close);
-//                 return;
-//             }
+        public static Task<T> CreateAsync<T>(object[] args) where T : DashboardFrame
+        {
+            var instance = Activator.CreateInstance(typeof(T), args) as T;
+            if (instance == null)
+                throw new InvalidOperationException($"Failed to create instance of {typeof(T).Name}");
 
-//             DashBoardInstance.OnFrameLoaded -= OnFrameLoaded;
-//             DashBoardInstance.OnFrameLoadedAsync -= OnFrameLoadedSync;
+            return instance.InitializeAsync<T>();
+        }
 
-//             Dispose();
-//         }
+        public static T Create<T>(object[] args) where T : DashboardFrame
+        {
+            var instance = Activator.CreateInstance(typeof(T), args) as T;
+            if (instance == null)
+                throw new InvalidOperationException($"Failed to create instance of {typeof(T).Name}");
 
-//     }
-// }
+            return instance.Initialize<T>();
+        }
+
+        public void Close()
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                DashBoardInstance.OnFrameLoaded -= OnFrameLoaded;
+                DashBoardInstance.OnFrameLoadedAsync -= OnFrameLoadedSync;
+
+                this.DataContext = null;
+                this.Content = null;
+
+                (this as IDisposable)?.Dispose();
+            });
+        }
+    }
+}

@@ -1,0 +1,9 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Nolvus.Core.Frames.DashboardFrame"
+             Width="1011" Height="469"
+             Name="DashboardFrame">
+  <UserControl.Background>
+    <SolidColorBrush Color="#363636"/>
+  </UserControl.Background>
+</UserControl>

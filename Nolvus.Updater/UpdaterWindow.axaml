@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="Nolvus.Updater.MainWindow"
+        x:Class="Nolvus.Updater.UpdaterWindow"
         Width="640" Height="260"
         CanResize="False"
         Background="#363636"

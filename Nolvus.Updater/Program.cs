@@ -5,7 +5,7 @@ namespace Nolvus.Updater;
 internal static class Program
 {
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<Nolvus.Updater.App>()
+        => AppBuilder.Configure<UpdaterApp>()
                      .UsePlatformDetect()
                      .LogToTrace();
 

@@ -42,10 +42,10 @@
     <ProjectReference Include="..\Nolvus.Services\Nolvus.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AvaloniaXaml Include="App.axaml" />
-    <AvaloniaXaml Include="MainWindow.axaml" />
-  </ItemGroup>
+  <!-- <ItemGroup>
+    <AvaloniaXaml Include="UpdaterApp.axaml" />
+    <AvaloniaXaml Include="UpdaterWindow.axaml" />
+  </ItemGroup> -->
 
 
 

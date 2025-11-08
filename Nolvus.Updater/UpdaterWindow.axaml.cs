@@ -18,7 +18,7 @@ using SharpCompress.Common;
 
 namespace Nolvus.Updater
 {
-    public partial class MainWindow : Window
+    public partial class UpdaterWindow : Window
     {
         private bool _error;
         private readonly bool _closeApp;
@@ -36,7 +36,7 @@ namespace Nolvus.Updater
         }
 
 
-        public MainWindow()
+        public UpdaterWindow()
         {
             InitializeComponent();
 

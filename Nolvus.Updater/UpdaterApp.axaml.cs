@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Nolvus.Updater;
 
-public partial class App : Application
+public partial class UpdaterApp : Application
 {
     public override void Initialize() =>
         AvaloniaXamlLoader.Load(this);
@@ -12,7 +12,7 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow();
+            desktop.MainWindow = new UpdaterWindow();
 
         base.OnFrameworkInitializationCompleted();
     }

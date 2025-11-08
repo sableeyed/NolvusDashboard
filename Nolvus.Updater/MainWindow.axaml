@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Nolvus.Updater.MainWindow"
+        Width="640" Height="260"
+        CanResize="False"
+        Background="#363636"
+        Icon="avares://NolvusUpdater/assets/icon.png"
+        Title="Nolvus Dashboard Updater">
+
+  <Window.Styles>
+    <!-- Text Defaults -->
+    <Style Selector="TextBlock">
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- ProgressBar Colors -->
+    <Style Selector="ProgressBar">
+      <Setter Property="Foreground" Value="#FFA500"/>
+      <Setter Property="Background" Value="#2D2D2D"/>
+    </Style>
+
+    <!-- Close Button styling -->
+    <Style Selector="Button#BtnClose">
+      <Setter Property="Background" Value="#FFA500"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="8,4"/>
+      <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+  </Window.Styles>
+
+  <Grid Margin="16" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="12">
+
+    <TextBlock x:Name="TitleText"
+               Text="Nolvus Dashboard Updater"
+               FontSize="20" FontWeight="Bold"
+               HorizontalAlignment="Center"
+               Margin="0,0,0,8"/>
+
+    <TextBlock x:Name="LblInfo" Grid.Row="1" Text="Initializing..." />
+
+    <StackPanel Grid.Row="2" Spacing="8">
+      <ProgressBar x:Name="ProgressBar" Minimum="0" Maximum="100" Height="24"/>
+      <TextBlock x:Name="LblError"
+                 Foreground="Tomato"
+                 IsVisible="False"
+                 TextWrapping="Wrap"
+                 FontWeight="Bold"/>
+    </StackPanel>
+
+    <StackPanel Grid.Row="3"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8">
+      <Button x:Name="BtnClose"
+              Content="Close"
+              IsVisible="False"
+              Click="BtnClose_OnClick"/>
+    </StackPanel>
+
+  </Grid>
+</Window>

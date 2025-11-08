@@ -5,6 +5,48 @@
     <OutputType>WinExe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>NolvusUpdater</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Remove="..\**\App.axaml" />
+    <AvaloniaXaml Remove="..\**\MainWindow.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="assets/icon.png" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.8" />
+    <PackageReference Include="SharpCompress" Version="0.37.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nolvus.Api.Library.Installer\Nolvus.Api.Installer.csproj" />
+    <ProjectReference Include="..\Nolvus.Core\Nolvus.Core.csproj" />
+    <ProjectReference Include="..\Nolvus.Services\Nolvus.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Include="App.axaml" />
+    <AvaloniaXaml Include="MainWindow.axaml" />
+  </ItemGroup>
+
+
 
 </Project>

@@ -1,22 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using System.Net;
 using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Nolvus.Core.Interfaces;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
-
 
 namespace Nolvus.Services.Files
 {
     public abstract class BaseFileDownloader : IDisposable
     {
         protected Stopwatch SW = new Stopwatch();
-        private WebClient Wcli;       
+        private readonly HttpClient _http = new HttpClient(new HttpClientHandler
+        {
+            AllowAutoRedirect = true,
+            UseCookies = true
+        });
 
         event DownloadProgressChangedHandler DownloadProgressChangedEvent;
 
@@ -24,101 +24,63 @@ namespace Nolvus.Services.Files
         {
             add
             {
-                if (DownloadProgressChangedEvent != null)
-                {
-                    lock (DownloadProgressChangedEvent)
-                    {
-                        DownloadProgressChangedEvent += value;
-                    }
-                }
-                else
-                {
-                    DownloadProgressChangedEvent = value;
-                }
+                lock (this)
+                    DownloadProgressChangedEvent += value;
             }
             remove
             {
-                if (DownloadProgressChangedEvent != null)
-                {
-                    lock (DownloadProgressChangedEvent)
-                    {
-                        DownloadProgressChangedEvent -= value;
-                    }
-                }
+                lock (this)
+                    DownloadProgressChangedEvent -= value;
             }
         }
 
-        protected readonly DownloadProgress Progress;
-        protected string FileName;
-
-        protected WebClient Client
-        {
-            get
-            {
-                return Wcli;
-            }
-        }
-
-        protected virtual WebClient CreateWebClient()
-        {
-            var Client = new WebClient();            
-
-            return Client;
-        }
-
-        public BaseFileDownloader()
-        {
-            Wcli = CreateWebClient();
-
-            Wcli.Proxy = null;
-
-            Wcli.Credentials = System.Net.CredentialCache.DefaultCredentials;
-            Wcli.Headers["Accept"] = "*/*";
-            Wcli.Headers["User-Agent"] = ServiceSingleton.Globals.NolvusUserAgent;
-
-            Wcli.DownloadProgressChanged += ProgressChanged;
-            Wcli.DownloadFileCompleted += FileCompleted;
-
-            Progress = new DownloadProgress();
-            Progress.TotalBytesToReceive = -1L;           
-        }
-        
-        public abstract Task DownloadFile(string UrlAddress, string Location);
+        protected readonly DownloadProgress Progress = new DownloadProgress();
+        protected string FileName = string.Empty;
 
         protected void NotifyProgress()
         {
-            DownloadProgressChangedHandler Handler = this.DownloadProgressChangedEvent;
-            if (Handler != null) Handler(this, Progress);
+            DownloadProgressChangedEvent?.Invoke(this, Progress);
         }
 
-        protected virtual void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            Progress.BytesReceived = e.BytesReceived;
+        public abstract Task DownloadFile(string UrlAddress, string Location);
 
-            if (e.TotalBytesToReceive > 0L)
+        protected async Task DownloadToFile(string url, string path)
+        {
+            FileName = Path.GetFileName(path);
+
+            using var response = await _http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            Progress.TotalBytesToReceive = response.Content.Headers.ContentLength ?? -1;
+            Progress.BytesReceived = 0;
+            SW.Restart();
+
+            await using var input = await response.Content.ReadAsStreamAsync();
+            await using var output = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None);
+
+            var buffer = new byte[64 * 1024];
+            int read;
+            while ((read = await input.ReadAsync(buffer)) > 0)
             {
-                Progress.TotalBytesToReceive = e.TotalBytesToReceive;
+                await output.WriteAsync(buffer.AsMemory(0, read));
+                Progress.BytesReceived += read;
+
+                Progress.ProgressPercentage = Progress.TotalBytesToReceive > 0
+                    ? (int)((double)Progress.BytesReceived / Progress.TotalBytesToReceive * 100)
+                    : 0;
+
+                Progress.Speed = Progress.BytesReceived / 1024d / 1024d / SW.Elapsed.TotalSeconds;
+                Progress.FileName = FileName;
+
+                NotifyProgress();
             }
 
-            Progress.ProgressPercentage = e.ProgressPercentage;
-
-            Progress.Speed = e.BytesReceived / 1024d / 1024d / SW.Elapsed.TotalSeconds;
-
-            Progress.BytesReceivedAsString = (e.BytesReceived / 1024d / 1024d).ToString("0.00");
-            Progress.TotalBytesToReceiveAsString = (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.00");
-
-            Progress.FileName = FileName;
-
-            NotifyProgress();            
-        }        
-
-        protected virtual void FileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
+            SW.Stop();
         }
 
         public void Dispose()
         {
-            Client.Dispose();
+            _http?.Dispose();
         }
     }
 }

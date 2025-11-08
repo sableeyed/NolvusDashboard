@@ -1,181 +1,125 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.IO;
-using System.Threading.Tasks;
 using System.ComponentModel;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Nolvus.Core.Events;
 
 namespace Nolvus.Services.Files.Downloaders
 {
     public class GoogleDriveFileDownloader : BaseFileDownloader
     {
-        private TaskCompletionSource<object> Tcs;        
-        private int DriveDownloadAttempt;
-        private Uri DownloadAddress;
-        private string DownloadPath;
-        private bool DownloadingDriveFile;
-        private const int GOOGLE_DRIVE_MAX_DOWNLOAD_ATTEMPT = 3;
+        private const int GOOGLE_DRIVE_MAX_ATTEMPT = 3;
 
-        public event AsyncCompletedEventHandler DownloadFileCompleted;        
+        public event AsyncCompletedEventHandler? DownloadFileCompleted;
 
-        protected new CookieAwareWebClient Client
+        private static readonly HttpClient _http = new HttpClient(new HttpClientHandler
         {
-            get
+            AllowAutoRedirect = true,
+            UseCookies = true
+        });
+
+        private static string ExtractGoogleDriveId(string url)
+        {
+            // Supports: id=, /file/d/ID/, resourcekey
+            if (url.Contains("id="))
             {
-                return base.Client as CookieAwareWebClient;
+                var idPart = url[(url.IndexOf("id=", StringComparison.Ordinal) + 3)..];
+                var end = idPart.IndexOf('&');
+                if (end > 0) idPart = idPart[..end];
+                return idPart;
             }
+
+            if (url.Contains("/file/d/"))
+            {
+                var start = url.IndexOf("/file/d/") + 8;
+                var end = url.IndexOf('/', start);
+                if (end < 0) end = url.IndexOf('?', start);
+                if (end < 0) end = url.Length;
+                return url[start..end];
+            }
+
+            return string.Empty;
         }
 
-        protected override WebClient CreateWebClient()
+        private static string BuildDownloadUrl(string fileId, string? resourceKey)
         {
-            Tcs = new TaskCompletionSource<object>();
+            if (!string.IsNullOrWhiteSpace(resourceKey))
+                return $"https://drive.google.com/uc?id={fileId}&export=download&resourcekey={resourceKey}&confirm=t";
 
-            return new CookieAwareWebClient(Tcs);
+            return $"https://drive.google.com/uc?id={fileId}&export=download&confirm=t";
         }
 
-        public GoogleDriveFileDownloader()
-        {            
+        private static string? ExtractResourceKey(string url)
+        {
+            var idx = url.IndexOf("resourcekey=", StringComparison.Ordinal);
+            if (idx < 0) return null;
+
+            var start = idx + "resourcekey=".Length;
+            var end = url.IndexOf('&', start);
+
+            if (end < 0) return url[start..];
+            return url[start..end];
         }
 
-        private string GetGoogleDriveDownloadAddress(string Address)
+        private async Task<bool> DetectGoogleConfirmationAndRetry(string filePath, string originalUrl, int attempt)
         {
-            int index = Address.IndexOf("id=");
-            int closingIndex;
-            if (index > 0)
-            {
-                index += 3;
-                closingIndex = Address.IndexOf('&', index);
-                if (closingIndex < 0)
-                    closingIndex = Address.Length;
-            }
-            else
-            {
-                index = Address.IndexOf("file/d/");
-                if (index < 0)
-                    return string.Empty;
+            var fi = new FileInfo(filePath);
+            if (!fi.Exists || fi.Length > 60000) // file is too large to be an HTML prompt
+                return false;
 
-                index += 7;
+            string text = await File.ReadAllTextAsync(filePath);
+            if (!text.Contains("<!DOCTYPE html>"))
+                return false;
 
-                closingIndex = Address.IndexOf('/', index);
-                if (closingIndex < 0)
-                {
-                    closingIndex = Address.IndexOf('?', index);
-                    if (closingIndex < 0)
-                        closingIndex = Address.Length;
-                }
-            }
+            // Search for confirm download link
+            var linkIdx = text.LastIndexOf("href=\"/uc?", StringComparison.Ordinal);
+            if (linkIdx < 0)
+                return false;
 
-            string fileID = Address.Substring(index, closingIndex - index);
+            linkIdx += 6;
+            var end = text.IndexOf('"', linkIdx);
+            if (end < 0) return false;
 
-            index = Address.IndexOf("resourcekey=");
-            if (index > 0)
-            {
-                index += 12;
-                closingIndex = Address.IndexOf('&', index);
-                if (closingIndex < 0)
-                    closingIndex = Address.Length;
+            var confirmUrl = "https://drive.google.com" +
+                             text.Substring(linkIdx, end - linkIdx).Replace("&amp;", "&");
 
-                string resourceKey = Address.Substring(index, closingIndex - index);
-                return string.Concat("https://drive.google.com/uc?id=", fileID, "&export=download&resourcekey=", resourceKey, "&confirm=t");
-            }
-            else
-                return string.Concat("https://drive.google.com/uc?id=", fileID, "&export=download&confirm=t");
-        }
+            if (attempt >= GOOGLE_DRIVE_MAX_ATTEMPT)
+                return false;
 
-        private bool ProcessDriveDownload()
-        {
-            FileInfo DownloadedFile = new FileInfo(DownloadPath);
-            if (DownloadedFile == null || !DownloadedFile.Exists)
-                return true;
-
-            if (DownloadedFile.Length > 60000L)
-                return true;
-
-            string content;
-            using (var reader = DownloadedFile.OpenText())
-            {
-                char[] header = new char[20];
-                int readCount = reader.ReadBlock(header, 0, 20);
-                if (readCount < 20 || !(new string(header).Contains("<!DOCTYPE html>")))
-                    return true;
-
-                content = reader.ReadToEnd();
-            }
-
-            int linkIndex = content.LastIndexOf("href=\"/uc?");
-            if (linkIndex >= 0)
-            {
-                linkIndex += 6;
-                int linkEnd = content.IndexOf('"', linkIndex);
-                if (linkEnd >= 0)
-                {
-                    DownloadAddress = new Uri("https://drive.google.com" + content.Substring(linkIndex, linkEnd - linkIndex).Replace("&amp;", "&"));
-                    return false;
-                }
-            }
-
+            // Retry: overwrite file and download the confirmed url
+            await DownloadToFile(confirmUrl, filePath);
             return true;
         }
 
-        private void DownloadFileInternal()
-        {            
-            SW.Start();
-            Client.DownloadFileAsync(DownloadAddress, DownloadPath);                        
-        }
-
-        private void DoDownloadFile(string UrlAddress, string Location)
+        public override async Task DownloadFile(string UrlAddress, string Location)
         {
-            DownloadingDriveFile = UrlAddress.StartsWith("drive.google.com") || UrlAddress.StartsWith("https://drive.google.com");
+            Progress.FileName = Path.GetFileName(Location);
 
-            UrlAddress = GetGoogleDriveDownloadAddress(UrlAddress);
-            DriveDownloadAttempt = 1;
-            Client.ContentRangeTarget = Progress;
-            DownloadAddress = new Uri(UrlAddress);
-            DownloadPath = Location;
-            Progress.FileName = new FileInfo(Location).Name;
-
-            DownloadFileInternal();           
-        }
-
-        public override Task DownloadFile(string UrlAddress, string Location)
-        {                       
-            DoDownloadFile(UrlAddress, Location);                            
-
-            return Tcs.Task;
-        }
-
-        protected override void FileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            if (!DownloadingDriveFile)
+            var fileId = ExtractGoogleDriveId(UrlAddress);
+            if (string.IsNullOrEmpty(fileId))
             {
-                if (DownloadFileCompleted != null)
-                    DownloadFileCompleted(this, e);
-
-                SW.Stop();
-                Tcs.SetResult(new object());
+                // Not actually Google Drive → standard download
+                await DownloadToFile(UrlAddress, Location);
+                return;
             }
-            else
+
+            var resourceKey = ExtractResourceKey(UrlAddress);
+            var downloadUrl = BuildDownloadUrl(fileId, resourceKey);
+
+            int attempt = 1;
+
+            while (true)
             {
-                if (DriveDownloadAttempt < GOOGLE_DRIVE_MAX_DOWNLOAD_ATTEMPT && !ProcessDriveDownload())
-                {
-                    DriveDownloadAttempt++;
-                    DownloadFileInternal();
-                }
-                else
-                {
-                    if (DownloadFileCompleted != null) DownloadFileCompleted(this, e);
+                await DownloadToFile(downloadUrl, Location);
 
-                    SW.Stop();
+                if (!await DetectGoogleConfirmationAndRetry(Location, UrlAddress, attempt))
+                    break;
 
-                    if (!Tcs.Task.IsFaulted)
-                    {
-                        Tcs.SetResult(new object());
-                    }                                        
-                }
+                attempt++;
             }
+
+            DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, false, null));
         }
     }
 }

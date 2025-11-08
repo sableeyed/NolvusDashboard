@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <UseAppHost>true</UseAppHost>
+    <PublishTrimmed>false</PublishTrimmed> <!-- Avalonia requires this -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <StripSymbols>true</StripSymbols>
+  </PropertyGroup>
+</Project>

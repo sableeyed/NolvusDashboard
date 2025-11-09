@@ -1,0 +1,44 @@
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="Nolvus.Dashboard.DashboardWindow"
+    Width="1200" Height="800"
+    CanResize="True"
+    Title="Nolvus Dashboard">
+
+  <Grid>
+    <!-- Top bar -->
+    <Border Background="#363636" Height="50" VerticalAlignment="Top">
+      <DockPanel Margin="12,0">
+        <TextBlock x:Name="TitleText" Text="Nolvus Dashboard"
+                   Foreground="Orange" VerticalAlignment="Center"
+                   FontSize="18" FontWeight="SemiBold"/>
+        <TextBlock x:Name="InfoText" DockPanel.Dock="Right"
+                   Foreground="#DDD" VerticalAlignment="Center"
+                   Text="v0.0.0 | Not logged"/>
+      </DockPanel>
+    </Border>
+
+    <!-- Content host -->
+    <Border Margin="0,50,0,32" Background="#2E2E2E">
+      <ContentPresenter x:Name="ContentHost"/>
+    </Border>
+
+    <!-- Status bar -->
+    <Border Background="#363636" Height="32" VerticalAlignment="Bottom">
+      <DockPanel Margin="8,0">
+        <TextBlock x:Name="StatusText" VerticalAlignment="Center" Foreground="#DDD"/>
+        <ProgressBar x:Name="StatusProgress" DockPanel.Dock="Right"
+                     Width="220" Height="18" IsIndeterminate="False" Minimum="0" Maximum="100" />
+      </DockPanel>
+    </Border>
+
+    <!-- Loading overlay -->
+    <Grid x:Name="LoadingOverlay" IsVisible="False" Background="#80000000">
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+        <ProgressBar IsIndeterminate="True" Width="320" Height="8"/>
+        <TextBlock Text="Loading…" Foreground="White" HorizontalAlignment="Center"/>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Window>

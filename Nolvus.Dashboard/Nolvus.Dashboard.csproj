@@ -1,23 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>WinExe</OutputType>
+    <ImplicitUsings>true</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+
+    <!-- Keep assembly name consistent with old project -->
+    <AssemblyName>NolvusDashboard</AssemblyName>
+
+    <!-- Self-contained Linux for now; can change later -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.8" />
     <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.8" />
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.8">
-      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
-      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.8" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+
+    <!-- These two are critical: -->
+    <PackageReference Include="ReactiveUI" Version="20.1.1" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
   </ItemGroup>
+
+  <!-- These link Core and Services like before -->
+  <ItemGroup>
+    <ProjectReference Include="..\Nolvus.Core\Nolvus.Core.csproj" />
+    <ProjectReference Include="..\Nolvus.Services\Nolvus.Services.csproj" />
+    <ProjectReference Include="..\Nolvus.Api.Library.Installer\Nolvus.Api.Installer.csproj" />
+    <ProjectReference Include="..\Nolvus.Services\Nolvus.Services.csproj" />
+    <ProjectReference Include="..\Nolvus.Package\Nolvus.Package.csproj" />
+    <ProjectReference Include="..\Nolvus.Browser\Nolvus.Browser.csproj" />
+    <ProjectReference Include="..\Nolvus.Instance\Nolvus.Instance.csproj" />
+    <ProjectReference Include="..\Nolvus.Components\Nolvus.Components.csproj" />
+    <ProjectReference Include="..\Nolvus.NexusApi\Nolvus.NexusApi.csproj" />
+    <ProjectReference Include="..\Nolvus.StockGame\Nolvus.StockGame.csproj" />
+  </ItemGroup>
+
+
 </Project>

@@ -9,6 +9,8 @@ using Avalonia.VisualTree;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using Nolvus.Core.Services;
+using Avalonia.Platform;
+using System.Runtime.CompilerServices;
 
 namespace Nolvus.Components.Controls
 {
@@ -66,10 +68,10 @@ namespace Nolvus.Components.Controls
             // Layout container
             var panel = new Grid
             {
-                ColumnDefinitions = new ColumnDefinitions("40,*,*,40"),
+                ColumnDefinitions = new ColumnDefinitions("Auto,Auto,*,Auto"),
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                 Background = new SolidColorBrush(Avalonia.Media.Color.FromRgb(54, 54, 54)),
-                Height = 36
+                Height = 50
             };
 
             AccountImage = new Avalonia.Controls.Image
@@ -79,6 +81,7 @@ namespace Nolvus.Components.Controls
                 Margin = new Thickness(6, 4),
                 Stretch = Avalonia.Media.Stretch.UniformToFill
             };
+            
             Grid.SetColumn(AccountImage, 0);
 
             LblTitle = new TextBlock
@@ -155,8 +158,7 @@ namespace Nolvus.Components.Controls
 
         public void SetAccountImage(string url)
         {
-            var img = SixLabors.ImageSharp.Image.Load(url);
-            SetAccountImage(img);
+            _ = LoadAccountImageFromUrl(url);
         }
 
         public void SetAccountImage(SixLabors.ImageSharp.Image img)
@@ -165,6 +167,40 @@ namespace Nolvus.Components.Controls
             img.Save(ms, new PngEncoder());
             ms.Position = 0;
             AccountImage.Source = new Bitmap(ms);
+        }
+
+        private async Task LoadAccountImageFromUrl(string url)
+        {
+            try
+            {
+                using var http = new HttpClient();
+                using var stream = await http.GetStreamAsync(url);
+                using var img = SixLabors.ImageSharp.Image.Load(stream);
+                await (ApplyImage(img));
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log("Image downloading failed =>\n" + ex);
+            }
+        }
+
+        private async Task ApplyImage(SixLabors.ImageSharp.Image img)
+        {
+            try
+            {
+                using var ms = new MemoryStream();
+                img.Save(ms, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
+                ms.Position = 0;
+
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => 
+                {
+                    AccountImage.Source = new Avalonia.Media.Imaging.Bitmap(ms);
+                });
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log("Image applying failed =>\n" + ex);
+            }
         }
     }
 }

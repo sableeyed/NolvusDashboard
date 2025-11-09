@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Diagnostics;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
@@ -191,10 +192,22 @@ namespace Nolvus.Services.Globals
             });
         }
 
-        public string GetVersion(string FilePath)
+        public string GetVersion(string filePath)
         {
-            string v = FileVersionInfo.GetVersionInfo(FilePath).ProductVersion;
-            return v.Substring(0, v.LastIndexOf('.'));
+            var asm = Assembly.GetEntryAssembly();
+            if (asm == null)
+                return "0.0.0";
+
+            var version = asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+                    ?? asm.GetName().Version?.ToString()
+                    ?? "0.0.0";
+
+            // Strip trailing build metadata like +commitHash if present
+            var plusIndex = version.IndexOf('+');
+            if (plusIndex > 0)
+                version = version[..plusIndex];
+
+            return version;
         }
     }
 }

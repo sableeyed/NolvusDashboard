@@ -1,6 +1,7 @@
 <Window
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
     x:Class="Nolvus.Dashboard.DashboardWindow"
     Width="1200" Height="800"
     CanResize="True"
@@ -9,78 +10,80 @@
     ExtendClientAreaTitleBarHeightHint="50"
     Background="#363636">
 
+  <!-- Resources (keyed objects like brushes go here) -->
+  <Window.Resources>
+    <SolidColorBrush x:Key="AccentBrush" Color="#F28F1A"/>
+  </Window.Resources>
+
+  <!-- Styles (selector-based; no x:Key) -->
+  <Window.Styles>
+    <!-- Apply to TextBlock with class 'primary' -->
+    <Style Selector="TextBlock.primary">
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+
+    <!-- Apply to TextBlock with class 'secondary' -->
+    <Style Selector="TextBlock.secondary">
+      <Setter Property="Foreground" Value="#CCCCCC"/>
+    </Style>
+  </Window.Styles>
+
   <Border Background="#363636">
     <Grid RowDefinitions="Auto,*,Auto,Auto">
 
       <!-- TITLE BAR -->
-      <Border Background="#363636" Height="50" Grid.Row="0" PointerPressed="TitleBar_PointerPressed">
-        <Grid ColumnDefinitions="*,Auto" Margin="12,0">
-          <!-- Title + Info (left) -->
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
-            <TextBlock x:Name="TitleText"
-                       Text="Nolvus Dashboard"
-                       Foreground="Orange"
-                       FontSize="18"
-                       FontWeight="SemiBold"/>
+      <Grid Grid.Row="0" Background="#363636" Height="50" ColumnDefinitions="*,Auto,Auto,Auto">
+        <!-- Reusable TitleBarControl (title, info text, account icon & settings cog) -->
+        <controls:TitleBarControl x:Name="TitleBarControl"
+                                  VerticalAlignment="Center"
+                                  Margin="6,0"/>
 
-            <TextBlock x:Name="InfoText"
-                       Foreground="#CCCCCC"
-                       VerticalAlignment="Center"
-                       Text="v0.0.0 | Not logged in"/>
-          </StackPanel>
+        <!-- Minimize -->
+        <Button x:Name="MinimizeButton"
+                Grid.Column="1"
+                Content="—"
+                Background="Transparent"
+                BorderThickness="0"
+                Foreground="White"
+                Padding="12,0"
+                Cursor="Hand"/>
 
-          <!-- Settings button (right) -->
-          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="16">
+        <!-- Maximize / Restore -->
+        <Button x:Name="MaximizeButton"
+                Grid.Column="2"
+                Content="▢"
+                Background="Transparent"
+                BorderThickness="0"
+                Foreground="White"
+                Padding="12,0"
+                Cursor="Hand"/>
 
-            <Button x:Name="SettingsButton"
-                    Content="⚙"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Foreground="Orange"
-                    FontSize="18"
-                    Cursor="Hand"
-                    Padding="4"
-                    ToolTip.Tip="Settings"/>
-
-            <Button x:Name="MinimizeButton"
-                    Content="—"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Foreground="White"
-                    Cursor="Hand"
-                    Padding="6,0"
-                    ToolTip.Tip="Minimize"/>
-
-            <Button x:Name="CloseButton"
-                    Content="✕"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Foreground="White"
-                    Cursor="Hand"
-                    Padding="6,0"
-                    ToolTip.Tip="Close"/>
-
-          </StackPanel>
-
-        </Grid>
-      </Border>
+        <!-- Close -->
+        <Button x:Name="CloseButton"
+                Grid.Column="3"
+                Content="✕"
+                Background="Transparent"
+                BorderThickness="0"
+                Foreground="White"
+                Padding="12,0"
+                Cursor="Hand"/>
+      </Grid>
 
       <!-- MAIN CONTENT HOST -->
-      <Border Margin="0,50,0,32" Background="#2E2E2E">
+      <Border Grid.Row="1" Margin="0,0,0,32" Background="#2E2E2E">
         <StackPanel>
           <!-- Status Label (replaces LblStatus) -->
           <TextBlock x:Name="LblStatus"
-                      Text="Initializing..."
-                      Foreground="White"
-                      FontSize="14"
-                      Margin="12,8,0,8"
-                      IsVisible="False"/>
-
+                     Classes="primary"
+                     Text="Initializing..."
+                     FontSize="14"
+                     Margin="12,8,0,8"
+                     IsVisible="False"/>
           <!-- Main frame host -->
           <ContentPresenter x:Name="ContentHost"/>
         </StackPanel>
       </Border>
-
 
       <!-- PROGRESS BAR -->
       <ProgressBar x:Name="DashboardProgressBar"
@@ -90,7 +93,7 @@
                    Height="6"
                    HorizontalAlignment="Stretch"
                    Background="#222"
-                   Foreground="Orange"
+                   Foreground="{StaticResource AccentBrush}"
                    Margin="0"/>
 
       <!-- STATUS STRIP -->
@@ -99,17 +102,17 @@
 
           <!-- Left status info -->
           <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="8,0" VerticalAlignment="Center">
-            <TextBlock x:Name="StStripLblInfo" Foreground="White" IsVisible="False" Margin="0,0,12,0"/>
-            <TextBlock x:Name="StStripLblAdditionalInfo" Foreground="White" Margin="0,0,12,0"/>
-            <TextBlock x:Name="StStripLblAdditionalInfo2" Foreground="White" Margin="0,0,12,0"/>
-            <TextBlock x:Name="StStripLblAdditionalInfo3" Foreground="White"/>
+            <TextBlock x:Name="StStripLblInfo" Classes="primary" IsVisible="False" Margin="0,0,12,0"/>
+            <TextBlock x:Name="StStripLblAdditionalInfo" Classes="primary" Margin="0,0,12,0"/>
+            <TextBlock x:Name="StStripLblAdditionalInfo2" Classes="primary" Margin="0,0,12,0"/>
+            <TextBlock x:Name="StStripLblAdditionalInfo3" Classes="primary"/>
           </StackPanel>
 
           <!-- Right status info -->
           <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0" VerticalAlignment="Center" Spacing="12">
-            <TextBlock x:Name="StripLblAccountType" Foreground="Orange"/>
-            <TextBlock x:Name="StripLblNexus" Foreground="Orange"/>
-            <TextBlock x:Name="StripLblScaling" Foreground="Gray"/>
+            <TextBlock x:Name="StripLblAccountType" Foreground="{StaticResource AccentBrush}"/>
+            <TextBlock x:Name="StripLblNexus" Foreground="{StaticResource AccentBrush}"/>
+            <TextBlock x:Name="StripLblScaling" Classes="secondary"/>
           </StackPanel>
 
         </DockPanel>
@@ -120,12 +123,10 @@
             IsVisible="False"
             Grid.RowSpan="4"
             Background="#80000000">
-
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
           <ProgressBar IsIndeterminate="True" Width="320" Height="8"/>
-          <TextBlock Text="Loading…" Foreground="White" HorizontalAlignment="Center"/>
+          <TextBlock Text="Loading…" Classes="primary" HorizontalAlignment="Center"/>
         </StackPanel>
-
       </Grid>
 
     </Grid>

@@ -33,43 +33,24 @@
     <Grid RowDefinitions="Auto,*,Auto,Auto">
 
       <!-- TITLE BAR -->
-      <Grid Grid.Row="0" Background="#363636" Height="50" ColumnDefinitions="*,Auto,Auto,Auto">
-        <!-- Reusable TitleBarControl (title, info text, account icon & settings cog) -->
+      <Grid Grid.Row="0" Background="#363636" Height="50">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width = "Auto" />
+          <ColumnDefinition Width = "Auto" />
+        </Grid.ColumnDefinitions>
+
         <controls:TitleBarControl x:Name="TitleBarControl"
+                                  Grid.Column="0"
                                   VerticalAlignment="Center"
-                                  Margin="6,0"/>
+                                  Margin="6,0" />
 
-        <!-- Minimize -->
-        <Button x:Name="MinimizeButton"
-                Grid.Column="1"
-                Content="—"
-                Background="Transparent"
-                BorderThickness="0"
-                Foreground="White"
-                Padding="12,0"
-                Cursor="Hand"/>
-
-        <!-- Maximize / Restore -->
-        <Button x:Name="MaximizeButton"
-                Grid.Column="2"
-                Content="▢"
-                Background="Transparent"
-                BorderThickness="0"
-                Foreground="White"
-                Padding="12,0"
-                Cursor="Hand"/>
-
-        <!-- Close -->
-        <Button x:Name="CloseButton"
-                Grid.Column="3"
-                Content="✕"
-                Background="Transparent"
-                BorderThickness="0"
-                Foreground="White"
-                Padding="12,0"
-                Cursor="Hand"/>
+        <!-- <controls:TitleBarControl.PointerPressed>
+          <PointerPressedEventHandler>TitleBar_PointerPressed</PointerPressedEventHandler>
+        </controls:TitleBarControl.PointerPressed>
+         -->
       </Grid>
-
       <!-- MAIN CONTENT HOST -->
       <Border Grid.Row="1" Margin="0,0,0,32" Background="#2E2E2E">
         <StackPanel>

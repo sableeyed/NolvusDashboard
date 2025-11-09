@@ -193,7 +193,7 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        this.TitleBarControl.Title = Value;
+        TitleBarControl.Title = Value;
     }
 
     #endregion
@@ -468,9 +468,9 @@ public partial class DashboardWindow : Window, IDashboard
         InitializeComponent();
         //DataContext = new DashboardMainViewModel();
 
-        MinimizeButton.Click += (_, _) => WindowState = WindowState.Minimized;
-        CloseButton.Click += (_, _) => Close();
-        MaximizeButton.Click += (_, _) =>
+        // MinimizeButton.Click += (_, _) => WindowState = WindowState.Minimized;
+        // CloseButton.Click += (_, _) => Close();
+        // MaximizeButton.Click += (_, _) =>
         {
             WindowState = WindowState == WindowState.Maximized
                 ? WindowState.Normal

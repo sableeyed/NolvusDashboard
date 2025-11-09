@@ -20,9 +20,14 @@ namespace Nolvus.Components.Controls
     {
         private bool _SettingsEnabled = true;
 
-        private TextBlock LblTitle;
-        private TextBlock LblInfo;
-        private Avalonia.Controls.Image AccountImage;
+        private TextBlock LblTitle = null!;
+        private TextBlock LblInfo = null!;
+        private Avalonia.Controls.Image AccountImage = null!;
+        private Avalonia.Controls.Image AppIcon = null!;
+        private Button SettingsButton = null!;
+        private Button MinButton = null!;
+        private Button MaxButton = null!;
+        private Button CloseButton = null!;
         private Button SettingsBox;
 
         private event SettingsHandler OnSettingsClickedEvent;
@@ -68,28 +73,28 @@ namespace Nolvus.Components.Controls
             // Layout container
             var panel = new Grid
             {
-                ColumnDefinitions = new ColumnDefinitions("Auto,Auto,*,Auto"),
-                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                //ColumnDefinitions = new ColumnDefinitions("Auto,Auto,*,Auto"),
+                //VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                 Background = new SolidColorBrush(Avalonia.Media.Color.FromRgb(54, 54, 54)),
+                ColumnDefinitions = new ColumnDefinitions("40,*,Auto,Auto,Auto,Auto,Auto,Auto"),
                 Height = 50
             };
 
-            AccountImage = new Avalonia.Controls.Image
+            AppIcon = new Avalonia.Controls.Image
             {
-                Width = 28,
-                Height = 28,
-                Margin = new Thickness(6, 4),
-                Stretch = Avalonia.Media.Stretch.UniformToFill
+                Width = 20,
+                Height = 20,
+                Margin = new Thickness(10, 0),
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
             };
-            
-            Grid.SetColumn(AccountImage, 0);
+            Grid.SetColumn(AppIcon, 0);
 
             LblTitle = new TextBlock
             {
-                Foreground = Brushes.White,
+                Foreground = Brushes.Orange,
+                FontWeight = FontWeight.SemiBold,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                Margin = new Thickness(6, 0),
-                FontSize = 14
+                FontSize = 16
             };
             Grid.SetColumn(LblTitle, 1);
 
@@ -97,34 +102,96 @@ namespace Nolvus.Components.Controls
             {
                 Foreground = Brushes.Gray,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                Margin = new Thickness(4, 0),
-                FontSize = 12
+                FontSize = 13,
+                Margin = new Thickness(6, 0)
             };
             Grid.SetColumn(LblInfo, 2);
 
-            SettingsBox = new Button
+            AccountImage = new Avalonia.Controls.Image
             {
-                Content = "⚙",
-                Foreground = Brushes.White,
-                Background = Brushes.Transparent,
-                BorderBrush = Brushes.Transparent,
-                Cursor = new Cursor(StandardCursorType.Hand),
+                Width = 24,
+                Height = 24,
+                Margin = new Thickness(4, 0),
+                Stretch = Avalonia.Media.Stretch.UniformToFill,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                IsVisible = true
             };
-            SettingsBox.PointerPressed += SettingsBox_Click;
-            ToolTip.SetTip(SettingsBox, "Global settings");
-            Grid.SetColumn(SettingsBox, 3);
+            Grid.SetColumn(AccountImage, 3);
+
+            SettingsButton = MakeButton("⚙");
+            // SettingsButton.Click += (_, _) =>
+            // {
+            //     if (_SettingsEnabled)
+            //         OnSettingsClicked?.Invoke(this, EventArgs.Empty);
+            // };
+            Grid.SetColumn(SettingsButton, 4);
+
+            MinButton = MakeButton("—");
+            Grid.SetColumn(MinButton, 5);
+
+            MaxButton = MakeButton("▢");
+            Grid.SetColumn(MaxButton, 6);
+
+            CloseButton = MakeButton("✕");
+            Grid.SetColumn(CloseButton, 7);
+
+            // LblTitle = new TextBlock
+            // {
+            //     Foreground = Brushes.White,
+            //     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            //     Margin = new Thickness(6, 0),
+            //     FontSize = 14
+            // };
+            // Grid.SetColumn(LblTitle, 1);
+
+            // LblInfo = new TextBlock
+            // {
+            //     Foreground = Brushes.Gray,
+            //     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+            //     Margin = new Thickness(4, 0),
+            //     FontSize = 12
+            // };
+            // Grid.SetColumn(LblInfo, 2);
+
+            // SettingsBox = new Button
+            // {
+            //     Content = "⚙",
+            //     Foreground = Brushes.White,
+            //     Background = Brushes.Transparent,
+            //     BorderBrush = Brushes.Transparent,
+            //     Cursor = new Cursor(StandardCursorType.Hand),
+            // };
+            // SettingsBox.PointerPressed += SettingsBox_Click;
+            // ToolTip.SetTip(SettingsBox, "Global settings");
+            // Grid.SetColumn(SettingsBox, 3);
 
             // Enable dragging the window by dragging any label text
-            LblTitle.PointerPressed += BeginDrag;
-            LblInfo.PointerPressed += BeginDrag;
+            // LblTitle.PointerPressed += BeginDrag;
+            // LblInfo.PointerPressed += BeginDrag;
 
-            panel.Children.Add(AccountImage);
+            panel.Children.Add(AppIcon);
             panel.Children.Add(LblTitle);
             panel.Children.Add(LblInfo);
-            panel.Children.Add(SettingsBox);
+            panel.Children.Add(AccountImage);
+            panel.Children.Add(SettingsButton);
+            panel.Children.Add(MinButton);
+            panel.Children.Add(MaxButton);
+            panel.Children.Add(CloseButton);
 
             Content = panel;
         }
+
+        private Button MakeButton(string icon) =>
+            new()
+            {
+                Content = icon,
+                Foreground = Brushes.White,
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Transparent,
+                FontSize = 16,
+                Padding = new Thickness(8, 0),
+                Cursor = new Cursor(StandardCursorType.Hand),
+            };
 
         private void BeginDrag(object sender, PointerPressedEventArgs e)
         {

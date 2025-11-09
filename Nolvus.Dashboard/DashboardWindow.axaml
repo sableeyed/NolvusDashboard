@@ -4,41 +4,118 @@
     x:Class="Nolvus.Dashboard.DashboardWindow"
     Width="1200" Height="800"
     CanResize="True"
-    Title="Nolvus Dashboard">
+    SystemDecorations="None"
+    ExtendClientAreaToDecorationsHint="True"
+    ExtendClientAreaTitleBarHeightHint="50"
+    Background="#363636">
 
-  <Grid>
-    <!-- Top bar -->
-    <Border Background="#363636" Height="50" VerticalAlignment="Top">
-      <DockPanel Margin="12,0">
-        <TextBlock x:Name="TitleText" Text="Nolvus Dashboard"
-                   Foreground="Orange" VerticalAlignment="Center"
-                   FontSize="18" FontWeight="SemiBold"/>
-        <TextBlock x:Name="InfoText" DockPanel.Dock="Right"
-                   Foreground="#DDD" VerticalAlignment="Center"
-                   Text="v0.0.0 | Not logged"/>
-      </DockPanel>
-    </Border>
+  <Border Background="#363636">
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
 
-    <!-- Content host -->
-    <Border Margin="0,50,0,32" Background="#2E2E2E">
-      <ContentPresenter x:Name="ContentHost"/>
-    </Border>
+      <!-- TITLE BAR -->
+      <Border Background="#363636" Height="50" Grid.Row="0" PointerPressed="TitleBar_PointerPressed">
+        <Grid ColumnDefinitions="*,Auto" Margin="12,0">
+          <!-- Title + Info (left) -->
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+            <TextBlock x:Name="TitleText"
+                       Text="Nolvus Dashboard"
+                       Foreground="Orange"
+                       FontSize="18"
+                       FontWeight="SemiBold"/>
 
-    <!-- Status bar -->
-    <Border Background="#363636" Height="32" VerticalAlignment="Bottom">
-      <DockPanel Margin="8,0">
-        <TextBlock x:Name="StatusText" VerticalAlignment="Center" Foreground="#DDD"/>
-        <ProgressBar x:Name="StatusProgress" DockPanel.Dock="Right"
-                     Width="220" Height="18" IsIndeterminate="False" Minimum="0" Maximum="100" />
-      </DockPanel>
-    </Border>
+            <TextBlock x:Name="InfoText"
+                       Foreground="#CCCCCC"
+                       VerticalAlignment="Center"
+                       Text="v0.0.0 | Not logged in"/>
+          </StackPanel>
 
-    <!-- Loading overlay -->
-    <Grid x:Name="LoadingOverlay" IsVisible="False" Background="#80000000">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
-        <ProgressBar IsIndeterminate="True" Width="320" Height="8"/>
-        <TextBlock Text="Loading…" Foreground="White" HorizontalAlignment="Center"/>
-      </StackPanel>
+          <!-- Settings button (right) -->
+          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="16">
+
+            <Button x:Name="SettingsButton"
+                    Content="⚙"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Foreground="Orange"
+                    FontSize="18"
+                    Cursor="Hand"
+                    Padding="4"
+                    ToolTip.Tip="Settings"/>
+
+            <Button x:Name="MinimizeButton"
+                    Content="—"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Foreground="White"
+                    Cursor="Hand"
+                    Padding="6,0"
+                    ToolTip.Tip="Minimize"/>
+
+            <Button x:Name="CloseButton"
+                    Content="✕"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Foreground="White"
+                    Cursor="Hand"
+                    Padding="6,0"
+                    ToolTip.Tip="Close"/>
+
+          </StackPanel>
+
+        </Grid>
+      </Border>
+
+      <!-- MAIN CONTENT HOST -->
+      <Border Grid.Row="1" Background="#2E2E2E">
+        <ContentPresenter x:Name="ContentHost"/>
+      </Border>
+
+      <!-- PROGRESS BAR -->
+      <ProgressBar x:Name="DashboardProgressBar"
+                   Grid.Row="2"
+                   Minimum="0"
+                   Maximum="100"
+                   Height="6"
+                   HorizontalAlignment="Stretch"
+                   Background="#222"
+                   Foreground="Orange"
+                   Margin="0"/>
+
+      <!-- STATUS STRIP -->
+      <Border Grid.Row="3" Background="#2C2C2C" Height="32">
+        <DockPanel LastChildFill="False">
+
+          <!-- Left status info -->
+          <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="8,0" VerticalAlignment="Center">
+            <TextBlock x:Name="InfoLabel" Foreground="White" IsVisible="False" Margin="0,0,12,0"/>
+            <TextBlock x:Name="AdditionalInfoLabel" Foreground="White" Margin="0,0,12,0"/>
+            <TextBlock x:Name="AdditionalInfo2Label" Foreground="White" Margin="0,0,12,0"/>
+            <TextBlock x:Name="AdditionalInfo3Label" Foreground="White"/>
+          </StackPanel>
+
+          <!-- Right status info -->
+          <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0" VerticalAlignment="Center" Spacing="12">
+            <TextBlock x:Name="AccountTypeLabel" Foreground="Orange"/>
+            <TextBlock x:Name="NexusLabel" Foreground="Orange"/>
+            <TextBlock x:Name="ScalingLabel" Foreground="Gray"/>
+          </StackPanel>
+
+        </DockPanel>
+      </Border>
+
+      <!-- LOADING OVERLAY -->
+      <Grid x:Name="LoadingOverlay"
+            IsVisible="False"
+            Grid.RowSpan="4"
+            Background="#80000000">
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+          <ProgressBar IsIndeterminate="True" Width="320" Height="8"/>
+          <TextBlock Text="Loading…" Foreground="White" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+      </Grid>
+
     </Grid>
-  </Grid>
+  </Border>
 </Window>

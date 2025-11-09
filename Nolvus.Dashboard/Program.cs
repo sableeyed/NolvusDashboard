@@ -15,6 +15,7 @@ using System.Net.Security;
 using System.Security.Authentication;
 using Nolvus.Api.Installer.Core;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Nolvus.Dashboard;
 
@@ -26,6 +27,23 @@ internal static class Program
                      .UsePlatformDetect()
                      .LogToTrace();
 
+
+    private static void ExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+    {
+        Exception ex = e.ExceptionObject as Exception;
+        ServiceSingleton.Logger.Log(ex.Message + Environment.NewLine + "Stack =>" + ex.StackTrace);
+    }
+
+    private static void Loader(object sender, AssemblyLoadEventArgs args)
+    {
+        ServiceSingleton.Logger.Log("Assembly Loader : ==>" + args.LoadedAssembly.FullName);
+    }
+
+    private static Assembly Resolver(object sender, ResolveEventArgs args)
+    {
+            ServiceSingleton.Logger.Log("Assembly loader : Unable to load assembly ==> " + args.Name);
+            return null;
+    }
     [STAThread]
     public static void Main(string[] args)
     {
@@ -72,9 +90,9 @@ internal static class Program
         ServiceSingleton.RegisterService<IReportService>(new ReportService());
         ServiceSingleton.RegisterService<ICheckerService>(new CheckerService());
 
-        // AppDomain.CurrentDomain.AssemblyResolve += Resolver;
-        // AppDomain.CurrentDomain.AssemblyLoad += Loader;
-        // AppDomain.CurrentDomain.UnhandledException += ExceptionHandler;
+        AppDomain.CurrentDomain.AssemblyResolve += Resolver;
+        AppDomain.CurrentDomain.AssemblyLoad += Loader;
+        AppDomain.CurrentDomain.UnhandledException += ExceptionHandler;
 
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);

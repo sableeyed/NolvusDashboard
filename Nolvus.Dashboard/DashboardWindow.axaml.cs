@@ -260,14 +260,22 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // this.LblStatus.Visible = true;
-        // this.LblStatus.Text = Value;
+        InfoLabel.IsVisible = true;
+        InfoLabel.Text = Value;
     }
 
     public void NoStatus()
     {
-        Status(string.Empty);
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            Dispatcher.UIThread.Post(NoStatus);
+            return;
+        }
+
+        //InfoLabel.IsVisible = false;
+        InfoLabel.Text = string.Empty;
     }
+
 
     public void Progress(int Value)
     {
@@ -460,9 +468,12 @@ public partial class DashboardWindow : Window, IDashboard
         InitializeComponent();
         //DataContext = new DashboardMainViewModel();
 
+        MinimizeButton.Click += (_, _) => WindowState = WindowState.Minimized;
+        CloseButton.Click += (_, _) => Close();
+
         ServiceSingleton.RegisterService<IDashboard>(this);
         ServiceSingleton.Logger.Log("You are running a currently non-functional Linux build of the Nolvus Dashboard");
-        //ServiceSingleton.Logger.Log(string.Format("Nolvus Dashboard Installer v{0} loaded", ServiceSingleton.Dashboard.Version));
+
 
         // StStripLblInfo.Text = string.Empty;
         // StStripLblAdditionalInfo.Text = string.Empty;
@@ -523,7 +534,7 @@ public partial class DashboardWindow : Window, IDashboard
     //     }
     // }
 
-    private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
+    private void TitleBar_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {
         if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             BeginMoveDrag(e);

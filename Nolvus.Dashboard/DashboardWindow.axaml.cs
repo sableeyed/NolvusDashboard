@@ -7,18 +7,18 @@
  * is superior. Having the first curly bracket on a new line is awful!
  */
 
+using Avalonia.Media;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
-using Nolvus.Dashboard.ViewModels;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Frames;
 using Nolvus.Components.Controls;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
-using System.Dynamic;
-using Avalonia.Controls.Chrome;
-using Microsoft.AspNetCore.Components.Web;
-using Avalonia.Input;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using Nolvus.Dashboard.Core;
 
 namespace Nolvus.Dashboard;
 
@@ -100,8 +100,34 @@ public partial class DashboardWindow : Window, IDashboard
     //CreateGraphics is the original system call so that won't work on linux
     public double ScalingFactor
     {
-        get { return 0.0; }
+        //get { return 0.0; }
+        get
+        {
+            double systemScale = 1.0;
+            if (VisualRoot is TopLevel tl)
+                return tl.RenderScaling;
+            return systemScale * SettingsCache.UiScaleMultiplier;
+        }
     }
+    private void ApplyScaling(double scale)
+    {
+        if (RootScaleHost?.LayoutTransform is ScaleTransform st)
+        {
+            st.ScaleX = scale;
+        st.ScaleY = scale;
+        }
+        else if (RootScaleHost is not null)
+        {
+            RootScaleHost.LayoutTransform = new ScaleTransform(scale, scale);
+        }
+
+        StripLblScaling.Text = $"[DPI: {(int)(scale * 100)}%]";
+        if (Math.Abs(ScalingSlider.Value - scale) > 0.001)
+            ScalingSlider.Value = scale;
+    }
+
+
+
 
     //Not giving it an exe for linux lol
     private string DashboardExe
@@ -466,16 +492,13 @@ public partial class DashboardWindow : Window, IDashboard
     public DashboardWindow()
     {
         InitializeComponent();
-        //DataContext = new DashboardMainViewModel();
 
-        // MinimizeButton.Click += (_, _) => WindowState = WindowState.Minimized;
-        // CloseButton.Click += (_, _) => Close();
-        // MaximizeButton.Click += (_, _) =>
         {
             WindowState = WindowState == WindowState.Maximized
                 ? WindowState.Normal
                 : WindowState.Maximized;
-        };
+        }
+        ;
 
 
         ServiceSingleton.RegisterService<IDashboard>(this);
@@ -500,15 +523,20 @@ public partial class DashboardWindow : Window, IDashboard
 
         TitleBarControl.Title = "Nolvus Dashboard";
         TitleBarControl.InfoCaption = string.Format("v{0} | Not logged in", ServiceSingleton.Dashboard.Version);
+        var uri = new Uri("avares://NolvusDashboard/Assets/nolvus-ico.jpg");
+        var logo = AssetLoader.Open(uri);
+        if (logo != null)
+        {
+            TitleBarControl.SetAppIcon(new Bitmap(logo));
+        }
 
-        //AccountImage
         LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
 
-        // ProgressBar.Value = 0;
-        // ProgressBar.Maximum = 100;
+        //ProgressBar.Value = 0;
+        //ProgressBar.Maximum = 100;
 
-        // IconSize = new Size((int)Math.Round(IconSize.Width * ScalingFactor), (int)Math.Round(IconSize.Height * ScalingFactor));
-        // StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
+        StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
+
     }
 
 
@@ -527,8 +555,14 @@ public partial class DashboardWindow : Window, IDashboard
     //         ShowError("This action is not allowed during mod list installation!", Nolvus.Core.Enums.MessageBoxType.Error);
     //     }
     // }
+    
+    private void ScalingSlider_ValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
+    {
+        ApplyScaling(e.NewValue);
+    }
 
-    private void TitleBar_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+
+    private void Window_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {
         if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             BeginMoveDrag(e);

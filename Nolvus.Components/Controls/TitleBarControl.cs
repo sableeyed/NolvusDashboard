@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.VisualTree;
+using Avalonia.Interactivity;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using Nolvus.Core.Services;
@@ -82,8 +83,8 @@ namespace Nolvus.Components.Controls
 
             AppIcon = new Avalonia.Controls.Image
             {
-                Width = 20,
-                Height = 20,
+                Width = 28,
+                Height = 28,
                 Margin = new Thickness(10, 0),
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
             };
@@ -100,10 +101,10 @@ namespace Nolvus.Components.Controls
 
             LblInfo = new TextBlock
             {
-                Foreground = Brushes.Gray,
+                Foreground = new SolidColorBrush(Avalonia.Media.Color.FromRgb(235, 235, 235)),
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                FontSize = 13,
-                Margin = new Thickness(6, 0)
+                FontSize = 16,
+                Margin = new Thickness(6, 0),
             };
             Grid.SetColumn(LblInfo, 2);
 
@@ -111,7 +112,7 @@ namespace Nolvus.Components.Controls
             {
                 Width = 24,
                 Height = 24,
-                Margin = new Thickness(4, 0),
+                Margin = new Thickness(6, 4, 14, 4),
                 Stretch = Avalonia.Media.Stretch.UniformToFill,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                 IsVisible = true
@@ -119,11 +120,6 @@ namespace Nolvus.Components.Controls
             Grid.SetColumn(AccountImage, 3);
 
             SettingsButton = MakeButton("⚙");
-            // SettingsButton.Click += (_, _) =>
-            // {
-            //     if (_SettingsEnabled)
-            //         OnSettingsClicked?.Invoke(this, EventArgs.Empty);
-            // };
             Grid.SetColumn(SettingsButton, 4);
 
             MinButton = MakeButton("—");
@@ -135,33 +131,30 @@ namespace Nolvus.Components.Controls
             CloseButton = MakeButton("✕");
             Grid.SetColumn(CloseButton, 7);
 
-            // LblTitle = new TextBlock
-            // {
-            //     Foreground = Brushes.White,
-            //     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-            //     Margin = new Thickness(6, 0),
-            //     FontSize = 14
-            // };
-            // Grid.SetColumn(LblTitle, 1);
+            MinButton.Click += (_, __) =>
+            {
+                var wnd = GetWindow();
+                if (wnd != null)
+                    wnd.WindowState = WindowState.Minimized;
+            };
 
-            // LblInfo = new TextBlock
-            // {
-            //     Foreground = Brushes.Gray,
-            //     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-            //     Margin = new Thickness(4, 0),
-            //     FontSize = 12
-            // };
-            // Grid.SetColumn(LblInfo, 2);
+            MaxButton.Click += (_, __) =>
+            {
+                var wnd = GetWindow();
+                if (wnd != null)
+                {
+                    wnd.WindowState = wnd.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+                }
+            };
 
-            // SettingsBox = new Button
-            // {
-            //     Content = "⚙",
-            //     Foreground = Brushes.White,
-            //     Background = Brushes.Transparent,
-            //     BorderBrush = Brushes.Transparent,
-            //     Cursor = new Cursor(StandardCursorType.Hand),
-            // };
-            // SettingsBox.PointerPressed += SettingsBox_Click;
+            CloseButton.Click += (_, __) =>
+            {
+                var wnd = GetWindow();
+                if (wnd != null)
+                    wnd.Close();
+            };
+
+            SettingsButton.Click += SettingsBox_Click;
             // ToolTip.SetTip(SettingsBox, "Global settings");
             // Grid.SetColumn(SettingsBox, 3);
 
@@ -201,20 +194,21 @@ namespace Nolvus.Components.Controls
 
         public void ShowLoading()
         {
-            SettingsBox.IsVisible = true;
+            SettingsButton.IsVisible = true;
         }
 
         public void HideLoading()
         {
-            SettingsBox.IsVisible = false;
+            SettingsButton.IsVisible = false;
         }
 
-        private void SettingsBox_Click(object? sender, PointerPressedEventArgs e)
+        private void SettingsBox_Click(object? sender, RoutedEventArgs e)
         {
             if (_SettingsEnabled)
             {
                 var handler = OnSettingsClickedEvent;
                 handler?.Invoke(this, EventArgs.Empty);
+                Console.WriteLine("Settings Clicked");
             }
         }
 
@@ -235,6 +229,17 @@ namespace Nolvus.Components.Controls
             ms.Position = 0;
             AccountImage.Source = new Bitmap(ms);
         }
+
+        public void SetAppIcon(Bitmap bmp)
+        {
+            AppIcon.Source = bmp;
+        }
+
+        public void SetAppIcon(string Path)
+        {
+            ServiceSingleton.Logger.Log("public void SetAppIcon(string Path) in Nolvus.Core/Components/TitleBarControl.cs unimplemented!!!!");
+        }
+
 
         private async Task LoadAccountImageFromUrl(string url)
         {
@@ -259,7 +264,7 @@ namespace Nolvus.Components.Controls
                 img.Save(ms, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
                 ms.Position = 0;
 
-                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => 
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     AccountImage.Source = new Avalonia.Media.Imaging.Bitmap(ms);
                 });
@@ -268,6 +273,23 @@ namespace Nolvus.Components.Controls
             {
                 ServiceSingleton.Logger.Log("Image applying failed =>\n" + ex);
             }
+        }
+
+        private Window? GetWindow()
+        {
+            return this.GetVisualRoot() as Window;
+        }
+        
+        public void SetScale(double scale)
+        {
+            LblTitle.FontSize = 16 * scale;
+            LblInfo.FontSize = 13 * scale;
+
+            AccountImage.Width = AccountImage.Height = 24 * scale;
+
+            MinButton.FontSize = 14 * scale;
+            MaxButton.FontSize = 14 * scale;
+            CloseButton.FontSize = 14 * scale;
         }
     }
 }

@@ -8,6 +8,7 @@
  */
 
 using Avalonia.Media;
+using Avalonia.Input;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
@@ -30,6 +31,7 @@ public partial class DashboardWindow : Window, IDashboard
     public const int WM_NCLBUTTONDOWN = 0xA1; //?
     public const int HT_CAPTION = 0x2; //?
     private Image PicBox; //replace PictureBox since it's windoze only
+    private ScaleTransform? _scale;
 
     #region Events
 
@@ -114,7 +116,7 @@ public partial class DashboardWindow : Window, IDashboard
         if (RootScaleHost?.LayoutTransform is ScaleTransform st)
         {
             st.ScaleX = scale;
-        st.ScaleY = scale;
+            st.ScaleY = scale;
         }
         else if (RootScaleHost is not null)
         {
@@ -125,8 +127,6 @@ public partial class DashboardWindow : Window, IDashboard
         if (Math.Abs(ScalingSlider.Value - scale) > 0.001)
             ScalingSlider.Value = scale;
     }
-
-
 
 
     //Not giving it an exe for linux lol
@@ -555,10 +555,24 @@ public partial class DashboardWindow : Window, IDashboard
     //         ShowError("This action is not allowed during mod list installation!", Nolvus.Core.Enums.MessageBoxType.Error);
     //     }
     // }
-    
+
     private void ScalingSlider_ValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
     {
-        ApplyScaling(e.NewValue);
+        //ApplyScaling(e.NewValue);
+        StripLblScaling.Text = $"[DPI: {(int)(e.NewValue * 100)}%]";
+    }
+    
+    private void ScalingSlider_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (sender is Slider s)
+            ApplyScaling(s.Value);
+    }
+
+    private void ScalingSlider_PointerCaptureLost(object? sender, PointerCaptureLostEventArgs e)
+    {
+        // Covers the case where the user releases outside the slider
+        if (sender is Slider s)
+            ApplyScaling(s.Value);
     }
 
 

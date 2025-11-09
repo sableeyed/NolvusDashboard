@@ -66,9 +66,21 @@
       </Border>
 
       <!-- MAIN CONTENT HOST -->
-      <Border Grid.Row="1" Background="#2E2E2E">
-        <ContentPresenter x:Name="ContentHost"/>
+      <Border Margin="0,50,0,32" Background="#2E2E2E">
+        <StackPanel>
+          <!-- Status Label (replaces LblStatus) -->
+          <TextBlock x:Name="LblStatus"
+                      Text="Initializing..."
+                      Foreground="White"
+                      FontSize="14"
+                      Margin="12,8,0,8"
+                      IsVisible="False"/>
+
+          <!-- Main frame host -->
+          <ContentPresenter x:Name="ContentHost"/>
+        </StackPanel>
       </Border>
+
 
       <!-- PROGRESS BAR -->
       <ProgressBar x:Name="DashboardProgressBar"
@@ -87,17 +99,17 @@
 
           <!-- Left status info -->
           <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="8,0" VerticalAlignment="Center">
-            <TextBlock x:Name="InfoLabel" Foreground="White" IsVisible="False" Margin="0,0,12,0"/>
-            <TextBlock x:Name="AdditionalInfoLabel" Foreground="White" Margin="0,0,12,0"/>
-            <TextBlock x:Name="AdditionalInfo2Label" Foreground="White" Margin="0,0,12,0"/>
-            <TextBlock x:Name="AdditionalInfo3Label" Foreground="White"/>
+            <TextBlock x:Name="StStripLblInfo" Foreground="White" IsVisible="False" Margin="0,0,12,0"/>
+            <TextBlock x:Name="StStripLblAdditionalInfo" Foreground="White" Margin="0,0,12,0"/>
+            <TextBlock x:Name="StStripLblAdditionalInfo2" Foreground="White" Margin="0,0,12,0"/>
+            <TextBlock x:Name="StStripLblAdditionalInfo3" Foreground="White"/>
           </StackPanel>
 
           <!-- Right status info -->
           <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0" VerticalAlignment="Center" Spacing="12">
-            <TextBlock x:Name="AccountTypeLabel" Foreground="Orange"/>
-            <TextBlock x:Name="NexusLabel" Foreground="Orange"/>
-            <TextBlock x:Name="ScalingLabel" Foreground="Gray"/>
+            <TextBlock x:Name="StripLblAccountType" Foreground="Orange"/>
+            <TextBlock x:Name="StripLblNexus" Foreground="Orange"/>
+            <TextBlock x:Name="StripLblScaling" Foreground="Gray"/>
           </StackPanel>
 
         </DockPanel>

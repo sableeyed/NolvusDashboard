@@ -260,8 +260,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        InfoLabel.IsVisible = true;
-        InfoLabel.Text = Value;
+        LblStatus.IsVisible = true;
+        LblStatus.Text = Value;
     }
 
     public void NoStatus()
@@ -272,8 +272,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        //InfoLabel.IsVisible = false;
-        InfoLabel.Text = string.Empty;
+        //LblStatus.IsVisible = false;
+        LblStatus.Text = string.Empty;
     }
 
 
@@ -475,29 +475,15 @@ public partial class DashboardWindow : Window, IDashboard
         ServiceSingleton.Logger.Log("You are running a currently non-functional Linux build of the Nolvus Dashboard");
 
 
-        // StStripLblInfo.Text = string.Empty;
-        // StStripLblAdditionalInfo.Text = string.Empty;
-        // StStripLblAdditionalInfo2.Text = string.Empty;
-        // StStripLblAdditionalInfo3.Text = string.Empty;
-        // StripLblAccountType.Text = string.Empty;
-        // StripLblNexus.Text = string.Empty;
+        StStripLblInfo.Text = string.Empty;
+        StStripLblAdditionalInfo.Text = string.Empty;
+        StStripLblAdditionalInfo2.Text = string.Empty;
+        StStripLblAdditionalInfo3.Text = string.Empty;
+        StripLblAccountType.Text = string.Empty;
+        StripLblNexus.Text = string.Empty;
 
-        // //SkinManager.SetVisualStyle(this, "Office2016Black");
-        // Style.TitleBar.MaximizeButtonHoverBackColor = Color.DarkOrange;
-        // Style.TitleBar.MinimizeButtonHoverBackColor = Color.DarkOrange;
-        // Style.TitleBar.HelpButtonHoverBackColor = Color.DarkOrange;
-        // Style.TitleBar.CloseButtonHoverBackColor = Color.DarkOrange;
-        // Style.TitleBar.MaximizeButtonPressedBackColor = Color.DarkOrange;
-        // Style.TitleBar.MinimizeButtonPressedBackColor = Color.DarkOrange;
-        // Style.TitleBar.HelpButtonPressedBackColor = Color.DarkOrange;
-        // Style.TitleBar.CloseButtonPressedBackColor = Color.DarkOrange;
+        //Padding = new Padding(0, 50, 0, 0);
 
-        // Style.TitleBar.BackColor = Color.FromArgb(54, 54, 54);
-        // Style.TitleBar.IconBackColor = Color.FromArgb(54, 54, 54);
-        // Style.TitleBar.Height = 50;
-
-        // Padding = new Padding(0, 50, 0, 0);
-        // Style.BackColor = Color.FromArgb(54, 54, 54);
 
         // TitleBarControl = new TitleBarControl();
         // TitleBarControl.Width = 3000;

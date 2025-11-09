@@ -154,10 +154,10 @@ public partial class DashboardWindow : Window, IDashboard
 
     private void DoLoad(DashboardFrame Frame)
     {
-        Frame.Height = 0; //TODO
-        Frame.Width = 0; //TODO
-        Frame.Anchor = 0; //TODO
-        //Must implement Core.Frames.DashboardFrame
+        // Frame.Height = 0; //TODO
+        // Frame.Width = 0; //TODO
+        // Frame.Anchor = 0; //TODO
+        // //Must implement Core.Frames.DashboardFrame
     }
 
     private void RemoveLoadedFrame()
@@ -182,7 +182,7 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        this.ProgressBar.Maximum = Value;
+        // this.ProgressBar.Maximum = Value;
     }
 
     public void Title(string Value)
@@ -260,8 +260,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        this.LblStatus.Visible = true;
-        this.LblStatus.Text = Value;
+        // this.LblStatus.Visible = true;
+        // this.LblStatus.Text = Value;
     }
 
     public void NoStatus()
@@ -277,8 +277,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        this.ProgressBar.Visible = true;
-        this.ProgressBar.Value = true;
+        // this.ProgressBar.Visible = true;
+        // this.ProgressBar.Value = true;
     }
 
     public void ProgressCompleted()
@@ -294,8 +294,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        StatusStripEx.Visible = true;
-        StStripLblAdditionalInfo.Text = Value;
+        // StatusStripEx.Visible = true;
+        // StStripLblAdditionalInfo.Text = Value;
     }
 
     public void AdditionalInfo(string Value)
@@ -306,8 +306,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        StatusStripEx.Visible = true;
-        StStripLblAdditionalInfo.Text = Value;
+        // StatusStripEx.Visible = true;
+        // StStripLblAdditionalInfo.Text = Value;
     }
 
     public void AdditionalSecondaryInfo(string Value)
@@ -318,8 +318,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        StatusStripEx.Visible = true;
-        StStripLblAdditionalInfo2.Text = Value;
+        // StatusStripEx.Visible = true;
+        // StStripLblAdditionalInfo2.Text = Value;
     }
 
     public void AdditionalTertiaryInfo(string Value)
@@ -330,8 +330,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        StatusStripEx.Visible = true;
-        StStripLblAdditionalInfo3.Text = Value;
+        // StatusStripEx.Visible = true;
+        // StStripLblAdditionalInfo3.Text = Value;
     }
 
     public void ClearInfo()
@@ -342,10 +342,10 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        StStripLblInfo.Text = string.Empty;
-        StStripLblAdditionalInfo.Text = string.Empty;
-        StStripLblAdditionalInfo2.Text = string.Empty;
-        StStripLblAdditionalInfo3.Text = string.Empty;
+        // StStripLblInfo.Text = string.Empty;
+        // StStripLblAdditionalInfo.Text = string.Empty;
+        // StStripLblAdditionalInfo2.Text = string.Empty;
+        // StStripLblAdditionalInfo3.Text = string.Empty;
     }
 
     public void TitleInfo(string Value)
@@ -367,8 +367,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        StatusStripEx.Visible = true;
-        StripLblNexus.Text = Value;
+        // StatusStripEx.Visible = true;
+        // StripLblNexus.Text = Value;
     }
 
     public void AccountType(string Value)
@@ -379,8 +379,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        StatusStripEx.Visible = true;
-        StripLblAccountType.Text = Value;
+        // StatusStripEx.Visible = true;
+        // StripLblAccountType.Text = Value;
     }
 
     public async Task<T> LoadFrameAsync<T>(FrameParameters Parameters = null) where T : DashboardFrame
@@ -425,8 +425,8 @@ public partial class DashboardWindow : Window, IDashboard
         ServiceSingleton.Dashboard.ProgressCompleted();
         ServiceSingleton.Logger.Log("Error Form => " + Message);
 
-        await LoadFrameAsync<ErrorFrame>(new FrameParameters(FrameParameter.Create("Title", Title), FrameParameter.Create("Message", Message),
-            FrameParameter.Create("Trace", Trace), FrameParameter.Create("Restry", Retry)));
+        // await LoadFrameAsync<ErrorFrame>(new FrameParameters(FrameParameter.Create("Title", Title), FrameParameter.Create("Message", Message),
+        //     FrameParameter.Create("Trace", Trace), FrameParameter.Create("Restry", Retry)));
 
     }
 
@@ -461,69 +461,67 @@ public partial class DashboardWindow : Window, IDashboard
         //DataContext = new DashboardMainViewModel();
 
         ServiceSingleton.RegisterService<IDashboard>(this);
-        ServiceSingleton.Logger.Log(string.Format("Nolvus Dashboard Installer v{0} loaded", ServiceSingleton.Dashboard.Version));
+        ServiceSingleton.Logger.Log("You are running a currently non-functional Linux build of the Nolvus Dashboard");
+        //ServiceSingleton.Logger.Log(string.Format("Nolvus Dashboard Installer v{0} loaded", ServiceSingleton.Dashboard.Version));
 
-        StStripLblInfo.Text = string.Empty;
-        StStripLblAdditionalInfo.Text = string.Empty;
-        StStripLblAdditionalInfo2.Text = string.Empty;
-        StStripLblAdditionalInfo3.Text = string.Empty;
-        StripLblAccountType.Text = string.Empty;
-        StripLblNexus.Text = string.Empty;
+        // StStripLblInfo.Text = string.Empty;
+        // StStripLblAdditionalInfo.Text = string.Empty;
+        // StStripLblAdditionalInfo2.Text = string.Empty;
+        // StStripLblAdditionalInfo3.Text = string.Empty;
+        // StripLblAccountType.Text = string.Empty;
+        // StripLblNexus.Text = string.Empty;
 
-        //SkinManager.SetVisualStyle(this, "Office2016Black");
-        Style.TitleBar.MaximizeButtonHoverBackColor = Color.DarkOrange;
-        Style.TitleBar.MinimizeButtonHoverBackColor = Color.DarkOrange;
-        Style.TitleBar.HelpButtonHoverBackColor = Color.DarkOrange;
-        Style.TitleBar.CloseButtonHoverBackColor = Color.DarkOrange;
-        Style.TitleBar.MaximizeButtonPressedBackColor = Color.DarkOrange;
-        Style.TitleBar.MinimizeButtonPressedBackColor = Color.DarkOrange;
-        Style.TitleBar.HelpButtonPressedBackColor = Color.DarkOrange;
-        Style.TitleBar.CloseButtonPressedBackColor = Color.DarkOrange;
+        // //SkinManager.SetVisualStyle(this, "Office2016Black");
+        // Style.TitleBar.MaximizeButtonHoverBackColor = Color.DarkOrange;
+        // Style.TitleBar.MinimizeButtonHoverBackColor = Color.DarkOrange;
+        // Style.TitleBar.HelpButtonHoverBackColor = Color.DarkOrange;
+        // Style.TitleBar.CloseButtonHoverBackColor = Color.DarkOrange;
+        // Style.TitleBar.MaximizeButtonPressedBackColor = Color.DarkOrange;
+        // Style.TitleBar.MinimizeButtonPressedBackColor = Color.DarkOrange;
+        // Style.TitleBar.HelpButtonPressedBackColor = Color.DarkOrange;
+        // Style.TitleBar.CloseButtonPressedBackColor = Color.DarkOrange;
 
-        Style.TitleBar.BackColor = Color.FromArgb(54, 54, 54);
-        Style.TitleBar.IconBackColor = Color.FromArgb(54, 54, 54);
-        Style.TitleBar.Height = 50;
+        // Style.TitleBar.BackColor = Color.FromArgb(54, 54, 54);
+        // Style.TitleBar.IconBackColor = Color.FromArgb(54, 54, 54);
+        // Style.TitleBar.Height = 50;
 
-        Padding = new Padding(0, 50, 0, 0);
-        Style.BackColor = Color.FromArgb(54, 54, 54);
+        // Padding = new Padding(0, 50, 0, 0);
+        // Style.BackColor = Color.FromArgb(54, 54, 54);
 
-        TitleBarControl = new TitleBarControl();
-        TitleBarControl.Width = 3000;
-        TitleBarControl.MouseDown += TitleBarControl_MouseDown;
-        TitleBarTextControl = TitleBarControl;
-        TitleBarControl.OnSettingsClicked += TitleBarControl_OnSettingsClicked;
+        // TitleBarControl = new TitleBarControl();
+        // TitleBarControl.Width = 3000;
+        // TitleBarControl.MouseDown += TitleBarControl_MouseDown;
+        // TitleBarTextControl = TitleBarControl;
+        // TitleBarControl.OnSettingsClicked += TitleBarControl_OnSettingsClicked;
 
-        TitleBarControl.Title = "Nolvus Dashboard";
-        TitleBarControl.InfoCaption = string.Format("v{0} | Not logged", ServiceSingleton.Dashboard.Version);
+        // TitleBarControl.Title = "Nolvus Dashboard";
+        // TitleBarControl.InfoCaption = string.Format("v{0} | Not logged", ServiceSingleton.Dashboard.Version);
 
-        LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
+        // LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
 
-        ProgressBar.Value = 0;
-        ProgressBar.Maximum = 100;
+        // ProgressBar.Value = 0;
+        // ProgressBar.Maximum = 100;
 
-        IconSize = new Size((int)Math.Round(IconSize.Width * ScalingFactor), (int)Math.Round(IconSize.Height * ScalingFactor));
-        StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
+        // IconSize = new Size((int)Math.Round(IconSize.Width * ScalingFactor), (int)Math.Round(IconSize.Height * ScalingFactor));
+        // StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
     }
 
 
-
-
-
-    private TitleBarControl_OnSettingsClicked(object sender, EventArgs e)
-    {
-        if (!ServiceSingleton.Packages.Processing)
-        {
-            if (TitleBarControl.SettingsEnabled)
-                ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
-            else
-                ShowError("This action can not be done now, please finish the Dashboard pre setup (Game path, Nexus and Nolvus connection)", Nolvus.Core.Enums.MessageBoxType.Error);
-            //Wrapper for NolvusMessageBox?
-        }
-        else
-        {
-            ShowError("This action is not allowed during mod list installation!", Nolvus.Core.Enums.MessageBoxType.Error);
-        }
-    }
+    // private TitleBarControl_OnSettingsClicked(object sender, EventArgs e)
+    // {
+    //     if (!ServiceSingleton.Packages.Processing)
+    //     {
+    //         if (TitleBarControl.SettingsEnabled)
+    //             ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
+    //         else
+    //             ShowError("This action can not be done now, please finish the Dashboard pre setup (Game path, Nexus and Nolvus connection)", Nolvus.Core.Enums.MessageBoxType.Error);
+    //         //Wrapper for NolvusMessageBox?
+    //     }
+    //     else
+    //     {
+    //         ShowError("This action is not allowed during mod list installation!", Nolvus.Core.Enums.MessageBoxType.Error);
+    //     }
+    // }
 
     private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
@@ -545,7 +543,7 @@ public partial class DashboardWindow : Window, IDashboard
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
-        await LoadFrameAsync<StartFrame>();
+        //await LoadFrameAsync<StartFrame>();
     }
 
 

@@ -7,7 +7,7 @@ using Nolvus.Core.Services;
 using System;
 using System.Threading.Tasks;
 
-namespace Nolvus.Dashboard.Frames
+namespace Nolvus.Dashboard.Frames.Settings
 {
     public partial class GameFrame : DashboardFrame
     {
@@ -51,6 +51,7 @@ namespace Nolvus.Dashboard.Frames
                 Console.WriteLine(ServiceSingleton.Game.GetSkyrimSEDirectory());
             }
             else {
+                LblError.Text = "Skyrim Anniversary Edition not found! Check if your game is installed. If it is installed, trying browsing to the installation directory manually";
                 LblError.IsVisible = true;
             }
         }

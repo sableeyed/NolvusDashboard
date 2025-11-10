@@ -14,7 +14,7 @@ using Nolvus.Dashboard.Controls;
 using Nolvus.Core.Enums;
 // using Nolvus.Dashboard.Frames.Installer;
 // using Nolvus.Dashboard.Frames.Instance;
-// using Nolvus.Dashboard.Frames.Settings;
+using Nolvus.Dashboard.Frames.Settings;
 
 namespace Nolvus.Dashboard.Frames
 {

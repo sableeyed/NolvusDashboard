@@ -56,7 +56,6 @@ namespace Nolvus.Dashboard.Controls
         public static async Task<bool?> Show(Window owner, string title, string message, MessageBoxType type)
         {
             var msgBox = new NolvusMessageBox(title, message, type);
-            msgBox.Owner = owner;
             return await msgBox.ShowDialog<bool?>(owner);
         }
     }

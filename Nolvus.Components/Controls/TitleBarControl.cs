@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -29,7 +31,6 @@ namespace Nolvus.Components.Controls
         private Button MinButton = null!;
         private Button MaxButton = null!;
         private Button CloseButton = null!;
-        private Button SettingsBox;
 
         private event SettingsHandler OnSettingsClickedEvent;
 
@@ -119,7 +120,18 @@ namespace Nolvus.Components.Controls
             };
             Grid.SetColumn(AccountImage, 3);
 
-            SettingsButton = MakeButton("⚙");
+            //SettingsButton = MakeButton("⚙");
+            SettingsButton = MakeButton("");
+            var uri = new Uri("avares://Nolvus.Components/Assets/Gear--03WF.png");
+            var stream = AssetLoader.Open(uri);
+            SettingsButton.Content = new Avalonia.Controls.Image 
+            {
+                Source = new Bitmap(stream),
+                Width = 48,
+                Height = 48,
+                Stretch = Avalonia.Media.Stretch.Uniform,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
+            };
             Grid.SetColumn(SettingsButton, 4);
 
             MinButton = MakeButton("—");
@@ -208,7 +220,6 @@ namespace Nolvus.Components.Controls
             {
                 var handler = OnSettingsClickedEvent;
                 handler?.Invoke(this, EventArgs.Empty);
-                Console.WriteLine("Settings Clicked");
             }
         }
 

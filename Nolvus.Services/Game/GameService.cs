@@ -101,18 +101,11 @@ namespace Nolvus.Services.Game
 
         public bool IsGameInstalled()
         {
-            //return GetInstalledApplication(SkyrimSE) != null;
-            return FindSkyrimInstallPath != null;
+            return FindSkyrimInstallPath() != null;
         }
 
         public string GetSkyrimSEDirectory()
-        {
-            // if (IsGameInstalled())
-            // {
-            //     return GetInstalledApplication(SkyrimSE).GetValue("InstallLocation") as string;
-            // }
-
-            // return string.Empty;        
+        {     
             return FindSkyrimInstallPath() ?? string.Empty;    
         }
 

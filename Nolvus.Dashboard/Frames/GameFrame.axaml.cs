@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Interactivity;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
@@ -38,32 +39,34 @@ namespace Nolvus.Dashboard.Frames
             //     if (!string.IsNullOrWhiteSpace(result))
             //         TxtPath.Text = result;
             // }
+            var topLevel = TopLevel.GetTopLevel(this);
+            if (topLevel is null )
+                return;
+            
+            var result = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions {
+                Title = "Select Skyrim Installation Folder",
+                AllowMultiple = false
+            });
+
+            if (result.Count > 0) {
+                TxtPath.Text = result[0].Path.LocalPath;
+            }
         }
 
         private async void BtnAutoDetect_Click(object? sender, RoutedEventArgs e)
         {
-            // ServiceSingleton.Dashboard.Status("Detecting Skyrim path…");
-            // var detected = ServiceSingleton.Globals.AutoDetectSkyrimPath();
-            // if (!string.IsNullOrWhiteSpace(detected))
-            //     TxtPath.Text = detected;
-            // else
-            //     ServiceSingleton.Dashboard.Status("Could not detect installation.");
-            // ServiceSingleton.Dashboard.NoStatus();
+            if (ServiceSingleton.Game.IsGameInstalled()) {
+                TxtPath.Text = ServiceSingleton.Game.GetSkyrimSEDirectory();
+                Console.WriteLine(ServiceSingleton.Game.GetSkyrimSEDirectory());
+            }
+            else {
+                LblError.IsVisible = true;
+            }
         }
 
         private async void BtnNext_Click(object? sender, RoutedEventArgs e)
         {
-            // var path = TxtPath.Text?.Trim();
-            // if (string.IsNullOrEmpty(path))
-            // {
-            //     await ServiceSingleton.Dashboard.Error("Invalid Path", "Please select a valid installation directory.");
-            //     return;
-            // }
 
-            // ServiceSingleton.Globals.SkyrimInstallDirectory = path;
-
-            // Continue flow later (e.g., SelectInstanceFrame)
-            // await ServiceSingleton.Dashboard.LoadFrameAsync<SelectInstanceFrame>();
         }
     }
 }

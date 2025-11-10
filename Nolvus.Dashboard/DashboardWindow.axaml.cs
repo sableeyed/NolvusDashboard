@@ -28,7 +28,6 @@ public partial class DashboardWindow : Window, IDashboard
 {
     private int DefaultDpi = 96;
     private DashboardFrame LoadedFrame;
-    //private TitleBarControl TitleBarControl; //This is in avalonia xml now
     public const int WM_NCLBUTTONDOWN = 0xA1; //?
     public const int HT_CAPTION = 0x2; //?
     private Image PicBox; //replace PictureBox since it's windoze only
@@ -516,8 +515,8 @@ public partial class DashboardWindow : Window, IDashboard
         //TitleBarControl.Width = 3000;
         // TitleBarControl.MouseDown += TitleBarControl_MouseDown;
         // TitleBarTextControl = TitleBarControl;
-        // TitleBarControl.OnSettingsClicked += TitleBarControl_OnSettingsClicked;
-
+        
+        TitleBarControl.OnSettingsClicked += TitleBarControl_OnSettingsClicked;
         TitleBarControl.Title = "Nolvus Dashboard";
         TitleBarControl.InfoCaption = string.Format("v{0} | Not logged in", ServiceSingleton.Dashboard.Version);
         var uri = new Uri("avares://NolvusDashboard/Assets/nolvus-ico.jpg");
@@ -537,23 +536,6 @@ public partial class DashboardWindow : Window, IDashboard
         LblStatus.IsVisible = false;
 
     }
-
-
-    // private TitleBarControl_OnSettingsClicked(object sender, EventArgs e)
-    // {
-    //     if (!ServiceSingleton.Packages.Processing)
-    //     {
-    //         if (TitleBarControl.SettingsEnabled)
-    //             ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
-    //         else
-    //             ShowError("This action can not be done now, please finish the Dashboard pre setup (Game path, Nexus and Nolvus connection)", Nolvus.Core.Enums.MessageBoxType.Error);
-    //         //Wrapper for NolvusMessageBox?
-    //     }
-    //     else
-    //     {
-    //         ShowError("This action is not allowed during mod list installation!", Nolvus.Core.Enums.MessageBoxType.Error);
-    //     }
-    // }
 
     private void ScalingSlider_ValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
     {
@@ -583,22 +565,22 @@ public partial class DashboardWindow : Window, IDashboard
 
     private void TitleBarControl_OnSettingsClicked(object? sender, EventArgs e)
     {
-        // if (!ServiceSingleton.Packages.Processing)
-        // {
-        //     if (SettingsButton.IsEnabled)
-        //     {
-        //         Console.Out.WriteLine("Settings Pressed");
-        //         //ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
-        //     }
-        //     else
-        //     {
-        //         ServiceSingleton.Logger.Log("Error: This action cannot be done now. Please finish the Dashboard pre setup");
-        //     }
-        // }
-        // else
-        // {
-        //     ServiceSingleton.Logger.Log("Settings: This action is not allowed during mod list installation!");
-        // }
+        if (!ServiceSingleton.Packages.Processing) 
+        {
+            if (TitleBarControl.SettingsEnabled) 
+            {
+                //ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
+                Console.WriteLine("TODO: Load Global Settings Frame");
+            }
+            else
+            {
+                Console.WriteLine("Please Finish dashboard setup first");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Settings not allowed during modlist installation!");
+        }
     }
 
     protected override void OnClosing(WindowClosingEventArgs e)

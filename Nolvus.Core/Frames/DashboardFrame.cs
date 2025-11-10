@@ -28,14 +28,6 @@ namespace Nolvus.Core.Frames
         protected virtual void OnLoaded() { }
         protected virtual Task OnLoadedAsync() => Task.CompletedTask;
 
-        public static Task<T> CreateAsync<T>() where T : DashboardFrame
-        {
-            var instance = Activator.CreateInstance(typeof(T)) as T;
-            if (instance == null)
-                throw new InvalidOperationException($"Unable to create instance of frame {typeof(T).Name}");
-
-            return instance.InitializeAsync<T>();
-        }
 
         public static Task<T> CreateAsync<T>(object[] args) where T : DashboardFrame
         {

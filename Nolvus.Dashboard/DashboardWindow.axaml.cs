@@ -172,6 +172,7 @@ public partial class DashboardWindow : Window, IDashboard
         }
 
         //ContentPanel.Controls.Add(Frame);
+        ContentHost.Content = Frame;
         LoadedFrame = Frame;
     }
 

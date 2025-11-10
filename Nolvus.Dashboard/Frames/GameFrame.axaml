@@ -1,0 +1,91 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="Nolvus.Dashboard.Frames.GameFrame"
+    Background="Transparent">
+
+  <UserControl.Styles>
+
+    <!-- Center all button text in this view -->
+    <Style Selector="Button">
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <!-- TextBox base appearance -->
+    <Style Selector="TextBox">
+      <Setter Property="BorderBrush" Value="#666" />
+      <Setter Property="CaretBrush" Value="#FFF" />
+    </Style>
+
+    <!-- Focus border + caret -->
+    <Style Selector="TextBox:focus">
+      <Setter Property="BorderBrush" Value="#F28C35" />
+      <Setter Property="CaretBrush" Value="#F28C35" />
+      <Setter Property="SelectionForegroundBrush" Value="#F28C35" />
+    </Style>
+
+    <!-- <Style Selector="TextBox:focus-within /template/ Border">
+      <Setter Property="Background" Value="#F28C35" />
+    </Style> -->
+
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" ColumnDefinitions="*">
+
+    <!-- Header -->
+    <StackPanel Grid.Row="0" Margin="24,24,24,12" Spacing="4">
+      <TextBlock Text="Select your Skyrim SE folder" FontSize="32" Foreground="#FFF" />
+    </StackPanel>
+
+    <!-- Path row (TextBox expands, Browse on right) -->
+    <Grid Grid.Row="1" Margin="24,0,24,0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+      <TextBox x:Name="TxtPath"
+               Grid.Column="0"
+               Watermark="e.g. /games/SkyrimSE"
+               MinWidth="600" />
+
+      <Button x:Name="BtnBrowse"
+              Grid.Column="1"
+              Content="Browse…"
+              MinWidth="96" />
+    </Grid>
+
+    <!-- Auto Detect + Warning -->
+    <StackPanel Grid.Row="2" Margin="24,8,24,0" Spacing="8">
+      <Button x:Name="BtnAutoDetect"
+              Content="Auto Detect"
+              MinWidth="120"
+              HorizontalAlignment="Left" />
+
+      <Border Background="#332"
+              BorderBrush="#FAD7A0"
+              BorderThickness="1"
+              CornerRadius="6"
+              Padding="12"
+              HorizontalAlignment="Stretch">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+          <Image Width="20" Height="20"
+                 Source="avares://NolvusDashboard/Assets/Warning-Message.png"
+                 VerticalAlignment="Center"/>
+
+          <TextBlock Grid.Column="1"
+                     TextWrapping="Wrap"
+                     Foreground="#F2D16B"
+                     FontSize="28"
+                     Text="If you click on auto detect and have several different Skyrim installations, the installer will only use the first one that is found which could be wrong. So if you are not sure, browse manually to the directory where the latest version of Skyrim with the AE content is installed. The only directories that will be checked are ~/.local/share/Steam/steamapps/common and ~/.steam/steam/steamapps/common"/>
+        </Grid>
+      </Border>
+    </StackPanel>
+
+    <!-- Spacer -->
+    <Border Grid.Row="3" />
+
+    <!-- Footer -->
+    <StackPanel Grid.Row="4" Margin="24,12,24,24"
+                Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+      <Button x:Name="BtnNext" Content="Next" MinWidth="120" />
+    </StackPanel>
+
+  </Grid>
+</UserControl>

@@ -14,6 +14,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Frames;
+using Nolvus.Core.Enums;
 using Nolvus.Components.Controls;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
@@ -21,6 +22,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Nolvus.Dashboard.Core;
 using Nolvus.Dashboard.Frames;
+using Nolvus.Dashboard.Controls;
 
 namespace Nolvus.Dashboard;
 
@@ -415,6 +417,10 @@ public partial class DashboardWindow : Window, IDashboard
 
         ShowLoadingIndicator();
 
+        //await Task.Delay(5000);
+
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Render);
+
         var Frame = await DashboardFrame.CreateAsync<T>(new object[] { this, Parameters });
 
         UnloadLoadingIndicator();
@@ -473,11 +479,13 @@ public partial class DashboardWindow : Window, IDashboard
 
     public void EnableSettings()
     {
+        Console.WriteLine("Settings Enabled");
         TitleBarControl.EnableSettings();
     }
 
     public void DisableSettings()
     {
+        Console.WriteLine("Settings Disabled");
         TitleBarControl.DisableSettings();
     }
 
@@ -526,7 +534,7 @@ public partial class DashboardWindow : Window, IDashboard
             TitleBarControl.SetAppIcon(new Bitmap(logo));
         }
 
-        LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
+        //LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
 
         //ProgressBar.Value = 0;
         //ProgressBar.Maximum = 100;
@@ -564,7 +572,8 @@ public partial class DashboardWindow : Window, IDashboard
     }
 
     private void TitleBarControl_OnSettingsClicked(object? sender, EventArgs e)
-    {
+    {   
+        Console.WriteLine("Settings Clicked");
         if (!ServiceSingleton.Packages.Processing) 
         {
             if (TitleBarControl.SettingsEnabled) 
@@ -573,8 +582,9 @@ public partial class DashboardWindow : Window, IDashboard
                 Console.WriteLine("TODO: Load Global Settings Frame");
             }
             else
-            {
-                Console.WriteLine("Please Finish dashboard setup first");
+            {   
+                var owner = TopLevel.GetTopLevel(this) as Window;
+                NolvusMessageBox.Show(owner, "Error", "This action can not be done now, please finish the Dashboard pre setup (Game path, nexus and Nolvus Connection)", MessageBoxType.Error);
             }
         }
         else

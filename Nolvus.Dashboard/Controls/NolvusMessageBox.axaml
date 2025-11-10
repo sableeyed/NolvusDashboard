@@ -1,0 +1,58 @@
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="Nolvus.Dashboard.Controls.NolvusMessageBox"
+    Width="460"
+    Height="220"
+    CanResize="False"
+    SystemDecorations="None"
+    Background="#363636"
+    WindowStartupLocation="CenterOwner">
+
+  <Border Background="#363636" CornerRadius="12" Padding="16">
+    <Grid RowDefinitions="Auto,* ,Auto" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+
+      <!-- Icon -->
+      <Image x:Name="ImgIcon"
+             Width="42"
+             Height="42"
+             VerticalAlignment="Top"/>
+
+      <!-- Title -->
+      <TextBlock x:Name="LblTitle"
+                 Grid.Column="1"
+                 FontSize="20"
+                 Foreground="#F28F1A"
+                 FontWeight="SemiBold"
+                 Text="Title"/>
+
+      <!-- Message -->
+      <TextBlock x:Name="LblMessage"
+                 Grid.Row="1"
+                 Grid.ColumnSpan="2"
+                 Foreground="#DDDDDD"
+                 TextWrapping="Wrap"
+                 Margin="0,8,0,16"
+                 FontSize="15"/>
+
+      <!-- Buttons -->
+      <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal"
+                  HorizontalAlignment="Right" Spacing="8">
+
+        <Button x:Name="BtnYes"
+                Content="Yes"
+                MinWidth="90"/>
+
+        <Button x:Name="BtnNo"
+                Content="No"
+                MinWidth="90"/>
+
+        <Button x:Name="BtnOK"
+                Content="OK"
+                MinWidth="90"/>
+      </StackPanel>
+
+    </Grid>
+  </Border>
+
+</Window>

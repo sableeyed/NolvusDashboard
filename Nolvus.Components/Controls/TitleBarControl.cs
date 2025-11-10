@@ -216,11 +216,13 @@ namespace Nolvus.Components.Controls
 
         private void SettingsBox_Click(object? sender, RoutedEventArgs e)
         {
-            if (_SettingsEnabled)
-            {
-                var handler = OnSettingsClickedEvent;
-                handler?.Invoke(this, EventArgs.Empty);
-            }
+            var handler = OnSettingsClickedEvent;
+            handler?.Invoke(this, EventArgs.Empty);
+            // if (_SettingsEnabled)
+            // {
+            //     var handler = OnSettingsClickedEvent;
+            //     handler?.Invoke(this, EventArgs.Empty);
+            // }
         }
 
         public void EnableSettings() => _SettingsEnabled = true;

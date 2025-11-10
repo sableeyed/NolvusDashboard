@@ -19,6 +19,8 @@ namespace Nolvus.Dashboard.Frames
             BtnBrowse.Click += BtnBrowse_Click;
             BtnAutoDetect.Click += BtnAutoDetect_Click;
             BtnNext.Click += BtnNext_Click;
+
+            this.Loaded += GameFrame_Loaded;
         }
 
         // Optional parameterless ctor (handy for design-time)
@@ -28,17 +30,6 @@ namespace Nolvus.Dashboard.Frames
 
         private async void BtnBrowse_Click(object? sender, RoutedEventArgs e)
         {
-            // var dialog = new OpenFolderDialog
-            // {
-            //     Title = "Select Skyrim Special Edition Directory"
-            // };
-
-            // if (ServiceSingleton.Dashboard is Window win)
-            // {
-            //     var result = await dialog.ShowAsync(win);
-            //     if (!string.IsNullOrWhiteSpace(result))
-            //         TxtPath.Text = result;
-            // }
             var topLevel = TopLevel.GetTopLevel(this);
             if (topLevel is null )
                 return;
@@ -66,7 +57,22 @@ namespace Nolvus.Dashboard.Frames
 
         private async void BtnNext_Click(object? sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(TxtPath.Text))
+            {
+                LblError.Text = "You must select a directory";
+                LblError.IsVisible = true;
+            }
+            else
+            {
+                //next frame
+                Console.WriteLine("Watermark doesn't count as empty");
+            }
+        }
 
+        private void GameFrame_Loaded(object? sender, RoutedEventArgs e)
+        {
+            if (TopLevel.GetTopLevel(this) is DashboardWindow dw)
+                dw.DisableSettings();
         }
     }
 }

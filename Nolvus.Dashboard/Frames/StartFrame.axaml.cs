@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Services;
@@ -8,6 +10,8 @@ using Nolvus.Core.Enums;
 using Nolvus.Api.Installer.Library;
 using Nolvus.Api.Installer.Services;
 using Nolvus.Package.Conditions;
+using Nolvus.Dashboard.Controls;
+using Nolvus.Core.Enums;
 // using Nolvus.Dashboard.Frames.Installer;
 // using Nolvus.Dashboard.Frames.Instance;
 // using Nolvus.Dashboard.Frames.Settings;
@@ -30,11 +34,21 @@ namespace Nolvus.Dashboard.Frames
             {
                 if (!File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashboard.ini")))
                 {
+                    Console.WriteLine("No Installation found - running install sequence");
                     ServiceSingleton.Dashboard.LoadFrame<GameFrame>();
                 }
                 else
-                {
-                    Console.WriteLine("Unimpl StartFrame Exception");
+                {   
+                    var owner = TopLevel.GetTopLevel(this) as Window;
+                    //Console.WriteLine("Unimpl StartFrame Exception");
+                    //await NolvusMessageBox.Show(owner, "Error", "You have a .ini present but installation is not implemented", MessageBoxType.Error);
+                    await CheckNolvus();
+                    // await CheckForUpdates();
+                    // await CheckNexus();
+
+                    // var InstancesCheck = await CheckInstances();
+
+                    // ServiceSingleton.Dashboard.EnableSettings();
                 }
             } catch (Exception ex)
             {
@@ -45,22 +59,63 @@ namespace Nolvus.Dashboard.Frames
 
         private async Task CheckNolvus()
         {
-            ServiceSingleton.Dashboard.Status("Connecting to Nolvus...");
+            try 
+            {
+                ServiceSingleton.Dashboard.Progress(0);
+                ServiceSingleton.Dashboard.Status("Connecting to Nolvus...");
+                ServiceSingleton.Logger.Log("Connecting to Nolvus...");
 
-            var url = ServiceSingleton.Globals.ApiUrl;
-            var version = ServiceSingleton.Globals.ApiVersion;
-            var user = ServiceSingleton.Globals.NolvusUserName;
-            var pass = ServiceSingleton.Globals.NolvusPassword;
+                var ApiUrl = ServiceSingleton.Globals.ApiUrl;
+                var ApiVersion = ServiceSingleton.Globals.ApiVersion;
+                var UserName = ServiceSingleton.Globals.NolvusUserName;
+                var Password = ServiceSingleton.Globals.NolvusPassword;
 
-            if (string.IsNullOrEmpty(version) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
-                throw new Exception("Nolvus settings missing, please check your Nolvus settings!");
+                if (ApiVersion == string.Empty || UserName == string.Empty || Password == string.Empty)
+                {
+                    throw new Exception("Nolvus settings missing, please check your Nolvus settings!");
+                }
+                else
+                {
+                    ApiManager.Init(ApiUrl, ApiVersion, UserName, ServiceSingleton.Lib.DecryptString(Password));
 
-            ApiManager.Init(url, version, user, ServiceSingleton.Lib.DecryptString(pass));
+                    if (!await ApiManager.Service.Installer.Authenticate(UserName, ServiceSingleton.Lib.DecryptString(Password)))
+                    {
+                        throw new Exception("Invalid Nolvus user name / password or your account has not been activated!");
+                    }
 
-            if (!await ApiManager.Service.Installer.Authenticate(user, ServiceSingleton.Lib.DecryptString(pass)))
-                throw new Exception("Invalid Nolvus credentials or account not activated!");
+                    ServiceSingleton.Dashboard.Progress(25);
 
-            ServiceSingleton.Dashboard.Progress(25);
+                    ServiceSingleton.Logger.Log("Connected to Nolvus");
+                }
+            }
+            catch (Exception ex) 
+            {
+                Exception CaughtExeption = ex;
+
+                if (ex.InnerException != null)
+                {
+                    CaughtExeption = ex.InnerException;
+                }
+
+                throw new Exception("Error during Nolvus connection. The Nolvus web site may have issues currently. Original message : " + CaughtExeption + ")");
+            }
+
+            // ServiceSingleton.Dashboard.Status("Connecting to Nolvus...");
+
+            // var url = ServiceSingleton.Globals.ApiUrl;
+            // var version = ServiceSingleton.Globals.ApiVersion;
+            // var user = ServiceSingleton.Globals.NolvusUserName;
+            // var pass = ServiceSingleton.Globals.NolvusPassword;
+
+            // if (string.IsNullOrEmpty(version) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
+            //     throw new Exception("Nolvus settings missing, please check your Nolvus settings!");
+
+            // ApiManager.Init(url, version, user, ServiceSingleton.Lib.DecryptString(pass));
+
+            // if (!await ApiManager.Service.Installer.Authenticate(user, ServiceSingleton.Lib.DecryptString(pass)))
+            //     throw new Exception("Invalid Nolvus credentials or account not activated!");
+
+            // ServiceSingleton.Dashboard.Progress(25);
         }
 
         private async Task CheckForUpdates()

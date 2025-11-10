@@ -1,0 +1,51 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="Nolvus.Dashboard.Frames.Settings.NexusFrame"
+    Background="Transparent">
+
+  <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
+    
+    <!-- HEADER + INSTRUCTIONS -->
+    <StackPanel Grid.Row="0" Margin="24,24,24,12" Spacing="8">
+      <TextBlock Text="Nexus Authentication" 
+                 FontSize="32" 
+                 Foreground="#FFF"
+                 FontWeight="SemiBold"/>
+
+      <TextBlock Text="Click the button below to authenticate using Nexus SSO. 
+Click here for more info."
+                 TextWrapping="Wrap"
+                 Foreground="#CCCCCC"
+                 FontSize="16"/>
+    </StackPanel>
+
+    <!-- MAIN AUTH BUTTON -->
+    <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+
+      <Button x:Name="BtnAuthenticate"
+              Content="Nexus SSO Authentication"
+              FontSize="20"
+              MinWidth="260"
+              Padding="12" />
+
+    </StackPanel>
+
+    <!-- FOOTER BUTTONS (BOTTOM RIGHT) -->
+    <StackPanel Grid.Row="2" Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="24,12,24,24"
+                Spacing="8">
+
+      <Button x:Name="BtnPrevious"
+              Content="Previous"
+              MinWidth="120"/>
+
+      <Button x:Name="BtnNext"
+              Content="Next"
+              MinWidth="120"/>
+
+    </StackPanel>
+
+  </Grid>
+</UserControl>

@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
+using Nolvus.Dashboard.Core;
 using System;
 using System.Threading.Tasks;
 
@@ -66,7 +67,8 @@ namespace Nolvus.Dashboard.Frames.Settings
             else
             {
                 //next frame
-                Console.WriteLine("Watermark doesn't count as empty");
+                SettingsCache.GameDirectory = TxtPath.Text;
+                ServiceSingleton.Dashboard.LoadFrame<NexusFrame>();
             }
         }
 

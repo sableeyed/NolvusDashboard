@@ -1,12 +1,9 @@
-using System;
-using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Threading;
 using Nolvus.Core.Interfaces;
 
 namespace Nolvus.Core.Frames
 {
-    public partial class DashboardFrame : IDashboardFrame
+    public partial class DashboardFrame : UserControl, IDashboardFrame
     {
         protected FrameParameters Parameters;
         IDashboard DashBoardInstance;

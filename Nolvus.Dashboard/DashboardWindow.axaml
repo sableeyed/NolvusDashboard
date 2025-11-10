@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
     xmlns:primitives="clr-namespace:Avalonia.Controls.Primitives;assembly=Avalonia.Controls"
-    xmlns:ani="using:Avalonia.Animation"
+    xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
     x:Class="Nolvus.Dashboard.DashboardWindow"
     Width="1200" Height="800"
     CanResize="True"
@@ -102,12 +102,34 @@
         </Grid>
 
         <!-- MAIN CONTENT HOST -->
-        <Border Grid.Row="1" Margin="0,0,0,32" Background="#2E2E2E">
+        <!-- <Border Grid.Row="1" Margin="0,0,0,32" Background="#2E2E2E">
           <StackPanel>
-            <TextBlock x:Name="LblStatus" Classes="primary" Text="Initializing..." FontSize="14" Margin="12,8,0,8" IsVisible="False"/>
+            <TextBlock x:Name="LblStatus" Classes="primary" Text="Initializing..." FontSize="14" Margin="12,8,0,8"/>
             <ContentPresenter x:Name="ContentHost"/>
           </StackPanel>
-        </Border>
+        </Border> -->
+
+        <!-- MAIN CONTENT HOST -->
+<Border Grid.Row="1" Background="#2E2E2E">
+  <Grid RowDefinitions="Auto,*">
+    
+    <!-- Status Label -->
+    <TextBlock x:Name="LblStatus"
+               Classes="primary"
+               Text="Initializing..."
+               FontSize="14"
+               Margin="12,8,0,8"
+               IsVisible="False"/>
+
+    <!-- Frame Content -->
+    <ContentPresenter x:Name="ContentHost"
+                      Grid.Row="1"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"/>
+
+  </Grid>
+</Border>
+
 
         <ProgressBar x:Name="DashboardProgressBar"
                      Grid.Row="2"
@@ -156,10 +178,9 @@
           </DockPanel>
         </Border>
 
-        <Grid x:Name="LoadingOverlay" IsVisible="False" Grid.RowSpan="4" Background="#80000000">
+        <Grid x:Name="LoadingOverlay" IsVisible="True" Grid.RowSpan="4" Background="#80000000">
           <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
-            <ProgressBar IsIndeterminate="True" Width="320" Height="8"/>
-            <TextBlock Text="Loading…" Classes="primary" HorizontalAlignment="Center"/>
+            <gif:GifImage Width="150" Height="150" Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif" />
           </StackPanel>
         </Grid>
 

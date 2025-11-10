@@ -20,6 +20,7 @@ using Nolvus.Core.Services;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Nolvus.Dashboard.Core;
+using Nolvus.Dashboard.Frames;
 
 namespace Nolvus.Dashboard;
 
@@ -142,28 +143,24 @@ public partial class DashboardWindow : Window, IDashboard
 
     private void ShowLoadingIndicator()
     {
-        //:worrystare:
         if (!Dispatcher.UIThread.CheckAccess())
         {
-            Dispatcher.UIThread.Post(() => ShowLoadingIndicator());
+            Dispatcher.UIThread.Post(ShowLoadingIndicator);
             return;
         }
 
-        //Put an image here and manipulate it
-        //Picbox stuff not gonna work
+        LoadingOverlay.IsVisible = true;
     }
 
     private void UnloadLoadingIndicator()
     {
-        //:worrystare:
         if (!Dispatcher.UIThread.CheckAccess())
         {
-            Dispatcher.UIThread.Post(() => ShowLoadingIndicator());
+            Dispatcher.UIThread.Post(UnloadLoadingIndicator);
             return;
         }
 
-        //Put an image here and manipulate it
-        //Picbox stuff not gonna work
+        LoadingOverlay.IsVisible = false;
     }
 
     private void AddFrame(DashboardFrame Frame)
@@ -178,14 +175,6 @@ public partial class DashboardWindow : Window, IDashboard
         LoadedFrame = Frame;
     }
 
-    private void DoLoad(DashboardFrame Frame)
-    {
-        // Frame.Height = 0; //TODO
-        // Frame.Width = 0; //TODO
-        // Frame.Anchor = 0; //TODO
-        // //Must implement Core.Frames.DashboardFrame
-    }
-
     private void RemoveLoadedFrame()
     {
         if (!Dispatcher.UIThread.CheckAccess())
@@ -197,7 +186,10 @@ public partial class DashboardWindow : Window, IDashboard
         if (LoadedFrame != null)
         {
             LoadedFrame.Close();
+            LoadedFrame = null;
         }
+
+        ContentHost.Content = null;
     }
 
     public void SetMaximumProgress(int Value)
@@ -298,7 +290,7 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        //LblStatus.IsVisible = false;
+        LblStatus.IsVisible = false;
         LblStatus.Text = string.Empty;
     }
 
@@ -328,8 +320,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // StatusStripEx.Visible = true;
-        // StStripLblAdditionalInfo.Text = Value;
+        StStripLblAdditionalInfo.IsVisible = true;
+        StStripLblAdditionalInfo.Text = Value;
     }
 
     public void AdditionalInfo(string Value)
@@ -340,8 +332,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // StatusStripEx.Visible = true;
-        // StStripLblAdditionalInfo.Text = Value;
+        StStripLblAdditionalInfo.IsVisible = true;
+        StStripLblAdditionalInfo.Text = Value;
     }
 
     public void AdditionalSecondaryInfo(string Value)
@@ -352,8 +344,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // StatusStripEx.Visible = true;
-        // StStripLblAdditionalInfo2.Text = Value;
+        StStripLblAdditionalInfo2.IsVisible = true;
+        StStripLblAdditionalInfo2.Text = Value;
     }
 
     public void AdditionalTertiaryInfo(string Value)
@@ -364,8 +356,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // StatusStripEx.Visible = true;
-        // StStripLblAdditionalInfo3.Text = Value;
+        StStripLblAdditionalInfo3.IsVisible = true;
+        StStripLblAdditionalInfo3.Text = Value;
     }
 
     public void ClearInfo()
@@ -376,10 +368,10 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // StStripLblInfo.Text = string.Empty;
-        // StStripLblAdditionalInfo.Text = string.Empty;
-        // StStripLblAdditionalInfo2.Text = string.Empty;
-        // StStripLblAdditionalInfo3.Text = string.Empty;
+        StStripLblInfo.Text = string.Empty;
+        StStripLblAdditionalInfo.Text = string.Empty;
+        StStripLblAdditionalInfo2.Text = string.Empty;
+        StStripLblAdditionalInfo3.Text = string.Empty;
     }
 
     public void TitleInfo(string Value)
@@ -401,8 +393,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // StatusStripEx.Visible = true;
-        // StripLblNexus.Text = Value;
+        StripLblNexus.IsVisible = true;
+        StripLblNexus.Text = Value;
     }
 
     public void AccountType(string Value)
@@ -413,8 +405,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // StatusStripEx.Visible = true;
-        // StripLblAccountType.Text = Value;
+        StripLblAccountType.IsVisible = true;
+        StripLblAccountType.Text = Value;
     }
 
     public async Task<T> LoadFrameAsync<T>(FrameParameters Parameters = null) where T : DashboardFrame
@@ -427,9 +419,11 @@ public partial class DashboardWindow : Window, IDashboard
 
         UnloadLoadingIndicator();
 
-        DoLoad(Frame);
+        ContentHost.Content = Frame;
+        LoadedFrame = Frame;
 
-        OnFrameLoadedAsyncEvent?.Invoke(this, new EventArgs());
+        OnFrameLoadedEvent?.Invoke(this, EventArgs.Empty);
+        OnFrameLoadedAsyncEvent?.Invoke(this, EventArgs.Empty);
 
         return Frame;
     }
@@ -444,9 +438,11 @@ public partial class DashboardWindow : Window, IDashboard
 
         UnloadLoadingIndicator();
 
-        DoLoad(Frame);
+        ContentHost.Content = Frame;
+        LoadedFrame = Frame;
 
-        OnFrameLoadedEvent?.Invoke(this, new EventArgs());
+        OnFrameLoadedEvent?.Invoke(this, EventArgs.Empty);
+        OnFrameLoadedAsyncEvent?.Invoke(this, EventArgs.Empty);
 
         return Frame;
     }
@@ -536,6 +532,8 @@ public partial class DashboardWindow : Window, IDashboard
         //ProgressBar.Maximum = 100;
 
         StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
+        DashboardProgressBar.IsVisible = false;
+        LblStatus.IsVisible = false;
 
     }
 
@@ -612,12 +610,14 @@ public partial class DashboardWindow : Window, IDashboard
 
         base.OnClosing(e);
     }
-    
+
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
-        //await LoadFrameAsync<StartFrame>();
+        await Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            //Console.WriteLine("Frame creation disabled while debugging");
+            await LoadFrameAsync<StartFrame>();
+        });
     }
-
-
 }

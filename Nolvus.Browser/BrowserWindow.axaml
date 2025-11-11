@@ -1,20 +1,26 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
         x:Class="Nolvus.Browser.BrowserWindow"
         Width="1200" Height="800"
         Title="Nolvus Browser"
+        SystemDecorations="None"
         CanResize="True">
 
   <Grid>
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="40"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
 
     <!-- Title bar placeholder (replace with your real control later) -->
-    <Border Grid.Row="0"
+    <!-- <Border Grid.Row="0"
             Height="50"
-            Background="#363636" />
+            Background="#363636" /> -->
+
+    <Border Background="#363636" Grid.Row="0">
+      <controls:BrowserTitleControl x:Name="TitleBar" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    </Border>
 
     <Grid x:Name="BrowserHost"
           Grid.Row="1"

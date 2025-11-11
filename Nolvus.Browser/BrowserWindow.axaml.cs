@@ -13,6 +13,14 @@ namespace Nolvus.Browser
         {
             InitializeComponent();
 
+            TitleBar.Title = "Nolvus Browser";
+            TitleBar.CloseRequested += (_, __) => Close();
+            TitleBar.PointerPressed += (_, e) =>
+            {
+                if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                    BeginMoveDrag(e);
+            };
+
             _browser = new AvaloniaCefBrowser
             {
                 Address = "https://www.google.com"

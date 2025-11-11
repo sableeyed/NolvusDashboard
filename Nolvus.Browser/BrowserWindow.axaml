@@ -4,20 +4,20 @@
         Width="1200" Height="800"
         Title="Nolvus Browser"
         CanResize="True">
+
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
 
-    <!-- Simple address bar for testing -->
-    <StackPanel Orientation="Horizontal" Margin="8" Spacing="8">
-      <TextBox x:Name="AddressBox" Width="900" Watermark="Enter URL…" />
-      <Button x:Name="GoButton" Content="Go" Width="80"/>
-      <Button x:Name="DevToolsButton" Content="DevTools" Width="100"/>
-    </StackPanel>
+    <!-- Title bar placeholder (replace with your real control later) -->
+    <Border Grid.Row="0"
+            Height="50"
+            Background="#363636" />
 
-    <!-- Host panel where we will add AvaloniaCefBrowser in code -->
-    <Panel x:Name="BrowserHost" Grid.Row="1"/>
+    <Grid x:Name="BrowserHost"
+          Grid.Row="1"
+          ClipToBounds="True" />
   </Grid>
 </Window>

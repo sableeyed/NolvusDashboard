@@ -98,7 +98,7 @@ namespace Nolvus.Services.Folders
         {
             get
             {
-                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusUpdater.exe");
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusUpdater");
             }
         }        
 

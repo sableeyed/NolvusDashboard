@@ -543,7 +543,7 @@ public partial class DashboardWindow : Window, IDashboard
         DashboardProgressBar.IsVisible = false;
         LblStatus.IsVisible = false;
 
-        Nolvus.Browser.Browser.InitCefIfNeeded("/tmp/nolvus_cef_cache");
+        //Nolvus.Browser.Browser.InitCefIfNeeded("/tmp/nolvus_cef_cache");
 
     }
 

@@ -54,7 +54,7 @@ namespace Nolvus.Dashboard.Frames.Settings
         {
             var owner = TopLevel.GetTopLevel(this) as Window;
 
-            Nolvus.Browser.Browser.OpenBrowser("https://nexusmods.com");
+            //Nolvus.Browser.Browser.OpenBrowser("https://nexusmods.com");
 
             // TODO: Replace with actual WebView authentication
             //SettingsCache.NexusApiKey = "SIMULATED-TEST-KEY";

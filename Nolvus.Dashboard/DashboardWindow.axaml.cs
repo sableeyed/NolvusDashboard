@@ -23,6 +23,7 @@ using Avalonia.Platform;
 using Nolvus.Dashboard.Core;
 using Nolvus.Dashboard.Frames;
 using Nolvus.Dashboard.Controls;
+using Nolvus.Browser;
 
 namespace Nolvus.Dashboard;
 
@@ -501,8 +502,7 @@ public partial class DashboardWindow : Window, IDashboard
             WindowState = WindowState == WindowState.Maximized
                 ? WindowState.Normal
                 : WindowState.Maximized;
-        }
-        ;
+        };
 
 
         ServiceSingleton.RegisterService<IDashboard>(this);
@@ -542,6 +542,8 @@ public partial class DashboardWindow : Window, IDashboard
         StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
         DashboardProgressBar.IsVisible = false;
         LblStatus.IsVisible = false;
+
+        Nolvus.Browser.Browser.InitCefIfNeeded("/tmp/nolvus_cef_cache");
 
     }
 

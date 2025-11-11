@@ -54,15 +54,17 @@ namespace Nolvus.Dashboard.Frames.Settings
         {
             var owner = TopLevel.GetTopLevel(this) as Window;
 
+            Nolvus.Browser.Browser.OpenBrowser("https://nexusmods.com");
+
             // TODO: Replace with actual WebView authentication
-            SettingsCache.NexusApiKey = "SIMULATED-TEST-KEY";
+            //SettingsCache.NexusApiKey = "SIMULATED-TEST-KEY";
 
-            await NolvusMessageBox.Show(owner,
-                "Authentication Success",
-                "You are now authenticated! Click Next to continue.",
-                MessageBoxType.Info);
+            // await NolvusMessageBox.Show(owner,
+            //     "Authentication Success",
+            //     "You are now authenticated! Click Next to continue.",
+            //     MessageBoxType.Info);
 
-            UpdateNextButtonState();
+            // UpdateNextButtonState();
         }
 
         private void UpdateNextButtonState()

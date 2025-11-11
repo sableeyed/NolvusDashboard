@@ -35,5 +35,11 @@ namespace Nolvus.Browser
 
             base.OnClosed(e);
         }
+
+        public void SetUrl(string url)
+        {
+            if (_browser != null)
+                _browser.Address = url;
+        }
     }
 }

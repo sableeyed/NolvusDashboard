@@ -12,7 +12,6 @@ namespace Nolvus.Browser
         {
 
             CefLifecycle.EnsureInitialized();
-            
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 desktop.MainWindow = new BrowserWindow();
 

@@ -114,6 +114,7 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private async void NexusSSOManager_OnAuthenticating(object? sender, AuthenticatingEventArgs eventArgs)
         {
+            ServiceSingleton.Logger.Log("$[UI] NexusSSOManager_OnAuthenticating called: {eventArgs.UuId}");
             await ChangeButtonText("Authenticating...");
         }
 

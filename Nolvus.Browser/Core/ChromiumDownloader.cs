@@ -234,23 +234,25 @@ public class ChromiumDownloader {
 	{
 		PageInfoChanged?.Invoke(Url);
 
-    	if (Url == "https://users.nexusmods.com/auth/sign_in")
-    	{
-        	HideLoadingRequested?.Invoke();
-    	}
-    	else if (Url.Contains("https://users.nexusmods.com/auth/continue?"))
-    	{
-        	HideLoadingRequested?.Invoke();
-    	}
-    	else if (Url == $"https://www.nexusmods.com/skyrimspecialedition/mods/{ModId}?tab=files")
-    	{
-        	RegisterLoadingStateEvent();
-        	NavigationRequested?.Invoke(_Url);
-    	}
-    	else
-    	{
-        	HideLoadingRequested?.Invoke();
-    	}
+		if (Url == "https://users.nexusmods.com/auth/sign_in")
+		{
+			HideLoadingRequested?.Invoke();
+		}
+		else if (Url.Contains("https://users.nexusmods.com/auth/continue?"))
+		{
+			HideLoadingRequested?.Invoke();
+		}
+		else if (Url == $"https://www.nexusmods.com/skyrimspecialedition/mods/{ModId}?tab=files")
+		{
+			RegisterLoadingStateEvent();
+			NavigationRequested?.Invoke(_Url);
+		}
+		else
+		{
+			HideLoadingRequested?.Invoke();
+		}
+		ServiceSingleton.Logger.Log($"[Browser] LoadEnd URL: {Url}");
+
 	}
 
 	#endregion
@@ -259,7 +261,22 @@ public class ChromiumDownloader {
 
 	private void HandleNexusSSOLoadEnd(string Url)
 	{
+		PageInfoChanged?.Invoke(Url);
 
+    	if (Url.Contains("https://www.nexusmods.com/oauth/callback?"))
+    	{
+        	HideLoadingRequested?.Invoke();
+        	NavigationRequested?.Invoke(_Url);
+    	}
+    	else if (Url.Contains("https://www.nexusmods.com/SSOauthorised?"))
+    	{
+        	HideLoadingRequested?.Invoke();
+        	TaskCompletionNexusSSO.TrySetResult(null);
+    	}
+    	else
+    	{
+        	HideLoadingRequested?.Invoke();
+    	}
 	}
 
 	#endregion

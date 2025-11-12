@@ -12,6 +12,8 @@ using Nolvus.Core.Events;
 using Nolvus.Core.Misc;
 using Nolvus.NexusApi.SSO.Events;
 using Nolvus.NexusApi.SSO.Responses;
+using Avalonia.Threading;
+using Nolvus.Core.Services;
 
 namespace Nolvus.NexusApi.SSO
 {
@@ -191,6 +193,7 @@ namespace Nolvus.NexusApi.SSO
 
         private void TriggerAuthenticated(string ApiKey)
         {
+            Console.WriteLine("API Key: " + ApiKey);
             OnAuthenticatedHandler Handler = OnAuthenticatedEvent;
             AuthenticationEventArgs Event = new AuthenticationEventArgs(ApiKey);
             if (Handler != null) Handler(this, Event);
@@ -198,8 +201,10 @@ namespace Nolvus.NexusApi.SSO
 
         private void TriggerAuthenticating(string UuId)
         {
+            ServiceSingleton.Logger.Log("TriggerAuthenticating Function: " + UuId);
             OnAuthenticatingHandler Handler = OnAuthenticatingEvent;
             AuthenticatingEventArgs Event = new AuthenticatingEventArgs(UuId);
+            ServiceSingleton.Logger.Log("Invoking Event: " + Event);
             if (Handler != null) Handler(this, Event);
         }
 
@@ -270,6 +275,11 @@ namespace Nolvus.NexusApi.SSO
         {
             Task.Run(async () =>
             {
+                if (!Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
+                {
+                    Console.WriteLine($"[Invalid thread access] {nameof(StartListenerThread)} called on {Environment.CurrentManagedThreadId}");
+                    Thread.Sleep(10);
+                } 
                 var Buffer = new byte[1024 * 4];
 
                 while (WebSocket.State == WebSocketState.Open || WebSocket.State == WebSocketState.CloseSent)                
@@ -280,32 +290,47 @@ namespace Nolvus.NexusApi.SSO
 
                         var NexusResponse = JsonConvert.DeserializeObject<NexusSSOResponse>(Encoding.UTF8.GetString(Buffer, 0, Result.Count));
 
+                        var json = Encoding.UTF8.GetString(Buffer, 0, Result.Count);
+                        //Console.WriteLine($"[SSO] Received JSON: {json}");
+                        ServiceSingleton.Logger.Log($"[SSO] Received JSON: {json}");
+
                         if (NexusResponse != null && NexusResponse.Success)
                         {
                             if (NexusResponse.Data.ApiKey != null)
                             {
-                                TriggerAuthenticated(NexusResponse.Data.ApiKey);
-                                IsAuthenticated = true;
+                                ServiceSingleton.Logger.Log("NexusResponse.Data.ApiKey != null! TriggerAuthenticated");
+                                await Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    TriggerAuthenticated(NexusResponse.Data.ApiKey);
+                                    IsAuthenticated = true;
 
-                                Browser.CloseBrowser();
+                                    Browser.CloseBrowser();
+                                });
                             }
                             else if (NexusResponse.Data.Token != string.Empty)
                             {
-                                Request.SetToken(NexusResponse.Data.Token);
+                                ServiceSingleton.Logger.Log("NexusResponse.Data.Token != empty! TriggerAuthenticating");
+                                await Dispatcher.UIThread.InvokeAsync(async () =>
+                                {
+                                    Request.SetToken(NexusResponse.Data.Token);
+                                    TriggerAuthenticating(Request.id);
 
-                                TriggerAuthenticating(Request.id);
+                                    await Browser.NexusSSOAuthentication(Request.id, Strings.NolvusSlug);
+                                });
 
-                                await Browser.NexusSSOAuthentication(Request.id, Strings.NolvusSlug);
                             }
                         }
                         else
                         {
-                            TriggerError(NexusResponse.Error);
+                            await Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                TriggerError(NexusResponse.Error);
+                            });
                         }
                     }
                     catch (Exception ex)
                     {
-                        TriggerError(ex.Message);
+                        await Dispatcher.UIThread.InvokeAsync(() => TriggerError(ex.Message));
                     }
                 }
             });

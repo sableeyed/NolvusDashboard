@@ -8,7 +8,7 @@ using Xilium.CefGlue.Avalonia;
 
 namespace Nolvus.Browser
 {
-    public partial class BrowserWindow : Window, IBrowserInstance
+    public partial class BrowserWindow : Window
     {
         private ChromiumDownloader? _downloader;
 
@@ -30,7 +30,7 @@ namespace Nolvus.Browser
         protected override void OnClosed(EventArgs e)
         {
 
-            CefLifecycle.Release();
+            
 
             base.OnClosed(e);
         }

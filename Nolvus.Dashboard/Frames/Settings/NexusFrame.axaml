@@ -13,20 +13,20 @@
                  Foreground="#FFF"
                  FontWeight="SemiBold"/>
 
-      <TextBlock Text="Click the button below to authenticate using Nexus SSO. 
-Click here for more info."
+      <TextBlock Text="Click the button below to authenticate using Nexus SSO. Visit https://www.nolvus.net/appendix/installer/requirements for more info."
                  TextWrapping="Wrap"
                  Foreground="#CCCCCC"
                  FontSize="16"/>
     </StackPanel>
 
     <!-- MAIN AUTH BUTTON -->
-    <StackPanel Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="16">
+    <StackPanel Grid.Row="1" HorizontalAlignment="Left" Spacing="16">
 
       <Button x:Name="BtnAuthenticate"
               Content="Nexus SSO Authentication"
               FontSize="20"
               MinWidth="260"
+              Margin="20,0,0,0"
               Padding="12" />
 
     </StackPanel>

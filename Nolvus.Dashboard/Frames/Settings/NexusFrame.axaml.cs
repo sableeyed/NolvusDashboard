@@ -9,6 +9,8 @@ using Nolvus.Core.Interfaces;
 using Nolvus.Dashboard.Controls;
 using Nolvus.Dashboard.Frames;
 using Nolvus.Dashboard.Core;
+using Nolvus.Browser.Core;
+using Nolvus.Browser;
 
 namespace Nolvus.Dashboard.Frames.Settings
 {
@@ -54,6 +56,9 @@ namespace Nolvus.Dashboard.Frames.Settings
         {
             var owner = TopLevel.GetTopLevel(this) as Window;
 
+            var browserr = new BrowserWindow();
+            browserr.Show();
+            browserr.Navigate("https://www.nexusmods.com", "Nexus");
             //Nolvus.Browser.Browser.OpenBrowser("https://nexusmods.com");
 
             // TODO: Replace with actual WebView authentication

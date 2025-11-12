@@ -192,18 +192,25 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private async void BtnAuthenticate_Click(object? sender, RoutedEventArgs e)
         {
-            if (!NexusSSOManager.Authenticated)
+            var b = new BrowserWindow();
+            b.OnBrowserClosed += (_, __) =>
             {
-                ToggleMessage(false);
-                ToggleAuthenticateButton(false);
-                await NexusSSOManager.Connect();
-                await NexusSSOManager.Authenticate();
-            }
-            else
-            {   
-                var owner = TopLevel.GetTopLevel(this) as Window;
-                NolvusMessageBox.Show(owner, "Info", "You are already authenticated", MessageBoxType.Info);
-            }
+                Console.WriteLine("Browser Closed");
+            };
+            b.LoadBrowser("https://nexusmods.com", true);
+            b.Show();
+            // if (!NexusSSOManager.Authenticated)
+            // {
+            //     ToggleMessage(false);
+            //     ToggleAuthenticateButton(false);
+            //     await NexusSSOManager.Connect();
+            //     await NexusSSOManager.Authenticate();
+            // }
+            // else
+            // {   
+            //     var owner = TopLevel.GetTopLevel(this) as Window;
+            //     NolvusMessageBox.Show(owner, "Info", "You are already authenticated", MessageBoxType.Info);
+            // }
         }
 
         private void UpdateNextButtonState()

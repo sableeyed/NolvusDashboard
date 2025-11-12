@@ -18,7 +18,7 @@ namespace Nolvus.Browser
             InitializeComponent();
 
             TitleBar.Title = "Nolvus Browser";
-            TitleBar.CloseRequested += (_, __) => Close();
+            TitleBar.CloseRequested += (_, __) => CloseBrowser();
             TitleBar.PointerPressed += (_, e) =>
             {
                 if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
@@ -29,9 +29,6 @@ namespace Nolvus.Browser
         }
         protected override void OnClosed(EventArgs e)
         {
-
-            
-
             base.OnClosed(e);
         }
 

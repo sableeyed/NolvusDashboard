@@ -1,21 +1,28 @@
-using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia;
+using Avalonia.Media;
 using Nolvus.Core.Services;
 using Nolvus.Core.Enums;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Dashboard.Controls;
-using Nolvus.Dashboard.Frames;
 using Nolvus.Dashboard.Core;
-using Nolvus.Browser.Core;
 using Nolvus.Browser;
+using Nolvus.NexusApi.SSO;
+using Avalonia.Threading;
+using Nolvus.NexusApi.SSO.Events;
+using Nolvus.NexusApi;
+using Nolvus.NexusApi.SSO.Responses;
+using System.Threading.Tasks;
+
 
 namespace Nolvus.Dashboard.Frames.Settings
 {
     public partial class NexusFrame : DashboardFrame
     {
+
+        private NexusSSOManager NexusSSOManager;
+
         public NexusFrame(IDashboard dashboard, FrameParameters parameters)
             : base(dashboard, parameters)
         {
@@ -29,6 +36,142 @@ namespace Nolvus.Dashboard.Frames.Settings
             (TopLevel.GetTopLevel(this) as DashboardWindow)?.DisableSettings();
 
             UpdateNextButtonState();
+
+            this.AttachedToVisualTree += (_, __) =>
+            {
+                ToggleMessage(false);
+
+                NexusSSOManager = new NexusSSOManager(new NexusSSOSettings
+                {
+                    Browser = () => (IBrowserInstance)new BrowserWindow()
+                });
+
+                // NexusSSOManager.OnAuthenticating += NexusSSOManager_OnAuthenticating;
+                // NexusSSOManager.OnAuthenticated += NexusSSOManager_OnAuthenticated;
+                // NexusSSOManager.OnRequestError += NexusSSOManager_OnRequestError;
+                // NexusSSOManager.OnBrowserClosed += NexusSSOManager_OnBrowserClosed;
+                NexusSSOManager.OnAuthenticating += async (s, e) =>
+                await Dispatcher.UIThread.InvokeAsync(() => NexusSSOManager_OnAuthenticating(s, e));
+
+                NexusSSOManager.OnAuthenticated += async (s, e) =>
+                await Dispatcher.UIThread.InvokeAsync(() => NexusSSOManager_OnAuthenticated(s, e));
+
+                NexusSSOManager.OnRequestError += async (s, e) =>
+                await Dispatcher.UIThread.InvokeAsync(() => NexusSSOManager_OnRequestError(s, e));
+
+                NexusSSOManager.OnBrowserClosed += async (s, e) =>
+                await Dispatcher.UIThread.InvokeAsync(() => NexusSSOManager_OnBrowserClosed(s, e));
+            };
+        }
+
+        public async Task ChangeButtonText(string Value)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                BtnAuthenticate.Content = Value;
+            });
+        }
+
+        private async Task ToggleMessage(bool Visible)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                PnlMessage.IsVisible = Visible;
+                PicBox.IsVisible = Visible;
+                LblMessage.IsVisible = Visible;
+            });
+        }
+
+        private async Task ToggleAuthenticateButton(bool Active)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                BtnAuthenticate.IsEnabled = Active;
+            });
+        }
+
+        public async Task SetReturnMessage(string Message, bool Error)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ToggleMessage(true);
+
+                if (!Error)
+                {
+                    PnlMessage.Background = new SolidColorBrush(Color.FromArgb(255, 92, 184, 92));
+                    //Set PicBox to Info.png
+                    LblMessage.Text = Message;
+                }
+                else
+                {
+                    PnlMessage.Background = new SolidColorBrush(Color.FromArgb(255, 217, 83, 79));
+                    //set to Warning-Message.png
+                    LblMessage.Text = Message;
+                }
+
+            });
+        }
+
+        private async Task NexusSSOManager_OnBrowserClosed(object? sender, EventArgs eventArgs)
+        {
+            await ChangeButtonText("Nexus SSO Authentication");
+            await ToggleAuthenticateButton(true);
+        }
+
+        private async Task NexusSSOManager_OnAuthenticating(object? sender, AuthenticatingEventArgs eventArgs)
+        {
+            await ChangeButtonText("Authenticating...");
+        }
+
+        private async Task NexusSSOManager_OnRequestError(object? sender, RequestErrorEventArgs eventArgs)
+        {
+            await SetReturnMessage(eventArgs.Message, true);
+            await ToggleAuthenticateButton(true);
+        }
+
+        private async Task NexusSSOManager_OnAuthenticated(object sender, AuthenticationEventArgs EventArgs)
+        {
+            await ChangeButtonText("Nexus SSO Authentication");
+            SettingsCache.NexusApiKey = EventArgs.ApiKey;            
+            await SetReturnMessage("Authentication successfull! Click on the \"Next\" button", false);
+            await ToggleAuthenticateButton(true);
+        }
+
+        public void ShowLoading()
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                BtnNext.Content = "Validating...";
+                BtnNext.IsEnabled = false;
+            });
+        }
+
+        public void HideLoading()
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                BtnNext.Content = "Next";
+                BtnNext.IsVisible = true;
+            });
+        }
+        
+        private async Task<bool> NexusAuthenticate()
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    ApiManager.Init(
+                        SettingsCache.NexusApiKey,
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36", Path.GetTempPath());
+                });
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void BtnPrevious_Click(object? sender, RoutedEventArgs e)
@@ -54,22 +197,18 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private async void BtnAuthenticate_Click(object? sender, RoutedEventArgs e)
         {
-            var owner = TopLevel.GetTopLevel(this) as Window;
-
-            var browserr = new BrowserWindow();
-            browserr.Show();
-            browserr.Navigate("https://www.nexusmods.com", "Nexus");
-            //Nolvus.Browser.Browser.OpenBrowser("https://nexusmods.com");
-
-            // TODO: Replace with actual WebView authentication
-            //SettingsCache.NexusApiKey = "SIMULATED-TEST-KEY";
-
-            // await NolvusMessageBox.Show(owner,
-            //     "Authentication Success",
-            //     "You are now authenticated! Click Next to continue.",
-            //     MessageBoxType.Info);
-
-            // UpdateNextButtonState();
+            if (!NexusSSOManager.Authenticated)
+            {
+                ToggleMessage(false);
+                ToggleAuthenticateButton(false);
+                await NexusSSOManager.Connect();
+                await NexusSSOManager.Authenticate();
+            }
+            else
+            {   
+                var owner = TopLevel.GetTopLevel(this) as Window;
+                NolvusMessageBox.Show(owner, "Info", "You are already authenticated", MessageBoxType.Info);
+            }
         }
 
         private void UpdateNextButtonState()

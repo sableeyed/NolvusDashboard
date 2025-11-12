@@ -73,15 +73,26 @@ namespace Nolvus.Browser
 
         public void CloseBrowser()
         {
-            if (_downloader?.Browser != null)
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
-                BrowserHost.Children.Remove(_downloader.Browser);
-                _downloader.Browser.Dispose();
-            }
+                if (_downloader?.Browser != null)
+                {
+                    BrowserHost.Children.Remove(_downloader.Browser);
+                    _downloader.Browser.Dispose();
+                }
 
-            _downloader = null;
+                _downloader = null;
+                OnBrowserClosed?.Invoke(this, EventArgs.Empty);
+            });
+            // if (_downloader?.Browser != null)
+            // {
+            //     BrowserHost.Children.Remove(_downloader.Browser);
+            //     _downloader.Browser.Dispose();
+            // }
 
-            OnBrowserClosed?.Invoke(this, EventArgs.Empty);
+            // _downloader = null;
+
+            // OnBrowserClosed?.Invoke(this, EventArgs.Empty);
         }
 
         public event OnBrowserClosedHandler? OnBrowserClosed;

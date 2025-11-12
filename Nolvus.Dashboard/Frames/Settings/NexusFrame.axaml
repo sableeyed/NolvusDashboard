@@ -29,6 +29,28 @@
               Margin="20,0,0,0"
               Padding="12" />
 
+      <!-- MESSAGE PANEL -->
+      <Border x:Name="PnlMessage"
+              Background="#D9534F"
+              CornerRadius="4"
+              Padding="8"
+              IsVisible="False"
+              Width="872"
+              MaxWidth="872"
+              Margin="20,12,0,0">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Image x:Name="PicBox"
+                 Width="24" Height="24"
+                 Source="{x:Null}"/>
+          <TextBlock x:Name="LblMessage"
+                     Text="[Message]"
+                     FontSize="14"
+                     Foreground="White"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"/>
+        </StackPanel>
+      </Border>
+
     </StackPanel>
 
     <!-- FOOTER BUTTONS (BOTTOM RIGHT) -->

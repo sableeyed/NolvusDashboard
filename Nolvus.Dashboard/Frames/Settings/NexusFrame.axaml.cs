@@ -35,34 +35,27 @@ namespace Nolvus.Dashboard.Frames.Settings
             // Disable settings until authenticated
             (TopLevel.GetTopLevel(this) as DashboardWindow)?.DisableSettings();
 
+            ToggleMessage(false);
             UpdateNextButtonState();
 
-            this.AttachedToVisualTree += (_, __) =>
+            NexusSSOManager = new NexusSSOManager(new NexusSSOSettings
             {
-                ToggleMessage(false);
-
-                NexusSSOManager = new NexusSSOManager(new NexusSSOSettings
+                Browser = () =>
                 {
-                    //Browser = () => (IBrowserInstance)new BrowserWindow()
-                    Browser = () => Dispatcher.UIThread.InvokeAsync(() => (IBrowserInstance) new BrowserWindow()).GetAwaiter().GetResult()
-                });
+                    return Dispatcher.UIThread.Invoke(() =>
+                    {
+                        var window = new BrowserWindow();
+                        window.Show();
+                        return (IBrowserInstance)window;
+                    });
+                }
+            });
 
-                // NexusSSOManager.OnAuthenticating += NexusSSOManager_OnAuthenticating;
-                // NexusSSOManager.OnAuthenticated += NexusSSOManager_OnAuthenticated;
-                // NexusSSOManager.OnRequestError += NexusSSOManager_OnRequestError;
-                // NexusSSOManager.OnBrowserClosed += NexusSSOManager_OnBrowserClosed;
-                NexusSSOManager.OnAuthenticating += async (s, e) =>
-                await Dispatcher.UIThread.InvokeAsync(() => NexusSSOManager_OnAuthenticating(s, e));
+            NexusSSOManager.OnAuthenticating += NexusSSOManager_OnAuthenticating;
+            NexusSSOManager.OnAuthenticated += NexusSSOManager_OnAuthenticated;
+            NexusSSOManager.OnRequestError += NexusSSOManager_OnRequestError;
+            NexusSSOManager.OnBrowserClosed += NexusSSOManager_OnBrowserClosed;
 
-                NexusSSOManager.OnAuthenticated += async (s, e) =>
-                await Dispatcher.UIThread.InvokeAsync(() => NexusSSOManager_OnAuthenticated(s, e));
-
-                NexusSSOManager.OnRequestError += async (s, e) =>
-                await Dispatcher.UIThread.InvokeAsync(() => NexusSSOManager_OnRequestError(s, e));
-
-                NexusSSOManager.OnBrowserClosed += async (s, e) =>
-                await Dispatcher.UIThread.InvokeAsync(() => NexusSSOManager_OnBrowserClosed(s, e));
-            };
         }
 
         public async Task ChangeButtonText(string Value)
@@ -113,24 +106,24 @@ namespace Nolvus.Dashboard.Frames.Settings
             });
         }
 
-        private async Task NexusSSOManager_OnBrowserClosed(object? sender, EventArgs eventArgs)
+        private async void NexusSSOManager_OnBrowserClosed(object? sender, EventArgs eventArgs)
         {
             await ChangeButtonText("Nexus SSO Authentication");
             await ToggleAuthenticateButton(true);
         }
 
-        private async Task NexusSSOManager_OnAuthenticating(object? sender, AuthenticatingEventArgs eventArgs)
+        private async void NexusSSOManager_OnAuthenticating(object? sender, AuthenticatingEventArgs eventArgs)
         {
             await ChangeButtonText("Authenticating...");
         }
 
-        private async Task NexusSSOManager_OnRequestError(object? sender, RequestErrorEventArgs eventArgs)
+        private async void NexusSSOManager_OnRequestError(object? sender, RequestErrorEventArgs eventArgs)
         {
             await SetReturnMessage(eventArgs.Message, true);
             await ToggleAuthenticateButton(true);
         }
 
-        private async Task NexusSSOManager_OnAuthenticated(object sender, AuthenticationEventArgs EventArgs)
+        private async void NexusSSOManager_OnAuthenticated(object sender, AuthenticationEventArgs EventArgs)
         {
             await ChangeButtonText("Nexus SSO Authentication");
             SettingsCache.NexusApiKey = EventArgs.ApiKey;            

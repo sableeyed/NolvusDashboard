@@ -8,7 +8,7 @@ using Xilium.CefGlue.Avalonia;
 
 namespace Nolvus.Browser
 {
-    public partial class BrowserWindow : Window
+    public partial class BrowserWindow : Window, IBrowserInstance
     {
         private ChromiumDownloader? _downloader;
 

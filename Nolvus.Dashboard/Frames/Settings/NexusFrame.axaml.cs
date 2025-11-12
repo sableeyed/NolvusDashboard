@@ -43,7 +43,8 @@ namespace Nolvus.Dashboard.Frames.Settings
 
                 NexusSSOManager = new NexusSSOManager(new NexusSSOSettings
                 {
-                    Browser = () => (IBrowserInstance)new BrowserWindow()
+                    //Browser = () => (IBrowserInstance)new BrowserWindow()
+                    Browser = () => Dispatcher.UIThread.InvokeAsync(() => (IBrowserInstance) new BrowserWindow()).GetAwaiter().GetResult()
                 });
 
                 // NexusSSOManager.OnAuthenticating += NexusSSOManager_OnAuthenticating;

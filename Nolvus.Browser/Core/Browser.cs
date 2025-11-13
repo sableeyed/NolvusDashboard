@@ -44,6 +44,7 @@ namespace Nolvus.Browser.Core
 
         public void Navigate(string url, string? title = null)
         {
+            ServiceSingleton.Logger.Log("NAVIGATE CALLED");
             _url = url;
 
             if (url.Contains("www.nexusmods.com/sso"))
@@ -59,6 +60,8 @@ namespace Nolvus.Browser.Core
             PageInfoChanged?.Invoke(url);
 
             _browser!.Address = url;
+
+            ServiceSingleton.Logger.Log($"[BROWSER] NAVIGATE TO: {url}");
         }
         
         //STUB
@@ -100,7 +103,12 @@ namespace Nolvus.Browser.Core
 
         public async Task NexusSSOAuthentication(string Id, string Slug)
         {
-            
+            ServiceSingleton.Logger.Log("NexusSSOAuthentication CALLED!");
+            _ssoTcs = new TaskCompletionSource<bool>();
+
+            var ssoUrl = $"https://www.nexusmods.com/sso?id={Id}&application={Slug}";
+            Navigate(ssoUrl);
+            await _ssoTcs.Task;
         }
 
         public void CloseBrowser()
@@ -137,10 +145,30 @@ namespace Nolvus.Browser.Core
         {
             ServiceSingleton.Logger.Log("BROWSER LOAD START");
         }
-        
+
         private void Browser_LoadEnd(object? sender, LoadEndEventArgs e)
         {
             ServiceSingleton.Logger.Log("BROWSER LOAD END");
+            ServiceSingleton.Logger.Log($"[BROWSER] LOAD END URL: {e.Frame.Url}");
+            if (!e.Frame.IsMain)
+                return;
+
+            var url = e.Frame.Url;
+            PageInfoChanged?.Invoke(url);
+
+            if (website == WebSite.NexusSSO)
+            {
+                HandleNexusSSOLoadEnd(url);
+            }
+        }
+        
+        private void HandleNexusSSOLoadEnd(string url)
+        {
+            if (url.Contains("https://www.nexusmods.com/SSOauthorised?"))
+            {
+                HideLoadingRequested?.Invoke();
+                _ssoTcs.TrySetResult(true);
+            }
         }
     }
 }

@@ -303,8 +303,9 @@ namespace Nolvus.NexusApi.SSO
                                 {
                                     TriggerAuthenticated(NexusResponse.Data.ApiKey);
                                     IsAuthenticated = true;
-
-                                    Browser.CloseBrowser();
+                                    
+                                    //This causes a crash. How can we safely close the browser?
+                                    //Browser.CloseBrowser();
                                 });
                             }
                             else if (NexusResponse.Data.Token != string.Empty)

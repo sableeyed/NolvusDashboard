@@ -38,23 +38,23 @@ namespace Nolvus.Dashboard.Frames.Settings
             ToggleMessage(false);
             UpdateNextButtonState();
 
-            // NexusSSOManager = new NexusSSOManager(new NexusSSOSettings
-            // {
-            //     Browser = () =>
-            //     {
-            //         return Dispatcher.UIThread.Invoke(() =>
-            //         {
-            //             var window = new BrowserWindow();
-            //             window.Show();
-            //             return (IBrowserInstance)window;
-            //         });
-            //     }
-            // });
+            NexusSSOManager = new NexusSSOManager(new NexusSSOSettings
+            {
+                Browser = () =>
+                {
+                    return Dispatcher.UIThread.Invoke(() =>
+                    {
+                        var window = new BrowserWindow("about:blank");
+                        window.Show();
+                        return window.Engine;
+                    });
+                }
+            });
 
-            // NexusSSOManager.OnAuthenticating += NexusSSOManager_OnAuthenticating;
-            // NexusSSOManager.OnAuthenticated += NexusSSOManager_OnAuthenticated;
-            // NexusSSOManager.OnRequestError += NexusSSOManager_OnRequestError;
-            // NexusSSOManager.OnBrowserClosed += NexusSSOManager_OnBrowserClosed;
+            NexusSSOManager.OnAuthenticating += NexusSSOManager_OnAuthenticating;
+            NexusSSOManager.OnAuthenticated += NexusSSOManager_OnAuthenticated;
+            NexusSSOManager.OnRequestError += NexusSSOManager_OnRequestError;
+            NexusSSOManager.OnBrowserClosed += NexusSSOManager_OnBrowserClosed;
 
         }
 
@@ -192,8 +192,26 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private async void BtnAuthenticate_Click(object? sender, RoutedEventArgs e)
         {
-            var win = new BrowserWindow("https://nexusmods.com");
-            win.Show();
+            if (!NexusSSOManager.Authenticated)
+            {
+                ToggleMessage(false);
+                ToggleAuthenticateButton(false);
+
+                try
+                {
+                    await NexusSSOManager.Connect();
+                    await NexusSSOManager.Authenticate();
+                }
+                finally
+                {
+                    ToggleAuthenticateButton(true);
+                }
+            }
+            else
+            {
+                var owner = TopLevel.GetTopLevel(this) as Window;
+                NolvusMessageBox.Show(owner, "Info", "You are already authenticated", MessageBoxType.Info);
+            }
             // var b = new BrowserWindow();
             // b.OnBrowserClosed += (_, __) =>
             // {

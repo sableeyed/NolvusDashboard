@@ -44,6 +44,7 @@ internal static class Program
         {
             RootCachePath = _cefCachePath,
             WindowlessRenderingEnabled = false,
+            MultiThreadedMessageLoop = true,
             NoSandbox = true
         };
 

@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Nolvus.Core.Enums;
 using Nolvus.Core.Events;
 using Nolvus.Core.Interfaces;
+using Nolvus.Core.Services;
 using Xilium.CefGlue.Avalonia;
 using Xilium.CefGlue.Common.Events;
 
@@ -36,6 +37,9 @@ namespace Nolvus.Browser.Core
             _browser.DownloadHandler = _downloadHandler;
             _downloadHandler.OnFileDownloadCompleted += HandleDownloadCompleted;
             _downloadHandler.OnFileDownloadRequest += HandleDownloadRequest;
+
+            _browser.LoadStart += Browser_LoadStart;
+            _browser.LoadEnd += Browser_LoadEnd;
         }
 
         public void Navigate(string url, string? title = null)
@@ -116,12 +120,21 @@ namespace Nolvus.Browser.Core
             OnFileDownloadCompleted?.Invoke(this, e);
             _downloadTcs?.TrySetResult(true);
         }
-        
+
         private void HandleDownloadRequest(object? sender, FileDownloadRequestEvent e)
         {
             OnFileDownloadRequest?.Invoke(this, e);
             _downloadTcs?.TrySetResult(true);
         }
 
+        private void Browser_LoadStart(object? sender, LoadStartEventArgs e)
+        {
+            ServiceSingleton.Logger.Log("BROWSER LOAD START");
+        }
+        
+        private void Browser_LoadEnd(object? sender, LoadEndEventArgs e)
+        {
+            ServiceSingleton.Logger.Log("BROWSER LOAD END");
+        }
     }
 }

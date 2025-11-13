@@ -4,12 +4,14 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Xilium.CefGlue.Avalonia;
+using Nolvus.Browser.Core;
 
 namespace Nolvus.Browser
 {
     public partial class BrowserWindow : Window
     {
         private readonly AvaloniaCefBrowser ChromeBrowser;
+        private readonly Nolvus.Browser.Core.Browser BrowserEngine;
 
         public BrowserWindow(string initialUrl)
         {
@@ -23,6 +25,8 @@ namespace Nolvus.Browser
             {
                 Address = initialUrl
             };
+
+            BrowserEngine = new Nolvus.Browser.Core.Browser(ChromeBrowser);
 
             BrowserHost.Children.Add(ChromeBrowser);
 

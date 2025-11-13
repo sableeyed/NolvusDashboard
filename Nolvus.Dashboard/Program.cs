@@ -16,16 +16,61 @@ using System.Security.Authentication;
 using Nolvus.Api.Installer.Core;
 using System.Diagnostics;
 using System.Reflection;
+using Xilium.CefGlue;
+using Xilium.CefGlue.Common;
 
 namespace Nolvus.Dashboard;
 
 internal static class Program
 {
-    // Avalonia configuration, don't remove; also used by visual designer.
+
+    private static string? _cefCachePath;
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<DashboardApp>()
                      .UsePlatformDetect()
-                     .LogToTrace();
+                     .LogToTrace()
+                     .AfterSetup(_ => InitializeCef());
+
+    private static void InitializeCef()
+    {
+        if (_cefCachePath != null)
+            return;
+
+        _cefCachePath = Path.Combine(Path.GetTempPath(), "Nolvus_Cef");
+
+        AppDomain.CurrentDomain.ProcessExit += (_, __) => CleanupCef();
+
+        var settings = new CefSettings
+        {
+            RootCachePath = _cefCachePath,
+            WindowlessRenderingEnabled = false,
+            NoSandbox = true
+        };
+
+        CefRuntimeLoader.Initialize(settings);
+    }
+
+    private static void CleanupCef()
+    {
+        try
+        {
+            CefRuntime.Shutdown();
+        }
+        catch { }
+
+        if (string.IsNullOrEmpty(_cefCachePath))
+            return;
+
+        try
+        {
+            var dirInfo = new DirectoryInfo(_cefCachePath);
+            if (dirInfo.Exists)
+            {
+                dirInfo.Delete(true);
+            }
+        }
+        catch { }
+    }
 
 
     private static void ExceptionHandler(object sender, UnhandledExceptionEventArgs e)

@@ -38,23 +38,23 @@ namespace Nolvus.Dashboard.Frames.Settings
             ToggleMessage(false);
             UpdateNextButtonState();
 
-            NexusSSOManager = new NexusSSOManager(new NexusSSOSettings
-            {
-                Browser = () =>
-                {
-                    return Dispatcher.UIThread.Invoke(() =>
-                    {
-                        var window = new BrowserWindow();
-                        window.Show();
-                        return (IBrowserInstance)window;
-                    });
-                }
-            });
+            // NexusSSOManager = new NexusSSOManager(new NexusSSOSettings
+            // {
+            //     Browser = () =>
+            //     {
+            //         return Dispatcher.UIThread.Invoke(() =>
+            //         {
+            //             var window = new BrowserWindow();
+            //             window.Show();
+            //             return (IBrowserInstance)window;
+            //         });
+            //     }
+            // });
 
-            NexusSSOManager.OnAuthenticating += NexusSSOManager_OnAuthenticating;
-            NexusSSOManager.OnAuthenticated += NexusSSOManager_OnAuthenticated;
-            NexusSSOManager.OnRequestError += NexusSSOManager_OnRequestError;
-            NexusSSOManager.OnBrowserClosed += NexusSSOManager_OnBrowserClosed;
+            // NexusSSOManager.OnAuthenticating += NexusSSOManager_OnAuthenticating;
+            // NexusSSOManager.OnAuthenticated += NexusSSOManager_OnAuthenticated;
+            // NexusSSOManager.OnRequestError += NexusSSOManager_OnRequestError;
+            // NexusSSOManager.OnBrowserClosed += NexusSSOManager_OnBrowserClosed;
 
         }
 
@@ -192,13 +192,15 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private async void BtnAuthenticate_Click(object? sender, RoutedEventArgs e)
         {
-            var b = new BrowserWindow();
-            b.OnBrowserClosed += (_, __) =>
-            {
-                Console.WriteLine("Browser Closed");
-            };
-            b.LoadBrowser("https://nexusmods.com", true);
-            b.Show();
+            var win = new BrowserWindow("https://nexusmods.com");
+            win.Show();
+            // var b = new BrowserWindow();
+            // b.OnBrowserClosed += (_, __) =>
+            // {
+            //     Console.WriteLine("Browser Closed");
+            // };
+            // b.LoadBrowser("https://nexusmods.com", true);
+            // b.Show();
             // if (!NexusSSOManager.Authenticated)
             // {
             //     ToggleMessage(false);

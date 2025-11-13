@@ -12,7 +12,7 @@ namespace Nolvus.Browser
         {
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                desktop.MainWindow = new BrowserWindow();
+                desktop.MainWindow = new BrowserWindow("about:blank");
 
             base.OnFrameworkInitializationCompleted();
         }

@@ -19,6 +19,11 @@ namespace Nolvus.Browser.Core {
 			}
 		}
 
+        public void SetLinkyOnly(bool value)
+        {
+            LinkOnly = value;
+        }
+
 		private Stopwatch SW = new Stopwatch();
 
 		private readonly DownloadProgress DownloadProgress;

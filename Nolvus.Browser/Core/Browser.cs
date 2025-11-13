@@ -105,14 +105,20 @@ namespace Nolvus.Browser.Core
 
         public void CloseBrowser()
         {
-            
+            try
+            {
+                _browser.LoadStart -= Browser_LoadStart;
+                _browser.LoadEnd -= Browser_LoadEnd;
+
+                _downloadHandler.OnFileDownloadRequest -= HandleDownloadRequest;
+                _downloadHandler.OnFileDownloadCompleted -= HandleDownloadCompleted;
+
+                _browser.Dispose();
+
+                OnBrowserClosed?.Invoke(this, EventArgs.Empty);
+            }
+            catch { }
         }
-
-        //STUB
-        // event OnBrowserClosedHandler OnBrowserClosed
-        // {
-
-        // }
 
         private void HandleDownloadCompleted(object? sender, FileDownloadRequestEvent e)
         {

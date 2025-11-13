@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Nolvus.Core.Enums;
 using Nolvus.Core.Events;
 using Nolvus.Core.Interfaces;
 using Xilium.CefGlue.Avalonia;
@@ -6,29 +7,53 @@ using Xilium.CefGlue.Common.Events;
 
 namespace Nolvus.Browser.Core
 {
-    public class Browser //: BrowserInstance
+    public class Browser : IBrowserInstance
     {
 
         private readonly AvaloniaCefBrowser? _browser;
         private readonly ChromeDownloaderHandler _downloadHandler;
+        private WebSite website;
+        private string file;
+        private string modId;
+        private string _url;
+        public string Url { get { return _url; } }
 
         private TaskCompletionSource<string>? _manualLinkTcs;
         private TaskCompletionSource<bool>? _downloadTcs;
         private TaskCompletionSource<bool>? _ssoTcs;
         public event OnBrowserClosedHandler? OnBrowserClosed;
-
+        public event Action? HideLoadingRequested;
+        public event Action<string>? PageInfoChanged;
+        public event Action<string>? NavigationRequested;
+        public event OnFileDownloadRequestedHandler? OnFileDownloadRequest;
+        public event OnFileDownloadRequestedHandler? OnFileDownloadCompleted;
+        //GUI MODE
         public Browser(AvaloniaCefBrowser chromeBrowser)
         {
             _browser = chromeBrowser;
 
             _downloadHandler = new ChromeDownloaderHandler(false);
             _browser.DownloadHandler = _downloadHandler;
-            _downloadHandler.OnFileDownloadCompleted += OnFileDownloadCompleted;
-           // _downloadHandler.OnFileDownloadRequest += OnFileDownloadRequest;
+            _downloadHandler.OnFileDownloadCompleted += HandleDownloadCompleted;
+            _downloadHandler.OnFileDownloadRequest += HandleDownloadRequest;
         }
 
         public void Navigate(string url, string? title = null)
         {
+            _url = url;
+
+            if (url.Contains("www.nexusmods.com/sso"))
+                website = WebSite.NexusSSO;
+            else if (url.Contains("nexusmods.com"))
+                website = WebSite.Nexus;
+            else if (url.Contains("enbdev.com"))
+                website = WebSite.EnbDev;
+            else
+                website = WebSite.Other;
+
+            // Notify UI that navigation has begun (optional)
+            PageInfoChanged?.Invoke(url);
+
             _browser!.Address = url;
         }
         
@@ -74,7 +99,7 @@ namespace Nolvus.Browser.Core
             
         }
 
-        void CloseBrowser()
+        public void CloseBrowser()
         {
             
         }
@@ -82,11 +107,19 @@ namespace Nolvus.Browser.Core
         //STUB
         // event OnBrowserClosedHandler OnBrowserClosed
         // {
-            
+
         // }
 
-        private void OnFileDownloadCompleted(object? sender, FileDownloadRequestEvent e)
+        private void HandleDownloadCompleted(object? sender, FileDownloadRequestEvent e)
         {
+            //Forward to Browser/UI?
+            OnFileDownloadCompleted?.Invoke(this, e);
+            _downloadTcs?.TrySetResult(true);
+        }
+        
+        private void HandleDownloadRequest(object? sender, FileDownloadRequestEvent e)
+        {
+            OnFileDownloadRequest?.Invoke(this, e);
             _downloadTcs?.TrySetResult(true);
         }
 

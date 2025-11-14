@@ -24,6 +24,11 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
     <PackageReference Include="CefGlue.Common" Version="120.6099.211" />
     <PackageReference Include="CefGlue.Avalonia" Version="120.6099.211" />
+    <PackageReference Include="Avalonia.Labs.Gif" Version="11.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**\*" />
   </ItemGroup>
 
   <ItemGroup>

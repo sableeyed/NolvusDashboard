@@ -1,29 +1,43 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
+        xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
         x:Class="Nolvus.Browser.BrowserWindow"
-        Width="1200" Height="800"
+        Width="1200"
+        Height="800"
         Title="Nolvus Browser"
         SystemDecorations="None"
         CanResize="True">
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="40"/>
-      <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-    <!-- Title bar placeholder (replace with your real control later) -->
-    <!-- <Border Grid.Row="0"
-            Height="50"
-            Background="#363636" /> -->
+        <Border Background="#363636" Grid.Row="0">
+            <controls:BrowserTitleControl x:Name="TitleBar"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Stretch"/>
+        </Border>
 
-    <Border Background="#363636" Grid.Row="0">
-      <controls:BrowserTitleControl x:Name="TitleBar" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-    </Border>
+        <Grid x:Name="BrowserHost"
+              Grid.Row="1"
+              ClipToBounds="True"
+              IsVisible="True" />
 
-    <Grid x:Name="BrowserHost"
-          Grid.Row="1"
-          ClipToBounds="True" />
-  </Grid>
+        <Grid x:Name="LoadingOverlay"
+              Grid.RowSpan="2"
+              Background="#80000000"
+              IsVisible="False">
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="12">
+                <gif:GifImage Width="150"
+                              Height="150"
+                              Source="avares://Nolvus.Browser/Assets/cog-loader-alpha.gif" />
+            </StackPanel>
+        </Grid>
+
+    </Grid>
 </Window>

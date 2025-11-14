@@ -1,342 +1,172 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
 using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Text;
+using Avalonia.Threading;
 using Newtonsoft.Json;
-using Nolvus.Core.Interfaces;
-using Nolvus.Core.Events;
-using Nolvus.Core.Misc;
+using Nolvus.Core.Services;
 using Nolvus.NexusApi.SSO.Events;
 using Nolvus.NexusApi.SSO.Responses;
-using Avalonia.Threading;
-using Nolvus.Core.Services;
+using Nolvus.Core.Misc;
+
 
 namespace Nolvus.NexusApi.SSO
 {
-    public class NexusSSOSettings
-    {
-        public Func<IBrowserInstance> Browser { get; set; }
-    }
-
     public class NexusSSOManager
     {
         #region Field
-
-        private bool IsAuthenticated = false;        
-        private ClientWebSocket WebSocket;
-        private NexusSSORequest Request;
-        private NexusSSOSettings SocketSettings;
-        private IBrowserInstance _Browser;
-
+        private bool isAuthenticated = false;
+        private ClientWebSocket? webSocket;
+        private NexusSSORequest? currentRequest;
+        private readonly string endpoint = "wss://sso.nexusmods.com";
         #endregion
 
-        #region Properties
-
-        private IBrowserInstance Browser
-        {
-            get
-            {
-                if (_Browser == null)
-                {
-                    _Browser = SocketSettings.Browser();
-                    _Browser.OnBrowserClosed += TriggerBrowserClose;
-                }
-
-                return _Browser;
-            }
-        }
-
-        public bool Authenticated
-        {
-            get { return IsAuthenticated; }
-        }
-
+        #region Handlers
+        public event OnAuthenticatingHandler? OnAuthenticating;
+        public event OnAuthenticatedHandler? OnAuthenticated;
+        public event OnRequestErrorHandler? OnRequestError;
         #endregion
 
-        #region Events
+        public NexusSSOManager() { }
 
-        event OnAuthenticatedHandler OnAuthenticatedEvent;
-
-        public event OnAuthenticatedHandler OnAuthenticated
-        {
-            add
-            {
-                if (OnAuthenticatedEvent != null)
-                {
-                    lock (OnAuthenticatedEvent)
-                    {
-                        OnAuthenticatedEvent += value;
-                    }
-                }
-                else
-                {
-                    OnAuthenticatedEvent = value;
-                }
-            }
-            remove
-            {
-                if (OnAuthenticatedEvent != null)
-                {
-                    lock (OnAuthenticatedEvent)
-                    {
-                        OnAuthenticatedEvent -= value;
-                    }
-                }
-            }
-        }
-
-        event OnAuthenticatingHandler OnAuthenticatingEvent;
-
-        public event OnAuthenticatingHandler OnAuthenticating
-        {
-            add
-            {
-                if (OnAuthenticatingEvent != null)
-                {
-                    lock (OnAuthenticatingEvent)
-                    {
-                        OnAuthenticatingEvent += value;
-                    }
-                }
-                else
-                {
-                    OnAuthenticatingEvent = value;
-                }
-            }
-            remove
-            {
-                if (OnAuthenticatingEvent != null)
-                {
-                    lock (OnAuthenticatingEvent)
-                    {
-                        OnAuthenticatingEvent -= value;
-                    }
-                }
-            }
-        }
-
-        event OnRequestErrorHandler OnRequestErrorEvent;
-
-        public event OnRequestErrorHandler OnRequestError
-        {
-            add
-            {
-                if (OnRequestErrorEvent != null)
-                {
-                    lock (OnRequestErrorEvent)
-                    {
-                        OnRequestErrorEvent += value;
-                    }
-                }
-                else
-                {
-                    OnRequestErrorEvent = value;
-                }
-            }
-            remove
-            {
-                if (OnRequestErrorEvent != null)
-                {
-                    lock (OnRequestErrorEvent)
-                    {
-                        OnRequestErrorEvent -= value;
-                    }
-                }
-            }
-        }
-
-        event OnBrowserClosedHandler OnBrowserClosedEvent;
-
-        public event OnBrowserClosedHandler OnBrowserClosed
-        {
-            add
-            {
-                if (OnBrowserClosedEvent != null)
-                {
-                    lock (OnBrowserClosedEvent)
-                    {
-                        OnBrowserClosedEvent += value;
-                    }
-                }
-                else
-                {
-                    OnBrowserClosedEvent = value;
-                }
-            }
-            remove
-            {
-                if (OnBrowserClosedEvent != null)
-                {
-                    lock (OnBrowserClosedEvent)
-                    {
-                        OnBrowserClosedEvent -= value;
-                    }
-                }
-            }
-        }
-
-        #endregion
-
-        public NexusSSOManager(NexusSSOSettings Settings = null)
-        {
-            if (Settings != null)
-            {
-                SocketSettings = Settings;
-            }
-        }
-
-        #region Methods
-
-        private void TriggerAuthenticated(string ApiKey)
-        {
-            Console.WriteLine("API Key: " + ApiKey);
-            OnAuthenticatedHandler Handler = OnAuthenticatedEvent;
-            AuthenticationEventArgs Event = new AuthenticationEventArgs(ApiKey);
-            if (Handler != null) Handler(this, Event);
-        }
-
-        private void TriggerAuthenticating(string UuId)
-        {
-            ServiceSingleton.Logger.Log("TriggerAuthenticating Function: " + UuId);
-            OnAuthenticatingHandler Handler = OnAuthenticatingEvent;
-            AuthenticatingEventArgs Event = new AuthenticatingEventArgs(UuId);
-            ServiceSingleton.Logger.Log("Invoking Event: " + Event);
-            if (Handler != null) Handler(this, Event);
-        }
-
-        private void TriggerError(string Message)
-        {
-            OnRequestErrorHandler Handler = OnRequestErrorEvent;
-            RequestErrorEventArgs Event = new RequestErrorEventArgs(Message);
-            if (Handler != null) Handler(this, Event);
-        }
-
-        private void TriggerBrowserClose(object sender, EventArgs EventArgs)
-        {
-            _Browser.OnBrowserClosed -= TriggerBrowserClose;
-            _Browser = null;
-
-            Close();
-
-            OnBrowserClosedHandler Handler = OnBrowserClosedEvent;
-            EventArgs Event = new EventArgs();
-            if (Handler != null) Handler(this, Event);
-        }
+        public bool Authenticated => isAuthenticated;
 
         public async Task Connect()
         {
             try
             {
-                WebSocket = new ClientWebSocket();
-                await WebSocket.ConnectAsync(new Uri("wss://sso.nexusmods.com"), CancellationToken.None);
+                webSocket = new ClientWebSocket();
+                await webSocket.ConnectAsync(new Uri(endpoint), CancellationToken.None);
                 StartListenerThread();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                TriggerError(e.Message);
+                OnRequestError?.Invoke(this, new RequestErrorEventArgs(ex.Message));
             }
         }
 
         public async Task Authenticate()
         {
-            if (!IsAuthenticated)
+            if (isAuthenticated)
+                return;
+
+            try
             {
-                try
+                if (webSocket == null || webSocket.State != WebSocketState.Open)
                 {
-                    if (WebSocket.State == WebSocketState.Open)
-                    {
-
-                        Request = new NexusSSORequest
-                        {
-                            id = Guid.NewGuid().ToString()
-                        };
-
-                        await WebSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Request))), WebSocketMessageType.Text, true, CancellationToken.None);
-                    }
+                    TriggerError("Websocket not connected");
+                    return;
                 }
-                catch (Exception e)
-                {
-                    TriggerError(e.Message);
-                }
+
+                currentRequest = new NexusSSORequest { id = Guid.NewGuid().ToString() };
+                await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(currentRequest))), WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log(ex.Message);
             }
         }
 
         public void Close()
-        {            
-            WebSocket.Dispose();
-            WebSocket = null;
+        {
+            try
+            {
+                webSocket?.Dispose();
+            }
+            catch { }
+            webSocket = null;
         }
 
         private void StartListenerThread()
         {
             Task.Run(async () =>
             {
-                if (!Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
-                {
-                    Console.WriteLine($"[Invalid thread access] {nameof(StartListenerThread)} called on {Environment.CurrentManagedThreadId}");
-                    Thread.Sleep(10);
-                } 
-                var Buffer = new byte[1024 * 4];
+                var buffer = new byte[1024 * 4];
 
-                while (WebSocket.State == WebSocketState.Open || WebSocket.State == WebSocketState.CloseSent)                
+                while (webSocket != null && (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseSent))
                 {
+                    WebSocketReceiveResult result;
                     try
                     {
-                        var Result = await WebSocket.ReceiveAsync(new ArraySegment<byte>(Buffer), CancellationToken.None);
-
-                        var NexusResponse = JsonConvert.DeserializeObject<NexusSSOResponse>(Encoding.UTF8.GetString(Buffer, 0, Result.Count));
-
-                        var json = Encoding.UTF8.GetString(Buffer, 0, Result.Count);
-                        //Console.WriteLine($"[SSO] Received JSON: {json}");
-                        ServiceSingleton.Logger.Log($"[SSO] Received JSON: {json}");
-
-                        if (NexusResponse != null && NexusResponse.Success)
-                        {
-                            if (NexusResponse.Data.ApiKey != null)
-                            {
-                                ServiceSingleton.Logger.Log("NexusResponse.Data.ApiKey != null! TriggerAuthenticated");
-                                await Dispatcher.UIThread.InvokeAsync(() =>
-                                {
-                                    TriggerAuthenticated(NexusResponse.Data.ApiKey);
-                                    IsAuthenticated = true;
-                                    
-                                    //This causes a crash. How can we safely close the browser?
-                                    //Browser.CloseBrowser();
-                                });
-                            }
-                            else if (NexusResponse.Data.Token != string.Empty)
-                            {
-                                ServiceSingleton.Logger.Log("NexusResponse.Data.Token != empty! TriggerAuthenticating");
-                                await Dispatcher.UIThread.InvokeAsync(async () =>
-                                {
-                                    Request.SetToken(NexusResponse.Data.Token);
-                                    TriggerAuthenticating(Request.id);
-
-                                    await Browser.NexusSSOAuthentication(Request.id, Strings.NolvusSlug);
-                                });
-
-                            }
-                        }
-                        else
-                        {
-                            await Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                TriggerError(NexusResponse.Error);
-                            });
-                        }
+                        result = await webSocket.ReceiveAsync(buffer, CancellationToken.None);
                     }
                     catch (Exception ex)
                     {
-                        await Dispatcher.UIThread.InvokeAsync(() => TriggerError(ex.Message));
+                        ServiceSingleton.Logger.Log(ex.Message);
+                        break;
                     }
+
+                    if (result.MessageType == WebSocketMessageType.Close)
+                        break;
+
+                    var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
+
+                    NexusSSOResponse response = null;
+
+                    try
+                    {
+                        response = JsonConvert.DeserializeObject<NexusSSOResponse>(json);
+                    }
+                    catch (Exception ex)
+                    {
+                        ServiceSingleton.Logger.Log(ex.Message);
+                    }
+
+                    if (response == null)
+                    {
+                        ServiceSingleton.Logger.Log("Received null response from server");
+                        continue;
+                    }
+
+                    await HandleServerResponse(response);
                 }
             });
         }
 
-        #endregion
+        private async Task HandleServerResponse(NexusSSOResponse response)
+        {
+            if (!response.Success)
+            {
+                ServiceSingleton.Logger.Log(response.Error);
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(response?.Data?.ApiKey))
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    TriggerAuthenticated(response.Data.ApiKey);
+                    isAuthenticated = true;
+                });
+                //OnBrowserClosedEvent?.Invoke(this, EventArgs.Empty); //why
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(response?.Data?.Token))
+            {
+                currentRequest.SetToken(response.Data.Token);
+
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    TriggerAuthenticating(currentRequest.id);
+                });
+
+                return;
+            }
+            ServiceSingleton.Logger.Log("Unknown SSO Response");
+        }
+
+        private void TriggerAuthenticated(string apiKey)
+        {
+            OnAuthenticated?.Invoke(this, new AuthenticationEventArgs(apiKey));
+        }
+
+        private void TriggerAuthenticating(string uuid)
+        {
+            OnAuthenticating?.Invoke(this, new AuthenticatingEventArgs(uuid));
+        }
+        
+        private void TriggerError(string message)
+        {
+            OnRequestError?.Invoke(this, new RequestErrorEventArgs(message));
+        }
     }
 }

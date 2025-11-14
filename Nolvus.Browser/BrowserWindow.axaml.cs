@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using Xilium.CefGlue.Avalonia;
 using Nolvus.Browser.Core;
+using Nolvus.Core.Services;
 
 namespace Nolvus.Browser
 {
@@ -49,6 +50,11 @@ namespace Nolvus.Browser
             {
                 Dispatcher.UIThread.Post(() => { TitleBar.Title = Title; });
             };
+
+            // BrowserEngine.HideLoadingRequested += () =>
+            // {
+            //     Dispatcher.UIThread.Post(HideLoading);
+            // };
         }
         
         private void OnOpened(object? sender, EventArgs e)
@@ -65,6 +71,19 @@ namespace Nolvus.Browser
             {
                 BeginMoveDrag(e);
             }
+        }
+
+        //UNUSED
+        private void ShowLoading()
+        {
+            LoadingOverlay.IsVisible = true;
+            BrowserHost.IsVisible = false;
+        }
+
+        private void HideLoading()
+        {
+            LoadingOverlay.IsVisible = false;
+            BrowserHost.IsVisible = true;
         }
     }
 }

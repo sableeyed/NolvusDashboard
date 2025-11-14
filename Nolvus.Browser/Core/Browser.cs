@@ -98,14 +98,9 @@ namespace Nolvus.Browser.Core
             return "Unimplemented";
         }
 
-        //Not used but IBrowserInstance requires it to be implemented - will probably make it an empty stub
         public async Task NexusSSOAuthentication(string Id, string Slug)
         {
-            _ssoTcs = new TaskCompletionSource<bool>();
-
-            var ssoUrl = $"https://www.nexusmods.com/sso?id={Id}&application={Slug}";
-            Navigate(ssoUrl);
-            await _ssoTcs.Task;
+            return;
         }
 
         public void CloseBrowser()

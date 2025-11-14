@@ -61,10 +61,14 @@
 
       <Button x:Name="BtnPrevious"
               Content="Previous"
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center"
               MinWidth="120"/>
 
       <Button x:Name="BtnNext"
               Content="Next"
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center"
               MinWidth="120"/>
 
     </StackPanel>

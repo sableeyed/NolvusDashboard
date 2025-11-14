@@ -59,6 +59,11 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private async void BtnNext_Click(object? sender, RoutedEventArgs e)
         {
+            /* DEBUGGING REMOVE LATER */
+            if(Program.DebugMode)
+            {
+                ServiceSingleton.Dashboard.LoadFrame<NexusFrame>();
+            }
             if (string.IsNullOrEmpty(TxtPath.Text))
             {
                 LblError.Text = "You must select a directory";

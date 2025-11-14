@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RestEase;
+using System.Reflection;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
@@ -93,10 +94,32 @@ namespace Nolvus.NexusApi
 
             httpClient.DefaultRequestHeaders.Add("Application-Name", "Nolvus Dashboard");
 
-            string Version = FileVersionInfo.GetVersionInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashboard.exe")).ProductVersion;
-            Version = Version.Substring(0, Version.LastIndexOf('.'));
+            //string Version = FileVersionInfo.GetVersionInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashboard")).ProductVersion;
+            //Version = Version.Substring(0, Version.LastIndexOf('.'));
+			var asm = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
 
-            httpClient.DefaultRequestHeaders.Add("Application-Version", Version);
+			// Get version from InformationalVersion or fallback
+			var Version =
+    		asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+    			?? asm.GetName().Version?.ToString()
+    			?? "1.0.0";
+
+			// Strip build metadata (+gitsha)
+			if (Version.Contains('+'))
+    			Version = Version.Split('+')[0];
+
+			// Strip prerelease (-beta, -preview, etc.)
+			if (Version.Contains('-'))
+    			Version = Version.Split('-')[0];
+
+			// Trim to major.minor.patch (3 parts)
+			var parts = Version.Split('.');
+			if (parts.Length > 3)
+    			Version = string.Join('.', parts.Take(3));
+
+			Console.WriteLine("VERSION: " + Version);
+
+			httpClient.DefaultRequestHeaders.Add("Application-Version", Version);
 
             return this.InitializeAsync(httpClient, options);
 		}

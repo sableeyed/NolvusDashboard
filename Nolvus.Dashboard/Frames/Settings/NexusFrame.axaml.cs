@@ -38,8 +38,11 @@ namespace Nolvus.Dashboard.Frames.Settings
             // Disable settings until authenticated
             (TopLevel.GetTopLevel(this) as DashboardWindow)?.DisableSettings();
 
-            ToggleMessage(false);
-            UpdateNextButtonState();
+            if (!Program.DebugMode)
+            {
+                ToggleMessage(false);
+                UpdateNextButtonState();
+            }
 
             NexusSSOManager = new NexusSSOManager();
 
@@ -176,6 +179,10 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private void BtnNext_Click(object? sender, RoutedEventArgs e)
         {
+            if (Program.DebugMode)
+            {
+                ServiceSingleton.Dashboard.LoadFrame<NolvusFrame>();
+            }
             var owner = TopLevel.GetTopLevel(this) as Window;
 
             if (string.IsNullOrWhiteSpace(SettingsCache.NexusApiKey))
@@ -188,7 +195,7 @@ namespace Nolvus.Dashboard.Frames.Settings
             }
 
             //WE FINALLY FINISHED NEXUS FRAME AFTER LITERAL DAYS (BLAME CEF)
-            //ServiceSingleton.Dashboard.LoadFrame<NolvusFrame>();
+            ServiceSingleton.Dashboard.LoadFrame<NolvusFrame>();
         }
 
         private async void BtnAuthenticate_Click(object? sender, RoutedEventArgs e)

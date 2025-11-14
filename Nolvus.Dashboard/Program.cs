@@ -25,6 +25,8 @@ internal static class Program
 {
 
     private static string? _cefCachePath;
+
+    public static bool DebugMode { get; private set; }
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<DashboardApp>()
                      .UsePlatformDetect()
@@ -93,6 +95,7 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        DebugMode = args.Contains("--debugging");
 
         var current = Process.GetCurrentProcess();
         var running = Process.GetProcessesByName(current.ProcessName);

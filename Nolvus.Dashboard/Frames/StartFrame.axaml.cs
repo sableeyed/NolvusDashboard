@@ -15,6 +15,7 @@ using Nolvus.Core.Enums;
 // using Nolvus.Dashboard.Frames.Installer;
 // using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Dashboard.Frames.Settings;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Nolvus.Dashboard.Frames
 {
@@ -32,17 +33,39 @@ namespace Nolvus.Dashboard.Frames
         {
             try
             {
+                //no ini file, proceed to Game setup + Nexus SSO + Nolvus auth
                 if (!File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashboard.ini")))
                 {
-                    Console.WriteLine("No Installation found - running install sequence");
                     ServiceSingleton.Dashboard.LoadFrame<GameFrame>();
                 }
-                else
+                else //valid ini file - proceed to install
                 {   
-                    var owner = TopLevel.GetTopLevel(this) as Window;
+                    ServiceSingleton.Logger.Log("Dashboard ini found");
+                    await CheckNolvus();
+                    await CheckForUpdates();
+                    await CheckNexus();
+
+                    var InstancesCheck = await CheckInstances();
+                    ServiceSingleton.Dashboard.EnableSettings();
+                    switch (InstancesCheck)
+                    {
+                        case InstanceCheck.NoInstance:
+                            ServiceSingleton.Logger.Log("Dashboard is ready to install");
+                            //await ServiceSingleton.Dashboard.LoadFrameAsync<SelectInstanceFrame>();; //Unimplemented
+                            break;
+                        case InstanceCheck.InstancesToResume:
+                            ServiceSingleton.Logger.Log("Dashboard is ready to resume");
+                            //ServiceSingleton.Dashboard.LoadFrame<ResumeFrame>();; //Uninmplemented
+                            break;
+                        case InstanceCheck.InstalledInstances:
+                            ServiceSingleton.Logger.Log("Dashboard ready to play");
+                            //ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>(); //Unimplemented
+                            break;
+                    }
+                    //var owner = TopLevel.GetTopLevel(this) as Window;
                     //Console.WriteLine("Unimpl StartFrame Exception");
                     //await NolvusMessageBox.Show(owner, "Error", "You have a .ini present but installation is not implemented", MessageBoxType.Error);
-                    await CheckNolvus();
+                    //await CheckNolvus();
                     // await CheckForUpdates();
                     // await CheckNexus();
 
@@ -54,6 +77,9 @@ namespace Nolvus.Dashboard.Frames
             {
                 ServiceSingleton.Logger.Log(ex.StackTrace);
             }
+            Console.WriteLine("Set no status and progress completed");
+            ServiceSingleton.Dashboard.NoStatus();
+            ServiceSingleton.Dashboard.ProgressCompleted();
 
         }
 
@@ -99,51 +125,36 @@ namespace Nolvus.Dashboard.Frames
 
                 throw new Exception("Error during Nolvus connection. The Nolvus web site may have issues currently. Original message : " + CaughtExeption + ")");
             }
-
-            // ServiceSingleton.Dashboard.Status("Connecting to Nolvus...");
-
-            // var url = ServiceSingleton.Globals.ApiUrl;
-            // var version = ServiceSingleton.Globals.ApiVersion;
-            // var user = ServiceSingleton.Globals.NolvusUserName;
-            // var pass = ServiceSingleton.Globals.NolvusPassword;
-
-            // if (string.IsNullOrEmpty(version) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
-            //     throw new Exception("Nolvus settings missing, please check your Nolvus settings!");
-
-            // ApiManager.Init(url, version, user, ServiceSingleton.Lib.DecryptString(pass));
-
-            // if (!await ApiManager.Service.Installer.Authenticate(user, ServiceSingleton.Lib.DecryptString(pass)))
-            //     throw new Exception("Invalid Nolvus credentials or account not activated!");
-
-            // ServiceSingleton.Dashboard.Progress(25);
         }
 
         private async Task CheckForUpdates()
         {
             ServiceSingleton.Dashboard.Status("Checking for updates...");
+            ServiceSingleton.Logger.Log("Checking for updates...");
+            ServiceSingleton.Logger.Log("StartFrame.CheckForUpdates: STUB");
 
-            var latest = await ApiManager.Service.Installer.GetLatestInstaller();
-            ServiceSingleton.Dashboard.Progress(50);
+            // var latest = await ApiManager.Service.Installer.GetLatestInstaller();
+            // ServiceSingleton.Dashboard.Progress(50);
 
-            if (ServiceSingleton.Dashboard.IsOlder(latest.Version))
-            {
-                // (We keep the updater logic exactly the same)
-                if (!ServiceSingleton.Updater.Installed ||
-                    !await ServiceSingleton.Updater.IsValid(latest.UpdaterHash) ||
-                    ServiceSingleton.Updater.IsOlder(latest.UpdaterVersion))
-                {
-                    await ServiceSingleton.Files.DownloadFile(latest.UpdaterLink,
-                        ServiceSingleton.Updater.UpdaterExe,
-                        (s, e) =>
-                        {
-                            ServiceSingleton.Dashboard.Status($"Downloading Updater ({e.ProgressPercentage}%)");
-                            ServiceSingleton.Dashboard.Progress(e.ProgressPercentage);
-                        });
-                }
+            // if (ServiceSingleton.Dashboard.IsOlder(latest.Version))
+            // {
+                
+            //     if (!ServiceSingleton.Updater.Installed ||
+            //         !await ServiceSingleton.Updater.IsValid(latest.UpdaterHash) ||
+            //         ServiceSingleton.Updater.IsOlder(latest.UpdaterVersion))
+            //     {
+            //         await ServiceSingleton.Files.DownloadFile(latest.UpdaterLink,
+            //             ServiceSingleton.Updater.UpdaterExe,
+            //             (s, e) =>
+            //             {
+            //                 ServiceSingleton.Dashboard.Status($"Downloading Updater ({e.ProgressPercentage}%)");
+            //                 ServiceSingleton.Dashboard.Progress(e.ProgressPercentage);
+            //             });
+            //     }
 
-                await ServiceSingleton.Updater.Launch();
-                ServiceSingleton.Dashboard.ShutDown();
-            }
+            //     await ServiceSingleton.Updater.Launch();
+            //     ServiceSingleton.Dashboard.ShutDown();
+            // }
         }
 
         private async Task CheckNexus()
@@ -175,21 +186,40 @@ namespace Nolvus.Dashboard.Frames
 
         private async Task<InstanceCheck> CheckInstances()
         {
-            ServiceSingleton.Dashboard.Status("Checking instances...");
-
-            ServiceSingleton.Instances.Load();
-
-            if (!ServiceSingleton.Instances.Empty)
+            try 
             {
-                if (!ServiceSingleton.Instances.CheckInstances(out var msg))
-                    throw new Exception(msg + " (Check InstancesData.xml)");
+                ServiceSingleton.Dashboard.Status("Checking instances...");
+                ServiceSingleton.Logger.Log("Checking instances...");
 
-                return ServiceSingleton.Instances.InstancesToResume.Count > 0
-                    ? InstanceCheck.InstancesToResume
-                    : InstanceCheck.InstalledInstances;
+                ServiceSingleton.Instances.Load();
+
+                if (!ServiceSingleton.Instances.Empty)
+                {
+                    var InstanceMessage = string.Empty;
+
+                    if (ServiceSingleton.Instances.CheckInstances(out InstanceMessage))
+                    {
+                        if (ServiceSingleton.Instances.InstancesToResume.Count > 0)
+                        {
+                            return InstanceCheck.InstancesToResume;
+                        }
+                        else
+                        {
+                            return InstanceCheck.InstalledInstances;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception(InstanceMessage + ".This can happen if you modified the file InstancesData.xml manually!");
+                    }
+                }
+                return InstanceCheck.NoInstance;
             }
-
-            return InstanceCheck.NoInstance;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw new Exception("Error during instance checking with error : " + ex.Message + ". Certainly due to a manual editing of the InstancesData.xml file!");
+            }
         }
     }
 }

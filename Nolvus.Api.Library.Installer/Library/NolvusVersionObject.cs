@@ -7,7 +7,7 @@ using System.Net;
 using System.Drawing;
 using SixLabors.ImageSharp;
 
-namespace Nolvus.Api.Installer.Library
+namespace Vcc.Nolvus.Api.Installer.Library
 {
     public interface INolvusVersionDTO : IInstallerApiDTO
     {

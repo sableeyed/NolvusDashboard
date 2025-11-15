@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Nolvus.Api.Installer.Token
+namespace Vcc.Nolvus.Api.Installer.Token
 {
     public class AuthenticationToken
     {

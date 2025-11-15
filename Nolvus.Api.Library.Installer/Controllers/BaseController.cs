@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nolvus.Api.Installer.Services;
+using Vcc.Nolvus.Api.Installer.Services;
 
-namespace Nolvus.Api.Installer.Controllers
+namespace Vcc.Nolvus.Api.Installer.Controllers
 {
     public class BaseController
     {

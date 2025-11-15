@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nolvus.Api.Installer.Core
+namespace Vcc.Nolvus.Api.Installer.Core
 {
     public class WebApiException : Exception
     {

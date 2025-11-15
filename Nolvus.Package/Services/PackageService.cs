@@ -15,7 +15,7 @@ using Nolvus.Core.Services;
 using Nolvus.Core.Misc;
 using Nolvus.Package.Mods;
 using Nolvus.Package.Errors;
-using Nolvus.Api.Installer.Library;
+using Vcc.Nolvus.Api.Installer.Library;
 
 namespace Nolvus.Package.Services
 {   

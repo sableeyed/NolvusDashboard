@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nolvus.Api.Installer.Library
+namespace Vcc.Nolvus.Api.Installer.Library
 {
     public interface IInstallPackageDTO : IInstallerApiDTO
     {

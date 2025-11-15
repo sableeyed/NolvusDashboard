@@ -8,11 +8,11 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
-using Nolvus.Api.Installer.Core;
-using Nolvus.Api.Installer.Controllers;
+using Vcc.Nolvus.Api.Installer.Core;
+using Vcc.Nolvus.Api.Installer.Controllers;
 
 
-namespace Nolvus.Api.Installer.Services
+namespace Vcc.Nolvus.Api.Installer.Services
 {
     public class ApiService : IApiService
     {

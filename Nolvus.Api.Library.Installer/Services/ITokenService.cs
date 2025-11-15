@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nolvus.Api.Installer.Services
+namespace Vcc.Nolvus.Api.Installer.Services
 {
     public interface ITokenService
     {

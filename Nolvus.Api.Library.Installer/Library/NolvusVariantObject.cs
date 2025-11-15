@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Drawing;
 
-namespace Nolvus.Api.Installer.Library
+namespace Vcc.Nolvus.Api.Installer.Library
 {
     public interface INolvusVariantDTO : IInstallerApiDTO
     {        

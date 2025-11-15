@@ -10,7 +10,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Media.TextFormatting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
-using Nolvus.Api.Installer.Library;
+using Vcc.Nolvus.Api.Installer.Library;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
 

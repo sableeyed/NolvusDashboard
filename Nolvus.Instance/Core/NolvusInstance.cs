@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Nolvus.Core.Enums;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
-using Nolvus.Api.Installer.Services;
-using Nolvus.Api.Installer.Library;
+using Vcc.Nolvus.Api.Installer.Services;
+using Vcc.Nolvus.Api.Installer.Library;
 
 namespace Nolvus.Instance.Core
 {    

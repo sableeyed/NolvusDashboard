@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Nolvus.Api.Installer.Controllers;
+using Vcc.Nolvus.Api.Installer.Controllers;
 
-namespace Nolvus.Api.Installer.Services
+namespace Vcc.Nolvus.Api.Installer.Services
 {
     public interface IApiService
     {

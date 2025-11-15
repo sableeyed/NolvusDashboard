@@ -4,6 +4,8 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>Vcc.Nolvus.Api.Installer</AssemblyName>
+    <RootNamespace>Vcc.Nolvus.Api.Installer</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

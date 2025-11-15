@@ -1,4 +1,4 @@
-using Nolvus.Api.Installer.Library;
+using Vcc.Nolvus.Api.Installer.Library;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
@@ -6,7 +6,7 @@ using Nolvus.Instance.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nolvus.Api.Installer.Services;
+using Vcc.Nolvus.Api.Installer.Services;
 using Nolvus.Core.Enums;
 using Nolvus.Dashboard.Core;
 using Nolvus.Components.Controls;
@@ -59,7 +59,7 @@ namespace Nolvus.Dashboard.Frames.Installer
             //NolvusListBox.Items = Source;
             NolvusListBox.SelectedIndex = InstanceIndex(Source);
 
-            PicLoading.IsVisible = false;
+            //PicLoading.IsVisible = false;
             NolvusListBox.IsVisible = true;
         }
 
@@ -83,32 +83,23 @@ namespace Nolvus.Dashboard.Frames.Installer
             }
         }
 
-         private void LoadLanguages()
-        {           
-            List<LgCode> LgList = new List<LgCode>();
+        private void LoadLanguages()
+        {
+            var languages = new List<LgCode>
+            {
+                new LgCode { Code = "EN", Name = "English" },
+                new LgCode { Code = "FR", Name = "French" },
+                new LgCode { Code = "IT", Name = "Italian" },
+                new LgCode { Code = "DE", Name = "German" },
+                new LgCode { Code = "ES", Name = "Spanish" },
+                new LgCode { Code = "RU", Name = "Russian" },
+                new LgCode { Code = "PL", Name = "Polish" },
+            };
 
-            LgCode Lg1 = new LgCode { Code = "EN", Name = "English" };
-            LgCode Lg2 = new LgCode { Code = "FR", Name = "French" };
-            LgCode Lg3 = new LgCode { Code = "IT", Name = "Italian" };
-            LgCode Lg4 = new LgCode { Code = "DE", Name = "German" };
-            LgCode Lg5 = new LgCode { Code = "ES", Name = "Spanish" };
-            LgCode Lg6 = new LgCode { Code = "RU", Name = "Russian" };
-            LgCode Lg7 = new LgCode { Code = "PL", Name = "Polish" };
+            DrpDwnLg.ItemsSource = languages;
+            DrpDwnLg.SelectedIndex = 0;
+}
 
-            LgList.Add(Lg1);
-            LgList.Add(Lg2);
-            LgList.Add(Lg3);
-            LgList.Add(Lg4);
-            LgList.Add(Lg5);
-            LgList.Add(Lg6);
-            LgList.Add(Lg7);
-
-            //DrpDwnLg.DataSource = LgList;
-            //DrpDwnLg.DisplayMember = "Name";
-            //DrpDwnLg.ValueMember = "Code";
-
-            DrpDwnLg.SelectedIndex = LgIndex(LgList);            
-        }
 
         protected override async Task OnLoadedAsync()
         {

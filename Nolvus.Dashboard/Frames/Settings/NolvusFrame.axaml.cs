@@ -3,7 +3,7 @@ using Nolvus.Core.Frames;
 using Nolvus.Core.Services;
 using Nolvus.Core.Interfaces;
 using Nolvus.Dashboard.Core;
-using Nolvus.Api.Installer.Services;
+using Vcc.Nolvus.Api.Installer.Services;
 using System;
 using System.IO;
 using System.Threading.Tasks;

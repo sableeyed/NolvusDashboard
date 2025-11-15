@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nolvus.Api.Installer;
-using Nolvus.Api.Installer.Library;
+using Vcc.Nolvus.Api.Installer;
+using Vcc.Nolvus.Api.Installer.Library;
 
-namespace Nolvus.Api.Installer.Controllers
+namespace Vcc.Nolvus.Api.Installer.Controllers
 {
     public interface IInstallerController    
     {        

@@ -14,7 +14,7 @@ using Nolvus.Package.Services;
 using Nolvus.Instance.Services;
 using System.Net.Security;
 using System.Security.Authentication;
-using Nolvus.Api.Installer.Core;
+using Vcc.Nolvus.Api.Installer.Core;
 using System.Diagnostics;
 using System.Reflection;
 using Xilium.CefGlue;

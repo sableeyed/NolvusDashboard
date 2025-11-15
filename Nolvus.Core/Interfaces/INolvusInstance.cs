@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nolvus.Api.Installer.Library;
+using Vcc.Nolvus.Api.Installer.Library;
 
 namespace Nolvus.Core.Interfaces
 {

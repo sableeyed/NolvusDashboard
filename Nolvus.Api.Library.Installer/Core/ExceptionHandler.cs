@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json;
 
-namespace Nolvus.Api.Installer.Core
+namespace Vcc.Nolvus.Api.Installer.Core
 {
     public class ApiException
     {

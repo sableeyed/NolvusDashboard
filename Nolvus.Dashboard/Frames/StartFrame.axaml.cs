@@ -12,8 +12,8 @@ using Nolvus.Api.Installer.Services;
 using Nolvus.Package.Conditions;
 using Nolvus.Dashboard.Controls;
 using Nolvus.Core.Enums;
-// using Nolvus.Dashboard.Frames.Installer;
-// using Nolvus.Dashboard.Frames.Instance;
+using Nolvus.Dashboard.Frames.Installer;
+//using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Dashboard.Frames.Settings;
 using System.Diagnostics.CodeAnalysis;
 
@@ -40,6 +40,9 @@ namespace Nolvus.Dashboard.Frames
                 }
                 else //valid ini file - proceed to install
                 {   
+                    //make titlebar picture visible
+                    var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+                    window?.SetAccountImageVisible(true);
                     ServiceSingleton.Logger.Log("Dashboard ini found");
                     await CheckNolvus();
                     await CheckForUpdates();
@@ -51,7 +54,7 @@ namespace Nolvus.Dashboard.Frames
                     {
                         case InstanceCheck.NoInstance:
                             ServiceSingleton.Logger.Log("Dashboard is ready to install");
-                            //await ServiceSingleton.Dashboard.LoadFrameAsync<SelectInstanceFrame>();; //Unimplemented
+                            await ServiceSingleton.Dashboard.LoadFrameAsync<SelectInstanceFrame>();; //Unimplemented
                             break;
                         case InstanceCheck.InstancesToResume:
                             ServiceSingleton.Logger.Log("Dashboard is ready to resume");

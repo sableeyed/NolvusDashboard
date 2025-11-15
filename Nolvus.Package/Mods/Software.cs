@@ -35,7 +35,7 @@ namespace Nolvus.Package.Mods
             {
                 foreach (XmlNode RuleNode in RulesNode.ChildNodes.Cast<XmlNode>().ToList())
                 {
-                    Rule Rule = Activator.CreateInstance(Type.GetType("Vcc.Nolvus.Package.Rules." + RuleNode["Type"].InnerText)) as Rule;
+                    Rule Rule = Activator.CreateInstance(Type.GetType("Nolvus.Package.Rules." + RuleNode["Type"].InnerText)) as Rule;
 
                     Rule.Load(RuleNode);
 

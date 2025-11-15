@@ -304,5 +304,11 @@ namespace Nolvus.Components.Controls
             MaxButton.FontSize = 14 * scale;
             CloseButton.FontSize = 14 * scale;
         }
+
+        public void EnableAccountImage(bool value)
+        {
+            Console.WriteLine("Titlebar toggling image");
+            AccountImage.IsVisible = value;
+        }
     }
 }

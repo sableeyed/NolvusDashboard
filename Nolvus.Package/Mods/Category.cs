@@ -44,7 +44,7 @@ namespace Nolvus.Package.Mods
 
             foreach (XmlNode ModNode in Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "Mods").FirstOrDefault().ChildNodes.Cast<XmlNode>().ToList())
             {
-                Mod Mod = Activator.CreateInstance(Type.GetType("Vcc.Nolvus.Package.Mods." + ModNode["Type"].InnerText)) as Mod;
+                Mod Mod = Activator.CreateInstance(Type.GetType("Nolvus.Package.Mods." + ModNode["Type"].InnerText)) as Mod;
 
                 Mod.Category = this;
                 Mod.Load(ModNode, Elements);                

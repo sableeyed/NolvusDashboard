@@ -108,7 +108,7 @@ namespace Nolvus.Package.Mods
 
             foreach (XmlNode FileNode in Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "Files").FirstOrDefault().ChildNodes.Cast<XmlNode>().ToList())
             {
-                ModFile File = Activator.CreateInstance(Type.GetType("Vcc.Nolvus.Package.Files." + FileNode["Type"].InnerText)) as ModFile;
+                ModFile File = Activator.CreateInstance(Type.GetType("Nolvus.Package.Files." + FileNode["Type"].InnerText)) as ModFile;
 
                 File.Load(FileNode, this);
                                                 

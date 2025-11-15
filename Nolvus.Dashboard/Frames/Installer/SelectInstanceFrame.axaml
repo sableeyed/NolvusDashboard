@@ -1,0 +1,101 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.SelectInstanceFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Nolvus.Dashboard.Frames.Installer">
+
+    <Border 
+        Padding="32"
+        Background="#2E2E2E">
+
+        <Grid RowDefinitions="Auto,*,Auto"
+              RowSpacing="24">
+
+            <!-- Header -->
+            <TextBlock Text="Select Nolvus Instance"
+                       Foreground="White"
+                       FontSize="20"
+                       FontWeight="SemiBold" />
+
+            <!-- Content -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="2*,16,*"
+                  RowDefinitions="*"
+                  ColumnSpacing="16">
+
+                <!-- Left: Instances list -->
+                <Grid>
+                    <!-- Loading overlay -->
+                    <Image x:Name="PicLoading"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           IsVisible="True"
+                           Opacity="0.8" />
+
+                    <ListBox x:Name="NolvusListBox"
+                             Margin="0"
+                             IsVisible="False"
+                             SelectionMode="Single"
+                             Background="#363636"
+                             BorderBrush="#444"
+                             Foreground="White">
+                    </ListBox>
+                </Grid>
+
+                <!-- Right: Language & info -->
+                <StackPanel Grid.Column="2"
+                            Orientation="Vertical"
+                            Spacing="16"
+                            VerticalAlignment="Top">
+
+                    <TextBlock Text="Language"
+                               Foreground="White"
+                               FontSize="16" />
+
+                    <ComboBox x:Name="DrpDwnLg"
+                              Background="#363636"
+                              Foreground="White"
+                              BorderBrush="#444"
+                              MinWidth="200"
+                              HorizontalAlignment="Left"
+                              SelectedIndex="0" />
+
+                    <TextBlock Text="Choose the Nolvus instance and language you want to install."
+                               Foreground="#CCCCCC"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Bottom Buttons -->
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Spacing="8">
+
+                    <Button x:Name="BtnCancel"
+                            Content="Cancel"
+                            MinWidth="120"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Background="#363636"
+                            Foreground="White" />
+
+                    <Button x:Name="BtnContinue"
+                            Content="Next"
+                            MinWidth="120"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Background="#F28F1A"
+                            Foreground="Black" />
+                </StackPanel>
+            </Grid>
+
+        </Grid>
+
+    </Border>
+</UserControl>

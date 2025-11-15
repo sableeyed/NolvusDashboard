@@ -273,6 +273,12 @@ public partial class DashboardWindow : Window, IDashboard
         TitleBarControl.SetAccountImage(Image);
     }
 
+    public void SetAccountImageVisible(bool visible)
+    {
+        Console.WriteLine("Dashboard window requesting to set image visible");
+        TitleBarControl.EnableAccountImage(visible);
+    }
+
     public void Status(string Value)
     {
         if (!Dispatcher.UIThread.CheckAccess())
@@ -534,7 +540,8 @@ public partial class DashboardWindow : Window, IDashboard
             TitleBarControl.SetAppIcon(new Bitmap(logo));
         }
 
-        //LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
+        LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
+        TitleBarControl.EnableAccountImage(false);
 
         //ProgressBar.Value = 0;
         //ProgressBar.Maximum = 100;

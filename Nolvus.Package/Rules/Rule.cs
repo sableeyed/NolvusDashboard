@@ -32,7 +32,7 @@ namespace Nolvus.Package.Rules
             {
                 foreach (XmlNode ConditionNode in ConditionsNode.ChildNodes.Cast<XmlNode>().ToList())
                 {
-                    RuleCondition Condition = Activator.CreateInstance(Type.GetType("Vcc.Nolvus.Package.Conditions." + ConditionNode["Type"].InnerText)) as RuleCondition;
+                    RuleCondition Condition = Activator.CreateInstance(Type.GetType("Nolvus.Package.Conditions." + ConditionNode["Type"].InnerText)) as RuleCondition;
 
                     Condition.Load(ConditionNode);
 

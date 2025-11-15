@@ -226,7 +226,7 @@ namespace Nolvus.Package.Services
 
                     foreach (XmlNode SoftNode in SoftwaresNode)
                     {
-                        Software Soft = Activator.CreateInstance(Type.GetType("Vcc.Nolvus.Package.Mods." + SoftNode["Type"].InnerText)) as Software;
+                        Software Soft = Activator.CreateInstance(Type.GetType("Nolvus.Package.Mods." + SoftNode["Type"].InnerText)) as Software;
 
                         Soft.Load(SoftNode, Elements);                        
 

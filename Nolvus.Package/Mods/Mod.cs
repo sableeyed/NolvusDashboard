@@ -80,7 +80,7 @@ namespace Nolvus.Package.Mods
             {
                 foreach (XmlNode RuleNode in RulesNode.ChildNodes.Cast<XmlNode>().ToList())
                 {
-                    Rule Rule = Activator.CreateInstance(Type.GetType("Vcc.Nolvus.Package.Rules." + RuleNode["Type"].InnerText)) as Rule;
+                    Rule Rule = Activator.CreateInstance(Type.GetType("Nolvus.Package.Rules." + RuleNode["Type"].InnerText)) as Rule;
 
                     Rule.Load(RuleNode);
 
@@ -100,7 +100,7 @@ namespace Nolvus.Package.Mods
             {
                 foreach (XmlNode InstallConditionNode in InstallConditionsNode.ChildNodes.Cast<XmlNode>().ToList())
                 {
-                    InstallCondition InstallCondition = Activator.CreateInstance(Type.GetType("Vcc.Nolvus.Package.Conditions." + InstallConditionNode["Type"].InnerText)) as InstallCondition;
+                    InstallCondition InstallCondition = Activator.CreateInstance(Type.GetType("Nolvus.Package.Conditions." + InstallConditionNode["Type"].InnerText)) as InstallCondition;
 
                     InstallCondition.Load(InstallConditionNode);
 

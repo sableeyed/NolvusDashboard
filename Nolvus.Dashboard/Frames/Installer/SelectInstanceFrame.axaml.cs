@@ -10,6 +10,16 @@ using Vcc.Nolvus.Api.Installer.Services;
 using Nolvus.Core.Enums;
 using Nolvus.Dashboard.Core;
 using Nolvus.Components.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.VisualTree;
+using Nolvus.Package.Mods;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp;
+using Avalonia.Threading;
+using Nolvus.Dashboard.Controls;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -22,9 +32,9 @@ namespace Nolvus.Dashboard.Frames.Installer
 
 
             //UI Components
-            //BtnContinue.Click += BtnCancel_Click;
+            BtnContinue.Click += BtnContinue_Click;
             //BtnCancel.Click += BtnCancel_Click;
-            NolvusListBox.SelectionChanged += NolvusListBox_SelectedIndexChanged;
+            NolvusListBox.SelectionChanged += NolvusListBox_SelectionChanged;
         }
 
         private int InstanceIndex(IEnumerable<INolvusVersionDTO> Versions)
@@ -40,43 +50,47 @@ namespace Nolvus.Dashboard.Frames.Installer
             return 0;
         }
 
-        private int LgIndex(List<LgCode> Lgs)
-        {
-            INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
-
-            if (Instance != null)
-            {
-                var Index = Lgs.FindIndex(x => x.Code == Instance.Settings.LgCode);
-
-                return Index == -1 ? 0 : Index;
-            }
-
-            return 0;            
-        }
-
-        private void SetDataSource(IEnumerable<INolvusVersionDTO> Source)
-        {
-            //NolvusListBox.Items = Source;
-            NolvusListBox.SelectedIndex = InstanceIndex(Source);
-
-            //PicLoading.IsVisible = false;
-            NolvusListBox.IsVisible = true;
-        }
-
         private async Task LoadAvailableLists(IEnumerable<INolvusVersionDTO> Lists)
         {
-            var materialized = Lists.Select(x =>
+            var items = await Task.Run(() =>
             {
-                x.ImageObject = ServiceSingleton.Lib.SetImageOpacity(ServiceSingleton.Lib.GetImageFromUrl(x.Image), 0.50F);
-                return x;
-            }).ToList();
+                return Lists.Select(dto =>
+                {
+                    try
+                    {
+                        var img = ServiceSingleton.Lib.GetImageFromUrl(dto.Image);
+                        dto.ImageObject = img;
 
-            SetDataSource(materialized);
-            await Task.CompletedTask;
+                        if (img != null)
+                        {
+                            //OOP
+                            //img.Mutate(ctx => ctx.Resize(new SixLabors.ImageSharp.Size(220, 180)));
+                            using var ms = new MemoryStream();
+                            img.Save(ms, new PngEncoder());
+                            ms.Position = 0;
+
+                            dto.AvaloniaImage = new Bitmap(ms);
+                        }
+                        else
+                        {
+                            dto.AvaloniaImage = null;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dto.AvaloniaImage = null;
+                    }
+                    return dto;
+                }).ToList();
+            });
+            NolvusListBox.ItemsSource = items;
+            NolvusListBox.IsVisible = true;
         }
 
         private void SwitchInstance(INolvusVersionDTO NolvusInstance)
         {
+            if (NolvusInstance == null)
+                return; //They have not installed yet?
             if (ServiceSingleton.Instances.WorkingInstance == null || ServiceSingleton.Instances.WorkingInstance.Name != NolvusInstance.Name)
             {
                 ServiceSingleton.Instances.WorkingInstance = new NolvusInstance(NolvusInstance);                
@@ -97,8 +111,13 @@ namespace Nolvus.Dashboard.Frames.Installer
             };
 
             DrpDwnLg.ItemsSource = languages;
-            DrpDwnLg.SelectedIndex = 0;
-}
+            var inst = ServiceSingleton.Instances.WorkingInstance;
+
+            if (inst != null)
+                DrpDwnLg.SelectedItem = languages.FirstOrDefault(x => x.Code == inst.Settings.LgCode) ?? languages[0];
+            else
+                DrpDwnLg.SelectedIndex = 0;
+        }
 
 
         protected override async Task OnLoadedAsync()
@@ -116,7 +135,7 @@ namespace Nolvus.Dashboard.Frames.Installer
 
                 SwitchInstance(NolvusListBox.SelectedItem as INolvusVersionDTO);
 
-                //NolvusListBox.SelectedIndexChanged += NolvusListBox_SelectedIndexChanged;                
+                //NolvusListBox.SelectionChanged += NolvusListBox_SelectedIndexChanged;                
             }
             catch (Exception ex)
             {
@@ -124,43 +143,78 @@ namespace Nolvus.Dashboard.Frames.Installer
             }
         }
 
-        private void BtnContinue_Click(object sender, EventArgs e)
+        private async void BtnContinue_Click(object? sender, EventArgs e)
         {
-            // INolvusVersionDTO InstanceToInstall = NolvusListBox.SelectedItem as INolvusVersionDTO;
+            var owner = TopLevel.GetTopLevel(this) as Window;
 
-            // if (InstanceToInstall.Maintenance)
-            // {
-            //     NolvusMessageBox.ShowMessage("Maintenance", "The nolvus instance " + InstanceToInstall.Name + " is under maintenance. Unable to install.", MessageBoxType.Error);
-            // }
-            // else
-            // {
-            //     if (ServiceSingleton.Instances.InstanceExists(InstanceToInstall.Name))
-            //     {
-            //         NolvusMessageBox.ShowMessage("Invalid Instance", "The nolvus instance " + InstanceToInstall.Name + " is already installed!", MessageBoxType.Error);
-            //     }
-            //     else
-            //     {
-            //         if (!InstanceToInstall.IsBeta || NolvusMessageBox.ShowConfirmation("Disclaimer", string.Format("{0} is in BETA state.\n\n\nDon't Install it if :\n\n- You are expecting the full polished version.\n\n- You want to do a full playthrough.\n\n\nInstall it only if :\n\n- You want to help us reporting bugs.\n\n- You want to give us some feedbacks.\n\n\nDo you want to continue?", InstanceToInstall.Name), 390, 470) == DialogResult.Yes)
-            //         {
-            //             INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
+            var InstanceToInstall = NolvusListBox.SelectedItem as INolvusVersionDTO;
+            if (InstanceToInstall == null || owner == null)
+                return;
 
-            //             WorkingInstance.Settings.LgCode = (DrpDwnLg.SelectedItem as LgCode).Code;
-            //             WorkingInstance.Settings.LgName = (DrpDwnLg.SelectedItem as LgCode).Name;
+            if (InstanceToInstall.Maintenance)
+            {
+                await NolvusMessageBox.Show(
+                    owner,
+                    "Maintenance",
+                    $"The nolvus instance {InstanceToInstall.Name} is under maintenance. Unable to install.",
+                    MessageBoxType.Error
+                );
+                return;
+            }
 
-            //             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
-            //         }
-            //     }
-            // }
-        }  
+            if (ServiceSingleton.Instances.InstanceExists(InstanceToInstall.Name))
+            {
+                await NolvusMessageBox.Show(
+                    owner,
+                    "Invalid Instance",
+                    $"The nolvus instance {InstanceToInstall.Name} is already installed!",
+                    MessageBoxType.Error
+                );
+                return;
+            }
+
+            bool continueInstall = true;
+
+            if (InstanceToInstall.IsBeta)
+            {
+                var result = await NolvusMessageBox.ShowConfirmation(
+                    owner,
+                    "Disclaimer",
+                    string.Format(
+                        "{0} is in BETA state.\n\n\nDon't Install it if :\n\n- You are expecting the full polished version.\n\n- You want to do a full playthrough.\n\n\nInstall it only if :\n\n- You want to help us reporting bugs.\n\n- You want to give us some feedbacks.\n\n\nDo you want to continue?",
+                        InstanceToInstall.Name),
+                    390,
+                    470
+                );
+
+                continueInstall = (result == true);
+            }
+
+            if (!continueInstall)
+                return;
+
+            var WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
+            if (WorkingInstance != null)
+            {
+                if (DrpDwnLg.SelectedItem is LgCode selectedLg)
+                {
+                    WorkingInstance.Settings.LgCode = selectedLg.Code;
+                    WorkingInstance.Settings.LgName = selectedLg.Name;
+                }
+            }
+            //ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
+            ServiceSingleton.Logger.Log("Load Frame: Path Frame unimplemented");
+        } 
 
         // private void BtnCancel_Click(object sender, EventArgs e)
         // {
         //     ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
         // }
 
-        private void NolvusListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void NolvusListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             SwitchInstance(NolvusListBox.SelectedItem as INolvusVersionDTO);            
-        }          
+        }    
+
     }
 }

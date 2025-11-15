@@ -203,7 +203,7 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // this.ProgressBar.Maximum = Value;
+        //DashboardProgressBar.Maximum = Value;
     }
 
     public void Title(string Value)
@@ -312,8 +312,8 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        // this.ProgressBar.Visible = true;
-        // this.ProgressBar.Value = true;
+        //DashboardProgressBar.IsVisible = true;
+        //DashboardProgressBar.Value = Value;
     }
 
     public void ProgressCompleted()
@@ -543,11 +543,11 @@ public partial class DashboardWindow : Window, IDashboard
         LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
         TitleBarControl.EnableAccountImage(false);
 
-        //ProgressBar.Value = 0;
-        //ProgressBar.Maximum = 100;
+        //DashboardProgressBar.Value = 0;
+        //DashboardProgressBar.Maximum = 100;
 
         StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
-        DashboardProgressBar.IsVisible = false;
+        //DashboardProgressBar.IsVisible = false;
         LblStatus.IsVisible = false;
 
         //Nolvus.Browser.Browser.InitCefIfNeeded("/tmp/nolvus_cef_cache");

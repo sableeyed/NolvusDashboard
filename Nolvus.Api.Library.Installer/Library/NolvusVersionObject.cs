@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
-using System.Drawing;
 using SixLabors.ImageSharp;
+using Avalonia.Media.Imaging;
 
 namespace Vcc.Nolvus.Api.Installer.Library
 {
@@ -33,6 +33,8 @@ namespace Vcc.Nolvus.Api.Installer.Library
         bool IsBeta { get;}
         string Image { get; }
         Image ImageObject { get; set; }
+
+        Bitmap AvaloniaImage { get; set; }
 
         bool Maintenance { get; set; }
     }
@@ -68,5 +70,7 @@ namespace Vcc.Nolvus.Api.Installer.Library
     {        
         public string Id { get; set; }
         public Image ImageObject { get; set; }
+
+        public Bitmap AvaloniaImage { get; set ;}
     }
 }

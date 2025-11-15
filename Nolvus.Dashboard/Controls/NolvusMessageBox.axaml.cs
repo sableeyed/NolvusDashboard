@@ -11,6 +11,7 @@ namespace Nolvus.Dashboard.Controls
     public partial class NolvusMessageBox : Window
     {
         private TaskCompletionSource<bool?> _tcs;
+        private bool? _dialogResult = null;
 
         public NolvusMessageBox(string title, string message, MessageBoxType type)
         {
@@ -26,9 +27,15 @@ namespace Nolvus.Dashboard.Controls
             BtnNo.IsVisible = type == MessageBoxType.Question;
 
             BtnOK.Click += (_, __) => Close(true);
-            BtnYes.Click += (_, __) => Close(true);
-            BtnNo.Click += (_, __) => Close(false);
+            BtnYes.Click += (_, __) => CloseWithResult(true);
+            BtnNo.Click += (_, __) => CloseWithResult(false);
            
+        }
+
+        public void CloseWithResult(bool? result)
+        {
+            _dialogResult = result;
+            Close(result);
         }
 
         public void SetIcon(MessageBoxType type)
@@ -56,6 +63,23 @@ namespace Nolvus.Dashboard.Controls
         public static async Task<bool?> Show(Window owner, string title, string message, MessageBoxType type)
         {
             var msgBox = new NolvusMessageBox(title, message, type);
+            return await msgBox.ShowDialog<bool?>(owner);
+        }
+
+        public static async Task<bool?> ShowConfirmation(Window owner, string title, string message)
+        {
+            var msgBox = new NolvusMessageBox(title, message, MessageBoxType.Question);
+            return await msgBox.ShowDialog<bool?>(owner);
+        }
+
+        public static async Task<bool?> ShowConfirmation(Window owner, string title, string message, int height, int width)
+        {
+            var msgBox = new NolvusMessageBox(title, message, MessageBoxType.Question)
+            {
+                Height = height,
+                Width = width
+            };
+
             return await msgBox.ShowDialog<bool?>(owner);
         }
     }

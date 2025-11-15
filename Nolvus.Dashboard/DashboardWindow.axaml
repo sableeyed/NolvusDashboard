@@ -1,9 +1,9 @@
 <Window
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
-    xmlns:primitives="clr-namespace:Avalonia.Controls.Primitives;assembly=Avalonia.Controls"
-    xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
+	xmlns:primitives="clr-namespace:Avalonia.Controls.Primitives;assembly=Avalonia.Controls"
+	xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
     x:Class="Nolvus.Dashboard.DashboardWindow"
     Width="1200" Height="800"
     CanResize="True"
@@ -12,150 +12,118 @@
     ExtendClientAreaTitleBarHeightHint="50"
     Background="#363636"
     PointerPressed="Window_PointerPressed">
-
-  <Window.Resources>
-    <SolidColorBrush x:Key="AccentBrush" Color="#F28F1A"/>
-  </Window.Resources>
-
-  <Window.Styles>
-
-    <Style Selector="TextBlock.primary">
-      <Setter Property="Foreground"  Value="White"/>
-      <Setter Property="FontWeight"  Value="Medium"/>
-    </Style>
-
-    <Style Selector="TextBlock.secondary">
-      <Setter Property="Foreground" Value="#CCCCCC"/>
-    </Style>
-
-    <!-- Thumb styling -->
-    <Style Selector="Slider.accent /template/ primitives|Thumb">
-      <Setter Property="Background"     Value="#F28F1A"/>
-      <Setter Property="BorderBrush"    Value="White"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius"   Value="8"/>
-    </Style>
-
-    <Style Selector="Slider.accent:pointerover /template/ primitives|Thumb">
-      <Setter Property="Background" Value="#FFAA3A"/>
-    </Style>
-
-    <Style Selector="Slider.accent:pressed /template/ primitives|Thumb">
-      <Setter Property="Background" Value="#D97706"/>
-    </Style>
-
-    <!-- Extra inner-border support -->
-    <Style Selector="Slider.accent /template/ primitives|Thumb Border">
-      <Setter Property="Background"   Value="#F28F1A"/>
-      <Setter Property="CornerRadius" Value="8"/>
-    </Style>
-
-    <Style Selector="Slider.accent:pointerover /template/ primitives|Thumb Border">
-      <Setter Property="Background" Value="#FFAA3A"/>
-    </Style>
-
-    <Style Selector="Slider.accent:pressed /template/ primitives|Thumb Border">
-      <Setter Property="Background" Value="#D97706"/>
-    </Style>
-
-    <!-- Fill -->
-    <Style Selector="Slider.accent /template/ RepeatButton#PART_DecreaseButton">
-      <Setter Property="Background" Value="#F28F1A"/>
-      <Setter Property="BorderBrush" Value="Transparent"/>
-      <Setter Property="CornerRadius" Value="3"/>
-      <Setter Property="Height" Value="6"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-    </Style>
-
-    <!-- Track -->
-    <Style Selector="Slider.accent /template/ RepeatButton#PART_IncreaseButton">
-      <Setter Property="Background" Value="#3A3A3A"/>
-      <Setter Property="BorderBrush" Value="Transparent"/>
-      <Setter Property="CornerRadius" Value="3"/>
-      <Setter Property="Height" Value="6"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-    </Style>
-
-  </Window.Styles>
-
-  <LayoutTransformControl x:Name="RootScaleHost">
-    <LayoutTransformControl.LayoutTransform>
-      <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>          
-    </LayoutTransformControl.LayoutTransform>
-
-    <Border Background="#363636">
-      <Grid RowDefinitions="Auto,*,Auto,Auto">
-
-        <!-- TITLE BAR -->
-        <Grid Grid.Row="0" Background="#363636" Height="50">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-          </Grid.ColumnDefinitions>
-
-          <controls:TitleBarControl x:Name="TitleBarControl"
+	<Window.Resources>
+		<SolidColorBrush x:Key="AccentBrush" Color="#F28F1A"/>
+	</Window.Resources>
+	<Window.Styles>
+		<Style Selector="TextBlock.primary">
+			<Setter Property="Foreground"  Value="White"/>
+			<Setter Property="FontWeight"  Value="Medium"/>
+		</Style>
+		<Style Selector="TextBlock.secondary">
+			<Setter Property="Foreground" Value="#CCCCCC"/>
+		</Style>
+		<!-- Thumb styling -->
+		<Style Selector="Slider.accent /template/ primitives|Thumb">
+			<Setter Property="Background"     Value="#F28F1A"/>
+			<Setter Property="BorderBrush"    Value="White"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="CornerRadius"   Value="8"/>
+		</Style>
+		<Style Selector="Slider.accent:pointerover /template/ primitives|Thumb">
+			<Setter Property="Background" Value="#FFAA3A"/>
+		</Style>
+		<Style Selector="Slider.accent:pressed /template/ primitives|Thumb">
+			<Setter Property="Background" Value="#D97706"/>
+		</Style>
+		<!-- Extra inner-border support -->
+		<Style Selector="Slider.accent /template/ primitives|Thumb Border">
+			<Setter Property="Background"   Value="#F28F1A"/>
+			<Setter Property="CornerRadius" Value="8"/>
+		</Style>
+		<Style Selector="Slider.accent:pointerover /template/ primitives|Thumb Border">
+			<Setter Property="Background" Value="#FFAA3A"/>
+		</Style>
+		<Style Selector="Slider.accent:pressed /template/ primitives|Thumb Border">
+			<Setter Property="Background" Value="#D97706"/>
+		</Style>
+		<!-- Fill -->
+		<Style Selector="Slider.accent /template/ RepeatButton#PART_DecreaseButton">
+			<Setter Property="Background" Value="#F28F1A"/>
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<Setter Property="CornerRadius" Value="3"/>
+			<Setter Property="Height" Value="6"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
+		<!-- Track -->
+		<Style Selector="Slider.accent /template/ RepeatButton#PART_IncreaseButton">
+			<Setter Property="Background" Value="#3A3A3A"/>
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<Setter Property="CornerRadius" Value="3"/>
+			<Setter Property="Height" Value="6"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
+	</Window.Styles>
+	<LayoutTransformControl x:Name="RootScaleHost">
+		<LayoutTransformControl.LayoutTransform>
+			<ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+		</LayoutTransformControl.LayoutTransform>
+		<Border Background="#363636">
+			<Grid RowDefinitions="Auto,*,Auto,Auto">
+				<!-- TITLE BAR -->
+				<Grid Grid.Row="0" Background="#363636" Height="50">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+					<controls:TitleBarControl x:Name="TitleBarControl"
                                     Grid.Column="0"
                                     VerticalAlignment="Center"
                                     Margin="6,0"/>
-        </Grid>
-
-        <!-- MAIN CONTENT HOST -->
-        <!-- <Border Grid.Row="1" Margin="0,0,0,32" Background="#2E2E2E">
-          <StackPanel>
-            <TextBlock x:Name="LblStatus" Classes="primary" Text="Initializing..." FontSize="14" Margin="12,8,0,8"/>
-            <ContentPresenter x:Name="ContentHost"/>
-          </StackPanel>
-        </Border> -->
-
-        <!-- MAIN CONTENT HOST -->
-<Border Grid.Row="1" Background="#2E2E2E">
-  <Grid RowDefinitions="Auto,*">
-    
-    <!-- Status Label -->
-    <TextBlock x:Name="LblStatus"
+				</Grid>
+				<!-- MAIN CONTENT HOST -->
+				<!-- <Border Grid.Row="1" Margin="0,0,0,32" Background="#2E2E2E"><StackPanel><TextBlock x:Name="LblStatus" Classes="primary" Text="Initializing..." FontSize="14" Margin="12,8,0,8"/><ContentPresenter x:Name="ContentHost"/></StackPanel></Border> -->
+				<!-- MAIN CONTENT HOST -->
+				<Border Grid.Row="1" Background="#2E2E2E">
+					<Grid RowDefinitions="Auto,*">
+						<!-- Status Label -->
+						<TextBlock x:Name="LblStatus"
                Classes="primary"
                Text="Initializing..."
                FontSize="14"
                Margin="12,8,0,8"
                IsVisible="False"/>
-
-    <!-- Frame Content -->
-    <ContentPresenter x:Name="ContentHost"
+						<!-- Frame Content -->
+						<ContentPresenter x:Name="ContentHost"
                       Grid.Row="1"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"/>
-
-  </Grid>
-</Border>
-
-
-        <ProgressBar x:Name="DashboardProgressBar"
+					</Grid>
+				</Border>
+				<!-- <ProgressBar x:Name="DashboardProgressBar"
                      Grid.Row="2"
                      Minimum="0"
                      Maximum="100"
                      Height="6"
                      Background="#222"
-                     Foreground="{StaticResource AccentBrush}"/>
-
-        <!-- STATUS STRIP -->
-        <Border Grid.Row="3" Background="#2C2C2C" MinHeight="36">
-          <DockPanel LastChildFill="False">
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="8,0" VerticalAlignment="Center">
-              <TextBlock x:Name="StStripLblInfo" Classes="primary" IsVisible="False" Margin="0,0,12,0"/>
-              <TextBlock x:Name="StStripLblAdditionalInfo"  Classes="primary" Margin="0,0,12,0"/>
-              <TextBlock x:Name="StStripLblAdditionalInfo2" Classes="primary" Margin="0,0,12,0"/>
-              <TextBlock x:Name="StStripLblAdditionalInfo3" Classes="primary"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0" VerticalAlignment="Center" Spacing="16">
-              <TextBlock x:Name="StripLblAccountType" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
-              <TextBlock x:Name="StripLblNexus" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
-
-              <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
-                <Grid VerticalAlignment="Center">
-                  <Slider x:Name="ScalingSlider"
+                     Foreground="{StaticResource AccentBrush}"/> -->
+				<!-- STATUS STRIP -->
+				<Border Grid.Row="3" Background="#2C2C2C" MinHeight="36">
+					<DockPanel LastChildFill="False">
+						<StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="8,0" VerticalAlignment="Center">
+							<TextBlock x:Name="StStripLblInfo" Classes="primary" IsVisible="False" Margin="0,0,12,0"/>
+							<TextBlock x:Name="StStripLblAdditionalInfo"  Classes="primary" Margin="0,0,12,0"/>
+							<TextBlock x:Name="StStripLblAdditionalInfo2" Classes="primary" Margin="0,0,12,0"/>
+							<TextBlock x:Name="StStripLblAdditionalInfo3" Classes="primary"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0" VerticalAlignment="Center" Spacing="16">
+							<TextBlock x:Name="StripLblAccountType" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+							<TextBlock x:Name="StripLblNexus" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+							<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
+								<Grid VerticalAlignment="Center">
+									<Slider x:Name="ScalingSlider"
                           Classes="accent"
                           Width="140"
                           Minimum="0.75"
@@ -168,23 +136,20 @@
                           PointerReleased="ScalingSlider_PointerReleased"
                           PointerCaptureLost="ScalingSlider_PointerCaptureLost"
                           VerticalAlignment="Center"/>
-                </Grid>
-
-                <TextBlock x:Name="StripLblScaling"
+								</Grid>
+								<TextBlock x:Name="StripLblScaling"
                            Classes="secondary"
                            VerticalAlignment="Center"/>
-              </StackPanel>
-            </StackPanel>
-          </DockPanel>
-        </Border>
-
-        <Grid x:Name="LoadingOverlay" IsVisible="True" Grid.RowSpan="4" Background="#80000000">
-          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
-            <gif:GifImage Width="150" Height="150" Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif" />
-          </StackPanel>
-        </Grid>
-
-      </Grid>
-    </Border>
-  </LayoutTransformControl>
+							</StackPanel>
+						</StackPanel>
+					</DockPanel>
+				</Border>
+				<Grid x:Name="LoadingOverlay" IsVisible="True" Grid.RowSpan="4" Background="#80000000">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+						<gif:GifImage Width="150" Height="150" Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif" />
+					</StackPanel>
+				</Grid>
+			</Grid>
+		</Border>
+	</LayoutTransformControl>
 </Window>

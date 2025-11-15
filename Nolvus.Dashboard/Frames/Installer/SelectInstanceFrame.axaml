@@ -1,116 +1,122 @@
 <UserControl
     x:Class="Nolvus.Dashboard.Frames.Installer.SelectInstanceFrame"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
-    <Border Background="#2E2E2E" Padding="16">
-
-        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="16">
-
-            <!-- TOP HEADER -->
-            <TextBlock Text="Instance Prerequisites"
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:nolvus="clr-namespace:Nolvus.Api.Installer.Library;assembly=Nolvus.Api.Installer.Library">
+	<!-- RESOURCES -->
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<SolidColorBrush x:Key="NolvusHighlightBrush" Color="#F28F1A"/>
+			<!-- Instance Card Template (UNTYPED FOR MAX COMPATIBILITY) -->
+			<DataTemplate x:Key="InstanceCardTemplate">
+				<Grid ColumnDefinitions="140,16,*">
+					<Border Grid.Column="0"
+                            Width="140" Height="80"
+                            CornerRadius="4"
+                            Background="#222">
+						<Image Source="{Binding ImageObject}"
+                               Stretch="UniformToFill"/>
+					</Border>
+					<StackPanel Grid.Column="2"
+                                Spacing="4">
+						<TextBlock Text="{Binding Name}"
+                                   Foreground="White"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+						<TextBlock Text="{Binding Description}"
+                                   Foreground="White"
+                                   Opacity="0.85"
+                                   TextWrapping="Wrap"/>
+					</StackPanel>
+				</Grid>
+			</DataTemplate>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<!-- LAYOUT -->
+	<Border Padding="32"
+            Background="#2E2E2E">
+		<Grid RowDefinitions="Auto,*,Auto"
+              RowSpacing="24">
+			<!-- HEADER -->
+			<TextBlock Text="Instance Prerequisites"
                        Foreground="White"
                        FontSize="20"
-                       FontWeight="SemiBold"
-                       Margin="4"/>
-
-            <!-- MAIN CONTENT 2-COLUMN -->
-            <Grid Grid.Row="1"
-                  ColumnDefinitions="*,16,300"
-                  RowDefinitions="*">
-
-                <!-- LEFT SIDE -->
-                <StackPanel Grid.Column="0" Spacing="12">
-
-                    <!-- Language label -->
-                    <TextBlock Text="Language"
-                               Foreground="White"
-                               FontSize="14"/>
-
-                    <!-- Language dropdown -->
-                    <ComboBox x:Name="DrpDwnLg"
-                              Background="#363636"
-                              Foreground="White"
-                              BorderBrush="#444"
-                              MinWidth="200"/>
-
-                    <!-- bordered listbox panel -->
-                    <Border Background="#363636"
-                            BorderBrush="#444"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Margin="0,8,0,0"
-                            Padding="4"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch">
-
-                        <Grid>
-                            <!-- loading overlay -->
-                            <Image x:Name="PicLoading"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Opacity="0.8"
-                                   IsVisible="True"/>
-
-                            <!-- instance list -->
-                            <ListBox x:Name="NolvusListBox"
-                                     Background="#363636"
-                                     BorderBrush="#444"
-                                     Foreground="White"
-                                     IsVisible="False"/>
-                        </Grid>
-
-                    </Border>
-
-                </StackPanel>
-
-                <!-- RIGHT SIDE -->
-                <StackPanel Grid.Column="2" Spacing="12">
-
-                    <TextBlock Text="Welcome to Nolvus mod list installation."
-                               Foreground="White"
-                               FontSize="14"
-                               TextWrapping="Wrap"/>
-
-                    <TextBlock Text="Please select your Nolvus instance."
-                               Foreground="White"
-                               FontSize="14"
-                               TextWrapping="Wrap"/>
-
-                    <TextBlock Text="Language only affects base game not the mods. Be sure you have setup the same language for Skyrim SE in Steam too."
-                               Foreground="White"
-                               FontSize="13"
-                               Opacity="0.9"
-                               TextWrapping="Wrap"/>
-
-                </StackPanel>
-
-            </Grid>
-
-            <!-- BOTTOM BUTTONS -->
-            <StackPanel Grid.Row="2"
+                       FontWeight="SemiBold" />
+			<!-- CONTENT -->
+			<!-- MAIN CONTENT -->
+			<Grid Grid.Row="1" RowDefinitions="Auto,16,*" ColumnDefinitions="*,350" ColumnSpacing="24">
+				<!-- TOP LANGUAGE ROW -->
+				<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+					<TextBlock Text="Language"
+                   Foreground="White"
+                   FontSize="16"/>
+					<ComboBox x:Name="DrpDwnLg"
+                  Background="#363636"
+                  Foreground="White"
+                  BorderBrush="#444"
+                  MinWidth="200"/>
+				</StackPanel>
+				<!-- LEFT SIDE — INSTANCE LIST -->
+				<Border Grid.Row="2" Grid.Column="0"
+            Background="#363636"
+            BorderBrush="#444">
+					<ScrollViewer>
+						<ListBox x:Name="NolvusListBox"
+                     Background="#363636"
+                     BorderBrush="#444"
+                     Foreground="White"
+                     SelectionMode="Single"
+                     ItemTemplate="{StaticResource InstanceCardTemplate}"
+                     IsVisible="False">
+							<ListBox.Styles>
+								<Style Selector="ListBoxItem">
+									<Setter Property="Background" Value="#3A3A3A"/>
+									<Setter Property="Margin" Value="0,0,0,12"/>
+									<Setter Property="Padding" Value="4"/>
+									<Setter Property="CornerRadius" Value="4"/>
+								</Style>
+								<Style Selector="ListBoxItem:pointerover">
+									<Setter Property="Background" Value="#444444"/>
+								</Style>
+								<Style Selector="ListBoxItem:selected">
+									<Setter Property="Background" Value="{StaticResource NolvusHighlightBrush}"/>
+								</Style>
+							</ListBox.Styles>
+						</ListBox>
+					</ScrollViewer>
+				</Border>
+				<!-- RIGHT SIDE — INFO PANEL -->
+				<StackPanel Grid.Row="2" Grid.Column="1"
+                Spacing="16"
+                VerticalAlignment="Top">
+					<TextBlock Text="Welcome to Nolvus mod list installation."
+                   Foreground="#CCCCCC"
+                   TextWrapping="Wrap"/>
+					<TextBlock Text="Please select your Nolvus instance."
+                   Foreground="#CCCCCC"
+                   TextWrapping="Wrap"/>
+					<TextBlock
+            Text="Language only affects base game, not the mods. Ensure Skyrim SE uses the same language in Steam."
+            Foreground="#CCCCCC"
+            TextWrapping="Wrap"/>
+				</StackPanel>
+			</Grid>
+			<!-- BUTTONS -->
+			<StackPanel Grid.Row="2"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
-                        Spacing="12">
-
-                <Button x:Name="BtnCancel"
+                        Spacing="8">
+				<Button x:Name="BtnCancel"
                         Content="Cancel"
+                        MinWidth="120"
                         Background="#363636"
-                        Foreground="White"
-                        MinWidth="100"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"/>
-
-                <Button x:Name="BtnContinue"
+                        Foreground="White"/>
+				<Button x:Name="BtnContinue"
                         Content="Continue"
+                        MinWidth="120"
                         Background="#F28F1A"
-                        Foreground="Black"
-                        MinWidth="100"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"/>
-            </StackPanel>
-
-        </Grid>
-
-    </Border>
+                        Foreground="Black"/>
+			</StackPanel>
+		</Grid>
+	</Border>
 </UserControl>

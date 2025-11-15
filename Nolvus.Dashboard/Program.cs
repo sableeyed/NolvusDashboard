@@ -11,6 +11,7 @@ using Nolvus.Services.Game;
 using Nolvus.Services.Files;
 using Nolvus.Services.Checker;
 using Nolvus.Package.Services;
+using Nolvus.Instance.Services;
 using System.Net.Security;
 using System.Security.Authentication;
 using Nolvus.Api.Installer.Core;
@@ -129,7 +130,7 @@ internal static class Program
         ServiceSingleton.RegisterService<IGlobalsService>(new GlobalsService());
         ServiceSingleton.RegisterService<ISettingsService>(new SettingsService());
         ServiceSingleton.RegisterService<IFolderService>(new FolderService());            
-        //ServiceSingleton.RegisterService<IInstanceService>(new InstanceService());
+        ServiceSingleton.RegisterService<IInstanceService>(new InstanceService());
         ServiceSingleton.RegisterService<IUpdaterService>(new UpdaterService());
         ServiceSingleton.RegisterService<IPackageService>(PackageService);            
         ServiceSingleton.RegisterService<ILibService>(new LibService());

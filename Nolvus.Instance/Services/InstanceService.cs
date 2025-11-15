@@ -10,7 +10,7 @@ using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 using Nolvus.Instance.Core;
 
-namespace Vcc.Nolvus.Instance.Services
+namespace Nolvus.Instance.Services
 {
     public class InstanceService : IInstanceService
     {

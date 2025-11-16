@@ -115,16 +115,46 @@ namespace Nolvus.Services.Globals
             }
         }
 
+        // public List<string> GetVideoAdapters()
+        // {
+        //     var results = new List<string>();
+
+        //     try
+        //     {
+        //         if (File.Exists("/proc/driver/nvidia/version"))
+        //             results.Add("NVIDIA GPU");
+
+        //         // Read from PCI list
+        //         var psi = new ProcessStartInfo("lspci", "")
+        //         {
+        //             RedirectStandardOutput = true,
+        //             UseShellExecute = false
+        //         };
+
+        //         using var proc = Process.Start(psi);
+        //         var output = proc.StandardOutput.ReadToEnd();
+
+        //         foreach (var line in output.Split('\n'))
+        //         {
+        //             if (line.ToLower().Contains("vga"))
+        //                 results.Add(line.Trim());
+        //         }
+        //     }
+        //     catch
+        //     {
+        //         results.Add("GPU info not found");
+        //     }
+
+        //     return results;
+        // }
+
         public List<string> GetVideoAdapters()
         {
             var results = new List<string>();
 
             try
             {
-                if (File.Exists("/proc/driver/nvidia/version"))
-                    results.Add("NVIDIA GPU");
-
-                // Read from PCI list
+                // Run lspci
                 var psi = new ProcessStartInfo("lspci", "")
                 {
                     RedirectStandardOutput = true,
@@ -134,19 +164,105 @@ namespace Nolvus.Services.Globals
                 using var proc = Process.Start(psi);
                 var output = proc.StandardOutput.ReadToEnd();
 
-                foreach (var line in output.Split('\n'))
+                foreach (var raw in output.Split('\n'))
                 {
-                    if (line.ToLower().Contains("vga"))
-                        results.Add(line.Trim());
+                    var line = raw.Trim();
+                    if (!line.ToLower().Contains("vga")) 
+                        continue;
+
+                    var vendor = DetectVendor(line);
+                    var model = ExtractGpuModel(line);
+
+                    if (!string.IsNullOrWhiteSpace(vendor) &&
+                        !string.IsNullOrWhiteSpace(model))
+                    {
+                        results.Add($"{vendor} {model}");
+                    }
                 }
+
+                if (!results.Any())
+                    results.Add("Unknown GPU");
             }
             catch
             {
-                results.Add("GPU info not found");
+                results.Add("Unknown GPU");
             }
 
             return results;
         }
+
+        private string DetectVendor(string line)
+        {
+            line = line.ToLower();
+
+            if (line.Contains("nvidia"))
+                return "NVIDIA";
+            if (line.Contains("amd") || line.Contains("advanced micro devices"))
+                return "AMD";
+            if (line.Contains("intel"))
+                return "Intel";
+
+            return "Unknown";
+        }
+
+
+
+        private string ExtractGpuModel(string line)
+        {
+            string model = null;
+
+            // Prefer content inside brackets: [GeForce RTX 3080 Lite Hash Rate]
+            var s = line.IndexOf('[');
+            var e = line.IndexOf(']');
+            if (s != -1 && e != -1 && e > s)
+                model = line.Substring(s + 1, e - s - 1);
+            else
+            {
+                // Fallback: substring after last colon
+                var idx = line.LastIndexOf(":");
+                if (idx != -1 && idx + 1 < line.Length)
+                    model = line.Substring(idx + 1).Trim();
+            }
+
+            return CleanModelName(model);
+        }
+
+
+        private string CleanModelName(string model)
+        {
+            if (string.IsNullOrWhiteSpace(model))
+                return null;
+
+            // Remove text in parentheses: (rev a1)
+            var p = model.IndexOf("(");
+            if (p != -1)
+                model = model.Substring(0, p).Trim();
+
+            // Remove unwanted suffixes
+            var unwanted = new [] {
+                "Lite Hash Rate",
+                "LHR",
+                "Hash Rate",
+                "GA102",
+                "Navi 21"
+            };
+
+            foreach (var u in unwanted)
+            {
+                var idx = model.IndexOf(u, StringComparison.OrdinalIgnoreCase);
+                if (idx != -1)
+                {
+                    model = model.Remove(idx).Trim();
+                }
+            }
+
+            // Normalize multiple spaces
+            while (model.Contains("  "))
+                model = model.Replace("  ", " ");
+
+            return model.Trim();
+        }
+
 
         public async Task<string> GetCPUInfo()
         {

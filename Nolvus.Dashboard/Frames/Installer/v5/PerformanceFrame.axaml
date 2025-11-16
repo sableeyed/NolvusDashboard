@@ -205,12 +205,6 @@
                                 <TextBlock Text="GPU:" Foreground="White"/>
                                 <TextBlock x:Name="LblGPU" Foreground="#F28F1A"/>
 
-                                <TextBlock Text="VRAM:" Foreground="White"/>
-                                <TextBlock x:Name="LblVRAM" Foreground="#F28F1A"/>
-
-                                <TextBlock Text="Storage:" Foreground="White"/>
-                                <TextBlock x:Name="LblSTORAGE" Foreground="#F28F1A"/>
-
                                 <TextBlock Text="CPU:" Foreground="White"/>
                                 <TextBlock x:Name="LblCPU" Foreground="#F28F1A"/>
 

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using Nolvus.Api.Installer.Services;
+using Vcc.Nolvus.Api.Installer.Services;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 using Nolvus.Core.Events;

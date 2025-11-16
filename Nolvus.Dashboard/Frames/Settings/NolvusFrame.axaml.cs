@@ -122,7 +122,7 @@ RefreshInterval=10
                     ServiceSingleton.Lib.EncryptString(SettingsCache.NolvusPassword),
                     Environment.ProcessorCount
                 ));
-                //await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
+                await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
             });
         }
 

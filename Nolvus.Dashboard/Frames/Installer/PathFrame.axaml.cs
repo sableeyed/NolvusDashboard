@@ -61,6 +61,8 @@ namespace Nolvus.Dashboard.Frames.Installer
                 Title = "Select Instance Installation Directory",
                 AllowMultiple = false
             });
+            if (result.Count == 0)
+                return; //user cancelled dialog
 
             var folder = result[0];
             var folderPath = folder.Path.LocalPath;
@@ -89,6 +91,9 @@ namespace Nolvus.Dashboard.Frames.Installer
                 Title = "Select Archive Directory",
                 AllowMultiple = false
             });
+
+            if (result.Count == 0)
+                return; //user cancelled dialog
 
             var folder = result[0];
             var folderPath = folder.Path.LocalPath;

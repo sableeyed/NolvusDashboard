@@ -159,8 +159,7 @@
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     MinWidth="120"
-                    Background="#F28F1A"
-                    Foreground="Black"/>
+                    Foreground="White"/>
 						</StackPanel>
 					</Grid>
 				</Border>

@@ -1,0 +1,137 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.PathFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Padding="32" Background="#2E2E2E">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="24">
+
+            <!-- HEADER -->
+            <TextBlock Text="Instance Paths"
+                       Foreground="White"
+                       FontSize="20"
+                       FontWeight="SemiBold"/>
+
+            <!-- CONTENT -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,350"
+                  ColumnSpacing="24">
+
+                <!-- LEFT SIDE PANEL -->
+                <Border Grid.Column="0"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="16">
+
+                    <StackPanel Spacing="20">
+
+                        <!-- INSTANCE DIRECTORY -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Instance Directory"
+                                       Foreground="White"/>
+
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <TextBox x:Name="TxtInstanceDir"
+                                         Background="#2E2E2E"
+                                         Foreground="White"
+                                         BorderBrush="#555"/>
+                                <Button x:Name="BtnBrowseInstance"
+                                        Grid.Column="1"
+                                        Content="Browse"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        MinWidth="80"
+                                        Background="#F28F1A"
+                                        Foreground="Black"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- ARCHIVE DIRECTORY -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Archive Directory"
+                                       Foreground="White"/>
+
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <TextBox x:Name="TxtArchiveDir"
+                                         Background="#2E2E2E"
+                                         Foreground="White"
+                                         BorderBrush="#555"/>
+                                <Button x:Name="BtnBrowseArchive"
+                                        Grid.Column="1"
+                                        Content="Browse"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        MinWidth="80"
+                                        Background="#F28F1A"
+                                        Foreground="Black"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- ENABLE ARCHIVING -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Enable Archiving"
+                                       Foreground="White"/>
+
+                            <ToggleSwitch x:Name="TglArchive"
+                                          OnContent="On"
+                                          OffContent="Off"
+                                          Foreground="White"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- RIGHT SIDE PANEL -->
+                <Border Grid.Column="1"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="16">
+
+                    <Grid RowDefinitions="*,Auto">
+
+                        <!-- TOP INFO TEXT -->
+                        <StackPanel Grid.Row="0" Spacing="16" VerticalAlignment="Top">
+                            <TextBlock Text="Select your Nolvus instance installation and archive directories. ALWAYS be sure you don't have the archive directory inside your instance directory. If you are not sure, use the default paths the application has setup for you."
+                                        Foreground="#CCCCCC"
+                                        TextWrapping="Wrap"/>
+                            <TextBlock Text="You can choose to disable archiving to save some disk space. WARNING if you don't keep archive files and want to reinstall the mod list, the installer will download all mods again."
+                                        Foreground="#CCCCCC"
+                                        TextWrapping="Wrap"/>
+                            <TextBlock Text="If you already have a folder containing mod archive files, you can also point your archive directory to this directory. The installer will look into this folder first and will not download the mod if it finds the corresponding file."
+                                        Foreground="#CCCCCC"
+                                        TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <!-- BUTTONS (BOTTOM RIGHT) -->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Spacing="8"
+                                    Margin="0,24,0,0">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    MinWidth="120"
+                                    Foreground="White"/>
+
+                            <Button x:Name="BtnContinue"
+                                    Content="Continue"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    MinWidth="120"
+                                    Foreground="White"/>
+
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

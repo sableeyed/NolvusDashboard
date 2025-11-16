@@ -202,8 +202,8 @@ namespace Nolvus.Dashboard.Frames.Installer
                     WorkingInstance.Settings.LgName = selectedLg.Name;
                 }
             }
-            //ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
-            ServiceSingleton.Logger.Log("Load Frame: Path Frame unimplemented");
+
+            ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
         } 
 
         // private void BtnCancel_Click(object sender, EventArgs e)

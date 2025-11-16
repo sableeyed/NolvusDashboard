@@ -112,13 +112,13 @@ namespace Nolvus.Dashboard.Frames.Installer
             switch (ServiceSingleton.Instances.WorkingInstance.Name)
             {
                 case Strings.NolvusAscension:
-                    //ServiceSingleton.Dashboard.LoadFrameAsync<v5.PerformanceFrame>();
+                    ServiceSingleton.Dashboard.LoadFrameAsync<v5.PerformanceFrame>();
                     break;
                 case Strings.NolvusAwakening:
                     //ServiceSingleton.Dashboard.LoadFrameAsync<v6.PerformanceFrame>();
+                    ServiceSingleton.Logger.Log("v6 Performance Frame Unimplemented Exception");
                     break;
             }
-            ServiceSingleton.Logger.Log("Performance Frame Unimplemented Exception");
         }
     }
 }

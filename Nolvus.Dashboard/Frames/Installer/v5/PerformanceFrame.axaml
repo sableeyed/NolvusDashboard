@@ -1,0 +1,255 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.v5.PerformanceFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Padding="32" Background="#2E2E2E">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="24">
+
+            <!-- HEADER -->
+            <TextBlock Text="Performance Settings"
+                       Foreground="White"
+                       FontSize="20"
+                       FontWeight="SemiBold"/>
+
+            <!-- MAIN CONTENT AREA -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,350"
+                  ColumnSpacing="24">
+
+                <!-- LEFT PANEL -->
+                <Border Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="16">
+
+                    <ScrollViewer>
+                        <StackPanel Spacing="20" VerticalAlignment="Top">
+
+                            <!-- Variant -->
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Name="LblVariant"
+                                           Text="Variant"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstVariant"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- Anti-Aliasing -->
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Name="LblAntiAliasing"
+                                           Text="Anti-Aliasing"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstAntiAliasing"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- Ini Profile -->
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Name="LblIniProfile"
+                                           Text="Skyrim INI Profile"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstIni"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- LODs -->
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Name="LblLods"
+                                           Text="LODs"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstLODs"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- Physics -->
+                            <StackPanel Spacing="8">
+                                <TextBlock x:Name="LblPhysics"
+                                           Text="Advanced Physics"
+                                           Foreground="White"/>
+                                <ToggleSwitch x:Name="TglBtnPhysics"/>
+                                <TextBlock Text="Physics on hair and armors (can be taxing on cities)"
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Raytracing -->
+                            <StackPanel Spacing="8">
+                                <TextBlock x:Name="LblRaytracing"
+                                           Text="Global Illumination (Fake Raytracing)"
+                                           Foreground="White"/>
+                                <ToggleSwitch x:Name="TglBtnRayTracing"/>
+                                <TextBlock Text="Global Illumination will cost about 5–10 FPS."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- FPS Stabilizer -->
+                            <StackPanel Spacing="8">
+                                <TextBlock x:Name="LblFpsStabilizer"
+                                           Text="FPS Stabilizer"
+                                           Foreground="White"/>
+                                <ToggleSwitch x:Name="TglBtnFPSStabilizer"/>
+                                <TextBlock Text="Auto-reduces draw distance to maintain smooth FPS."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Resolution & Ratios -->
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Name="LblScreenRatio"
+                                           Text="Screen Ratio"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstRatios"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Name="LblResolution"
+                                           Text="Resolution"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstResolution"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- Downscaling Group -->
+                            <Border BorderBrush="#555" BorderThickness="1" CornerRadius="4" Padding="12">
+                                <StackPanel Spacing="12">
+
+                                    <TextBlock x:Name="LblDownscaling"
+                                               Text="Resolution Downscaling (Not Compatible with DLAA)"
+                                               Foreground="White"/>
+
+                                    <ToggleSwitch x:Name="TglBtnDownScale"/>
+
+                                    <TextBlock Text="Lets you play at a lower resolution than your monitor."
+                                               Foreground="#FFFFFF"
+                                               TextWrapping="Wrap"/>
+
+                                    <TextBlock Text="Recommended: 720p on 1080p monitors, 1080p on 1440p."
+                                               Foreground="#F28F1A"
+                                               TextWrapping="Wrap"/>
+
+                                    <StackPanel Spacing="4">
+                                        <TextBlock x:Name="LblDownscaleResolution"
+                                                   Text="Downscaled Resolution"
+                                                   Foreground="White"/>
+                                        <ComboBox x:Name="DrpDwnLstScreenRes"
+                                                  Background="#2E2E2E"
+                                                  Foreground="White"/>
+                                    </StackPanel>
+
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Border>
+
+                <!-- RIGHT PANEL -->
+                <Border Grid.Column="1"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="16">
+
+                    <Grid RowDefinitions="*,Auto">
+
+                        <!-- INFO TEXT -->
+                        <StackPanel Grid.Row="0" Spacing="12">
+                            <TextBlock Text="This new Nolvus version has some performance options"
+                                       Foreground="#CCCCCC"
+                                       TextWrapping="Wrap"/>
+
+                            <TextBlock Text="The Ultra variant is the graphically maxed out version of the list, the Redux is the same version gameplay wise but less heavy on vegetation and cities overhaul"
+                                       Foreground="#CCCCCC"
+                                       TextWrapping="Wrap"/>
+                                       
+                            
+                            <TextBlock Text="DLAA anti aliasing is only available for Nvidia RTX cards. The option will be greyed out and set to TAA if you don't have an Nvidia RTX card."
+                                       Foreground="#CCCCCC"
+                                       TextWrapping="Wrap"/>
+
+                            
+                            <TextBlock Text="Advanced physics provides physics on hair and armors. This configuration is recommended for high end computers."
+                                       Foreground="#CCCCCC"
+                                       TextWrapping="Wrap"/>
+
+                            
+                            <TextBlock Text="Select your ini profile (based on Bethini recommended settings)"
+                                       Foreground="#CCCCCC"
+                                       TextWrapping="Wrap"/>
+
+                            <TextBlock Text="If you selected the Ultra variant and want to spare some fps and vram consumption, you can also choose the LODs (Terrain, objects and trees in the distance) quality option"
+                                       Foreground="#CCCCCC"
+                                       TextWrapping="Wrap"/>
+
+                            <TextBlock Text="FPS Stabilizer is used to reduce draw distance on the fly to keep most fps possible. WARNING using this feature, you may gain 5-10 fps but some actors could pop really close to you. You may also experience objects and trees popins. Use this feature wisely."
+                                       Foreground="#CCCCCC"
+                                       TextWrapping="Wrap"/>
+
+                            <TextBlock x:Name="LblHardwareWarning"
+                                       Text="Current hardware configuration:"
+                                       Foreground="White"
+                                       Margin="0,16,0,4"/>
+
+                            <!-- Hardware Info -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="GPU:" Foreground="White"/>
+                                <TextBlock x:Name="LblGPU" Foreground="#F28F1A"/>
+
+                                <TextBlock Text="VRAM:" Foreground="White"/>
+                                <TextBlock x:Name="LblVRAM" Foreground="#F28F1A"/>
+
+                                <TextBlock Text="Storage:" Foreground="White"/>
+                                <TextBlock x:Name="LblSTORAGE" Foreground="#F28F1A"/>
+
+                                <TextBlock Text="CPU:" Foreground="White"/>
+                                <TextBlock x:Name="LblCPU" Foreground="#F28F1A"/>
+
+                                <TextBlock Text="RAM:" Foreground="White"/>
+                                <TextBlock x:Name="LblRAM" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                        </StackPanel>
+
+                        <!-- BUTTONS -->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="8"
+                                    Margin="0,24,0,0">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    MinWidth="120"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Foreground="White"/>
+
+                            <Button x:Name="BtnContinue"
+                                    Content="Continue"
+                                    MinWidth="120"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Foreground="White"/>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                </Border>
+
+            </Grid>
+
+        </Grid>
+    </Border>
+
+</UserControl>

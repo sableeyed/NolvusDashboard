@@ -1,0 +1,151 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Settings.GlobalSettingsFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Background="#2E2E2E" Padding="32">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="24">
+
+            <!-- HEADER -->
+            <TextBlock x:Name="LblStepText"
+                       Text="Global Settings"
+                       Foreground="White"
+                       FontSize="20"
+                       FontWeight="SemiBold"/>
+
+            <!-- CONTENT AREA -->
+            <Grid Grid.Row="1">
+
+                <!-- MAIN SETTINGS PANEL, ANCHORED TOP-LEFT -->
+                <Border x:Name="GrpBxMega"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="16"
+                        Width="520"
+                        Height="520"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+
+                    <!-- WRAPPER GRID FOR CONTENT + SAVE BUTTON -->
+                    <Grid RowDefinitions="*,Auto">
+
+                        <!-- MAIN CONTENT -->
+                        <Grid Grid.Row="0"
+                              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                              RowSpacing="10">
+
+                            <!-- "Click here..." line -->
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Click" Foreground="#CCCCCC"/>
+
+                                <HyperlinkButton x:Name="MegaButton"
+                                    Content="here"
+                                    Foreground="#F28F1A"
+                                    Click="OpenMega" />
+
+                                <TextBlock Text="to create your free mega.nz account."
+                                            Foreground="#CCCCCC"/>
+                            </StackPanel>
+
+
+                            <!-- Anonymous toggle -->
+                            <StackPanel Grid.Row="1"
+                                        Orientation="Horizontal"
+                                        Spacing="12"
+                                        VerticalAlignment="Center">
+
+                                <TextBlock Text="Anonymous Connection"
+                                            Foreground="#CCCCCC"
+                                            VerticalAlignment="Center"/>
+
+                                <ToggleSwitch x:Name="TglBtnAnonymous"
+                                            PropertyChanged="TglBtnAnonymous_PropertyChanged"
+                                            VerticalAlignment="Center"/>
+                            </StackPanel>
+
+
+                            <!-- Info text -->
+                            <TextBlock Grid.Row="2"
+                                       Text="When created, please enter the email address and password you used to create your mega account."
+                                       Foreground="#CCCCCC"
+                                       TextWrapping="Wrap"/>
+
+                            <!-- Email -->
+                            <StackPanel Grid.Row="3" Spacing="4">
+                                <TextBlock Text="Email"
+                                           Foreground="#CCCCCC"/>
+                                <TextBox x:Name="TxtBxUserName"
+                                         Background="#2E2E2E"
+                                         Foreground="White"
+                                         BorderBrush="#555"/>
+                            </StackPanel>
+
+                            <!-- Password -->
+                            <StackPanel Grid.Row="4" Spacing="4">
+                                <TextBlock Text="Password"
+                                           Foreground="#CCCCCC"/>
+                                <TextBox x:Name="TxtBxPassword"
+                                         Background="#2E2E2E"
+                                         Foreground="White"
+                                         BorderBrush="#555"
+                                         PasswordChar="*"/>
+                            </StackPanel>
+
+                            <!-- WARNING PANEL -->
+                            <Border x:Name="PnlMessage"
+                                    Grid.Row="5"
+                                    Background="#14cb14"
+                                    CornerRadius="4"
+                                    Padding="8">
+
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <Image x:Name="PicBox"
+                                           Grid.Column="0"
+                                           Source="avares://NolvusDashboard/Assets/Info.png"
+                                           Width="24"
+                                           Height="24"/>
+
+                                    <TextBlock x:Name="LblMessage"
+                                               Grid.Column="1"
+                                               Text="Your credentials will be stored and encrypted in your local Dashboard config file. Note that if you have a mega premium account, you will be able to download mega files faster."
+                                               Foreground="White"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- EMPTY ROW (just keeping Row=6 to preserve structure) -->
+                            <Grid Grid.Row="6"/>
+
+                        </Grid>
+
+                        <!-- SAVE BUTTON ANCHORED BOTTOM RIGHT -->
+                        <Button x:Name="BtnSaveMegaInfo"
+                                Grid.Row="1"
+                                Content="Save"
+                                HorizontalAlignment="Right"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                MinWidth="120"
+                                Foreground="White"/>
+                    </Grid>
+
+                </Border>
+
+            </Grid>
+
+            <!-- BACK BUTTON (bottom-right of whole frame) -->
+            <Button x:Name="BtnBack"
+                    Grid.Row="2"
+                    Content="Back"
+                    HorizontalAlignment="Right"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    MinWidth="120"
+                    Background="#363636"
+                    Foreground="White"/>
+
+        </Grid>
+    </Border>
+
+</UserControl>

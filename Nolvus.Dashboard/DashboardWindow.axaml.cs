@@ -22,6 +22,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Nolvus.Dashboard.Core;
 using Nolvus.Dashboard.Frames;
+using Nolvus.Dashboard.Frames.Settings;
 using Nolvus.Dashboard.Controls;
 using Nolvus.Browser;
 
@@ -481,18 +482,16 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        Close(); //avalonia version?
+        Close();
     }
 
     public void EnableSettings()
     {
-        Console.WriteLine("Settings Enabled");
         TitleBarControl.EnableSettings();
     }
 
     public void DisableSettings()
     {
-        Console.WriteLine("Settings Disabled");
         TitleBarControl.DisableSettings();
     }
 
@@ -549,9 +548,6 @@ public partial class DashboardWindow : Window, IDashboard
         StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
         //DashboardProgressBar.IsVisible = false;
         LblStatus.IsVisible = false;
-
-        //Nolvus.Browser.Browser.InitCefIfNeeded("/tmp/nolvus_cef_cache");
-
     }
 
     private void ScalingSlider_ValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
@@ -568,7 +564,6 @@ public partial class DashboardWindow : Window, IDashboard
 
     private void ScalingSlider_PointerCaptureLost(object? sender, PointerCaptureLostEventArgs e)
     {
-        // Covers the case where the user releases outside the slider
         if (sender is Slider s)
             ApplyScaling(s.Value);
     }
@@ -582,12 +577,11 @@ public partial class DashboardWindow : Window, IDashboard
 
     private void TitleBarControl_OnSettingsClicked(object? sender, EventArgs e)
     {   
-        Console.WriteLine("Settings Clicked");
         if (!ServiceSingleton.Packages.Processing) 
         {
             if (TitleBarControl.SettingsEnabled) 
             {
-                //ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
+                ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
                 Console.WriteLine("TODO: Load Global Settings Frame");
             }
             else
@@ -618,7 +612,6 @@ public partial class DashboardWindow : Window, IDashboard
         base.OnOpened(e);
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            //Console.WriteLine("Frame creation disabled while debugging");
             await LoadFrameAsync<StartFrame>();
         });
     }

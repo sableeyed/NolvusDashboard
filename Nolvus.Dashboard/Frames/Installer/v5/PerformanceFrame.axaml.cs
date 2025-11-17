@@ -7,6 +7,7 @@ using Nolvus.Dashboard.Core;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
 using Avalonia.Controls;
+using Nolvus.Dashboard.Controls;
 
 namespace Nolvus.Dashboard.Frames.Installer.v5
 {
@@ -211,9 +212,37 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
         }
 
-        private void BtnContinue_Click(object? sender, RoutedEventArgs e)
+        private async void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
-            return;
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            var Instance = ServiceSingleton.Instances.WorkingInstance;
+            var Performance = Instance.Performance;
+
+            if (Performance.DownScaling == "TRUE" && (Performance.DownScaling == "TRUE" && (Instance.Settings.Height == Performance.DownHeight || System.Convert.ToInt32(Performance.DownHeight) > System.Convert.ToInt32(Instance.Settings.Height)) && (Instance.Settings.Width == Performance.DownWidth || System.Convert.ToInt32(Performance.DownWidth) > System.Convert.ToInt32(Instance.Settings.Width))))
+            {
+                NolvusMessageBox.Show(owner, "Invalid Downscaling setting", "If downscaling is enabled, the downscaled resolution must be less than the monitor resolution!", MessageBoxType.Error);
+            }
+            else
+            {
+                bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "Some of the options you selected (like the variant, LODs quality, Advanced physics, Global Illumination or FPS stabilizer) can not be changed after installation. Are you sure you want to continue?");
+                if (result == true)
+                {
+                    if ((Performance.Variant == "Redux") && (Performance.AdvancedPhysics == "TRUE" || Performance.RayTracing == "TRUE" || Performance.AntiAliasing == "DLAA"))
+                    {
+                        bool? redux = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "You selected the Redux variant with other effects that are normally disabled by default with this variant. Be sure you have more than the minimum requirement. Are you sure you want to continue?");
+                        if (redux == true)
+                        {
+                            //ServiceSingleton.Dashboard.LoadFrame<v5.OptionsFrame>();
+                            ServiceSingleton.Logger.Log("Options frame not yet implemented (Redux)");
+                        }
+                    }
+                    else
+                    {                        
+                        //ServiceSingleton.Dashboard.LoadFrame<v5.OptionsFrame>();
+                        ServiceSingleton.Logger.Log("Options frame not yet implemented (Ultra)");
+                    }     
+                }
+            }
         }
 
         private void DisplayHardwareRequirement()

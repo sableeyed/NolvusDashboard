@@ -41,14 +41,20 @@
 
         <Button x:Name="BtnYes"
                 Content="Yes"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
                 MinWidth="90"/>
 
         <Button x:Name="BtnNo"
                 Content="No"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
                 MinWidth="90"/>
 
         <Button x:Name="BtnOK"
                 Content="OK"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
                 MinWidth="90"/>
       </StackPanel>
 

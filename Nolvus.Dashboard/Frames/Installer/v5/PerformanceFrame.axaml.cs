@@ -232,14 +232,12 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
                         bool? redux = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "You selected the Redux variant with other effects that are normally disabled by default with this variant. Be sure you have more than the minimum requirement. Are you sure you want to continue?");
                         if (redux == true)
                         {
-                            //ServiceSingleton.Dashboard.LoadFrame<v5.OptionsFrame>();
-                            ServiceSingleton.Logger.Log("Options frame not yet implemented (Redux)");
+                            ServiceSingleton.Dashboard.LoadFrame<v5.OptionsFrame>();
                         }
                     }
                     else
                     {                        
-                        //ServiceSingleton.Dashboard.LoadFrame<v5.OptionsFrame>();
-                        ServiceSingleton.Logger.Log("Options frame not yet implemented (Ultra)");
+                        ServiceSingleton.Dashboard.LoadFrame<v5.OptionsFrame>();
                     }     
                 }
             }

@@ -1,0 +1,166 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.v5.OptionsFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Background="#2E2E2E" Padding="32">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="24">
+
+            <!-- HEADER -->
+            <TextBlock Text="Additional Options"
+                       FontSize="20"
+                       FontWeight="SemiBold"
+                       Foreground="White"/>
+
+            <!-- MAIN CONTENT AREA -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,350"
+                  ColumnSpacing="24">
+
+                <!-- LEFT PANEL -->
+                <Border Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="16">
+
+                    <ScrollViewer>
+                        <StackPanel Spacing="20">
+
+                            <!-- === OPTION: ENABLE NUDITY === -->
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="Auto,10,Auto">
+                                    <TextBlock Text="Enable Nudity" Foreground="White" VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglEnableNudity"
+                                                  VerticalAlignment="Center"
+                                                  Grid.Column="2"/>
+                                </Grid>
+
+                                <TextBlock Text="When nudity is enabled all NPCs will be nude when undressed."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- === OPTION: FEMALE SKIN TYPE === -->
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="Auto,10,Auto">
+                                    <TextBlock Text="Female Skin Type" Foreground="White" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpFemaleSkinType"
+                                              VerticalAlignment="Center"
+                                              Grid.Column="2"
+                                              Width="140"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                </Grid>
+
+                                <TextBlock Text="Choose between 'babe' type or 'muscular' type skins."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- === OPTION: HARDCORE MODE === -->
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="Auto,10,Auto">
+                                    <TextBlock Text="Hardcore Mode" Foreground="White" VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglHardcoreMode"
+                                                  VerticalAlignment="Center"
+                                                  Grid.Column="2"/>
+                                </Grid>
+
+                                <TextBlock Text="Unleveled dungeons, aggressive AI, difficult sneaking, poise-based stagger."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- === OPTION: ALTERNATE LEVELING === -->
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="Auto,10,Auto">
+                                    <TextBlock Text="Alternate Leveling" Foreground="White" VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglAlternateLeveling"
+                                                VerticalAlignment="Center"
+                                                  Grid.Column="2"/>
+                                </Grid>
+
+                                <TextBlock Text="Gives you multiple progression paths and modified leveling behavior."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- === OPTION: ALTERNATE START === -->
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="Auto,10,Auto">
+                                    <TextBlock Text="Alternate Start" Foreground="White" VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglAlternateStart"
+                                                  VerticalAlignment="Center"
+                                                  Grid.Column="2"/>
+                                </Grid>
+
+                                <TextBlock Text="Begin your adventure in a different location with a unique backstory."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- === OPTION: FANTASY MODE === -->
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="Auto,10,Auto">
+                                    <TextBlock Text="Fantasy Mode" Foreground="White" VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglFantasyMode"
+                                                  VerticalAlignment="Center"
+                                                  Grid.Column="2"/>
+                                </Grid>
+
+                                <TextBlock Text="Enables fantasy combat animations and JARPG-inspired features."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Border>
+
+                <!-- RIGHT PANEL -->
+                <Border Grid.Column="1"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="16">
+
+                    <Grid RowDefinitions="*,Auto">
+
+                        <TextBlock Grid.Row="0"
+                                   Text="Customize additional options that affect gameplay, visuals, and immersion. Some options affect balance significantly."
+                                   Foreground="#CCCCCC"
+                                   TextWrapping="Wrap"/>
+
+                        <!-- BUTTONS -->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="8"
+                                    Margin="0,24,0,0">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    MinWidth="120"
+                                    Foreground="White"/>
+
+                            <Button x:Name="BtnContinue"
+                                    Content="Continue"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    MinWidth="120"
+                                    Foreground="White"/>
+
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+
+        </Grid>
+    </Border>
+
+</UserControl>

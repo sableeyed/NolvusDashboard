@@ -53,7 +53,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                     switch (ServiceSingleton.Instances.WorkingInstance.Name)
                     {
                         case Strings.NolvusAscension:
-                            //ServiceSingleton.Dashboard.LoadFrame<v5.SummaryFrame>();
+                            ServiceSingleton.Dashboard.LoadFrame<v5.SummaryFrame>();
                             break;
                         case Strings.NolvusAwakening:
                             //ServiceSingleton.Dashboard.LoadFrame<v6.SummaryFrame<>();

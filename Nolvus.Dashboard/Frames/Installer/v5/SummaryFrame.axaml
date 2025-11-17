@@ -1,0 +1,394 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.v5.SummaryFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Background="#2E2E2E" Padding="24">
+        <Grid RowDefinitions="Auto,*"
+              RowSpacing="16">
+
+            <!-- TOP TITLE -->
+            <TextBlock Grid.Row="0"
+                       Text="Installation Summary"
+                       Foreground="White"
+                       FontSize="20"
+                       FontWeight="SemiBold"/>
+
+            <!-- MAIN CONTAINER PANEL -->
+            <Border Grid.Row="1"
+                    Background="#363636"
+                    BorderBrush="#444"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="16">
+
+                <Grid RowDefinitions="Auto,*,Auto,Auto"
+                      RowSpacing="16">
+
+                    <!-- SETTINGS PANEL (TOP, FULL WIDTH) -->
+                    <Border Grid.Row="0"
+                            Background="#2E2E2E"
+                            BorderBrush="#555"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="12">
+
+                        <StackPanel Spacing="8">
+                            <!-- Section Header -->
+                            <TextBlock Text="Settings"
+                                       Foreground="White"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"/>
+
+                            <!-- Name / Value grid -->
+                            <Grid ColumnDefinitions="Auto,*"
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                                  RowSpacing="4"
+                                  Margin="0,4,0,0">
+
+                                <!-- Instance Name -->
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                           Text="Instance name"
+                                           Foreground="White"
+                                           Margin="0,0,12,0"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1"
+                                           x:Name="LblInstanceName"
+                                           Foreground="#F28F1A"/>
+
+                                <!-- Screen ratio -->
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                           Text="Screen ratio"
+                                           Foreground="White"
+                                           Margin="0,0,12,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1"
+                                           x:Name="LblScreenRatio"
+                                           Foreground="#F28F1A"/>
+
+                                <!-- Resolution -->
+                                <TextBlock Grid.Row="2" Grid.Column="0"
+                                           Text="Resolution"
+                                           Foreground="White"
+                                           Margin="0,0,12,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1"
+                                           x:Name="LblResolution"
+                                           Foreground="#F28F1A"/>
+
+                                <!-- Installation directory -->
+                                <TextBlock Grid.Row="3" Grid.Column="0"
+                                           Text="Installation directory"
+                                           Foreground="White"
+                                           Margin="0,0,12,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1"
+                                           x:Name="LblInstallDir"
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+
+                                <!-- Enable archiving -->
+                                <TextBlock Grid.Row="4" Grid.Column="0"
+                                           Text="Enable archiving"
+                                           Foreground="White"
+                                           Margin="0,0,12,0"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1"
+                                           x:Name="LblEnableArchiving"
+                                           Foreground="#F28F1A"/>
+
+                                <!-- Archive directory -->
+                                <TextBlock Grid.Row="5" Grid.Column="0"
+                                           Text="Archive directory"
+                                           Foreground="White"
+                                           Margin="0,0,12,0"/>
+                                <TextBlock Grid.Row="5" Grid.Column="1"
+                                           x:Name="LblArchiveDir"
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"/>
+
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- PERFORMANCE + OPTIONS PANELS -->
+                    <Grid Grid.Row="1"
+                          ColumnDefinitions="*,*"
+                          ColumnSpacing="16">
+
+                        <!-- PERFORMANCE PANEL (LEFT) -->
+                        <Border Grid.Column="0"
+                                Background="#2E2E2E"
+                                BorderBrush="#555"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12">
+
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Performance"
+                                           Foreground="White"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"/>
+
+                                <Grid ColumnDefinitions="Auto,*"
+                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                                      RowSpacing="4"
+                                      Margin="0,4,0,0">
+
+                                    <!-- Downscaling -->
+                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                                               Text="Downscaling"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1"
+                                               x:Name="LblDownscaling"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Variant -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0"
+                                               Text="Variant"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                               x:Name="LblVariant"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Anti Aliasing -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0"
+                                               Text="Anti aliasing"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1"
+                                               x:Name="LblAntiAliasing"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Ini -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0"
+                                               Text="Ini"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1"
+                                               x:Name="LblIniProfile"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Advanced Physics -->
+                                    <TextBlock Grid.Row="4" Grid.Column="0"
+                                               Text="Advanced physics"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1"
+                                               x:Name="LblAdvancedPhysics"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- LODs -->
+                                    <TextBlock Grid.Row="5" Grid.Column="0"
+                                               Text="LODs"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1"
+                                               x:Name="LblLods"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Ray Tracing -->
+                                    <TextBlock Grid.Row="6" Grid.Column="0"
+                                               Text="Ray tracing"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1"
+                                               x:Name="LblRayTracing"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- FPS Stabilizer -->
+                                    <TextBlock Grid.Row="7" Grid.Column="0"
+                                               Text="FPS stabilizer"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="1"
+                                               x:Name="LblFpsStabilizer"
+                                               Foreground="#F28F1A"/>
+
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- OPTIONS PANEL (RIGHT) -->
+                        <Border Grid.Column="1"
+                                Background="#2E2E2E"
+                                BorderBrush="#555"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12">
+
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Options"
+                                           Foreground="White"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"/>
+
+                                <Grid ColumnDefinitions="Auto,*"
+                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                                      RowSpacing="4"
+                                      Margin="0,4,0,0">
+
+                                    <!-- Nudity -->
+                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                                               Text="Nudity"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1"
+                                               x:Name="LblNudity"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Hardcore Mode -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0"
+                                               Text="Hardcore mode"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                               x:Name="LblHardcoreMode"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Alternate Leveling -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0"
+                                               Text="Alternate leveling"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1"
+                                               x:Name="LblAlternateLeveling"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Skin type -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0"
+                                               Text="Skin type"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1"
+                                               x:Name="LblSkinType"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Alternate Start -->
+                                    <TextBlock Grid.Row="4" Grid.Column="0"
+                                               Text="Alternate start"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1"
+                                               x:Name="LblAlternateStart"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- Fantasy Mode -->
+                                    <TextBlock Grid.Row="5" Grid.Column="0"
+                                               Text="Fantasy mode"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1"
+                                               x:Name="LblFantasyMode"
+                                               Foreground="#F28F1A"/>
+
+                                    <!-- ENB -->
+                                    <TextBlock Grid.Row="6" Grid.Column="0"
+                                               Text="ENB"
+                                               Foreground="White"
+                                               Margin="0,0,12,0"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1"
+                                               x:Name="LblENB"
+                                               Foreground="#F28F1A"/>
+
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                    </Grid>
+
+                    <!-- NOTIFICATION BAR -->
+                    <Border Grid.Row="2"
+                            Background="#3BBF4B"
+                            CornerRadius="3"
+                            Padding="8">
+
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Spacing="8">
+
+                            <Image Source="avares://NolvusDashboard/Assets/Info.png"
+                                   Width="24" Height="24"
+                                   Margin="4,0,0,0"/>
+
+                            <TextBlock x:Name="LblNotification"
+                                       Text="You are a Nexus Premium user. Download will be automatic and bandwidth will be unlimited."
+                                       Foreground="White"
+                                       VerticalAlignment="Center"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ERRORS + BUTTONS -->
+                    <Grid Grid.Row="3"
+                          RowDefinitions="*,Auto"
+                          RowSpacing="8">
+
+                        <!-- Errors Management Panel -->
+                        <Border Grid.Row="0"
+                                Background="#2E2E2E"
+                                BorderBrush="#555"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12">
+
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Errors Management"
+                                           Foreground="White"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"/>
+
+                                <TextBlock Text="Action to take when an error occurs"
+                                           Foreground="White"/>
+
+                                <StackPanel Spacing="6" Margin="8,4,0,0">
+                                    <RadioButton x:Name="RdoStopOnFirstError"
+                                                 GroupName="ErrorAction"
+                                                 IsChecked="True">
+                                        <TextBlock Text="Stop installation and display the error message (recommended if you don't have a Nexus Premium account)"
+                                                   Foreground="White"
+                                                   TextWrapping="Wrap"
+                                                   MaxWidth="600"/>
+                                    </RadioButton>
+
+                                    <RadioButton x:Name="RdoStopOn50Errors"
+                                                 GroupName="ErrorAction">
+                                        <TextBlock Text="Stop the installation when 50 errors occurred and display the error messages (max errors can be set up in the Nolvus Dashboard.ini file)"
+                                                   Foreground="White"
+                                                   TextWrapping="Wrap"
+                                                   MaxWidth="600"/>
+                                    </RadioButton>
+
+                                    <RadioButton x:Name="RdoDontStop"
+                                                 GroupName="ErrorAction">
+                                        <TextBlock Text="Don't stop installation and display all error messages at the end of the process (overnight)"
+                                                   Foreground="White"
+                                                   TextWrapping="Wrap"
+                                                   MaxWidth="600"/>
+                                    </RadioButton>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Buttons -->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="8"
+                                    Margin="0,8,0,0">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    MinWidth="120"
+                                    Foreground="White"/>
+
+                            <Button x:Name="BtnStart"
+                                    Content="Start"
+                                    MinWidth="120"
+                                    Foreground="White"/>
+                        </StackPanel>
+
+                    </Grid>
+
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

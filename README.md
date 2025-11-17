@@ -17,14 +17,14 @@ Dashboard Window is made, DPI scaling.. not much for you to see yet :D
 - Nolvus.Core
 - Nolvus.Components (UI heavy - will be broken but it compiles)
 - Nolvus.Services
+- Nolvus.Instance
 
 # Partially Implemented
 - Nolvus.Dashboard
+- Nolvus.Browser
 
 # Not Implemented
 
-- Nolvus.Browser
 - Nolvus.Downgrader
 - Nolvus.GrassCache
-- Nolvus.Instance
 - Nolvus.Launcher

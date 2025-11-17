@@ -29,6 +29,16 @@ namespace Nolvus.Dashboard.Frames.Settings
             {
                 ServiceSingleton.Dashboard.Title("Nolvus Dashboard - [Settings]");
                 ServiceSingleton.Dashboard.Info("Global Settings");
+
+                TxtBxUserName.Text = ServiceSingleton.Globals.MegaEmail;
+                TxtBxPassword.Text = ServiceSingleton.Globals.MegaPassword;
+
+                TglBtnAnonymous.IsChecked = true;
+
+                if (!ServiceSingleton.Globals.MegaAnonymousConnection)
+                {
+                    TglBtnAnonymous.IsChecked = false;
+                }
             }
             catch (Exception ex)
             {

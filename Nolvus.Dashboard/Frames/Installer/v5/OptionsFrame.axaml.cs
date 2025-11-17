@@ -83,11 +83,19 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
             ServiceSingleton.Dashboard.Info("Additional Options");
         }
 
-        private void BtnContinue_Click(object? sender, RoutedEventArgs e)
+        private async void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
             var owner = TopLevel.GetTopLevel(this) as Window;
-            NolvusMessageBox.Show(owner, "Error", "Unimplemented - do not report as a bug", MessageBoxType.Error);
-            return;
+            bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "The options you selected can not be changed after installation. Are you sure you want to continue?");
+            if (result == true)
+            {
+                Console.WriteLine("ENB Frame Not Implemented");
+                //ServiceSingleton.Dashboard.LoadFrame<v5.ENBFrame>();
+            }
+            else 
+            {
+                return;
+            }
         }
 
         private async void BtnPrevious_Click(object? sender, RoutedEventArgs e)

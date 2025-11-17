@@ -49,7 +49,7 @@ namespace Nolvus.Dashboard.Frames.Settings
         {
             if (ServiceSingleton.Game.IsGameInstalled()) {
                 TxtPath.Text = ServiceSingleton.Game.GetSkyrimSEDirectory();
-                Console.WriteLine(ServiceSingleton.Game.GetSkyrimSEDirectory());
+                //Console.WriteLine(ServiceSingleton.Game.GetSkyrimSEDirectory());
             }
             else {
                 LblError.Text = "Skyrim Anniversary Edition not found! Check if your game is installed. If it is installed, trying browsing to the installation directory manually";

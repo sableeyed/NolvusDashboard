@@ -203,7 +203,6 @@ namespace Nolvus.Dashboard.Frames.Installer
                     WorkingInstance.Settings.LgName = selectedLg.Name;
                 }
             }
-            Console.WriteLine("WorkingInstance.Settings.LgCode: " + ServiceSingleton.Instances.WorkingInstance.Settings.LgCode);
             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
         } 
 

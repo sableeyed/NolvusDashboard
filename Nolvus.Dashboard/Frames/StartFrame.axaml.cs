@@ -43,7 +43,6 @@ namespace Nolvus.Dashboard.Frames
                     //make titlebar picture visible
                     var window = TopLevel.GetTopLevel(this) as DashboardWindow;
                     window?.SetAccountImageVisible(true);
-                    ServiceSingleton.Logger.Log("Dashboard ini found");
                     await CheckNolvus();
                     await CheckForUpdates();
                     await CheckNexus();
@@ -80,7 +79,7 @@ namespace Nolvus.Dashboard.Frames
             {
                 ServiceSingleton.Logger.Log(ex.StackTrace);
             }
-            Console.WriteLine("Set no status and progress completed");
+
             ServiceSingleton.Dashboard.NoStatus();
             ServiceSingleton.Dashboard.ProgressCompleted();
 

@@ -307,7 +307,6 @@ namespace Nolvus.Components.Controls
 
         public void EnableAccountImage(bool value)
         {
-            Console.WriteLine("Titlebar toggling image");
             AccountImage.IsVisible = value;
         }
     }

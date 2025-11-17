@@ -276,7 +276,6 @@ public partial class DashboardWindow : Window, IDashboard
 
     public void SetAccountImageVisible(bool visible)
     {
-        Console.WriteLine("Dashboard window requesting to set image visible");
         TitleBarControl.EnableAccountImage(visible);
     }
 
@@ -582,7 +581,6 @@ public partial class DashboardWindow : Window, IDashboard
             if (TitleBarControl.SettingsEnabled) 
             {
                 ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
-                Console.WriteLine("TODO: Load Global Settings Frame");
             }
             else
             {   

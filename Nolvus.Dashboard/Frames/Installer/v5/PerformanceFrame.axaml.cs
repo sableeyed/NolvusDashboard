@@ -216,5 +216,115 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
             return;
         }
 
+        private void DisplayHardwareRequirement()
+        {
+            if (ServiceSingleton.Instances.WorkingInstance.Performance.Variant == "Ultra")
+            {
+                if (ServiceSingleton.Instances.WorkingInstance.Performance.LODs == "Ultra")
+                {
+                    LblReqGpu.Text = "Recommended : RTX 3080 Ti";
+                    LblReqVram.Text = "Recommended : 12Gb @1440p (HIGHER GPU with HIGHER VRAM needed beyond 1440p)";
+                    LblReqStorageTotal.Text = "Mods: 277 Gb, Archives: 115Gb, Total: 392Gb";
+                }
+                else if (ServiceSingleton.Instances.WorkingInstance.Performance.LODs == "Performance")
+                {
+                    LblReqGpu.Text = "Recommended : RTX 3080";
+                    LblReqVram.Text = "Recommended : 10Gb @1440p (HIGHER GPU with HIGHER VRAM needed beyond 1440p)";
+                    LblReqStorageTotal.Text = "Mods: 254 Gb, Archives: 115Gb, Total: 369Gb";
+                }
+                else if (ServiceSingleton.Instances.WorkingInstance.Performance.LODs == "Ultra Performance")
+                {
+                    LblReqGpu.Text = "Recommended : RTX 2080 Ti";
+                    LblReqVram.Text = "Recommended : 10Gb @1440p (HIGHER GPU with HIGHER VRAM needed beyond 1440p)";
+                    LblReqStorageTotal.Text = "Mods: 251 Gb, Archives: 115Gb, Total: 366Gb";
+                }
+            }
+            else
+            {
+                LblReqGpu.Text = "Minimum : GTX 1080, Recommended : RTX 2070";
+                LblReqVram.Text = "Recommended : 8Gb @1080p (HIGHER GPU with HIGHER VRAM needed beyond 1080p)";
+                LblReqStorageTotal.Text = "Mods: 240 Gb, Archives: 105Gb, Total: 345Gb";
+            }
+        }
+
+        private void OnVariantChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            ServiceSingleton.Instances.WorkingInstance.Performance.Variant = DrpDwnLstVariant.SelectedItem.ToString();
+
+            if (DrpDwnLstVariant.SelectedItem.ToString() == "Ultra")
+            {                
+                //LblLods.ForeColor = Color.White;
+                DrpDwnLstLODs.IsEnabled = true;
+            }
+            else
+            {                
+                //LblLods.ForeColor = Color.Gray;
+                DrpDwnLstLODs.IsEnabled = false;
+            }
+
+            DisplayHardwareRequirement();
+        } 
+
+        private void OnAntiAliasingChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (DrpDwnLstAntiAliasing.SelectedValue != null)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = DrpDwnLstAntiAliasing.SelectedItem.ToString();
+
+                if (ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing == "DLAA")
+                {
+                    TglBtnDownScale.IsEnabled = false;
+                    TglBtnDownScale.IsChecked = false;
+                }
+                else
+                {
+                    TglBtnDownScale.IsEnabled = true;                    
+                }
+            }
+
+            DisplayHardwareRequirement();
+        }
+
+        private void OnLodsChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            ServiceSingleton.Instances.WorkingInstance.Performance.LODs = DrpDwnLstLODs.SelectedItem.ToString();
+            DisplayHardwareRequirement();
+        }
+
+        private void OnListRatiosChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            ServiceSingleton.Instances.WorkingInstance.Settings.Ratio = DrpDwnLstRatios.SelectedItem.ToString();
+        }
+
+        private void OnResolutionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
+
+            string Resolution = DrpDwnLstResolution.SelectedItem.ToString();
+
+            string[] Reso = Resolution.Split(new char[] { 'x' });
+
+            WorkingInstance.Settings.Width = Reso[0];
+            WorkingInstance.Settings.Height = Reso[1];
+        }
+
+        private void OnDownscaledResolutionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (DrpDwnLstScreenRes.SelectedValue != null)
+            {
+                string Resolution = DrpDwnLstScreenRes.SelectedItem.ToString();
+
+                string[] Reso = Resolution.Split(new char[] { 'x' });
+
+                ServiceSingleton.Instances.WorkingInstance.Performance.DownWidth = Reso[0];
+                ServiceSingleton.Instances.WorkingInstance.Performance.DownHeight = Reso[1];
+            }
+        }
+
+        private void OnIniChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            ServiceSingleton.Instances.WorkingInstance.Performance.IniSettings = DrpDwnLstIni.SelectedIndex.ToString(); 
+        }
+
     }
 }

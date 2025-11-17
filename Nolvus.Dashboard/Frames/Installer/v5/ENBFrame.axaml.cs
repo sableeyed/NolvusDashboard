@@ -1,27 +1,12 @@
 using Nolvus.Core.Frames;
-using Vcc.Nolvus.Api.Installer.Library;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
-using Nolvus.Instance.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Vcc.Nolvus.Api.Installer.Services;
-using Nolvus.Core.Enums;
-using Nolvus.Dashboard.Core;
-using Nolvus.Components.Controls;
-using Avalonia.Media.Imaging;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.VisualTree;
-using Nolvus.Package.Mods;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp;
-using Avalonia.Threading;
-using Nolvus.Dashboard.Controls;
 using System.Diagnostics;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using Nolvus.Core.Misc;
+using Nolvus.Dashboard.Frames.Installer;
 
 namespace Nolvus.Dashboard.Frames.Installer.v5
 {
@@ -30,6 +15,32 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
         public ENBFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
+
+            BtnPrevious.Click += BtnPrevious_Click;
+            BtnContinue.Click += BtnContinue_Click;
+        }
+
+        protected override async Task OnLoadedAsync()
+        {
+            ServiceSingleton.Dashboard.Info("ENB Selection");
+            
+            DrpEnbPreset.ItemsSource = ENBs.GetAvailableENBsForV5();
+            DrpEnbPreset.SelectedIndex = 0;
+        }
+
+        private void BtnPrevious_Click(object? sender, RoutedEventArgs e)
+        {
+            ServiceSingleton.Dashboard.LoadFrame<v5.OptionsFrame>();
+        }
+
+        private void BtnContinue_Click(object? sender, RoutedEventArgs e)
+        {
+            ServiceSingleton.Dashboard.LoadFrame<PageFileFrame>();
+        }
+
+        private void OnEnbChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB = DrpEnbPreset.SelectedItem.ToString();
         }
 
         private void LnkCabbageTutorial_PointerPressed(object? sender, PointerPressedEventArgs e)

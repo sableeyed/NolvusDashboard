@@ -1,18 +1,19 @@
 <UserControl
-    x:Class="Nolvus.Dashboard.Frames.Installer.v5.ENBFrame"
+    x:Class="Nolvus.Dashboard.Frames.Installer.PageFileFrame"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Border Padding="32" Background="#2E2E2E">
+    <Border Background="#2E2E2E" Padding="32">
         <Grid RowDefinitions="Auto,*,Auto" RowSpacing="24">
 
             <!-- HEADER -->
-            <TextBlock Text="Select Your ENB"
+            <TextBlock x:Name="LblStepText"
+                       Text="Page File Size Configuration"
                        Foreground="White"
                        FontSize="20"
                        FontWeight="SemiBold"/>
 
-            <!-- MAIN SPLIT LAYOUT -->
+            <!-- MAIN CONTENT -->
             <Grid Grid.Row="1"
                   ColumnDefinitions="*,350"
                   ColumnSpacing="24">
@@ -21,58 +22,39 @@
                 <Border Background="#363636"
                         BorderBrush="#444"
                         CornerRadius="4"
-                        Padding="20">
+                        Padding="16">
 
                     <ScrollViewer>
-                        <StackPanel Spacing="20">
+                        <StackPanel Spacing="16">
 
-                            <!-- ENB Selection -->
-                            <StackPanel Spacing="6">
-                                <StackPanel Orientation="Horizontal" Spacing="12">
-                                    <TextBlock Text="ENB:"
-                                               Foreground="White"
-                                               VerticalAlignment="Center"/>
-                                    <ComboBox x:Name="DrpEnbPreset"
-                                              Width="260"
-                                              SelectionChanged="OnEnbChanged"
-                                              Background="#2E2E2E"
-                                              Foreground="White"/>
-                                </StackPanel>
+                            <!-- Warning Icon -->
+                            <Image Source="avares://NolvusDashboard/Assets/Warning-Message.png"
+                                   HorizontalAlignment="Left"
+                                   Width="32"
+                                   Height="32"/>
 
-                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
-                                    <Image Source="avares://NolvusDashboard/Assets/Warning-Message.png"
-                                           Width="24" Height="24"/>
-                                    <TextBlock Text="This application will automatically install ENB and Reshade. 
-Changing ENB presets may impact intended visuals."
-                                               Foreground="#CCCCCC"
-                                               TextWrapping="Wrap"
-                                               Width="400"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <!-- Cabbage ENB Warning -->
-                            <TextBlock Text="A preset with Cabbage ENB is also available, but must be installed manually. 
-It cannot be shipped with Nolvus automatically."
+                            <!-- Main description -->
+                            <TextBlock Text="To improve system stability and avoid crashes, especially if you only have 16 GB of RAM, it is recommended to configure your swap size."
                                        Foreground="White"
                                        TextWrapping="Wrap"/>
 
+                            <!-- Link line (same pattern as ENBFrame) -->
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <TextBlock Text="Click"
                                            Foreground="White"/>
-                                <TextBlock Text="here"
+                                <TextBlock x:Name="LnkPageFile"
+                                           Text="here"
                                            Foreground="#F28F1A"
                                            Classes="link"
                                            Cursor="Hand"
-                                           PointerPressed="LnkCabbageTutorial_PointerPressed"
-                                           x:Name="LnkCabbageTutorial"/>
-                                <TextBlock Text="for the tutorial on installing Cabbage ENB."
+                                           PointerPressed="LnkPageFile_PointerPressed"/>
+                                <TextBlock Text="for more information on changing your swap size."
                                            Foreground="White"/>
                             </StackPanel>
 
-                            <!-- Final Warning -->
-                            <TextBlock Text="BE SURE TO FOLLOW THIS TUTORIAL AFTER THE LIST IS INSTALLED."
-                                       Foreground="#F28F1A"
-                                       FontWeight="SemiBold"
+                            <!-- Secondary note -->
+                            <TextBlock Text="This setup will require a reboot. You can do this after installation, but do not forget to do it before playing the game."
+                                       Foreground="White"
                                        TextWrapping="Wrap"/>
 
                         </StackPanel>
@@ -89,10 +71,8 @@ It cannot be shipped with Nolvus automatically."
 
                     <Grid RowDefinitions="*,Auto">
 
-                        <!-- Info -->
-                        <TextBlock Grid.Row="0"
-                                   Text="Select the ENB you want to install. 
-PI-CHO is the default and recommended preset for Nolvus."
+                        <!-- Info text on the right -->
+                        <TextBlock Text="Configure your swap size according to the tutorial to ensure system stability while running Nolvus."
                                    Foreground="#CCCCCC"
                                    TextWrapping="Wrap"/>
 
@@ -116,12 +96,17 @@ PI-CHO is the default and recommended preset for Nolvus."
                                     VerticalContentAlignment="Center"
                                     MinWidth="120"
                                     Foreground="White"/>
+
                         </StackPanel>
+
                     </Grid>
 
                 </Border>
 
             </Grid>
+
+            <!-- Bottom spacer (optional) -->
+            <Border Grid.Row="2" Height="1"/>
 
         </Grid>
     </Border>

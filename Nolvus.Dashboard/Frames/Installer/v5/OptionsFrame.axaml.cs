@@ -89,8 +89,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
             bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "The options you selected can not be changed after installation. Are you sure you want to continue?");
             if (result == true)
             {
-                Console.WriteLine("ENB Frame Not Implemented");
-                //ServiceSingleton.Dashboard.LoadFrame<v5.ENBFrame>();
+                ServiceSingleton.Dashboard.LoadFrame<v5.ENBFrame>();
             }
             else 
             {

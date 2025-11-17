@@ -1,0 +1,124 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.v5.ENBFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Padding="32" Background="#2E2E2E">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="24">
+
+            <!-- HEADER -->
+            <TextBlock Text="Select Your ENB"
+                       Foreground="White"
+                       FontSize="20"
+                       FontWeight="SemiBold"/>
+
+            <!-- MAIN SPLIT LAYOUT -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,350"
+                  ColumnSpacing="24">
+
+                <!-- LEFT PANEL -->
+                <Border Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="20">
+
+                    <ScrollViewer>
+                        <StackPanel Spacing="20">
+
+                            <!-- ENB Selection -->
+                            <StackPanel Spacing="6">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <TextBlock Text="ENB:"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpEnbPreset"
+                                              Width="260"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                                    <Image Source="avares://NolvusDashboard/Assets/Warning-Message.png"
+                                           Width="24" Height="24"/>
+                                    <TextBlock Text="This application will automatically install ENB and Reshade. 
+Changing ENB presets may impact intended visuals."
+                                               Foreground="#CCCCCC"
+                                               TextWrapping="Wrap"
+                                               Width="400"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Cabbage ENB Warning -->
+                            <TextBlock Text="A preset with Cabbage ENB is also available, but must be installed manually. 
+It cannot be shipped with Nolvus automatically."
+                                       Foreground="White"
+                                       TextWrapping="Wrap"/>
+
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Click"
+                                           Foreground="White"/>
+                                <TextBlock Text="here"
+                                           Foreground="#F28F1A"
+                                           Classes="link"
+                                           Cursor="Hand"
+                                           PointerPressed="LnkCabbageTutorial_PointerPressed"
+                                           x:Name="LnkCabbageTutorial"/>
+                                <TextBlock Text="for the tutorial on installing Cabbage ENB."
+                                           Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- Final Warning -->
+                            <TextBlock Text="BE SURE TO FOLLOW THIS TUTORIAL AFTER THE LIST IS INSTALLED."
+                                       Foreground="#F28F1A"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap"/>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Border>
+
+                <!-- RIGHT PANEL -->
+                <Border Grid.Column="1"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        CornerRadius="4"
+                        Padding="16">
+
+                    <Grid RowDefinitions="*,Auto">
+
+                        <!-- Info -->
+                        <TextBlock Grid.Row="0"
+                                   Text="Select the ENB you want to install. 
+PI-CHO is the default and recommended preset for Nolvus."
+                                   Foreground="#CCCCCC"
+                                   TextWrapping="Wrap"/>
+
+                        <!-- Buttons -->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="8"
+                                    Margin="0,24,0,0">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    MinWidth="120"
+                                    Foreground="White"/>
+
+                            <Button x:Name="BtnContinue"
+                                    Content="Continue"
+                                    MinWidth="120"
+                                    Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+
+                </Border>
+
+            </Grid>
+
+        </Grid>
+    </Border>
+
+</UserControl>

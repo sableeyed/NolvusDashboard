@@ -37,6 +37,10 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
 
             BtnPrevious.Click += BtnPrevious_Click;
             BtnContinue.Click += BtnContinue_Click;
+            TglBtnPhysics.IsCheckedChanged += OnPhysicsChanged;
+            TglBtnDownScale.IsCheckedChanged += OnDownscaleChanged;
+            TglBtnFPSStabilizer.IsCheckedChanged += OnFPSStabilizerChanged;
+            TglBtnRayTracing.IsCheckedChanged += OnRayTracingChanged;
         }
 
         protected override async Task OnLoadedAsync()
@@ -351,6 +355,57 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
         private void OnIniChanged(object? sender, SelectionChangedEventArgs e)
         {
             ServiceSingleton.Instances.WorkingInstance.Performance.IniSettings = DrpDwnLstIni.SelectedIndex.ToString(); 
+        }
+
+        private void OnRayTracingChanged(object? sender, RoutedEventArgs e)
+        {
+            if (TglBtnRayTracing.IsChecked == true)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Performance.RayTracing = "TRUE";
+            }
+            else
+            {
+                ServiceSingleton.Instances.WorkingInstance.Performance.RayTracing = "FALSE";
+            }
+        }
+
+        private void OnFPSStabilizerChanged(object? sender, RoutedEventArgs e)
+        {
+            if (TglBtnFPSStabilizer.IsChecked == true)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Performance.FPSStabilizer = "TRUE";
+            }
+            else
+            {
+                ServiceSingleton.Instances.WorkingInstance.Performance.FPSStabilizer = "FALSE";
+            }
+        }
+
+        private void OnPhysicsChanged(object? sender, RoutedEventArgs e)
+        {
+            if (TglBtnPhysics.IsChecked == true)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Performance.AdvancedPhysics = "TRUE";
+            }
+            else
+            {
+                ServiceSingleton.Instances.WorkingInstance.Performance.AdvancedPhysics = "FALSE";
+            }
+        }
+
+        private void OnDownscaleChanged(object? sender, RoutedEventArgs e)
+        {
+            if (TglBtnDownScale.IsChecked == true)
+            {
+                DrpDwnLstScreenRes.IsEnabled = TglBtnDownScale.IsChecked == true;
+                ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling = "TRUE";
+                DrpDwnLstScreenRes.SelectedIndex = ResolutionIndex(ServiceSingleton.Globals.WindowsResolutions);
+            }
+            else
+            {
+                DrpDwnLstScreenRes.IsEnabled = TglBtnDownScale.IsChecked == false;
+                ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling = "FALSE";                
+            }    
         }
 
     }

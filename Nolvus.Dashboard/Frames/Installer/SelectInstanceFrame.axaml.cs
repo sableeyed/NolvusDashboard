@@ -143,6 +143,7 @@ namespace Nolvus.Dashboard.Frames.Installer
             }
         }
 
+        //TODO - Test and resume installations.
         private async void BtnContinue_Click(object? sender, EventArgs e)
         {
             var owner = TopLevel.GetTopLevel(this) as Window;
@@ -202,7 +203,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                     WorkingInstance.Settings.LgName = selectedLg.Name;
                 }
             }
-
+            Console.WriteLine("WorkingInstance.Settings.LgCode: " + ServiceSingleton.Instances.WorkingInstance.Settings.LgCode);
             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
         } 
 

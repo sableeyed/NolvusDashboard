@@ -45,6 +45,7 @@
                                 <Grid ColumnDefinitions="Auto,10,Auto">
                                     <TextBlock Text="Female Skin Type" Foreground="White" VerticalAlignment="Center"/>
                                     <ComboBox x:Name="DrpFemaleSkinType"
+                                              SelectionChanged="OnSkinTypeChanged"
                                               VerticalAlignment="Center"
                                               Grid.Column="2"
                                               Width="140"

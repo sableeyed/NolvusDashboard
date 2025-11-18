@@ -97,6 +97,34 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
         private void BtnStart_Click(object? sender, RoutedEventArgs e)
         {
             Console.WriteLine("Unimplemented: Start Install");
+
+            //MO2 is not native on linux so this should be irrelevant
+            string Mo2Path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ModOrganizer");
+
+            if (Directory.Exists(Mo2Path))
+            {
+                ServiceSingleton.Dashboard.Error("Global ModOrganizer instance detected", "The installer can not proceed to the installation because a global ModOrganizer instance has been detected. Read the message below to fix", "READ THIS TO FIX!!!" + Environment.NewLine + "All automated mod lists use portable instances, this way you can have multiple lists installed together." + Environment.NewLine + "If you want to install Nolvus, you need to remove this installed ModOrganizer global instance to avoid issues(make a backup before if it's sensitive)." + Environment.NewLine + "To know where your global instance is installed go to " + Mo2Path + "." + Environment.NewLine + "This folder may be hidden (be sure you disable hidden files and folder in Windows folder options if you don't see it)" + Environment.NewLine + "If you made a backup of your global instance and want to continue, just delete the " + Mo2Path + " folder" + Environment.NewLine + "DON'T REACTIVATE THIS GLOBAL INSTANCE AFTER INSTALLATION!!! YOUR NOLVUS MOD ORGANIZER WILL NOT WORK!!!");
+            }
+            else
+            {
+                if (RdoStopOnFirstError.IsChecked == true)
+                {
+                    ServiceSingleton.Settings.StoreIniValue("Process", "ErrorsThreshold", "1");
+                }
+                else if (RdoDontStop.IsChecked == true)
+                {
+                    ServiceSingleton.Settings.StoreIniValue("Process", "ErrorsThreshold", "0");
+                }
+                else
+                {
+                    if (ServiceSingleton.Settings.ErrorsThreshold == 1 || ServiceSingleton.Settings.ErrorsThreshold == 0)
+                    {
+                        ServiceSingleton.Settings.StoreIniValue("Process", "ErrorsThreshold", "50");
+                    }
+                }
+
+                ServiceSingleton.Dashboard.LoadFrameAsync<PackageFrame>();
+            }
         }
 
         private void BtnPrevious_Click(object? sender, RoutedEventArgs e)

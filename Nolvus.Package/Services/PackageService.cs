@@ -169,7 +169,7 @@ namespace Nolvus.Package.Services
                     }
                     finally
                     {
-                        File.Delete(DownloadedFile);
+                        //File.Delete(DownloadedFile);
                     }
 
                     return ExtractedFile;

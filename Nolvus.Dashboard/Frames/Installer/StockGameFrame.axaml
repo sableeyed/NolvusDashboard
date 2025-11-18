@@ -1,0 +1,40 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.StockGameFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#363636">
+
+    <Grid>
+        <!-- Outer bordered panel -->
+        <Border Margin="3"
+                BorderThickness="1"
+                BorderBrush="#555"
+                Background="#363636">
+
+            <!-- Output List -->
+            <ListBox x:Name="LstBxOutput"
+                     Background="#363636"
+                     Foreground="White"
+                     BorderThickness="0"
+                     Margin="4"
+                     SelectionMode="Single">
+
+                <!-- Remove highlight/selection visuals -->
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Style>
+                    <Style Selector="ListBoxItem:pointerover">
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Style>
+                    <Style Selector="ListBoxItem:selected">
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Style>
+                </ListBox.Styles>
+
+            </ListBox>
+
+        </Border>
+    </Grid>
+
+</UserControl>

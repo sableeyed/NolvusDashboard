@@ -20,9 +20,12 @@ namespace Nolvus.Package.Rules
         public override void Load(XmlNode Node)
         {
             base.Load(Node);
-            Source = Encoding.UTF8.GetString(Encoding.GetEncoding("Windows-1252").GetBytes(Node["Source"].InnerText));
-            Destination = System.Convert.ToInt16(Node["Destination"].InnerText);
-            DestinationDirectory = Node["DestinationDirectory"].InnerText;
+            //Source = Encoding.UTF8.GetString(Encoding.GetEncoding("Windows-1252").GetBytes(Node["Source"].InnerText));
+            Source = Node["Source"]?.InnerText ?? string.Empty;
+            //Destination = System.Convert.ToInt16(Node["Destination"].InnerText);
+            Destination = Convert.ToInt16(Node["Destination"]?.InnerText ?? "0");
+            //DestinationDirectory = Node["DestinationDirectory"].InnerText;
+            DestinationDirectory = Node["DestinationDirectory"]?.InnerText ?? string.Empty;
         }
 
         public override bool IsPriority

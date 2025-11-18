@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Xilium.CefGlue;
 using Xilium.CefGlue.Common;
+using System.Text;
 
 namespace Nolvus.Dashboard;
 
@@ -106,6 +107,16 @@ internal static class Program
             Console.WriteLine("Another instance is already running");
             Environment.Exit(0);
         }
+
+        var libDir = Path.Combine(AppContext.BaseDirectory, "lib");
+
+        if (!Directory.Exists(libDir))
+        {
+            Directory.CreateDirectory(libDir);
+        }
+
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
 
         ServiceSingleton.RegisterService<ILogService>(new LogService());
         ServiceSingleton.Logger.LineBreak();

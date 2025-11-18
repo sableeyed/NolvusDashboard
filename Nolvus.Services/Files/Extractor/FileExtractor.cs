@@ -41,14 +41,20 @@ namespace Nolvus.Services.Files.Extractor
                 {
                     ExtractProgressChanged += OnProgress;
 
+                    if (!Directory.Exists(Output))
+                    {
+                        Directory.CreateDirectory(Output);
+                    }
+
                     Process SevenZipProcess = new Process
                     {
-                        StartInfo = { WorkingDirectory = ServiceSingleton.Folders.LibDirectory, FileName = "cmd.exe", CreateNoWindow = true, UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden }
+                        StartInfo = { WorkingDirectory = ServiceSingleton.Folders.LibDirectory, FileName = "/bin/bash", CreateNoWindow = true, UseShellExecute = false}
                     };
 
-                    var Args = string.Format("\"" + Path.Combine(ServiceSingleton.Folders.LibDirectory, "7z.exe") + "\" x -bsp1 -y \"{0}\" -o\"{1}\" -mmt=off", File, Output);
+                    var SevenZip = "/usr/bin/7z";
+                    var Args = string.Format("\"{0}\" x -bsp1 -y \"{1}\" -o\"{2}\" -mmt=off", SevenZip, File, Output);
 
-                    SevenZipProcess.StartInfo.Arguments = "/c \"" + Args + "\"";
+                    SevenZipProcess.StartInfo.Arguments = "-c \"" + Args + "\"";
                     SevenZipProcess.StartInfo.RedirectStandardOutput = true;
                     SevenZipProcess.StartInfo.RedirectStandardError = true;
 

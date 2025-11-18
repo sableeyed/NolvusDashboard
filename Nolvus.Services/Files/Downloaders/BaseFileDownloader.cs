@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
+using System.Web;
 
 namespace Nolvus.Services.Files
 {
@@ -47,6 +48,10 @@ namespace Nolvus.Services.Files
         protected async Task DownloadToFile(string url, string path)
         {
             FileName = Path.GetFileName(path);
+
+            Console.WriteLine("Downloading to: " + path);
+            Console.WriteLine("URL: " + url);
+
 
             using var response = await _http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();

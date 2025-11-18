@@ -21,7 +21,10 @@ namespace Nolvus.StockGame.Core
         private const string ExeNameKey = "GameManifest/ExeName";
         private const string VersionKey = "GameManifest/Version";
         private const string FileKey = "GameManifest/Files/File";
-        private const string InstructionKey = "GameManifest/Patcher/Instruction";        
+        private const string InstructionKey = "GameManifest/Patcher/Instruction";   
+
+        //We have to work around case sensitivity on Linux in a user friendly way.
+        private Dictionary<string, string> FileDict = new Dictionary<string, string>();     
 
         #region Fields
 
@@ -228,15 +231,22 @@ namespace Nolvus.StockGame.Core
             StepProcessedEventArgs Event = new StepProcessedEventArgs(0, 0, Step);
             if (Handler != null) Handler(this, Event);
         }
-
+        //Rewrite to handle files with spaces in their name because of breaking problems on Linux.
         public async Task Load()
         {            
             var Tsk = Task.Run(async () => 
             {
-                string DownloadedFile = Path.Combine(_WorkingDir, _GamePackage.Name + ".zip");
-
+                //string DownloadedFile = Path.Combine(_WorkingDir, _GamePackage.Name + ".zip");
+                string DownloadedFile = "";
                 try
                 {
+                    string Link = _GamePackage.DownloadLink;
+                    string OriginalName = Path.GetFileName(Link);
+                    string EncodedName = Uri.EscapeDataString(OriginalName);
+                    if (!string.Equals(OriginalName, EncodedName, StringComparison.Ordinal))
+                        Link = Link.Replace(OriginalName, EncodedName);
+                    string SafeLocalName = (_GamePackage.Name + ".zip").Replace(" ", "_");
+                    DownloadedFile = Path.Combine(_WorkingDir, SafeLocalName);
                     try
                     {
                         this.StepProcessed("Initializing stock game installation");
@@ -265,6 +275,7 @@ namespace Nolvus.StockGame.Core
 
         private async Task DoLoad()
         {
+            BuildHashTable();
             var Tsk = Task.Run(() => 
             {
                 try
@@ -286,6 +297,17 @@ namespace Nolvus.StockGame.Core
 
                     foreach (XmlNode FileNode in FileElements)
                     {
+                        string hash = FileNode["Hash"]?.InnerText?.Trim()?.ToLowerInvariant();
+                        //_Package.AddFile(FileNode);
+
+                        //var addedFile = _Package.Files.Last();
+                        if (!string.IsNullOrWhiteSpace(hash) &&
+                            FileDict.TryGetValue(hash, out var correctedName))
+                        {
+                            // override the XML node so GameFile.Parse() sees the correct filename
+                            FileNode["Name"].InnerText = correctedName;
+                        }
+
                         _Package.AddFile(FileNode);
 
                         ElementProcessed(Counter, FileCount, StockGameProcessStep.GameFileInfoLoading, _Package.Name);
@@ -425,6 +447,32 @@ namespace Nolvus.StockGame.Core
             await CheckIntegrity();
             await CopyGameFiles();
             await PatchGameFiles();            
+        }
+
+        private void BuildHashTable()
+        {
+            FileDict.Clear();
+
+            var Files = Directory.EnumerateFiles(_GameDir, "*", SearchOption.AllDirectories);
+
+            foreach (var File in Files)
+            {
+                try
+                {
+                    string hash = ComputeMD5(File);
+                    string name = Path.GetFileName(File);
+                    if (!FileDict.ContainsKey(hash))
+                        FileDict.Add(hash, name);
+                }
+                catch { }
+            }
+        }
+
+        private string ComputeMD5(string Path)
+        {
+            using var sha = System.Security.Cryptography.MD5.Create();
+            using var stream = File.OpenRead(Path);
+            return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
         }
 
         #endregion

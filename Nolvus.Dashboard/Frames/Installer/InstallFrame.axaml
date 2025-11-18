@@ -1,0 +1,27 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.InstallFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components">
+
+    <Grid RowDefinitions="Auto, * , Auto" Margin="20">
+
+        <!-- Header -->
+        <TextBlock Text="Install Frame (ModsBox Test)"
+                   FontSize="20"
+                   Foreground="White"
+                   Margin="0,0,0,10"/>
+
+        <!-- ModsBox -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      Background="#2E2E2E">
+                <Border Background="#363636">
+                    <controls:ModsBox x:Name="ModsBoxControl"
+                                    Height="400"/>
+                </Border>
+
+        </ScrollViewer>
+    </Grid>
+
+</UserControl>

@@ -51,16 +51,16 @@ namespace Nolvus.Dashboard.Frames.Installer
                 ServiceSingleton.Dashboard.Info("Stock Game Installation 1/4 (25%)");
                 await StockGameManager.CheckIntegrity();
                 ServiceSingleton.Dashboard.Info("Stock Game Installation 2/4 (50%)");
-                // await StockGameManager.CopyGameFiles();
-                // ServiceSingleton.Dashboard.Info("Stock Game Installation 3/4 (75%)");
-                // await StockGameManager.PatchGameFiles();
-                // ServiceSingleton.Dashboard.Info("Stock Game Installation 4/4 (100%)");
+                await StockGameManager.CopyGameFiles();
+                ServiceSingleton.Dashboard.Info("Stock Game Installation 3/4 (75%)");
+                await StockGameManager.PatchGameFiles();
+                ServiceSingleton.Dashboard.Info("Stock Game Installation 4/4 (100%)");
 
-                // ServiceSingleton.Dashboard.ProgressCompleted();
-                // ServiceSingleton.Instances.PrepareInstanceForInstall();
+                ServiceSingleton.Dashboard.ProgressCompleted();
+                ServiceSingleton.Instances.PrepareInstanceForInstall();
 
                 Console.WriteLine("InstallFrame not implemented - but STOCK GAME should be finsihed");
-                //await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>();
+                await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>();
             }
             catch (Exception ex)
             {

@@ -8,8 +8,6 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Input;
 using Avalonia.Media.TextFormatting;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
 using Nolvus.Core.Services;
 using Nolvus.Core.Events;
 
@@ -29,6 +27,13 @@ namespace Nolvus.Components.Controls
         public ModsBox()
         {
             ClipToBounds = true;
+
+            // Auto-update UI on add/remove
+            Items.CollectionChanged += (_, __) =>
+            {
+                InvalidateMeasure();
+                InvalidateVisual();
+            };
         }
 
         private Avalonia.Media.Imaging.Bitmap? GetAvaloniaBitmap(SixLabors.ImageSharp.Image img)
@@ -40,7 +45,7 @@ namespace Nolvus.Components.Controls
                 return cached;
 
             using var ms = new MemoryStream();
-            img.Save(ms, new PngEncoder());
+            img.Save(ms, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
             ms.Position = 0;
 
             var bmp = new Avalonia.Media.Imaging.Bitmap(ms);
@@ -48,10 +53,10 @@ namespace Nolvus.Components.Controls
             return bmp;
         }
 
-        private int GetGlobalProgress(int value)
+        private int GetProgressWidth(int value)
         {
-            //return (int)(((Bounds.Width - 100) / 100) * value);
-            return (int)((Bounds.Width - 100) * (value / 100.0));
+            double width = Math.Max(0, Bounds.Width - 100);
+            return (int)(width * (value / 100.0));
         }
 
         public override void Render(DrawingContext context)
@@ -60,42 +65,42 @@ namespace Nolvus.Components.Controls
 
             // Background
             context.FillRectangle(
-                new SolidColorBrush(Avalonia.Media.Color.FromRgb(54, 54, 54)),
+                new SolidColorBrush(Color.FromRgb(54, 54, 54)),
                 Bounds);
 
             if (Items.Count == 0)
                 return;
 
-            var titleTypeface = new Typeface("Segoe UI Light", FontStyle.Normal, FontWeight.Bold);
-            var infoTypeface = new Typeface(FontFamily.Default, FontStyle.Normal, FontWeight.Normal);
+            var titleTypeface = new Typeface("Segoe UI Light");
+            var infoTypeface = new Typeface("Segoe UI");
 
             for (int index = 0; index < Items.Count; index++)
             {
                 var progress = Items[index];
                 var top = ItemHeight * index;
 
-                // Progress background bar
-                Avalonia.Media.Color barColor = progress.HasError
-                    ? Avalonia.Media.Color.FromArgb(30, 255, 0, 0)
-                    : Avalonia.Media.Color.FromArgb(30, 255, 165, 0);
+                // Highlight bar
+                Color barColor = progress.HasError
+                    ? Color.FromArgb(30, 255, 0, 0)
+                    : Color.FromArgb(30, 255, 165, 0);
 
                 context.FillRectangle(
                     new SolidColorBrush(barColor),
-                    new Rect(105, 5 + top, GetGlobalProgress(progress.GlobalDone), 30));
+                    new Rect(105, 5 + top, GetProgressWidth(progress.PercentDone), 30));
 
-                // Thin progress bar indicator line
+                // Thin orange line
                 context.DrawRectangle(
-                    new Pen(Avalonia.Media.Brushes.Orange, 1),
+                    new Pen(Brushes.Orange, 1),
                     new Rect(3, 5 + top, progress.PercentDone, 1));
 
                 // Mod Name
                 new TextLayout(progress.Name ?? "",
                     titleTypeface,
                     9 * ScalingFactor,
-                    Avalonia.Media.Brushes.White)
-                    .Draw(context, new Avalonia.Point(105, 3 + top));
+                    Brushes.White)
+                    .Draw(context, new Point(105, 3 + top));
 
-                // Image (cached ImageSharp → Avalonia conversion)
+                // Image (optional)
                 if (progress.Image is SixLabors.ImageSharp.Image img)
                 {
                     var bmp = GetAvaloniaBitmap(img);
@@ -103,12 +108,8 @@ namespace Nolvus.Components.Controls
                     {
                         context.DrawImage(
                             bmp,
-                            new Rect(0, 0, bmp.PixelSize.Width, bmp.PixelSize.Height), // source
-                            new Rect(3, 5 + top, bmp.PixelSize.Width, bmp.PixelSize.Height)); // destination
-
-                        // context.DrawImage(
-                        //     bmp,
-                        //     new Rect(3, 5 + top, bmp.PixelSize.Width, bmp.PixelSize.Height));
+                            new Rect(0, 0, bmp.PixelSize.Width, bmp.PixelSize.Height),
+                            new Rect(3, 5 + top, bmp.PixelSize.Width, bmp.PixelSize.Height));
                     }
                 }
 
@@ -118,8 +119,8 @@ namespace Nolvus.Components.Controls
                     new TextLayout($"{progress.Mbs:0.0}MB/s",
                         infoTypeface,
                         7 * ScalingFactor,
-                        Avalonia.Media.Brushes.White)
-                        .Draw(context, new Avalonia.Point(105, 10 + top));
+                        Brushes.White)
+                        .Draw(context, new Point(105, 10 + top));
                 }
 
                 // Percent or Error
@@ -128,31 +129,31 @@ namespace Nolvus.Components.Controls
                     new TextLayout($"{progress.PercentDone}%",
                         infoTypeface,
                         7 * ScalingFactor,
-                        Avalonia.Media.Brushes.White)
-                        .Draw(context, new Avalonia.Point(105, 22 + top));
+                        Brushes.White)
+                        .Draw(context, new Point(105, 22 + top));
                 }
                 else
                 {
                     new TextLayout("Error",
                         infoTypeface,
                         7 * ScalingFactor,
-                        Avalonia.Media.Brushes.Red)
-                        .Draw(context, new Avalonia.Point(105, 22 + top));
+                        Brushes.Red)
+                        .Draw(context, new Point(105, 22 + top));
                 }
 
-                // Status Line
-                var statusBrush = progress.HasError ? Avalonia.Media.Brushes.Red : Avalonia.Media.Brushes.Orange;
+                // Status
+                var statusBrush = progress.HasError ? Brushes.Red : Brushes.Orange;
                 new TextLayout(progress.Status ?? "",
                     infoTypeface,
                     7 * ScalingFactor,
                     statusBrush)
-                    .Draw(context, new Avalonia.Point(105, 20 + top));
+                    .Draw(context, new Point(105, 20 + top));
             }
         }
 
-        protected override Avalonia.Size MeasureOverride(Avalonia.Size availableSize)
+        protected override Size MeasureOverride(Size availableSize)
         {
-            return new Avalonia.Size(availableSize.Width, Items.Count * ItemHeight);
+            return new Size(availableSize.Width, Items.Count * ItemHeight);
         }
     }
 }

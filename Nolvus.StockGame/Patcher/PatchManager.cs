@@ -17,8 +17,8 @@ namespace Nolvus.StockGame.Patcher
 {
     public class PatcherManager
     {
-        private const string xdeltaUrl = "https://github.com/jmacd/xdelta-gpl/releases/download/v3.1.0/xdelta3-3.1.0-x86_64.exe.zip";
-        private const string xdeltaBin = "xdelta3-3.1.0-x86_64.exe";
+        //private const string xdeltaUrl = "https://github.com/jmacd/xdelta-gpl/releases/download/v3.1.0/xdelta3-3.1.0-x86_64.exe.zip";
+        //private const string xdeltaBin = "xdelta3-3.1.0-x86_64.exe";
 
         #region Fields
 
@@ -134,47 +134,48 @@ namespace Nolvus.StockGame.Patcher
             if (Handler != null) Handler(this, Event);
         }
 
-        private async Task DoDownloadBinaries()
-        {
-            var Tsk = Task.Run(async () => 
-            {
-                if (!File.Exists(Path.Combine(_LibDir, "xdelta3.exe")))
-                {
-                    var DownloadedFile = Path.Combine(_WorkingDir, "xdelta3.zip");
+        //Going to use xdelta3 on linux
+        // private async Task DoDownloadBinaries()
+        // {
+        //     var Tsk = Task.Run(async () => 
+        //     {
+        //         if (!File.Exists(Path.Combine(_LibDir, "xdelta3.exe")))
+        //         {
+        //             var DownloadedFile = Path.Combine(_WorkingDir, "xdelta3.zip");
 
-                    try
-                    {
-                        try
-                        {
+        //             try
+        //             {
+        //                 try
+        //                 {
 
-                            this.StepProcessed("Downloading patcher binary file");
+        //                     this.StepProcessed("Downloading patcher binary file");
 
-                            await ServiceSingleton.Files.DownloadFile(xdeltaUrl, DownloadedFile, Downloading);
+        //                     await ServiceSingleton.Files.DownloadFile(xdeltaUrl, DownloadedFile, Downloading);
 
-                            this.StepProcessed("Patcher bynary downloaded");
+        //                     this.StepProcessed("Patcher bynary downloaded");
 
-                            await ServiceSingleton.Files.ExtractFile(DownloadedFile, _WorkingDir, Extracting);
+        //                     await ServiceSingleton.Files.ExtractFile(DownloadedFile, _WorkingDir, Extracting);
 
-                            this.StepProcessed("Patching Binaries extracted");
+        //                     this.StepProcessed("Patching Binaries extracted");
 
-                            File.Copy(Path.Combine(_WorkingDir, xdeltaBin), Path.Combine(_LibDir, "xdelta3.exe"), true);
-                        }
-                        catch(Exception ex)
-                        {
-                            ServiceSingleton.Logger.Log(string.Format("Error during patcher binary file download message {0}", ex.Message));
-                            throw ex;
-                        }
-                    }
-                    finally
-                    {
-                        File.Delete(DownloadedFile);
-                        File.Delete(Path.Combine(_WorkingDir, xdeltaBin));
-                    }
-                }                
-            });
+        //                     File.Copy(Path.Combine(_WorkingDir, xdeltaBin), Path.Combine(_LibDir, "xdelta3.exe"), true);
+        //                 }
+        //                 catch(Exception ex)
+        //                 {
+        //                     ServiceSingleton.Logger.Log(string.Format("Error during patcher binary file download message {0}", ex.Message));
+        //                     throw ex;
+        //                 }
+        //             }
+        //             finally
+        //             {
+        //                 File.Delete(DownloadedFile);
+        //                 File.Delete(Path.Combine(_WorkingDir, xdeltaBin));
+        //             }
+        //         }                
+        //     });
 
-            await Tsk;            
-        }
+        //     await Tsk;            
+        // }
 
         private async Task DoDownloadPatchFile(PatchingInstruction Instruction)
         {            
@@ -201,99 +202,177 @@ namespace Nolvus.StockGame.Patcher
             });
 
             await Tsk;                              
-        }      
+        }    
+
 
         private async Task DoPatchFile(PatchingInstruction Instruction, string SourceDir, string DestDir, bool KeepPatches)
-        {            
-            var Tsk = Task.Run(async () => 
+        {
+            try
             {
-                try
+                await DoDownloadPatchFile(Instruction);
+
+                StepProcessed("Patching game file : " + Instruction.DestFile.Name);
+                ElementProcessed(0, 1, StockGameProcessStep.PatchGameFile, Instruction.DestFile.Name);
+
+                string SourceFileName = Instruction.SourceFile.GetFullName(SourceDir);
+                string DestinationFileName = Instruction.DestFile.GetFullName(DestDir);
+                string PatchFileName = Path.Combine(_PatchDir, Instruction.PatchFile);
+
+                Directory.CreateDirectory(DestDir);
+
+                ServiceSingleton.Logger.Log("Executing xdelta3 patch:");
+                ServiceSingleton.Logger.Log($"  Source      = {SourceFileName}");
+                ServiceSingleton.Logger.Log($"  Patch       = {PatchFileName}");
+                ServiceSingleton.Logger.Log($"  Destination = {DestinationFileName}");
+
+                var psi = new ProcessStartInfo
                 {
-                    await DoDownloadPatchFile(Instruction);
+                    WorkingDirectory = DestDir,
+                    FileName = "/usr/bin/xdelta3",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
 
-                    StepProcessed("Patching game file : " + Instruction.DestFile.Name);
-                    ElementProcessed(0, 1, StockGameProcessStep.PatchGameFile, Instruction.DestFile.Name);
+                psi.ArgumentList.Add("-d");
+                psi.ArgumentList.Add("-f");
+                psi.ArgumentList.Add("-s");
+                psi.ArgumentList.Add(SourceFileName);     // arg 1
+                psi.ArgumentList.Add(PatchFileName);      // arg 2
+                psi.ArgumentList.Add(DestinationFileName); // arg 3
 
-                    string SourceFileName = Instruction.SourceFile.GetFullName(SourceDir);
-                    string DestinationFileName = Instruction.DestFile.GetFullName(DestDir);
-                    string PatchFileName = Path.Combine(_PatchDir, Instruction.PatchFile);
+                using var process = new Process();
+                process.StartInfo = psi;
 
-                    Process PatchingProcess = new Process();
+                process.Start();
 
-                    PatchingProcess.StartInfo.WorkingDirectory = DestDir;
-                    PatchingProcess.StartInfo.FileName = "cmd.exe";
-                    PatchingProcess.StartInfo.CreateNoWindow = true;
-                    PatchingProcess.StartInfo.UseShellExecute = false;
-                    PatchingProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                string stdout = await process.StandardOutput.ReadToEndAsync();
+                string stderr = await process.StandardError.ReadToEndAsync();
 
-                    string CommandLine = string.Format("\"" + Path.Combine(_LibDir, "xdelta3.exe") + "\" -d -f -s \"{0}\" \"{1}\" \"{2}\"", SourceFileName, PatchFileName, DestinationFileName);
+                await process.WaitForExitAsync();
 
-                    ServiceSingleton.Logger.Log(string.Format("Executing command {0}", CommandLine));                 
+                ServiceSingleton.Logger.Log($"Exit code: {process.ExitCode}");
+                if (!string.IsNullOrWhiteSpace(stdout))
+                    ServiceSingleton.Logger.Log($"stdout: {stdout}");
+                if (!string.IsNullOrWhiteSpace(stderr))
+                    ServiceSingleton.Logger.Log($"stderr: {stderr}");
 
-                    PatchingProcess.StartInfo.Arguments = "/c \"" + CommandLine + "\"";
-
-                    PatchingProcess.StartInfo.RedirectStandardOutput = true;
-                    PatchingProcess.StartInfo.RedirectStandardError = true;
-
-                    List<String> Output = new List<string>();
-
-                    PatchingProcess.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
-                    {
-                        if (e.Data != null)
-                        {
-                            Output.Add((string)e.Data);
-                        }
-                    });
-                    PatchingProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
-                    {
-                        if (e.Data != null)
-                        {
-                            Output.Add((String)e.Data);
-                        }
-                    });
-
-                    PatchingProcess.Start();
-                    PatchingProcess.BeginOutputReadLine();
-                    PatchingProcess.BeginErrorReadLine();
-
-                    PatchingProcess.WaitForExit();
-
-                    if (PatchingProcess.ExitCode == 0)
-                    {
-                        var CommandOutput = string.Join(Environment.NewLine, Output.ToArray());
-
-                        ServiceSingleton.Logger.Log(string.Format("Exit code {0}", PatchingProcess.ExitCode));
-                        ServiceSingleton.Logger.Log(string.Format("Command output [{0}]", CommandOutput));
-
-                        if (CommandOutput.Contains("The screen cannot be set to the number of lines and columns specified"))
-                        {
-                            throw new GameFilePatchingException("Failed to patch game file [CMD Error]: " + Instruction.DestFile.Name, string.Join(Environment.NewLine, Output.ToArray()));
-                        }
-                        
-                        if (!KeepPatches)
-                        {
-                            File.Delete(PatchFileName);
-                        }
-                        
-                        StepProcessed("Game file : " + Instruction.DestFile.Name + " patched");
-                        ElementProcessed(1, 1, StockGameProcessStep.PatchGameFile, Instruction.DestFile.Name);
-                    }
-                    else
-                    {
-                        ServiceSingleton.Logger.Log(string.Format("Exit code {0}", PatchingProcess.ExitCode));
-                        ServiceSingleton.Logger.Log(string.Format("Command output [{0}]", string.Join(Environment.NewLine, Output.ToArray())));
-                        throw new GameFilePatchingException("Failed to patch game file : " + Instruction.DestFile.Name, String.Join(Environment.NewLine, Output.ToArray()));
-                    }
-                }
-                catch(Exception ex)
+                if (process.ExitCode != 0)
                 {
-                    ServiceSingleton.Logger.Log(string.Format("Error during game file patching with message {0}", ex.Message));
-                    throw ex;
+                    throw new GameFilePatchingException(
+                        $"Failed to patch game file : {Instruction.DestFile.Name}",
+                        stderr + Environment.NewLine + stdout
+                    );
                 }
-            });
 
-            await Tsk;           
-        }        
+                if (!KeepPatches && File.Exists(PatchFileName))
+                    File.Delete(PatchFileName);
+
+                StepProcessed("Game file : " + Instruction.DestFile.Name + " patched");
+                ElementProcessed(1, 1, StockGameProcessStep.PatchGameFile, Instruction.DestFile.Name);
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"Error during game file patching with message: {ex.Message}");
+                throw;
+            }
+        }
+
+
+        // private async Task DoPatchFile(PatchingInstruction Instruction, string SourceDir, string DestDir, bool KeepPatches)
+        // {            
+        //     var Tsk = Task.Run(async () => 
+        //     {
+        //         try
+        //         {
+        //             await DoDownloadPatchFile(Instruction);
+
+        //             StepProcessed("Patching game file : " + Instruction.DestFile.Name);
+        //             ElementProcessed(0, 1, StockGameProcessStep.PatchGameFile, Instruction.DestFile.Name);
+
+        //             string SourceFileName = Instruction.SourceFile.GetFullName(SourceDir);
+        //             string DestinationFileName = Instruction.DestFile.GetFullName(DestDir);
+        //             string PatchFileName = Path.Combine(_PatchDir, Instruction.PatchFile);
+
+        //             Process PatchingProcess = new Process();
+
+        //             PatchingProcess.StartInfo.WorkingDirectory = DestDir;
+        //             PatchingProcess.StartInfo.FileName = "/bin/bash";
+        //             PatchingProcess.StartInfo.CreateNoWindow = true;
+        //             PatchingProcess.StartInfo.UseShellExecute = false;
+        //             PatchingProcess.StartInfo.RedirectStandardOutput = true;
+        //             PatchingProcess.StartInfo.RedirectStandardError = true;
+        //             PatchingProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+        //             string CommandLine = string.Format("\"/usr/bin/xdelta3\" -d -f -s \"{0}\" \"{1}\" \"{2}\"", SourceFileName, PatchFileName, DestinationFileName);
+
+        //             ServiceSingleton.Logger.Log(string.Format("Executing command {0}", CommandLine));                 
+
+        //             PatchingProcess.StartInfo.Arguments = "-c \"" + CommandLine + "\"";
+
+        //             PatchingProcess.StartInfo.RedirectStandardOutput = true;
+        //             PatchingProcess.StartInfo.RedirectStandardError = true;
+
+        //             List<String> Output = new List<string>();
+
+        //             PatchingProcess.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+        //             {
+        //                 if (e.Data != null)
+        //                 {
+        //                     Output.Add((string)e.Data);
+        //                 }
+        //             });
+        //             PatchingProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+        //             {
+        //                 if (e.Data != null)
+        //                 {
+        //                     Output.Add((String)e.Data);
+        //                 }
+        //             });
+
+        //             PatchingProcess.Start();
+        //             PatchingProcess.BeginOutputReadLine();
+        //             PatchingProcess.BeginErrorReadLine();
+
+        //             PatchingProcess.WaitForExit();
+
+        //             if (PatchingProcess.ExitCode == 0)
+        //             {
+        //                 var CommandOutput = string.Join(Environment.NewLine, Output.ToArray());
+
+        //                 ServiceSingleton.Logger.Log(string.Format("Exit code {0}", PatchingProcess.ExitCode));
+        //                 ServiceSingleton.Logger.Log(string.Format("Command output [{0}]", CommandOutput));
+
+        //                 if (CommandOutput.Contains("The screen cannot be set to the number of lines and columns specified"))
+        //                 {
+        //                     throw new GameFilePatchingException("Failed to patch game file [CMD Error]: " + Instruction.DestFile.Name, string.Join(Environment.NewLine, Output.ToArray()));
+        //                 }
+                        
+        //                 if (!KeepPatches)
+        //                 {
+        //                     File.Delete(PatchFileName);
+        //                 }
+                        
+        //                 StepProcessed("Game file : " + Instruction.DestFile.Name + " patched");
+        //                 ElementProcessed(1, 1, StockGameProcessStep.PatchGameFile, Instruction.DestFile.Name);
+        //             }
+        //             else
+        //             {
+        //                 ServiceSingleton.Logger.Log(string.Format("Exit code {0}", PatchingProcess.ExitCode));
+        //                 ServiceSingleton.Logger.Log(string.Format("Command output [{0}]", string.Join(Environment.NewLine, Output.ToArray())));
+        //                 throw new GameFilePatchingException("Failed to patch game file : " + Instruction.DestFile.Name, String.Join(Environment.NewLine, Output.ToArray()));
+        //             }
+        //         }
+        //         catch(Exception ex)
+        //         {
+        //             ServiceSingleton.Logger.Log(string.Format("Error during game file patching with message {0}", ex.Message));
+        //             throw ex;
+        //         }
+        //     });
+
+        //     await Tsk;           
+        // }        
 
         private void CheckPatchedFile(PatchingInstruction Instruction, string DestDir)
         {
@@ -319,7 +398,7 @@ namespace Nolvus.StockGame.Patcher
             {
                 try
                 {
-                    await DoDownloadBinaries();
+                    //await DoDownloadBinaries();
                                      
                     Process PatchingProcess = new Process();
 
@@ -410,7 +489,7 @@ namespace Nolvus.StockGame.Patcher
             {
                 try
                 {
-                    await DoDownloadBinaries();
+                    //await DoDownloadBinaries();
 
                     StepProcessed("About to patch game file : " + Instruction.DestFile.Name);
 

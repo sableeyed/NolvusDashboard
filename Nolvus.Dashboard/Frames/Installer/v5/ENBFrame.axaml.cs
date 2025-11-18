@@ -40,7 +40,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
 
         private void OnEnbChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB = DrpEnbPreset.SelectedItem.ToString();
+            ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB = ENBs.GetENBCode(DrpEnbPreset.SelectedItem.ToString());
         }
 
         private void LnkCabbageTutorial_PointerPressed(object? sender, PointerPressedEventArgs e)

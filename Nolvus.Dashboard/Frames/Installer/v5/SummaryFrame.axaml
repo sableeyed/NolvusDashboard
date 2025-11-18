@@ -296,6 +296,7 @@
 
                     <!-- NOTIFICATION BAR -->
                     <Border Grid.Row="2"
+                            x:Name="NotificationBanner"
                             Background="#3BBF4B"
                             CornerRadius="3"
                             Padding="8">
@@ -304,7 +305,14 @@
                                     VerticalAlignment="Center"
                                     Spacing="8">
 
+                            <Image Source="avares://NolvusDashboard/Assets/Warning-Message.png"
+                                   x:Name="NonPremiumImg"
+                                   Width="24" Height="24"
+                                   IsVisible="False"
+                                   Margin="4,0,0,0"/>
+
                             <Image Source="avares://NolvusDashboard/Assets/Info.png"
+                                   x:Name="PremiumImg"
                                    Width="24" Height="24"
                                    Margin="4,0,0,0"/>
 
@@ -376,11 +384,15 @@
 
                             <Button x:Name="BtnPrevious"
                                     Content="Previous"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
                                     MinWidth="120"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnStart"
                                     Content="Start"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
                                     MinWidth="120"
                                     Foreground="White"/>
                         </StackPanel>

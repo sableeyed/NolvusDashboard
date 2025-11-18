@@ -65,6 +65,17 @@ namespace Nolvus.Core.Misc
 
             return Result;
         }
+
+        public static string GetENBCode(string Name)
+        {
+            string Result = ENBs.GetAvailableENBsForV5().Where(x => x.Name == Name).Select(x => x.Code).FirstOrDefault();
+
+            if (Result == null) {
+                Result = ENBs.GetAvailableENBsForV6().Where(x => Name == Name).Select(x => x.Code).FirstOrDefault();
+            }
+
+            return Result;
+        }
     }
 
     public static class CDN

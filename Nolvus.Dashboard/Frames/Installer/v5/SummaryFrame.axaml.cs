@@ -65,10 +65,12 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
 
                 if (!ApiManager.AccountInfo.IsPremium)
                 {
-                    NotificationBanner.Background = new SolidColorBrush(Colors.Orange);
-                    LblNotification.Text = "You are not a Nexus Premium user. Download will not be automatic (you will have to click the download button for each mod) and bandwidth will be limited to 2 MB/s";
+                    NotificationBanner.Background = new SolidColorBrush(Colors.Red);
+                    //LblNotification.Text = "You are not a Nexus Premium user. Download will not be automatic (you will have to click the download button for each mod) and bandwidth will be limited to 2 MB/s";
+                    LblNotification.Text = "You are not a Nexus Premium user. Functionality for free users is not implemented at this time.";
                     PremiumImg.IsVisible = false;
                     NonPremiumImg.IsVisible = true;
+                    BtnStart.IsEnabled = false;
                 }
                 //no need for an else because the default state of the UI components are for premium members
 
@@ -96,7 +98,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
 
         private void BtnStart_Click(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Unimplemented: Start Install");
 
             //MO2 is not native on linux so this should be irrelevant
             string Mo2Path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ModOrganizer");

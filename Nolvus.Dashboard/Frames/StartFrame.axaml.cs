@@ -53,11 +53,11 @@ namespace Nolvus.Dashboard.Frames
                     {
                         case InstanceCheck.NoInstance:
                             ServiceSingleton.Logger.Log("Dashboard is ready to install");
-                            await ServiceSingleton.Dashboard.LoadFrameAsync<SelectInstanceFrame>();; //Unimplemented
+                            await ServiceSingleton.Dashboard.LoadFrameAsync<SelectInstanceFrame>();
                             break;
                         case InstanceCheck.InstancesToResume:
                             ServiceSingleton.Logger.Log("Dashboard is ready to resume");
-                            //ServiceSingleton.Dashboard.LoadFrame<ResumeFrame>();; //Uninmplemented
+                            ServiceSingleton.Dashboard.LoadFrame<ResumeFrame>();
                             break;
                         case InstanceCheck.InstalledInstances:
                             ServiceSingleton.Logger.Log("Dashboard ready to play");

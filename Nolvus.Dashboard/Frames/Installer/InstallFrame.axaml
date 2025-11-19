@@ -2,26 +2,38 @@
     x:Class="Nolvus.Dashboard.Frames.Installer.InstallFrame"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components">
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
+    xmlns:frames="clr-namespace:Nolvus.Core.Frames;assembly=Nolvus.Core"
+    Background="#363636">
 
-    <Grid RowDefinitions="Auto, * , Auto" Margin="20">
+    <Grid RowDefinitions="Auto,*"
+          Margin="16">
 
-        <!-- Header -->
-        <TextBlock Text="Install Frame (ModsBox Test)"
+        <!-- Title -->
+        <TextBlock Text="Installing Mods"
                    FontSize="20"
                    Foreground="White"
-                   Margin="0,0,0,10"/>
+                   Margin="0,0,0,12" />
 
-        <!-- ModsBox -->
-        <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Auto"
-                      Background="#2E2E2E">
-                <Border Background="#363636">
-                    <controls:ModsBox x:Name="ModsBoxControl"
-                                    Height="400"/>
-                </Border>
+        <!-- Main content -->
+        <Border Grid.Row="1"
+                Background="#2E2E2E"
+                BorderBrush="#505050"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="8">
 
-        </ScrollViewer>
+            <!-- ScrollViewer included to support large mod lists -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                <!-- Your existing ModsBox control -->
+                <controls:ModsBox x:Name="ModsBox"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top"
+                                  />
+
+            </ScrollViewer>
+        </Border>
+
     </Grid>
-
 </UserControl>

@@ -33,15 +33,15 @@ namespace Nolvus.Dashboard.Frames
                             break;
 
                         case InstanceInstallStatus.Installing:                            
-                            //await Resume(Instance);
+                            await Resume(Instance);
                             break;
 
                         case InstanceInstallStatus.Updating:                            
-                            //await Update(Instance);
+                            // await Update(Instance);
                             break;
 
                         default:
-                            //await View(Instance);
+                            // await View(Instance);
                             break;
 
                     }                  
@@ -103,17 +103,17 @@ namespace Nolvus.Dashboard.Frames
         //     ServiceSingleton.Dashboard.LoadFrame<InstanceDetailFrame>();
         // }
 
-        // protected async Task Resume(INolvusInstance Instance)
-        // {
-        //     await ServiceSingleton.Packages.Load(await ApiManager.Service.Installer.GetPackage(Instance.Id, Instance.Version), (s, p) =>
-        //     {
-        //         ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
-        //         ServiceSingleton.Dashboard.Progress(p);
-        //     });
+        protected async Task Resume(INolvusInstance Instance)
+        {
+            await ServiceSingleton.Packages.Load(await ApiManager.Service.Installer.GetPackage(Instance.Id, Instance.Version), (s, p) =>
+            {
+                ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                ServiceSingleton.Dashboard.Progress(p);
+            });
 
-        //     ServiceSingleton.Logger.Log(string.Format("Resume installing {0} - v {1}...", Instance.Name, Instance.Version));
+            ServiceSingleton.Logger.Log(string.Format("Resume installing {0} - v {1}...", Instance.Name, Instance.Version));
 
-        //     await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>(); 
-        // }
+            await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>(); 
+        }
     }
 }

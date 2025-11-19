@@ -1,0 +1,129 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.ResumeFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components">
+
+    <Grid RowDefinitions="Auto, *" Background="#363636">
+
+        <!-- Header -->
+        <Border Background="#363636" Height="30">
+            <TextBlock Text="Resume Nolvus Instance installation"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       Foreground="White"
+                       Margin="10,0,0,0"/>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*, 340" Margin="10">
+
+            <!-- LEFT PANEL -->
+            <Border Background="#2E2E2E" BorderBrush="#555" BorderThickness="1" Margin="0,0,10,0">
+                <ScrollViewer>
+                    <StackPanel Margin="12">
+
+                        <!-- Instance selector -->
+                        <TextBlock Text="Instance to resume"
+                                   Foreground="White"
+                                   Margin="0,0,0,5" />
+
+                        <ComboBox x:Name="DrpDwnLstInstances"
+                                  Width="260"
+                                  Foreground="White"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  SelectionChanged="DrpDwnLstInstances_SelectionChanged"/>
+
+                        <!-- Download location selector -->
+                        <TextBlock x:Name="LblDownLoc"
+                                   Text="Download location"
+                                   Foreground="White"
+                                   Margin="0,20,0,5"/>
+
+                        <ComboBox x:Name="DrpDwnLstDownLoc"
+                                  Width="260"
+                                  Foreground="White"
+                                  SelectionChanged="DrpDwnLstDownLoc_SelectionChanged"/>
+
+                        <!-- Errors Management GroupBox Replacement -->
+                        <Border BorderBrush="#666" BorderThickness="1" Margin="0,20,0,0" Padding="10">
+                            <StackPanel>
+
+                                <TextBlock Text="Errors Management"
+                                           FontSize="14"
+                                           Foreground="White"
+                                           Margin="0,0,0,10"/>
+
+                                <TextBlock Text="Action to take when an error occurs"
+                                           Foreground="White"
+                                           Margin="0,0,0,10"/>
+
+                                <RadioButton x:Name="RdBtnOneError"
+                                             Content="Stop installation and display error message"
+                                             Foreground="White"/>
+
+                                <RadioButton x:Name="RdBtnThreshold"
+                                             Content="Stop after a threshold of errors"
+                                             IsChecked="True"
+                                             Margin="0,10,0,0"
+                                             Foreground="White"/>
+
+                                <RadioButton x:Name="RdBtnNoThreshold"
+                                             Content="Don't stop; show all errors afterward"
+                                             Margin="0,10,0,0"
+                                             Foreground="White"/>
+
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- RIGHT PANEL -->
+            <Border Grid.Column="1"
+                    Background="#2E2E2E"
+                    BorderBrush="#555"
+                    BorderThickness="1">
+
+                <Grid RowDefinitions="Auto, *, Auto" Margin="12">
+
+                    <TextBlock Text="A previous instance installation has not been completed."
+                               TextWrapping="Wrap"
+                               Foreground="White"
+                               Margin="0,0,0,10"/>
+
+                    <TextBlock Grid.Row="1"
+                               Text="Select the instance you want to resume and click Resume."
+                               TextWrapping="Wrap"
+                               Foreground="White"
+                               Margin="0,0,0,10"/>
+
+                    <StackPanel Grid.Row="2"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Spacing="10">
+
+                        <Button x:Name="BtnCancel"
+                                             MinWidth="120"
+                                             Content="Cancel"
+                                             HorizontalContentAlignment="Center"
+                                             VerticalContentAlignment="Center"
+                                             Click="BtnCancel_Click"/>
+
+                        <Button x:Name="BtnResume"
+                                             MinWidth="120"
+                                             Content="Resume"
+                                             HorizontalContentAlignment="Center"
+                                             VerticalContentAlignment="Center"
+                                             Click="BtnResume_Click"/>
+
+                    </StackPanel>
+
+                </Grid>
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,62 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.ErrorSummaryFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
+    xmlns:dashControls="clr-namespace:Nolvus.Dashboard.Controls;assembly=NolvusDashboard"
+    Background="#363636">
+
+    <Grid RowDefinitions="*,Auto,Auto"
+          Margin="16">
+
+        <!-- Error list -->
+        <Border Grid.Row="0"
+                Background="#2E2E2E"
+                BorderBrush="#505050"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="8">
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="ErrorsList" />
+            </ScrollViewer>
+        </Border>
+
+        <!-- Main message (orange) -->
+        <TextBlock Grid.Row="1"
+                   x:Name="LblMessage"
+                   Margin="0,8,0,4"
+                   Foreground="Orange"
+                   TextWrapping="Wrap" />
+
+        <!-- Bottom hint + buttons -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto,Auto"
+              Margin="0,4,0,0">
+
+            <TextBlock Text="Click Fix to get help, or Retry to try the installation again."
+                       Foreground="White"
+                       VerticalAlignment="Center" />
+
+            <Button x:Name="BtnFix"
+                    Grid.Column="1"
+                    Width="113"
+                    Height="35"
+                    Margin="8,0,4,0"
+                    Content="Fix"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Click="BtnFix_Click" />
+
+            <Button x:Name="BtnRetry"
+                    Grid.Column="2"
+                    Width="113"
+                    Height="35"
+                    Content="Retry"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Click="BtnRetry_Click" />
+        </Grid>
+
+    </Grid>
+</UserControl>

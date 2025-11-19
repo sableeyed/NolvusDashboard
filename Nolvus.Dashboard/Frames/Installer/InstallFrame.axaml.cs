@@ -26,7 +26,6 @@ namespace Nolvus.Dashboard.Frames.Installer
         {
             InitializeComponent();
 
-            // match original WinForms behavior
             ModsBox.ScalingFactor = ServiceSingleton.Dashboard.ScalingFactor;
         }
 
@@ -95,17 +94,17 @@ namespace Nolvus.Dashboard.Frames.Installer
                     }
                 });
 
-                // installation done → stop refresh loop
                 _refreshCts?.Cancel();
 
                 Console.WriteLine("InstallFrame: Unimplemented Load Order Frame");
+                //await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>(new FrameParameters(new FrameParameter(){Key = "Mode", Value = "Install"}));
             }
             catch
             {
                 _refreshCts?.Cancel();
 
                 ServiceSingleton.Dashboard.ClearInfo();
-                Console.WriteLine("InstallFrame: Unimplemented Error Summary Frame");
+                ServiceSingleton.Dashboard.LoadFrame<ErrorSummaryFrame>();
             }
         }
 
@@ -120,9 +119,6 @@ namespace Nolvus.Dashboard.Frames.Installer
                 ServiceSingleton.Packages.ModsCount));
         }
 
-        /// <summary>
-        /// Sync ModsBox items with ProgressQueue exactly like original WinForms listbox
-        /// </summary>
         private void RefreshBox()
         {
             var queue = ServiceSingleton.Packages.ProgressQueue;
@@ -143,9 +139,6 @@ namespace Nolvus.Dashboard.Frames.Installer
             }
         }
 
-        /// <summary>
-        /// Periodic update loop (equivalent to WinForms Task.Run refresh loop)
-        /// </summary>
         private void Refresh(int ms)
         {
             _refreshCts?.Cancel();
@@ -154,7 +147,6 @@ namespace Nolvus.Dashboard.Frames.Installer
 
             Task.Run(async () =>
             {
-                // First immediate refresh so UI is not empty
                 await Dispatcher.UIThread.InvokeAsync(RefreshBox);
 
                 while (!token.IsCancellationRequested)

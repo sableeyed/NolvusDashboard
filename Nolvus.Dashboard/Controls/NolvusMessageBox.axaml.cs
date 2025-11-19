@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
+using Avalonia.Media;
 using Avalonia.Platform;
 using System;
 using System.Threading.Tasks;
@@ -12,6 +13,9 @@ namespace Nolvus.Dashboard.Controls
     {
         private TaskCompletionSource<bool?> _tcs;
         private bool? _dialogResult = null;
+        public int CustomWidth { get; set; } = 700;
+        public int CustomHeight { get; set; } = 300;
+        public Avalonia.Media.Color HighlightColor { get; set; } = Avalonia.Media.Colors.Red;
 
         public NolvusMessageBox(string title, string message, MessageBoxType type)
         {
@@ -63,6 +67,18 @@ namespace Nolvus.Dashboard.Controls
         public static async Task<bool?> Show(Window owner, string title, string message, MessageBoxType type)
         {
             var msgBox = new NolvusMessageBox(title, message, type);
+            return await msgBox.ShowDialog<bool?>(owner);
+        }
+
+        public static async Task<bool?> Show(Window owner, string title, string message, MessageBoxType type, int height, int width, Color color)
+        {
+            var msgBox = new NolvusMessageBox(title, message, type)
+            {
+                CustomHeight = height,
+                CustomWidth = width,
+                HighlightColor = color
+            };
+
             return await msgBox.ShowDialog<bool?>(owner);
         }
 

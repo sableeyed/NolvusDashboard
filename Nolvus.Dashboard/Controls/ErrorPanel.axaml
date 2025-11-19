@@ -1,0 +1,47 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Controls.ErrorPanel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#363636"
+    Height="35">
+
+    <Grid ColumnDefinitions="100, *"
+          RowDefinitions="Auto, Auto"
+          Margin="0">
+
+        <!-- IMAGE -->
+        <Border Background="#363636"
+                BorderBrush="#505050"
+                BorderThickness="1"
+                Width="100"
+                Height="30"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="3">
+            <Image x:Name="Img"
+                   Stretch="Uniform"
+                   Margin="0" />
+        </Border>
+
+        <!-- MOD NAME -->
+        <TextBlock x:Name="LblModName"
+                   Grid.Column="1"
+                   Text="[Mod Name]"
+                   Foreground="White"
+                   FontWeight="Bold"
+                   Margin="10,3,0,0"
+                   VerticalAlignment="Top"
+                   />
+
+        <!-- ERROR TEXT (clickable red ellipsis) -->
+        <TextBlock x:Name="LnkError"
+                   Grid.Column="1"
+                   Text="[Error...]"
+                   Foreground="Red"
+                   Margin="10,18,10,0"
+                   TextTrimming="CharacterEllipsis"
+                   Cursor="Hand"
+                   Classes="link"
+                   />
+    </Grid>
+</UserControl>

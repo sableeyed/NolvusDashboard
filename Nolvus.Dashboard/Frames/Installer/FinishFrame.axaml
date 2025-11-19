@@ -1,0 +1,93 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.FinishFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#363636">
+
+    <Grid RowDefinitions="Auto,*"
+          Margin="8">
+
+        <!-- Top title -->
+        <TextBlock x:Name="LblStepText"
+                   Grid.Row="0"
+                   Text="Installation Completed"
+                   Foreground="White"
+                   FontSize="20"
+                   VerticalAlignment="Center"
+                   Margin="0,0,0,8"/>
+
+        <!-- Main panel -->
+        <Border Grid.Row="1"
+                Background="#2E2E2E"
+                BorderBrush="#505050"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="12">
+
+            <Grid RowDefinitions="Auto,Auto,Auto,*"
+                  ColumnDefinitions="*">
+
+                <!-- Main success text -->
+                <TextBlock x:Name="label1"
+                           Text="Congratulations! You have completed your instance installation... On Linux!"
+                           Foreground="White"
+                           Margin="0,0,0,8" />
+
+                <!-- Donation/patreon help text -->
+                <TextBlock x:Name="label2"
+                           Grid.Row="1"
+                           Text="If you enjoyed this software, please consider donate or become a patreon to help maintaining and improving it ;)"
+                           Foreground="White"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,16" />
+
+                <!-- Donate + Patreon buttons -->
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal"
+                            Spacing="12"
+                            Margin="0,0,0,20">
+
+                    <Button x:Name="BtnDonate"
+                            Width="124"
+                            Height="40"
+                            Content="Donate"
+                            Background="#363636"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Foreground="White"
+                            BorderBrush="White"
+                            Click="BtnDonate_Click"/>
+
+                    <Button x:Name="BtnPatreon"
+                            Width="124"
+                            Height="40"
+                            Content="Patreon"
+                            Background="#363636"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Foreground="White"
+                            BorderBrush="White"
+                            Click="BtnPatreon_Click"/>
+                </StackPanel>
+
+                <!-- Bottom-right button -->
+                <Button x:Name="BtnContinue"
+                        Grid.Row="3"
+                        Content="Manage Instances"
+                        Width="150"
+                        Height="40"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Background="#363636"
+                        Foreground="White"
+                        BorderBrush="White"
+                        Click="BtnContinue_Click"/>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+</UserControl>

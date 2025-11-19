@@ -155,5 +155,39 @@ namespace Nolvus.Components.Controls
         {
             return new Size(availableSize.Width, Items.Count * ItemHeight);
         }
+
+        public void AddItem(string name)
+        {
+            Items.Add(new ModProgress
+            {
+                Name = name,
+                Status = "Queued",
+                PercentDone = 0,
+                HasError = false
+            });
+        }
+
+        public void UpdateItem(string name, string status, int percent, double mbs = 0)
+        {
+            var item = Items.FirstOrDefault(x => x.Name == name);
+            if (item == null)
+                return;
+
+            item.Status = status;
+            item.PercentDone = percent;
+            item.Mbs = mbs;
+
+            InvalidateVisual();
+        }
+
+        public void RemoveItem(string name)
+        {
+            var item = Items.FirstOrDefault(x => x.Name == name);
+            if (item != null)
+            {
+                Items.Remove(item);
+            }
+        }
+
     }
 }

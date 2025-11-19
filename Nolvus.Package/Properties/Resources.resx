@@ -3,16 +3,4 @@
   <resheader name="version">
     <value>2.0</value>
   </resheader>
-  <data name="mod_def_22" type="System.Resources.ResXFileRef, System.Resources">
-    <value>..\Resources\mod-def-22.png;System.Byte[]</value>
-  </data>
-  <data name="splash_v5" type="System.Resources.ResXFileRef, System.Resources">
-    <value>..\Resources\splash_v5.png;System.Byte[]</value>
-  </data>
-  <data name="splash_v6" type="System.Resources.ResXFileRef, System.Resources">
-    <value>..\Resources\splash_v6.png;System.Byte[]</value>
-  </data>
-  <data name="NolvusLauncher" type="System.Resources.ResXFileRef, System.Resources">
-    <value>..\Resources\NolvusLauncher.exe;System.Byte[]</value>
-  </data>
 </root>

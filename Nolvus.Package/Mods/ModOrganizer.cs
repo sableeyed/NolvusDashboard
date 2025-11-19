@@ -2461,7 +2461,8 @@ ccafdsse001-dwesanctuary.esm";
 
         private void CreateLauncher()
         {
-            File.WriteAllBytes(Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MO2", "NolvusLauncher.exe"), Properties.Resources.NolvusLauncher);
+            Console.WriteLine("Skipping Creation of NolvusLauncher.exe");
+            //File.WriteAllBytes(Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MO2", "NolvusLauncher.exe"), Properties.Resources.NolvusLauncher);
         }
 
         private void AddExecutables()
@@ -2470,23 +2471,57 @@ ccafdsse001-dwesanctuary.esm";
 
             var MO2Folder = Path.Combine(Instance.InstallDir, "MO2");
 
-            AddExecutable(MO2Folder, @"\""" + Instance.StockGame.Replace(@"\", @"\\") + @"\""", Path.Combine(Instance.InstallDir, "MO2", "NolvusLauncher.exe").Replace(@"\", @"/"), false, true, "Nolvus", true, Path.Combine(Instance.InstallDir, "MO2").Replace(@"\", @"/"));
-            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "skse64_loader.exe").Replace(@"\", @"/"), true, true, "SKSE", false, Instance.StockGame.Replace(@"\", @"/"));
-            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "SkyrimSE.exe").Replace(@"\", @"/"), true, true, "Skyrim Special Edition", false, Instance.StockGame.Replace(@"\", @"/"));
-            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "SkyrimSELauncher.exe").Replace(@"\", @"/"), true, true, "Skyrim Special Edition Launcher", false, Instance.StockGame.Replace(@"\", @"/"));
-            AddExecutable(MO2Folder, @"\""" + Instance.StockGame.Replace(@"\", @"\\") + "\\\\Data\\\"", Path.Combine(Instance.InstallDir, "MO2", "explorer++", "Explorer++.exe").Replace(@"\", @"/"), true, true, "Explore Virtual Folder", false, Path.Combine(Instance.InstallDir, "MO2", "explorer++").Replace(@"\", @"/"));
-            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine", "Nemesis_Engine", "Nemesis Unlimited Behavior Engine.exe").Replace(@"\", @"/"), false, true, "Nemesis Unlimited Behavior Engine", true, Path.Combine(Instance.InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine", "Nemesis_Engine").Replace(@"\", @"/"));
+            // Skip NolvusLauncher.exe entirely
+            // Add SKSE, Skyrim, Launcher
+            AddExecutable(MO2Folder, string.Empty,
+                Path.Combine(Instance.StockGame, "skse64_loader.exe").Replace(@"\", @"/"),
+                true, true, "SKSE", true, Instance.StockGame.Replace(@"\", @"/"));
 
-            string Args = "-D:\\\"" + Path.Combine(Instance.StockGame, "Data").Replace("\\", "\\\\") + "\\\"" + " -c:\\\"" + Instance.InstallDir.Replace("\\", "\\\\") + "\\\\TOOLS\\\\SSE Edit\\\\Cache\\\\\\\"";
-            AddExecutable(Instance.InstallDir + "\\MO2", Args, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit", "SSEEdit.exe").Replace(@"\", @"/"), false, true, "xEdit", true, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit").Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, string.Empty,
+                Path.Combine(Instance.StockGame, "SkyrimSE.exe").Replace(@"\", @"/"),
+                true, true, "Skyrim Special Edition", false, Instance.StockGame.Replace(@"\", @"/"));
 
-            string ArgsAutoClean = "-DontCache -D:\\\"" + Path.Combine(Instance.StockGame, "Data").Replace("\\", "\\\\") + "\\\"";
-            AddExecutable(Instance.InstallDir + "\\MO2", ArgsAutoClean, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit", "SSEEditQuickAutoClean.exe").Replace(@"\", @"/"), false, true, "xEdit Cleaning", false, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit").Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, string.Empty,
+                Path.Combine(Instance.StockGame, "SkyrimSELauncher.exe").Replace(@"\", @"/"),
+                true, true, "Skyrim Special Edition Launcher", false, Instance.StockGame.Replace(@"\", @"/"));
 
+            // Explorer++ (no arguments for now)
+            AddExecutable(MO2Folder, string.Empty,
+                Path.Combine(Instance.InstallDir, "MO2", "explorer++", "Explorer++.exe").Replace(@"\", @"/"),
+                true, true, "Explore Virtual Folder", false,
+                Path.Combine(Instance.InstallDir, "MO2", "explorer++").Replace(@"\", @"/"));
 
-            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.InstallDir, "MODS", "mods", "BodySlide and Outfit Studio", "CalienteTools", "BodySlide", "BodySlide x64.exe").Replace(@"\", @"/"), false, true, "Body Slide", true, Path.Combine(Instance.InstallDir, "MODS", "mods", "BodySlide and Outfit Studio", "CalienteTools", "BodySlide").Replace(@"\", @"/"));
+            // Nemesis
+            AddExecutable(MO2Folder, string.Empty,
+                Path.Combine(Instance.InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine",
+                            "Nemesis_Engine", "Nemesis Unlimited Behavior Engine.exe").Replace(@"\", @"/"),
+                false, true, "Nemesis Unlimited Behavior Engine", true,
+                Path.Combine(Instance.InstallDir, "MODS", "mods",
+                            "Nemesis Unlimited Behavior Engine", "Nemesis_Engine").Replace(@"\", @"/"));
 
+            // xEdit (temporary: no arguments)
+            string Args = string.Empty;
+            AddExecutable(Path.Combine(Instance.InstallDir, "MO2"), Args,
+                Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit", "SSEEdit.exe").Replace(@"\", @"/"),
+                false, true, "xEdit", true,
+                Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit").Replace(@"\", @"/"));
+
+            // xEdit AutoClean
+            string ArgsAutoClean = string.Empty;
+            AddExecutable(Path.Combine(Instance.InstallDir, "MO2"), ArgsAutoClean,
+                Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit", "SSEEditQuickAutoClean.exe").Replace(@"\", @"/"),
+                false, true, "xEdit Cleaning", false,
+                Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit").Replace(@"\", @"/"));
+
+            // Bodyslide
+            AddExecutable(MO2Folder, string.Empty,
+                Path.Combine(Instance.InstallDir, "MODS", "mods", "BodySlide and Outfit Studio",
+                            "CalienteTools", "BodySlide", "BodySlide x64.exe").Replace(@"\", @"/"),
+                false, true, "Body Slide", true,
+                Path.Combine(Instance.InstallDir, "MODS", "mods",
+                            "BodySlide and Outfit Studio", "CalienteTools", "BodySlide").Replace(@"\", @"/"));
         }
+
 
         private void AddSplash()
         {

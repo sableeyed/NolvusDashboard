@@ -31,7 +31,7 @@ namespace Nolvus.Instance.Core
         {
             get
             {
-                return Path.Combine(ServiceSingleton.Instances.WorkingInstance.StockGame, "Data\\");
+                return Path.Combine(ServiceSingleton.Instances.WorkingInstance.StockGame, "Data/"); //this had \\ so trying / instead
             }
         }
 

@@ -33,7 +33,7 @@ namespace Nolvus.Package.Conditions
                 SourceDir = InstallDir;
             }
 
-            FileInfo File = new FileInfo(SourceDir + "\\" + DataToCompare);
+            FileInfo File = new FileInfo(SourceDir + "/" + DataToCompare);
 
             long Size = File.Length / 1024;
 

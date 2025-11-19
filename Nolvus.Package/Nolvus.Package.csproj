@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Nolvus.StockGame\Nolvus.StockGame.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\*.png" />
+  </ItemGroup>
+
 </Project>

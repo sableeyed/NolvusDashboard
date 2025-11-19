@@ -275,6 +275,7 @@ namespace Nolvus.StockGame.Core
 
         private async Task DoLoad()
         {
+            this.StepProcessed("Pre-computing hashes. Please be patient.");
             BuildHashTable();
             var Tsk = Task.Run(() => 
             {

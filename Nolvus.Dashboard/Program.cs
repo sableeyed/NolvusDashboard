@@ -97,6 +97,13 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+
+        if (!File.Exists("/usr/bin/7z") || (!File.Exists("/usr/bin/xdelta3")))
+        {
+            Console.WriteLine("7zip and xdelta3 are required to run this program. Please install the relevant packages");
+            Environment.Exit(-1);
+        }
+
         DebugMode = args.Contains("--debugging");
 
         var current = Process.GetCurrentProcess();

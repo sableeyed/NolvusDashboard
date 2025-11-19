@@ -33,6 +33,8 @@ namespace Nolvus.Services.Files.Extractor
 
         public async Task ExtractFile(string File, string Output, ExtractProgressChangedHandler OnProgress)
         {
+            ServiceSingleton.Logger.Log("File to extract: " + File);
+            ServiceSingleton.Logger.Log("Outpath path: " + Output);
             await Task.Run(() =>
             {
                 FileName = Path.GetFileName(File);

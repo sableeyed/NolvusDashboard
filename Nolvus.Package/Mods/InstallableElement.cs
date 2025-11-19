@@ -226,28 +226,57 @@ namespace Nolvus.Package.Mods
 
             await Tsk;
         }
+
         protected virtual async Task DoExtract()
         {
-            var Tsk = Task.Run(async () =>
+            var task = Task.Run(async () =>
             {
                 try
                 {
-                    ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+                    var root = Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir);
+                    ServiceSingleton.Files.RemoveDirectory(root, true);
 
-                    foreach (var File in Files)
+                    foreach (var file in Files)
                     {
-                        await File.Extract(ExtractingProgress);
+                        await file.Extract(ExtractingProgress);
                     }
+
+                    NormalizeFolderCasing(root);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
-                    throw ex;
+                    ServiceSingleton.Files.RemoveDirectory(
+                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+
+                    throw;
                 }
             });
 
-            await Tsk;
+            await task;
         }
+
+        // protected virtual async Task DoExtract()
+        // {
+        //     var Tsk = Task.Run(async () =>
+        //     {
+        //         try
+        //         {
+        //             ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+
+        //             foreach (var File in Files)
+        //             {
+        //                 await File.Extract(ExtractingProgress);
+        //             }
+        //         }
+        //         catch(Exception ex)
+        //         {
+        //             ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+        //             throw ex;
+        //         }
+        //     });
+
+        //     await Tsk;
+        // }
         protected abstract Task DoUnpack();
         protected abstract Task DoCopy();
         protected abstract Task DoPatch();          
@@ -353,6 +382,51 @@ namespace Nolvus.Package.Mods
                 return Progress;              
             });
         }
+
+        // Map lowercase folder names to their Windows-canonical casing
+        private static readonly Dictionary<string, string> FolderCaseMap = new()
+        {
+            { "data", "Data" },
+            { "skse", "SKSE" },
+            { "skse64", "SKSE" },
+            { "plugins", "Plugins" },
+            { "meshes", "Meshes" },
+            { "textures", "Textures" },
+            { "interface", "Interface" },
+            { "scripts", "Scripts" }
+        };
+
+        private void NormalizeFolderCasing(string root)
+        {
+            if (!Directory.Exists(root))
+                return;
+
+            // Get all directories in a flat list
+            var allDirs = Directory.GetDirectories(root, "*", SearchOption.AllDirectories)
+                .Select(d => new DirectoryInfo(d))
+                // Sort deepest path first so children are renamed before parents
+                .OrderByDescending(d => d.FullName.Count(c => c == Path.DirectorySeparatorChar))
+                .ToList();
+
+            foreach (var di in allDirs)
+            {
+                var lower = di.Name.ToLowerInvariant();
+
+                if (FolderCaseMap.TryGetValue(lower, out var canonicalName) &&
+                    canonicalName != di.Name)
+                {
+                    var newPath = Path.Combine(di.Parent!.FullName, canonicalName);
+
+                    if (!Directory.Exists(newPath))
+                    {
+                        ServiceSingleton.Logger.Log(
+                            $"NormalizeFolderCasing: {di.FullName} → {newPath}");
+                        Directory.Move(di.FullName, newPath);
+                    }
+                }
+            }
+        }
+
 
         #endregion                                                                                          
       

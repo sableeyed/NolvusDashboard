@@ -1,0 +1,17 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
+    x:Class="Nolvus.Dashboard.Frames.Installer.LoadOrderFrame"
+    Background="#363636">
+
+    <Grid>
+        <gif:GifImage Width="150"
+                      Height="150"
+                      Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Stretch="None" />
+    </Grid>
+
+</UserControl>

@@ -27,7 +27,7 @@ Dashboard Window is made, DPI scaling.. not much for you to see yet :D
 
 - Nolvus.Downgrader
 - Nolvus.GrassCache
-- Nolvus.Launcher
+- ~~Nolvus.Launcher~~
 
 
 # SOFTWARE REQUIREMENTS

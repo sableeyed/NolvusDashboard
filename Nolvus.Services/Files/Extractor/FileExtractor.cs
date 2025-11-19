@@ -33,74 +33,64 @@ namespace Nolvus.Services.Files.Extractor
 
         public async Task ExtractFile(string File, string Output, ExtractProgressChangedHandler OnProgress)
         {
-            var Tsk = Task.Run(() => 
+            await Task.Run(() =>
             {
-                FileName = new FileInfo(File).Name;
+                FileName = Path.GetFileName(File);
 
                 try
                 {
                     ExtractProgressChanged += OnProgress;
 
                     if (!Directory.Exists(Output))
-                    {
                         Directory.CreateDirectory(Output);
-                    }
 
-                    Process SevenZipProcess = new Process
+                    var sevenZip = "/usr/bin/7z";
+
+                    var psi = new ProcessStartInfo
                     {
-                        StartInfo = { WorkingDirectory = ServiceSingleton.Folders.LibDirectory, FileName = "/bin/bash", CreateNoWindow = true, UseShellExecute = false}
+                        FileName = sevenZip,
+                        Arguments = $"x -bsp1 -y \"{File}\" -o\"{Output}\" -mmt=off",
+                        WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
                     };
 
-                    var SevenZip = "/usr/bin/7z";
-                    var Args = string.Format("\"{0}\" x -bsp1 -y \"{1}\" -o\"{2}\" -mmt=off", SevenZip, File, Output);
+                    var proc = new Process { StartInfo = psi };
+                    List<string> errorOutput = new();
 
-                    SevenZipProcess.StartInfo.Arguments = "-c \"" + Args + "\"";
-                    SevenZipProcess.StartInfo.RedirectStandardOutput = true;
-                    SevenZipProcess.StartInfo.RedirectStandardError = true;
-
-                    List<string> ErrorOutput = new List<string>();
-
-                    SevenZipProcess.OutputDataReceived += delegate (object s, DataReceivedEventArgs e) {
+                    proc.OutputDataReceived += (s, e) =>
+                    {
                         if (e.Data != null && e.Data.Length >= 4 && e.Data[3] == '%')
                         {
-                            var PercentAsInt = 0;
-
-                            if (int.TryParse(e.Data.Substring(0, 3), out PercentAsInt))
-                            {
-                                TriggerProgressEvent(PercentAsInt, FileName);
-                            }
+                            if (int.TryParse(e.Data.Substring(0, 3), out var pct))
+                                TriggerProgressEvent(pct, FileName);
                         }
                     };
-                    SevenZipProcess.ErrorDataReceived += delegate (object s, DataReceivedEventArgs e) {
+
+                    proc.ErrorDataReceived += (s, e) =>
+                    {
                         if (e.Data != null)
-                        {
-                            ErrorOutput.Add(e.Data);
-                        }
+                            errorOutput.Add(e.Data);
                     };
 
-                    SevenZipProcess.Start();
-                    SevenZipProcess.BeginOutputReadLine();
-                    SevenZipProcess.BeginErrorReadLine();
-                    SevenZipProcess.WaitForExit();
+                    proc.Start();
+                    proc.BeginOutputReadLine();
+                    proc.BeginErrorReadLine();
+                    proc.WaitForExit();
 
-                    if (SevenZipProcess.ExitCode != 0)
-                    {
-                        throw new Exception(string.Format("Error during file extraction {0} with error {1}!", FileName, string.Join(" ", ErrorOutput.ToArray())));
-                    }
-                    else
-                    {
-                        TriggerProgressEvent(100, FileName);
-                    }
+                    if (proc.ExitCode != 0)
+                        throw new Exception($"Error during file extraction {FileName}: {string.Join(" ", errorOutput)}");
+
+                    TriggerProgressEvent(100, FileName);
                 }
                 catch (Exception ex)
                 {
                     ServiceSingleton.Logger.Log(ex.Message);
-                    throw ex;
+                    throw;
                 }
-
             });
-
-            await Tsk;
         }
     }
 }

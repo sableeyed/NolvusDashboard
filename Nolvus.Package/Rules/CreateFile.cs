@@ -1,50 +1,41 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Nolvus.Package.Rules
 {
     public class CreateFile : CreateRule
     {
-        public string DefaultText { get; set; }
+        public string DefaultText { get; set; } = string.Empty;
 
         public override void Load(XmlNode Node)
         {
             base.Load(Node);
-            if (Node["DefaultText"] != null) DefaultText = Node["DefaultText"].InnerText;            
+            DefaultText = Node["DefaultText"]?.InnerText ?? string.Empty;
         }
 
         public override void Execute(string GamePath, string ExtractDir, string ModDir, string InstanceDir)
         {
-            if (CanExecute(GamePath, ModDir))
-            {                
-                if (DefaultText != string.Empty)
-                {
-                    if ( Source == 0)
-                    {
-                        File.WriteAllText(Path.Combine(ModDir, Name), DefaultText);
-                    }
-                    else
-                    {
-                        File.WriteAllText(Path.Combine(GamePath, Name), DefaultText);
-                    }                    
-                }
-                else
-                {
-                    if (this.Source == 0)
-                    {
-                        File.Create(Path.Combine(ModDir, Name)).Dispose();
-                    }
-                    else
-                    {
-                        File.Create(Path.Combine(GamePath, Name)).Dispose();
-                    }
-                }
-            }                     
+            if (!CanExecute(GamePath, ModDir))
+                return;
+
+            // Determine base directory
+            string baseDir = (Source == 0) ? ModDir : GamePath;
+
+            // Normalize path relative to base directory
+            string fullPath = Path.Combine(baseDir, Name);
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+
+            if (!string.IsNullOrEmpty(DefaultText))
+            {
+                File.WriteAllText(fullPath, DefaultText);
+            }
+            else
+            {
+                File.Create(fullPath).Dispose();
+            }
         }
     }
 }

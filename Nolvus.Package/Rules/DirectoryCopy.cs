@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.IO;
-using System.Threading.Tasks;
-using Nolvus.Core.Services;
 using System.Xml;
+using Nolvus.Core.Services;
 
 namespace Nolvus.Package.Rules
 {
@@ -13,91 +10,86 @@ namespace Nolvus.Package.Rules
     {
         public bool IncludeRootDirectory { get; set; }
 
-        public override void Load(XmlNode Node)
+        public override void Load(XmlNode node)
         {
-            base.Load(Node);
-            IncludeRootDirectory = System.Convert.ToBoolean(Node["IncludeRootDirectory"].InnerText);
+            base.Load(node);
+            IncludeRootDirectory = Convert.ToBoolean(node["IncludeRootDirectory"]?.InnerText ?? "false");
+
+            // Normalize inherited CopyRule.Source and CopyRule.DestinationDirectory
+            Source = NormalizePath(Source);
+            DestinationDirectory = NormalizePath(DestinationDirectory);
         }
 
-        private FileCopy CreateFileCopyRule(int Destination, string Source, string DestinationDirectory)
+        public override void Execute(string gamePath, string extractDir, string modDir, string instanceDir)
         {
-            return new FileCopy {
-                Destination = Destination,
-                NewFileName = string.Empty,
-                Source = Source,
-                DestinationDirectory = DestinationDirectory
-            };                    
-        }
+            if (!CanExecute(gamePath, modDir))
+                return;
 
-        public List<Rule> CreateFileRules(string ExtactDir, int Destination, string GamePath, string ModDir)
-        {
-            var Rules = new List<Rule>();
+            string destBase =
+                Destination == 0 ? modDir :
+                Destination == 1 ? gamePath :
+                instanceDir;
 
-            if (CanExecute(GamePath, ModDir))
+            string sourceAbsolute = Path.Combine(extractDir, Source);
+            if (!Directory.Exists(sourceAbsolute))
             {
-                foreach (var File in ServiceSingleton.Files.GetFiles(Path.Combine(ExtactDir, Source)))
-                {
-                    var SourceDir = File.FullName.Replace(ExtactDir, string.Empty).Replace(@"\\?\\", "\\").Substring(1);
-                    var DestDirectory = File.Directory.FullName.Replace(ExtactDir, string.Empty).Replace(@"\\?\\", "\\");
-
-                    if (Source != string.Empty)
-                    {
-                        var Dir = Source;
-
-                        if (IncludeRootDirectory)
-                        {
-                            Dir = Source.Replace(new DirectoryInfo(Source).Name, string.Empty);
-                        }
-
-                        if (Dir != string.Empty)
-                        {
-                            var regex = new Regex(Regex.Escape(Dir));
-                            DestDirectory = regex.Replace(DestDirectory, string.Empty, 1);
-                        }
-                    }
-
-                    DestDirectory = DestDirectory + DestinationDirectory;                    
-
-                    Rules.Add(CreateFileCopyRule(Destination, SourceDir, DestDirectory.TrimStart('\\')));
-                }
+                ServiceSingleton.Logger.Log($"DirectoryCopy skipped: source not found: {sourceAbsolute}");
+                return;
             }
 
-            return Rules;
+            // If no subdirectory override, copy into root of destination
+            string finalDestination = destBase;
+
+            if (!CopyToRoot)
+            {
+                finalDestination = Path.Combine(destBase, DestinationDirectory);
+            }
+
+            Directory.CreateDirectory(finalDestination);
+
+            if (!IncludeRootDirectory)
+            {
+                // Copy CONTENTS of the directory
+                CopyDirectoryContents(sourceAbsolute, finalDestination);
+            }
+            else
+            {
+                // Copy directory including the root folder
+                string rootName = new DirectoryInfo(sourceAbsolute).Name;
+                string destWithRoot = Path.Combine(finalDestination, rootName);
+                Directory.CreateDirectory(destWithRoot);
+
+                CopyDirectoryContents(sourceAbsolute, destWithRoot);
+            }
         }
 
-        public override void Execute(string GamePath, string ExtractDir, string ModDir, string InstanceDir)
+        private void CopyDirectoryContents(string src, string dst)
         {
-            if (CanExecute(GamePath, ModDir))
+            // Copy files
+            foreach (var file in Directory.GetFiles(src, "*", SearchOption.AllDirectories))
             {
-                string Destination = InstanceDir;
+                string localPath = Path.GetRelativePath(src, file);
+                localPath = NormalizePath(localPath);
 
-                if (this.Destination == 0)
-                {
-                    Destination = ModDir;
-                }
-                else if( this.Destination == 1)
-                {
-                    Destination = GamePath;
-                }                
+                string targetPath = Path.Combine(dst, localPath);
 
-                if (!CopyToRoot)
-                {
-                    Destination = Path.Combine(Destination, DestinationDirectory);
+                Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+                File.Copy(file, targetPath, true);
+            }
+        }
 
-                    Directory.CreateDirectory(Destination);
-                }
+        private string NormalizePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
 
-                if (!IncludeRootDirectory)
-                {
-                    ServiceSingleton.Files.CopyFiles(Path.Combine(ExtractDir , Source), Destination, false);
-                }
-                else
-                {
-                    DirectoryInfo DirInfo = new DirectoryInfo(Path.Combine(ExtractDir, Source));
+            path = path.Replace("\\", "/");
 
-                    ServiceSingleton.Files.CopyFiles(Path.Combine(ExtractDir, Source), Path.Combine(Destination, DirInfo.Name), true);
-                }
-            }                                   
-        }        
+            // Prevent absolute paths on Linux
+            while (path.StartsWith("/"))
+                path = path.TrimStart('/');
+
+            return path;
+        }
     }
 }

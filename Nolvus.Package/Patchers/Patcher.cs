@@ -48,6 +48,11 @@ namespace Nolvus.Package.Patchers
                 MirrorDownloadLink = string.Empty;
             }
 
+            ServiceSingleton.Logger.Log($"[PATCHER] PatchArchive={PatchArchive}");
+            ServiceSingleton.Logger.Log($"[PATCHER] DownloadLink raw='{DownloadLink}'");
+            ServiceSingleton.Logger.Log($"[PATCHER] MirrorDownloadLink raw='{MirrorDownloadLink}'");
+
+
             foreach (XmlNode PatchFileNode in Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "PatchFiles").FirstOrDefault().ChildNodes.Cast<XmlNode>().ToList())
             {
                 PatchFile PatchFile = new PatchFile();

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Xml;
 using Nolvus.Core.Services;
 
@@ -17,50 +15,87 @@ namespace Nolvus.Package.Rules
         public string Value { get; set; }
         public string Section { get; set; }
 
-        public override void Load(XmlNode Node)
+        public override void Load(XmlNode node)
         {
-            base.Load(Node);
-            FileName = Node["FileName"].InnerText;
-            IsIni = System.Convert.ToBoolean(Node["IsIni"].InnerText);
-            Key = Node["Key"].InnerText;
-            Value = Node["Value"].InnerText;
-            Section = Node["Section"].InnerText;
+            base.Load(node);
+
+            FileName = Normalize(node["FileName"]?.InnerText);
+            IsIni = Convert.ToBoolean(node["IsIni"]?.InnerText ?? "false");
+            Key = node["Key"]?.InnerText ?? string.Empty;
+            Value = node["Value"]?.InnerText ?? string.Empty;
+            Section = node["Section"]?.InnerText ?? string.Empty;
         }
 
-        public override void Execute(string GamePath, string ExtractDir, string ModDir, string InstanceDir)
+        public override void Execute(string gamePath, string extractDir, string modDir, string instanceDir)
         {
-            if (this.CanExecute(GamePath, ModDir))
-            {                
-                if (this.IsIni)
-                {                    
-                    ServiceSingleton.Settings.StoreIniValue(Path.Combine(ModDir, FileName), Section, Key, Value);
-                }
-                else
-                {
-                    string SettingsFile = Path.Combine(ModDir, FileName);
+            if (!CanExecute(gamePath, modDir))
+                return;
 
-                    string[] Lines = System.IO.File.ReadAllLines(SettingsFile);
+            string fullPath = Path.Combine(modDir, FileName);
 
-                    List<string> NewLines = new List<string>();
+            // Ensure directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
 
-                    bool Found = false;
-
-                    foreach(string Line in Lines)
-                    {                        
-                        string _Line = Line;
-
-                        if (Line.Contains(this.Key) && Line.Substring(0,1) != "#" && !Found)
-                        {
-                            _Line = this.Key + " = " + this.Value;
-                            Found = true;
-                        }
-
-                        NewLines.Add(_Line);
-                    }
-
-                    System.IO.File.WriteAllLines(SettingsFile, NewLines.ToArray());                    
-                }
+            if (IsIni)
+            {
+                ServiceSingleton.Settings.StoreIniValue(fullPath, Section, Key, Value);
+                return;
             }
+
+            // Non-INI plaintext config
+            if (!File.Exists(fullPath))
+            {
+                ServiceSingleton.Logger.Log($"SettingsRule: file not found: {fullPath}");
+                return;
+            }
+
+            string[] lines = File.ReadAllLines(fullPath);
+            List<string> newLines = new List<string>(lines.Length);
+
+            bool replaced = false;
+
+            foreach (string line in lines)
+            {
+                string newLine = line;
+
+                // Skip comments
+                if (!line.TrimStart().StartsWith("#") && !line.TrimStart().StartsWith(";"))
+                {
+                    // Match "Key = value" type entries
+                    string trimmed = line.Trim();
+
+                    if (!replaced &&
+                        trimmed.StartsWith(Key) &&
+                        (trimmed.Contains("=") || trimmed.Contains(" ")))
+                    {
+                        newLine = $"{Key} = {Value}";
+                        replaced = true;
+                    }
+                }
+
+                newLines.Add(newLine);
+            }
+
+            // If key never existed, append it
+            if (!replaced)
+                newLines.Add($"{Key} = {Value}");
+
+            File.WriteAllLines(fullPath, newLines);
+        }
+
+        private string Normalize(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            // Convert windows slashes
+            path = path.Replace("\\", "/");
+
+            // Never allow absolute path
+            while (path.StartsWith("/"))
+                path = path.TrimStart('/');
+
+            return path;
         }
     }
 }

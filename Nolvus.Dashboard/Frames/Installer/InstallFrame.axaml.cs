@@ -22,47 +22,50 @@ namespace Nolvus.Dashboard.Frames.Installer
         {
             try
             {
-                // var Instance = ServiceSingleton.Instances.WorkingInstance;
+                var Instance = ServiceSingleton.Instances.WorkingInstance;
                 
-                // ServiceSingleton.Dashboard.Title("Nolvus Dashboard - [Instance Auto Installer]");
-                // ServiceSingleton.Dashboard.Status(string.Format("Installing {0} - {1} (v{2})", Instance.Name, Instance.Performance.Variant, ServiceSingleton.Packages.LoadedVersion));
-                // ServiceSingleton.Dashboard.AdditionalSecondaryInfo("Error(s) : 0");
+                ServiceSingleton.Dashboard.Title("Nolvus Dashboard - [Instance Auto Installer]");
+                ServiceSingleton.Dashboard.Status(string.Format("Installing {0} - {1} (v{2})", Instance.Name, Instance.Performance.Variant, ServiceSingleton.Packages.LoadedVersion));
+                ServiceSingleton.Dashboard.AdditionalSecondaryInfo("Error(s) : 0");
 
-                // GlobalProgress();
+                GlobalProgress();
 
-                // ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Folders.NexusCacheDirectory, false);                                             
+                ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Folders.NexusCacheDirectory, false);                                             
 
-                // await ServiceSingleton.Packages.InstallModList(new ModInstallSettings()
-                // {
-                //     OnStartInstalling = () =>
-                //     {
-                //         Refresh(ServiceSingleton.Settings.RefreshInterval);
-                //     },
-                //     OnModInstalled = (Mod) =>
-                //     {
-                //         GlobalProgress();
-                //         ServiceSingleton.Logger.Log(string.Format("Mod : {0} installed.", Mod.Name));
-                //     }, 
-                //     OnModError = (ErrorCount) => 
-                //     {
-                //         if (ServiceSingleton.Packages.ErrorHandler.ThresholdEnabled)
-                //         {
-                //             ServiceSingleton.Dashboard.AdditionalSecondaryInfo(string.Format("Error(s) : {0} Threshold : {1} {2}", ServiceSingleton.Packages.ErrorHandler.ErrorsCount, ServiceSingleton.Settings.ErrorsThreshold, "(Errors will be displayed at the end of the installation)"));
-                //         }
-                //         else
-                //         {
-                //             ServiceSingleton.Dashboard.AdditionalSecondaryInfo(string.Format("Error(s) : {0} {1}", ServiceSingleton.Packages.ErrorHandler.ErrorsCount, "(Errors will be displayed at the end of the installation)"));
-                //         }
-                //     },
-                //     OnMaxErrors = () =>
-                //     {
-                //         ServiceSingleton.Dashboard.AdditionalSecondaryInfo(string.Format("Error(s) : {0} {1}", ServiceSingleton.Packages.ErrorHandler.ErrorsCount, "(Maximum errors threshold reached, waiting for current queue to finish...)"));
-                //     },               
-                //     Browser = () =>
-                //     {
-                //         return Invoke((Func<IBrowserInstance>)(() => { return new BrowserWindow(); })) as IBrowserInstance;
-                //     }
-                // });                
+                await ServiceSingleton.Packages.InstallModList(new ModInstallSettings()
+                {
+                    OnStartInstalling = () =>
+                    {
+                        Refresh(ServiceSingleton.Settings.RefreshInterval);
+                    },
+                    OnModInstalled = (Mod) =>
+                    {
+                        GlobalProgress();
+                        ServiceSingleton.Logger.Log(string.Format("Mod : {0} installed.", Mod.Name));
+                    }, 
+                    OnModError = (ErrorCount) => 
+                    {
+                        if (ServiceSingleton.Packages.ErrorHandler.ThresholdEnabled)
+                        {
+                            ServiceSingleton.Dashboard.AdditionalSecondaryInfo(string.Format("Error(s) : {0} Threshold : {1} {2}", ServiceSingleton.Packages.ErrorHandler.ErrorsCount, ServiceSingleton.Settings.ErrorsThreshold, "(Errors will be displayed at the end of the installation)"));
+                        }
+                        else
+                        {
+                            ServiceSingleton.Dashboard.AdditionalSecondaryInfo(string.Format("Error(s) : {0} {1}", ServiceSingleton.Packages.ErrorHandler.ErrorsCount, "(Errors will be displayed at the end of the installation)"));
+                        }
+                    },
+                    OnMaxErrors = () =>
+                    {
+                        ServiceSingleton.Dashboard.AdditionalSecondaryInfo(string.Format("Error(s) : {0} {1}", ServiceSingleton.Packages.ErrorHandler.ErrorsCount, "(Maximum errors threshold reached, waiting for current queue to finish...)"));
+                    },               
+                    Browser = () =>
+                    {
+                        var win = new BrowserWindow("about:blank");
+                        win.Show();
+                        return win.Engine;
+                        //return Invoke((Func<IBrowserInstance>)(() => { return new BrowserWindow(); })) as IBrowserInstance;
+                    }
+                });                
 
                 Console.WriteLine("InstallFrame: Unimplemented Load Order Frame");
                 //await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>(new FrameParameters(new FrameParameter(){Key = "Mode", Value = "Install"}));

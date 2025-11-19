@@ -25,7 +25,8 @@ namespace Nolvus.Package.Rules
             //Destination = System.Convert.ToInt16(Node["Destination"].InnerText);
             Destination = Convert.ToInt16(Node["Destination"]?.InnerText ?? "0");
             //DestinationDirectory = Node["DestinationDirectory"].InnerText;
-            DestinationDirectory = Node["DestinationDirectory"]?.InnerText ?? string.Empty;
+            //DestinationDirectory = Node["DestinationDirectory"]?.InnerText ?? string.Empty;
+            DestinationDirectory = NormalizeRulePath(Node["DestinationDirectory"]?.InnerText ?? string.Empty);
         }
 
         public override bool IsPriority
@@ -34,6 +35,22 @@ namespace Nolvus.Package.Rules
             {
                 return true;
             }
-        }        
+        }   
+
+        private string NormalizeRulePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            // Replace Windows slashes with Linux ones
+            path = path.Replace("\\", "/");
+
+            // If path starts with "/", remove it -> make relative
+            if (path.StartsWith("/"))
+                path = path.TrimStart('/');
+
+            return path;
+        }
+     
     }
 }

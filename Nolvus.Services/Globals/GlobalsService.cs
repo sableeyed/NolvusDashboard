@@ -36,7 +36,7 @@ namespace Nolvus.Services.Globals
                 var val = ServiceSingleton.Settings.GetIniValue(MegaSection, MegaAnonymous);
                 return val == null ? true : Convert.ToBoolean(val);
             }
-            set => ServiceSingleton.Settings.StoreIniValue(MegaSection, MegaAnonymous, value.ToString());
+            set => ServiceSingleton.Settings.StoreIniValue(MegaSection, MegaAnonymous, value.ToString().Trim()); //Adding .Trim stores the value as a bool and not a string which appeared to be a bug
         }
 
         public string MegaEmail

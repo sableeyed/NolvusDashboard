@@ -1,68 +1,74 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Threading.Tasks;
-using Nolvus.Core.Services;
 using System.Xml;
+using Nolvus.Core.Services;
 
 namespace Nolvus.Package.Rules
 {
     public class DeleteRule : Rule
     {
-        public string Source { get; set; }
+        public string Source { get; set; } = string.Empty;
         public bool IsDirectory { get; set; }
         public int Destination { get; set; } = 0;
+
         public override void Load(XmlNode Node)
         {
             base.Load(Node);
-            Source = Node["Source"].InnerText;
-            IsDirectory = System.Convert.ToBoolean(Node["IsDirectory"].InnerText);
 
-            Destination = 0;
+            Source = NormalizePath(Node["Source"]?.InnerText ?? string.Empty);
+            IsDirectory = Convert.ToBoolean(Node["IsDirectory"]?.InnerText ?? "false");
 
             if (Node["Destination"] != null)
-            {
-                Destination = System.Convert.ToInt16(Node["Destination"].InnerText);
-            }
-            
+                Destination = Convert.ToInt16(Node["Destination"]?.InnerText ?? "0");
         }
 
         public override void Execute(string GamePath, string ExtractDir, string ModDir, string InstanceDir)
         {
-            if (this.CanExecute(GamePath, ModDir))
+            if (!CanExecute(GamePath, ModDir))
+                return;
+
+            string baseDir =
+                Destination == 0 ? ModDir :
+                Destination == 1 ? GamePath :
+                InstanceDir;
+
+            string fullPath = Path.Combine(baseDir, Source);
+
+            // Nothing to delete
+            if (!File.Exists(fullPath) && !Directory.Exists(fullPath))
+                return;
+
+            try
             {
-                string Dest = string.Empty;
-
-                if (Destination == 0)
-                {
-                    Dest = ModDir;
-                }
-                else if (Destination == 1)
-                {
-                    Dest = GamePath;
-                }
-                else
-                {
-                    Dest = InstanceDir;
-                }
-
                 if (!IsDirectory)
                 {
-                    if (File.Exists(Path.Combine(Dest, Source)))
-                    {
-                        File.Delete(Path.Combine(Dest, Source));
-                    }                    
+                    File.Delete(fullPath);
                 }
                 else
                 {
-                    if (Directory.Exists((Path.Combine(Dest, Source))))
-                    {
-                        ServiceSingleton.Files.RemoveDirectory(Path.Combine(Dest, Source), true);
-                    }                    
+                    ServiceSingleton.Files.RemoveDirectory(fullPath, true);
                 }
             }
+            catch (Exception ex)
+            {
+                // IMPORTANT: do not throw — deletion failure should NOT abort installs
+                ServiceSingleton.Logger.Log($"DeleteRule failed on {fullPath}: {ex.Message}");
+            }
+        }
+
+        private string NormalizePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            // Convert Windows slashes to Linux format
+            path = path.Replace("\\", "/");
+
+            // Remove leading slash (avoid deleting `/SKSE` etc)
+            if (path.StartsWith("/"))
+                path = path.TrimStart('/');
+
+            return path;
         }
     }
 }

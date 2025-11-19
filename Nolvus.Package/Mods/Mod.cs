@@ -220,48 +220,82 @@ namespace Nolvus.Package.Mods
 
             return string.Empty;
         }
+
         protected List<Rule> FetchRules()
         {
             var Result = new List<Rule>();
 
-            if (Rules.Where(x => x.Force).Count() > 0)
-            {
+            if (Rules.Any(x => x.Force))
                 return Rules;
+
+            var DirectoryRules = Rules.Where(x => x is DirectoryCopy).ToList();
+            var PriorityRules  = Rules.Where(x => x.IsPriority && !(x is DirectoryCopy)).ToList();
+
+            if (DirectoryRules.Count == 0 && PriorityRules.Count == 0)
+            {
+                Result.Add(new DirectoryCopy
+                {
+                    Source = "",                // empty = entire extract root
+                    Destination = 0,            // 0 = ModDir
+                    DestinationDirectory = "",  // copy into mod root
+                });
             }
             else
             {
-                var DirectoryRules = Rules.Where(x => x is DirectoryCopy).ToList();
-                var PriorityRules  = Rules.Where(x => x.IsPriority && !(x is DirectoryCopy)).ToList();
-                               
-                if (DirectoryRules.Count == 0 && PriorityRules.Count == 0)
+                foreach (var rule in DirectoryRules)
                 {
-                    Result.AddRange(
-                        new DirectoryCopy().CreateFileRules(
-                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 
-                        0, 
-                        ServiceSingleton.Instances.WorkingInstance.StockGame, 
-                        MoDirectoryFullName));
+                    Result.Add(rule);
                 }
-                else
-                {
-                    foreach (var Rule in DirectoryRules)
-                    {                        
-                        Result.AddRange(
-                            (Rule as DirectoryCopy).CreateFileRules
-                            (Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 
-                            (Rule as DirectoryCopy).Destination, 
-                            ServiceSingleton.Instances.WorkingInstance.StockGame, 
-                            MoDirectoryFullName));
-                    }
-
-                    Result.AddRange(PriorityRules);
-                }                
-
-                Result.AddRange(Rules.Where(x => !x.Force && !x.IsPriority).ToList());
+                Result.AddRange(PriorityRules);
             }
+            Result.AddRange(Rules.Where(x => !x.Force && !x.IsPriority && !(x is DirectoryCopy)));
 
             return Result;
         }
+
+
+        // protected List<Rule> FetchRules()
+        // {
+        //     var Result = new List<Rule>();
+
+        //     if (Rules.Where(x => x.Force).Count() > 0)
+        //     {
+        //         return Rules;
+        //     }
+        //     else
+        //     {
+        //         var DirectoryRules = Rules.Where(x => x is DirectoryCopy).ToList();
+        //         var PriorityRules  = Rules.Where(x => x.IsPriority && !(x is DirectoryCopy)).ToList();
+                               
+        //         if (DirectoryRules.Count == 0 && PriorityRules.Count == 0)
+        //         {
+        //             Result.AddRange(
+        //                 new DirectoryCopy().CreateFileRules(
+        //                 Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 
+        //                 0, 
+        //                 ServiceSingleton.Instances.WorkingInstance.StockGame, 
+        //                 MoDirectoryFullName));
+        //         }
+        //         else
+        //         {
+        //             foreach (var Rule in DirectoryRules)
+        //             {                        
+        //                 Result.AddRange(
+        //                     (Rule as DirectoryCopy).CreateFileRules
+        //                     (Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 
+        //                     (Rule as DirectoryCopy).Destination, 
+        //                     ServiceSingleton.Instances.WorkingInstance.StockGame, 
+        //                     MoDirectoryFullName));
+        //             }
+
+        //             Result.AddRange(PriorityRules);
+        //         }                
+
+        //         Result.AddRange(Rules.Where(x => !x.Force && !x.IsPriority).ToList());
+        //     }
+
+        //     return Result;
+        // }
         protected override async Task DoUnpack()
         {
             var Tsk = Task.Run(async () =>
@@ -338,8 +372,8 @@ namespace Nolvus.Package.Mods
         {
             var Tsk = Task.Run(async () => 
             {
-                try
-                {                                        
+                //try
+                //{                                        
                     if (Patcher != null)
                     {
                         ServiceSingleton.Logger.Log(string.Format("Patching mod {0}", Name));
@@ -352,15 +386,16 @@ namespace Nolvus.Package.Mods
                                                  ExtractingProgress, 
                                                  PatchingProgress);
                     }                                        
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    throw ex;
+                //}
             });
 
             await Tsk;
         }
+
         public override async Task Remove()
         {
             var Tsk = Task.Run(() =>

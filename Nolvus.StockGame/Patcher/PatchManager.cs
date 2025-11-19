@@ -392,82 +392,133 @@ namespace Nolvus.StockGame.Patcher
             ElementProcessed(1, 1, StockGameProcessStep.CheckPatchedGameFile, Instruction.DestFile.Name);
         }
 
-        public async Task PatchFile(string SourceFile, string DestinationFile, string PatchFileName)
-        {            
-            var Tsk = Task.Run(async () =>
+        public async Task PatchFile(string sourceFile, string destinationFile, string patchFile)
+        {
+            var task = Task.Run(() =>
             {
                 try
                 {
-                    //await DoDownloadBinaries();
-                                     
-                    Process PatchingProcess = new Process();
+                    var workingDirectory = new FileInfo(destinationFile).DirectoryName ?? ".";
 
-                    PatchingProcess.StartInfo.WorkingDirectory = new FileInfo(DestinationFile).DirectoryName;
-                    PatchingProcess.StartInfo.FileName = "cmd.exe";
-                    PatchingProcess.StartInfo.CreateNoWindow = true;
-                    PatchingProcess.StartInfo.UseShellExecute = false;
-                    PatchingProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-                    string CommandLine = string.Format("\"" + Path.Combine(_LibDir, "xdelta3.exe") + "\" -d -f -s \"{0}\" \"{1}\" \"{2}\"", SourceFile, PatchFileName, DestinationFile);
-
-                    PatchingProcess.StartInfo.Arguments = "/c \"" + CommandLine + "\"";
-
-                    PatchingProcess.StartInfo.RedirectStandardOutput = true;
-                    PatchingProcess.StartInfo.RedirectStandardError = true;
-
-                    List<String> Output = new List<string>();
-
-                    PatchingProcess.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+                    var psi = new ProcessStartInfo
                     {
-                        if (e.Data != null)
-                        {
-                            Output.Add((string)e.Data);
-                        }
-                    });
-                    PatchingProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+                        FileName = "/usr/bin/xdelta3",
+                        Arguments = $"-d -f -s \"{sourceFile}\" \"{patchFile}\" \"{destinationFile}\"",
+                        WorkingDirectory = workingDirectory,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
+                    using var proc = new Process { StartInfo = psi };
+
+                    List<string> output = new();
+                    proc.OutputDataReceived += (_, e) => { if (e.Data != null) output.Add(e.Data); };
+                    proc.ErrorDataReceived += (_, e) => { if (e.Data != null) output.Add(e.Data); };
+
+                    proc.Start();
+                    proc.BeginOutputReadLine();
+                    proc.BeginErrorReadLine();
+                    proc.WaitForExit();
+
+                    if (proc.ExitCode != 0)
                     {
-                        if (e.Data != null)
-                        {
-                            Output.Add((String)e.Data);
-                        }
-                    });
-
-                    PatchingProcess.Start();
-                    PatchingProcess.BeginOutputReadLine();
-                    PatchingProcess.BeginErrorReadLine();
-
-                    PatchingProcess.WaitForExit();
-
-                    if (PatchingProcess.ExitCode == 0)
-                    {
-                        var CommandOutput = string.Join(Environment.NewLine, Output.ToArray());
-
-                        ServiceSingleton.Logger.Log(string.Format("Exit code {0}", PatchingProcess.ExitCode));
-                        ServiceSingleton.Logger.Log(string.Format("Command output [{0}]", CommandOutput));
-
-                        if (CommandOutput.Contains("The screen cannot be set to the number of lines and columns specified"))
-                        {
-                            throw new GameFilePatchingException("Failed to patch game file [CMD Error]: " + new FileInfo(DestinationFile).Name + " (" + String.Join(Environment.NewLine, Output.ToArray()) + ")", string.Join(Environment.NewLine, Output.ToArray()));
-                        }                                             
-                    }
-                    else
-                    {
-                        ServiceSingleton.Logger.Log(string.Format("Exit code {0}", PatchingProcess.ExitCode));
-                        ServiceSingleton.Logger.Log(string.Format("Command output [{0}]", string.Join(Environment.NewLine, Output.ToArray())));
-
-                        throw new GameFilePatchingException("Failed to patch game file : " + new FileInfo(DestinationFile).Name + " (" + String.Join(Environment.NewLine, Output.ToArray()) + ")", String.Join(Environment.NewLine, Output.ToArray()));
+                        throw new Exception(
+                            $"xdelta3 failed (exit {proc.ExitCode})\n{string.Join(Environment.NewLine, output)}");
                     }
 
+                    ServiceSingleton.Logger.Log(
+                        $"Patched {Path.GetFileName(destinationFile)} successfully (exit {proc.ExitCode})");
                 }
                 catch (Exception ex)
                 {
-                    ServiceSingleton.Logger.Log(string.Format("Error during game file patching with message {0}", ex.Message));
-                    throw ex;
+                    ServiceSingleton.Logger.Log($"PatchFile error: {ex.Message}");
+                    throw;
                 }
             });
 
-            await Tsk;
+            await task;
         }
+
+
+
+        // public async Task PatchFile(string SourceFile, string DestinationFile, string PatchFileName)
+        // {            
+        //     var Tsk = Task.Run(async () =>
+        //     {
+        //         try
+        //         {
+        //             //await DoDownloadBinaries();
+                                     
+        //             Process PatchingProcess = new Process();
+
+        //             PatchingProcess.StartInfo.WorkingDirectory = new FileInfo(DestinationFile).DirectoryName;
+        //             PatchingProcess.StartInfo.FileName = "cmd.exe";
+        //             PatchingProcess.StartInfo.CreateNoWindow = true;
+        //             PatchingProcess.StartInfo.UseShellExecute = false;
+        //             PatchingProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+        //             string CommandLine = string.Format("\"" + Path.Combine(_LibDir, "xdelta3.exe") + "\" -d -f -s \"{0}\" \"{1}\" \"{2}\"", SourceFile, PatchFileName, DestinationFile);
+
+        //             PatchingProcess.StartInfo.Arguments = "/c \"" + CommandLine + "\"";
+
+        //             PatchingProcess.StartInfo.RedirectStandardOutput = true;
+        //             PatchingProcess.StartInfo.RedirectStandardError = true;
+
+        //             List<String> Output = new List<string>();
+
+        //             PatchingProcess.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
+        //             {
+        //                 if (e.Data != null)
+        //                 {
+        //                     Output.Add((string)e.Data);
+        //                 }
+        //             });
+        //             PatchingProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
+        //             {
+        //                 if (e.Data != null)
+        //                 {
+        //                     Output.Add((String)e.Data);
+        //                 }
+        //             });
+
+        //             PatchingProcess.Start();
+        //             PatchingProcess.BeginOutputReadLine();
+        //             PatchingProcess.BeginErrorReadLine();
+
+        //             PatchingProcess.WaitForExit();
+
+        //             if (PatchingProcess.ExitCode == 0)
+        //             {
+        //                 var CommandOutput = string.Join(Environment.NewLine, Output.ToArray());
+
+        //                 ServiceSingleton.Logger.Log(string.Format("Exit code {0}", PatchingProcess.ExitCode));
+        //                 ServiceSingleton.Logger.Log(string.Format("Command output [{0}]", CommandOutput));
+
+        //                 if (CommandOutput.Contains("The screen cannot be set to the number of lines and columns specified"))
+        //                 {
+        //                     throw new GameFilePatchingException("Failed to patch game file [CMD Error]: " + new FileInfo(DestinationFile).Name + " (" + String.Join(Environment.NewLine, Output.ToArray()) + ")", string.Join(Environment.NewLine, Output.ToArray()));
+        //                 }                                             
+        //             }
+        //             else
+        //             {
+        //                 ServiceSingleton.Logger.Log(string.Format("Exit code {0}", PatchingProcess.ExitCode));
+        //                 ServiceSingleton.Logger.Log(string.Format("Command output [{0}]", string.Join(Environment.NewLine, Output.ToArray())));
+
+        //                 throw new GameFilePatchingException("Failed to patch game file : " + new FileInfo(DestinationFile).Name + " (" + String.Join(Environment.NewLine, Output.ToArray()) + ")", String.Join(Environment.NewLine, Output.ToArray()));
+        //             }
+
+        //         }
+        //         catch (Exception ex)
+        //         {
+        //             ServiceSingleton.Logger.Log(string.Format("Error during game file patching with message {0}", ex.Message));
+        //             throw ex;
+        //         }
+        //     });
+
+        //     await Tsk;
+        // }
 
         private void DeleteFile(PatchingInstruction Instruction, string DestDir)
         {

@@ -2509,39 +2509,86 @@ ccafdsse001-dwesanctuary.esm";
             {
                 try
                 {
-                    try
+                    var Instance = ServiceSingleton.Instances.WorkingInstance;
+
+                    CreateBaseDirectories();
+                    CreateProfileBaseFiles();
+                    CreateLauncher();
+                    AddExecutables();
+
+                    var extractDir = Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir);
+                    var mo2Dir = Path.Combine(Instance.InstallDir, "MO2");
+
+                    var directoryCopyRule = new DirectoryCopy
                     {
-                        var Instance = ServiceSingleton.Instances.WorkingInstance;
+                        Source = "",                // Empty => copy entire extract folder
+                        Destination = 2,            // 2 => InstanceDir (but we will override below)
+                        DestinationDirectory = "",  // copy to root of MO2
+                    };
 
-                        CreateBaseDirectories();
-                        CreateProfileBaseFiles();
-                        CreateLauncher();
-                        AddExecutables();
+                    directoryCopyRule.Execute(
+                        Instance.StockGame,    // GamePath
+                        extractDir,            // ExtractDir
+                        mo2Dir,                // ModDir (ignored for MO2)
+                        mo2Dir                 // InstanceDir = Destination for MO2
+                    );
 
-                        var Rules = new DirectoryCopy().CreateFileRules(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 2, string.Empty, string.Empty);
-                        var Counter = 0;
+                    CopyingProgress(1, 1);
 
-                        foreach (var Rule in Rules)
-                        {
-                            Rule.Execute(Instance.StockGame, Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), Path.Combine(Instance.InstallDir, "MO2"), Path.Combine(Instance.InstallDir, "MO2"));
-                            CopyingProgress(++Counter, Rules.Count);
-                        }
-
-                        AddSplash();
-                    }
-                    finally
-                    {
-                        ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
-                    }
+                    AddSplash();
                 }
-                catch (Exception ex)
+                finally
                 {
-                    throw ex;
+                    ServiceSingleton.Files.RemoveDirectory(
+                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir),
+                        true
+                    );
                 }
             });
 
             await Tsk;
         }
+
+
+        // protected override async Task DoCopy()
+        // {
+        //     var Tsk = Task.Run(() =>
+        //     {
+        //         try
+        //         {
+        //             try
+        //             {
+        //                 var Instance = ServiceSingleton.Instances.WorkingInstance;
+
+        //                 CreateBaseDirectories();
+        //                 CreateProfileBaseFiles();
+        //                 CreateLauncher();
+        //                 AddExecutables();
+
+        //                 var Rules = new DirectoryCopy().CreateFileRules(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 2, string.Empty, string.Empty);
+        //                 var Counter = 0;
+
+        //                 foreach (var Rule in Rules)
+        //                 {
+        //                     Rule.Execute(Instance.StockGame, Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), Path.Combine(Instance.InstallDir, "MO2"), Path.Combine(Instance.InstallDir, "MO2"));
+        //                     CopyingProgress(++Counter, Rules.Count);
+        //                 }
+
+        //                 AddSplash();
+        //             }
+        //             finally
+        //             {
+        //                 ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+        //             }
+        //         }
+        //         catch (Exception ex)
+        //         {
+        //             throw ex;
+        //         }
+        //     });
+
+        //     await Tsk;
+        // }
 
         private string GetModListFile()
         {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Diagnostics;
 using Nolvus.Core.Services;
+using Nolvus.Package.Services;
 using System.Threading.Tasks;
 
 namespace Nolvus.Package.Mods
@@ -25,74 +26,26 @@ namespace Nolvus.Package.Mods
             }            
         }
 
-        public async Task UnPack(string ExtractDir)
+        public async Task UnPack(string extractDir)
         {
-            var Tsk = Task.Run(() => 
-            {
-                Process UnPackingProcess = new Process();
-                var BSArchDir = Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "TOOLS", "BSArch");
-                var BSAFile = GetBsaToUnpack(ExtractDir);
+            var bsaFile = GetBsaToUnpack(extractDir);
 
-                if (BSAFile != null)
-                {
-                    UnPackingProcess.StartInfo.WorkingDirectory = BSArchDir;
-                    UnPackingProcess.StartInfo.FileName = "cmd.exe";
-                    UnPackingProcess.StartInfo.CreateNoWindow = true;
-                    UnPackingProcess.StartInfo.UseShellExecute = false;
-                    UnPackingProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    
-                    string CommandLine = string.Format("\"" + Path.Combine(BSArchDir, "bsarch.exe") + "\" unpack \"{0}\" \"{1}\"", BSAFile.FullName, BSAFile.DirectoryName);
+            if (bsaFile == null)
+                throw new Exception($"Failed to unpack file : {FileName} ==> File not found");
 
-                    ServiceSingleton.Logger.Log(string.Format("Unpacking command line : {0}", CommandLine));
+            // Create service (or inject via constructor)
+            var bsarch = new BSArchService(ServiceSingleton.Instances.WorkingInstance.InstallDir);
 
-                    UnPackingProcess.StartInfo.Arguments = "/c \"" + CommandLine + "\"";
+            ServiceSingleton.Logger.Log($"Unpacking BSA: {bsaFile.FullName}");
 
-                    UnPackingProcess.StartInfo.RedirectStandardOutput = true;
-                    UnPackingProcess.StartInfo.RedirectStandardError = true;
+            bool success = await bsarch.UnpackAsync(bsaFile.FullName, bsaFile.DirectoryName);
 
-                    List<String> Output = new List<string>();
+            if (!success)
+                throw new Exception($"Failed to unpack file: {FileName}");
 
-                    UnPackingProcess.OutputDataReceived += new DataReceivedEventHandler((s, e) =>
-                    {
-                        if (e.Data != null)
-                        {
-                            Output.Add((string)e.Data);
-                        }
-                    });
-
-                    UnPackingProcess.ErrorDataReceived += new DataReceivedEventHandler((s, e) =>
-                    {
-                        if (e.Data != null)
-                        {
-                            Output.Add((String)e.Data);
-                        }
-                    });
-
-                    UnPackingProcess.Start();
-                    UnPackingProcess.BeginOutputReadLine();
-                    UnPackingProcess.BeginErrorReadLine();
-
-                    UnPackingProcess.WaitForExit();
-
-                    if (UnPackingProcess.ExitCode == 0)
-                    {
-                        File.Delete(BSAFile.FullName);
-                    }
-                    else
-                    {
-                        throw new Exception("Failed to unpack file : " + FileName + "==>" + String.Join(Environment.NewLine, Output.ToArray()));
-                    }
-                }
-                else
-                {
-                    throw new Exception("Failed to unpack file : " + FileName + "==> File not found");
-                }
-                
-            });
-
-            await Tsk;
-
-           
+            // Delete after successful extraction
+            File.Delete(bsaFile.FullName);
         }
+
     }
 }

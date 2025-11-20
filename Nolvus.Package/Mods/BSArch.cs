@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using Nolvus.Core.Services;
@@ -8,83 +7,57 @@ namespace Nolvus.Package.Mods
 {
     public class BSArch : NexusSoftware
     {
-
         protected override async Task DoCopy()
         {
-            var Tsk = Task.Run(() =>
+            var instance = ServiceSingleton.Instances.WorkingInstance;
+
+            // TOOLS/BSArch
+            var installDirectory = Path.Combine(instance.InstallDir, "TOOLS", Name);
+            Directory.CreateDirectory(installDirectory);
+
+            // Extract root: .../Extract/<ExtractSubDir>
+            var extractDir = Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir);
+
+            try
             {
-                try
+                //
+                // BSArch has no XML <Rules>, so we synthesize a single DirectoryCopy rule
+                // that copies EVERYTHING from extractDir into installDirectory.
+                //
+                // We rely on CopyRule defaults:
+                //   - Destination (int) defaults to 0 → "modDir" (installDirectory)
+                //   - CopyToRoot is computed from internal state and is read-only
+                //
+                var autoRule = new DirectoryCopy
                 {
-                    var instance = ServiceSingleton.Instances.WorkingInstance;
+                    // Empty Source => DirectoryCopy will treat extractDir as the source root
+                    Source = string.Empty,
 
-                    var installDirectory = Path.Combine(instance.InstallDir, "TOOLS", Name);
-                    Directory.CreateDirectory(installDirectory);
+                    // Empty DestinationDirectory => copy directly into installDirectory
+                    DestinationDirectory = string.Empty,
 
-                    var extractDir = Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir);
+                    // We only want the contents, not an extra nested root folder
+                    IncludeRootDirectory = false
+                };
 
-                    int counter = 0;
-                    foreach (var rule in Rules)
-                    {
-                        rule.Execute(
-                            instance.StockGame, // GamePath
-                            extractDir,         // ExtractDir (source)
-                            installDirectory,   // ModDir (destination root for this tool)
-                            instance.InstallDir // InstanceDir
-                        );
+                autoRule.Execute(
+                    instance.StockGame, // gamePath
+                    extractDir,         // extractDir (root of extracted archive)
+                    installDirectory,   // modDir (TOOLS/BSArch)
+                    instance.InstallDir // instanceDir
+                );
 
-                        CopyingProgress(++counter, Rules.Count);
-                    }
-                }
-                finally
-                {
-                    ServiceSingleton.Files.RemoveDirectory(
-                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir),
-                        true
-                    );
-                }
-            });
+                // Single synthesized rule, so progress is trivially 1/1
+                CopyingProgress(1, 1);
+            }
+            finally
+            {
+                // Always clean up the extracted cache directory
+                ServiceSingleton.Files.RemoveDirectory(extractDir, true);
+            }
 
-            await Tsk;
+            // Method is logically sync, but override is async
+            await Task.CompletedTask;
         }
-
-        // protected override async Task DoCopy()
-        // {
-        //     var Tsk = Task.Run(() =>
-        //     {
-        //         try
-        //         {
-        //             try
-        //             {
-        //                 var InstallDirectory = Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "TOOLS", Name);
-
-        //                 Directory.CreateDirectory(InstallDirectory);
-
-        //                 var Rules = new DirectoryCopy().CreateFileRules(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 2, string.Empty, string.Empty);
-
-        //                 var Counter = 0;
-
-        //                 foreach (var Rule in Rules)
-        //                 {
-        //                     Rule.Execute(ServiceSingleton.Instances.WorkingInstance.StockGame, 
-        //                                  Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 
-        //                                  InstallDirectory, 
-        //                                  InstallDirectory);
-
-        //                     CopyingProgress(++Counter, Rules.Count);
-        //                 }
-        //             }
-        //             finally
-        //             {
-        //                 ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
-        //             }
-        //         }
-        //         catch (Exception ex)
-        //         {
-        //             throw ex;
-        //         }
-        //     });
-
-        //     await Tsk;
-        // }
     }
 }

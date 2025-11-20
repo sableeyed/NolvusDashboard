@@ -360,9 +360,9 @@ namespace Nolvus.Package.Mods
                         ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
                     }                                          
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw ex;                    
+                    throw;                    
                 }
             });
 

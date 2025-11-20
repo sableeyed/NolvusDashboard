@@ -135,5 +135,10 @@ namespace Nolvus.Core.Services
                 return ServiceSingleton.GetService<ICheckerService>();
             }
         }
+
+        public static IWineRunner Wine
+        {
+            get { return ServiceSingleton.GetService<IWineRunner>(); }
+        }
     }
 }

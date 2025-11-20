@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Nolvus.Core.Interfaces;
@@ -10,10 +9,14 @@ namespace Nolvus.Package.Services
     public class BSArchService : IBSArchService
     {
         private readonly string _bsarchDirectory;
+        private readonly IWineRunner _wineRunner;
 
-        public BSArchService(string installDir)
+        private const string BsarchExe = "BSArch.exe";
+
+        public BSArchService(string installDir, IWineRunner wineRunner)
         {
             _bsarchDirectory = Path.Combine(installDir, "TOOLS", "BSArch");
+            _wineRunner = wineRunner ?? throw new ArgumentNullException(nameof(wineRunner));
 
             if (!Directory.Exists(_bsarchDirectory))
                 throw new DirectoryNotFoundException($"BSArch directory not found: {_bsarchDirectory}");
@@ -26,73 +29,23 @@ namespace Nolvus.Package.Services
 
             Directory.CreateDirectory(outputDirectory);
 
-            var args = $"unpack \"{bsaFile}\" \"{outputDirectory}\"";
+            string winBsa = _wineRunner.ToWinePath(bsaFile);
+            string winOut = _wineRunner.ToWinePath(outputDirectory);
+            string workingDir = _bsarchDirectory;
 
-            var exitCode = await RunBSArchAsync(args);
-            return exitCode == 0;
-        }
+            ServiceSingleton.Logger.Log($"[BSARCH] Running Wine: unpack {winBsa} {winOut}");
 
-        public async Task<bool> PackAsync(string sourceDirectory, string outputFile)
-        {
-            if (!Directory.Exists(sourceDirectory))
-                throw new DirectoryNotFoundException("Source directory not found: " + sourceDirectory);
+            int exit = await _wineRunner.RunAsync(
+                workingDir,
+                BsarchExe,
+                "unpack",
+                winBsa,
+                winOut
+            );
 
-            Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
+            ServiceSingleton.Logger.Log($"[BSARCH] Exit code: {exit}");
 
-            var args = $"pack \"{sourceDirectory}\" \"{outputFile}\"";
-
-            var exitCode = await RunBSArchAsync(args);
-            return exitCode == 0;
-        }
-
-        public async Task<int> RunBSArchAsync(string arguments)
-        {
-            string exe = Path.Combine(_bsarchDirectory, "BSArch.exe");
-
-            if (!File.Exists(exe))
-                throw new FileNotFoundException("bsarch executable not found", exe);
-
-            var psi = new ProcessStartInfo
-            {
-                FileName = exe,
-                Arguments = arguments,
-                WorkingDirectory = _bsarchDirectory,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using var process = new Process();
-            process.StartInfo = psi;
-
-            var tcs = new TaskCompletionSource<int>();
-
-            process.OutputDataReceived += (s, e) =>
-            {
-                if (!string.IsNullOrWhiteSpace(e.Data))
-                    Console.WriteLine($"BSArch: {e.Data}");
-            };
-
-            process.ErrorDataReceived += (s, e) =>
-            {
-                if (!string.IsNullOrWhiteSpace(e.Data))
-                    Console.WriteLine($"BSArch ERR: {e.Data}");
-            };
-
-            process.Exited += (_, __) =>
-            {
-                tcs.TrySetResult(process.ExitCode);
-                process.Dispose();
-            };
-
-            process.EnableRaisingEvents = true;
-
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            return await tcs.Task;
+            return exit == 0;
         }
     }
 }

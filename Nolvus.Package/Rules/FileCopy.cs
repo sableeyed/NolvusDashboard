@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Xml;
 using Nolvus.Core.Services;
-using Nolvus.NexusApi.Responses;
 
 namespace Nolvus.Package.Rules
 {
@@ -14,11 +13,11 @@ namespace Nolvus.Package.Rules
         {
             base.Load(node);
 
-            NewFileName = Normalize(node["NewFileName"]?.InnerText ?? string.Empty);
-
-            // Normalize inherited values from CopyRule
+            // Normalize all inherited paths
             Source = Normalize(Source);
             DestinationDirectory = Normalize(DestinationDirectory);
+
+            NewFileName = Normalize(node["NewFileName"]?.InnerText ?? string.Empty);
         }
 
         public override void Execute(string gamePath, string extractDir, string modDir, string instanceDir)
@@ -26,44 +25,55 @@ namespace Nolvus.Package.Rules
             if (!CanExecute(gamePath, modDir))
                 return;
 
-            // Normalize paths at runtime (extra safety)
-            var sourceRel = Normalize(Source);
-            var destDirRel = Normalize(DestinationDirectory);
+            ServiceSingleton.Logger.Log(
+                $"[FileCopy] Source='{Source}' DestDir='{DestinationDirectory}' NormalizedSource='{Normalize(Source)}' NormalizedDest='{Normalize(DestinationDirectory)}'"
+            );
 
-            // Select actual root destination
-            string rootDest =
+            // Always normalize before using
+            string srcRel = Normalize(Source);
+            string destRel = Normalize(DestinationDirectory);
+
+            // Convert to platform separators
+            string destRelPlatform =
+                destRel.Replace("/", Path.DirectorySeparatorChar.ToString());
+
+            // Pick destination base
+            string destBase =
                 Destination == 0 ? modDir :
                 Destination == 1 ? gamePath :
                 instanceDir;
 
-            string sourceFull = Path.Combine(extractDir, sourceRel);
+            // Resolve full source path
+            // Convert to platform separators:
+            string srcPlatform = srcRel.Replace("/", Path.DirectorySeparatorChar.ToString());
+            string sourceFull = Path.Combine(extractDir, srcPlatform);
 
             if (!File.Exists(sourceFull))
             {
-                ServiceSingleton.Logger.Log($"FileCopy skipping: missing source file {sourceFull}");
+                ServiceSingleton.Logger.Log($"[FileCopy] Skipping missing file: {sourceFull}");
                 return;
             }
 
-            // Determine final destination directory
-            string targetDirectory = rootDest;
+            // Determine actual directory to copy into
+            string targetDir = CopyToRoot
+                ? destBase
+                : Path.Combine(destBase, destRelPlatform);
 
-            if (!CopyToRoot)
-            {
-                targetDirectory = Path.Combine(rootDest, destDirRel);
-                Directory.CreateDirectory(targetDirectory);
-            }
+            Directory.CreateDirectory(targetDir);
 
-            // Determine final file name
-            string destFileName = !string.IsNullOrWhiteSpace(NewFileName)
+            // Determine final filename
+            string finalName = !string.IsNullOrWhiteSpace(NewFileName)
                 ? Normalize(NewFileName)
                 : Path.GetFileName(sourceFull);
 
-            string destFull = Path.Combine(targetDirectory, destFileName);
+            finalName = finalName.Replace("/", Path.DirectorySeparatorChar.ToString());
+
+            string destFull = Path.Combine(targetDir, finalName);
 
             // Perform the copy
             File.Copy(sourceFull, destFull, overwrite: true);
 
-            ServiceSingleton.Logger.Log($"Copied file: {sourceFull} → {destFull}");
+            ServiceSingleton.Logger.Log($"[FileCopy] Copied: {sourceFull} → {destFull}");
         }
 
         private string Normalize(string path)
@@ -71,10 +81,10 @@ namespace Nolvus.Package.Rules
             if (string.IsNullOrWhiteSpace(path))
                 return string.Empty;
 
-            // Convert Windows separators → Linux
+            // Windows → Unix separators first
             path = path.Replace("\\", "/");
 
-            // Remove leading "/" so path isn't absolute
+            // Prevent absolute paths
             while (path.StartsWith("/"))
                 path = path.TrimStart('/');
 

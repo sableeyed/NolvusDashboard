@@ -32,11 +32,15 @@ namespace Nolvus.Package.Rules
                 Destination == 1 ? gamePath :
                 instanceDir;
 
+            //Normalize Rule Paths
+            string normalizedSource = NormalizePath(Source);
+            string normalizedDest = NormalizePath(DestinationDirectory);
+
             // ------------------------------------------------------------
             // 1) Try resolving Source path segment-by-segment
             //    Works for: "NetScriptFramework/Plugins", "_core/meshes", etc.
             // ------------------------------------------------------------
-            string? resolvedSource = PathResolver.ResolvePathSegments(extractDir, Source);
+            string? resolvedSource = PathResolver.ResolvePathSegments(extractDir, normalizedSource);
 
             // ------------------------------------------------------------
             // 2) Fallback for FLAT archives (files directly at extract root)
@@ -67,10 +71,12 @@ namespace Nolvus.Package.Rules
             // ------------------------------------------------------------
             // 4) Determine final destination path
             // ------------------------------------------------------------
+            string platformDest = normalizedDest.Replace("/", Path.DirectorySeparatorChar.ToString());
+
             string finalDestination =
                 CopyToRoot
                     ? destBase
-                    : Path.Combine(destBase, DestinationDirectory);
+                    : Path.Combine(destBase, platformDest);
 
             Directory.CreateDirectory(finalDestination);
 

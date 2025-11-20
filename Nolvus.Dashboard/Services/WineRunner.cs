@@ -1,58 +1,78 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
+using Nolvus.Core.Interfaces;
+using Nolvus.Core.Services;
 
 namespace Nolvus.Dashboard.Services.Wine
 {
-    public static class WineRunner
+    public class WineRunner : IWineRunner
     {
-        public static async Task<(int ExitCode, string Output, string Error)>
-            RunAsync(string workingDirectory, string executable, params string[] arguments)
+        public async Task<int> RunAsync(string workingDirectory, string exeName, params string[] args)
         {
             await WinePrefix.InitializeAsync();
 
+            if (string.IsNullOrWhiteSpace(WinePrefix.PrefixPath))
+                throw new InvalidOperationException("Wine prefix path not set.");
+
+            if (!Directory.Exists(workingDirectory))
+                throw new DirectoryNotFoundException($"Working directory not found: {workingDirectory}");
+
             var psi = new ProcessStartInfo
             {
-                FileName = executable,  // "wine", "winetricks", "protontricks", "bsarch.exe", etc.
+                FileName = "wine",
                 WorkingDirectory = workingDirectory,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                UseShellExecute = false
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
 
+            // First argument: the exe we run under wine
+            psi.ArgumentList.Add(exeName);
+
+            // Next arguments: EXACTLY AS PROVIDED
+            foreach (var a in args)
+                psi.ArgumentList.Add(a);
+
             psi.Environment["WINEPREFIX"] = WinePrefix.PrefixPath;
+            psi.Environment["WINEDEBUG"] = "-all";
 
-            foreach (var arg in arguments)
+            ServiceSingleton.Logger.Log("[WINE] Running: wine " + exeName + " " + string.Join(" ", args));
+
+            var process = new Process { StartInfo = psi, EnableRaisingEvents = true };
+            var tcs = new TaskCompletionSource<int>();
+
+            process.OutputDataReceived += (_, e) =>
             {
-                psi.ArgumentList.Add(arg);
-            }
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                    ServiceSingleton.Logger.Log($"[WINE] {e.Data}");
+            };
 
-            var process = Process.Start(psi)!;
+            process.ErrorDataReceived += (_, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                    ServiceSingleton.Logger.Log($"[WINE-ERR] {e.Data}");
+            };
 
-            string stdout = await process.StandardOutput.ReadToEndAsync();
-            string stderr = await process.StandardError.ReadToEndAsync();
+            process.Exited += (_, __) =>
+            {
+                tcs.TrySetResult(process.ExitCode);
+                process.Dispose();
+            };
 
-            await process.WaitForExitAsync();
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
-            return (process.ExitCode, stdout, stderr);
+            return await tcs.Task;
         }
 
-        public static Task<(int ExitCode, string Output, string Error)>
-            RunWineAsync(string workingDirectory, string exePath, params string[] args)
+        public string ToWinePath(string linuxPath)
         {
-            return RunAsync(workingDirectory, "wine", new[] { exePath }.Concat(args).ToArray());
-        }
-
-        public static Task<(int ExitCode, string Output, string Error)>
-            WinetricksAsync(params string[] args)
-        {
-            return RunAsync(workingDirectory: "/", executable: "winetricks", args);
-        }
-
-        public static Task<(int ExitCode, string Output, string Error)>
-            ProtontricksAsync(params string[] args)
-        {
-            return RunAsync(workingDirectory: "/", executable: "protontricks", args);
+            linuxPath = linuxPath.TrimEnd('/', '\\'); // prevent \Z:\ bug
+            return WinePrefix.ToWinePath(linuxPath);
         }
     }
 }

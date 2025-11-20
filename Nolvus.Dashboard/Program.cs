@@ -152,6 +152,7 @@ internal static class Program
         ServiceSingleton.RegisterService<ISoftwareProvider>(PackageService);
         ServiceSingleton.RegisterService<IReportService>(new ReportService());
         ServiceSingleton.RegisterService<ICheckerService>(new CheckerService());
+        ServiceSingleton.RegisterService<IWineRunner>(new WineRunner());
 
         AppDomain.CurrentDomain.AssemblyResolve += Resolver;
         AppDomain.CurrentDomain.AssemblyLoad += Loader;

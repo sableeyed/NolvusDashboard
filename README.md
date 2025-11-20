@@ -1,40 +1,53 @@
 # Welcome
 
-This project is not done.
+This product is for Linux only. If you are looking for the Windows version it is [here]("https://github.com/vektor999/NolvusDashboard)
+Upates are being made daily. Please check back periodically.
 
-The current state of this README is for my sanity
+# Known Issues
+- v6 installation is not implemented
+- Instance management is not implemented
+- This requires Nexus Premium. I do not plan to implement what's needed for free accounts at this time
 
-What works?
+# Wine
+A wine prefix will be created for you in ~/.local/share/NolvusDashboard/prefix
+Do not modify this unless you know what you are doing
+If you break the prefix you can delete the folder and relaunch the Dashboard to have it create a new one
+This prefix is required to run certain tools like BSArch
 
-Dashboard Window is made, DPI scaling.. not much for you to see yet :D
+# Required Software
+- Protontricks
+- Winetricks
+- Wine
+- 7zip
+- xdelta3
+- .NET Runtime 9.x
 
-# Fully Implemented but not tested
+# Untested
+- The entire MO2 stack
 
-- Nolvus.Api.Library.Installer (Compiles without error)
-- Nolvus.NexusApi (Compiles without error) 
-- Nolvus.Package (Need to dig)
-- Nolvus.StockGame (PatchManager may need reworked)
+# Fully Implemented
+- Nolvus.NexusApi
+- Nolvus.Package
+- Nolvus.StockGame
 - Nolvus.Core
-- Nolvus.Components (UI heavy - will be broken but it compiles)
-- Nolvus.Services
+- Nolvus.Components
+- Nolvus.Service
 - Nolvus.Instance
 
 # Partially Implemented
 - Nolvus.Dashboard
 - Nolvus.Browser
 
-# Not Implemented
-
+# Unimplemented
 - Nolvus.Downgrader
 - Nolvus.GrassCache
-- ~~Nolvus.Launcher~~
 
+# Refactor Needed
+- Nolvus.Updater
 
-# SOFTWARE REQUIREMENTS
-- 7zip
-- Wine 
-- Winetricks
-- xdelta3
-- Protontricks
-- .NET runtime 9.x
-- possibly forgetting more
+# Won't Implement
+- Nolvus.Launcher
+
+# TODO
+- Unify the theme and layout of all UI components/frames
+- Create desktop entries to allow for icons

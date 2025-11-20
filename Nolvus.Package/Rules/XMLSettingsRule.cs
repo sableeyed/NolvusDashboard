@@ -1,15 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using System.IO;
-using System.Threading.Tasks;
-using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 
 namespace Nolvus.Package.Rules
-{    
+{
     public class XMLSettingsRule : Rule
     {
         public string FileName { get; set; }
@@ -20,32 +15,68 @@ namespace Nolvus.Package.Rules
         public override void Load(XmlNode Node)
         {
             base.Load(Node);
-            FileName = Node["FileName"].InnerText;
-            Key = Node["Key"].InnerText;
-            Variable = System.Convert.ToBoolean(Node["Variable"].InnerText);
-            Value = Node["Value"].InnerText;
+
+            FileName = Normalize(Node["FileName"]?.InnerText ?? "");
+            Key      = Node["Key"]?.InnerText ?? "";
+            Variable = Convert.ToBoolean(Node["Variable"]?.InnerText ?? "false");
+            Value    = Node["Value"]?.InnerText ?? "";
         }
 
         public override void Execute(string GamePath, string ExtractDir, string ModDir, string InstanceDir)
         {
-            if (this.CanExecute(GamePath, ModDir))
-            {               
-                string EnvValue = Value;
+            if (!CanExecute(GamePath, ModDir))
+                return;
 
-                if (Variable)
-                {
-                    EnvValue = ServiceSingleton.Instances.GetValueFromKey(Value);
-                }
+            string envValue = Variable
+                ? ServiceSingleton.Instances.GetValueFromKey(Value)
+                : Value;
 
-                XmlDocument XMLFile = new XmlDocument();
-                XMLFile.Load(Path.Combine(ModDir, FileName));
+            // Normalize path again at runtime (safety)
+            string normalizedFile = Normalize(FileName);
 
-                XmlNode KeyNode = XMLFile.SelectSingleNode(Key);
+            // Build actual file path
+            string fullPath = Path.Combine(ModDir, normalizedFile);
 
-                KeyNode.InnerText = EnvValue;
-
-                XMLFile.Save(Path.Combine(ModDir, FileName));              
+            if (!File.Exists(fullPath))
+            {
+                ServiceSingleton.Logger.Log(
+                    $"[XMLSettingsRule] File not found: {fullPath}");
+                return;
             }
+
+            XmlDocument xml = new XmlDocument();
+            xml.Load(fullPath);
+
+            XmlNode keyNode = xml.SelectSingleNode(Key);
+
+            if (keyNode == null)
+            {
+                ServiceSingleton.Logger.Log(
+                    $"[XMLSettingsRule] XPath '{Key}' not found in: {fullPath}");
+                return;
+            }
+
+            keyNode.InnerText = envValue;
+
+            xml.Save(fullPath);
+
+            ServiceSingleton.Logger.Log(
+                $"[XMLSettingsRule] Updated '{Key}' in {fullPath}");
+        }
+
+        private string Normalize(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            // Convert Windows separators → Linux
+            path = path.Replace("\\", "/");
+
+            // Remove accidental leading slashes to avoid absolute paths
+            while (path.StartsWith("/"))
+                path = path.TrimStart('/');
+
+            return path;
         }
     }
 }

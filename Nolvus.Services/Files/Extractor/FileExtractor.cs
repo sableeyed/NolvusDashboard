@@ -41,7 +41,8 @@ namespace Nolvus.Services.Files.Extractor
 
                 try
                 {
-                    ExtractProgressChanged += OnProgress;
+                    if (OnProgress != null)
+                        ExtractProgressChanged += OnProgress;
 
                     if (!Directory.Exists(Output))
                         Directory.CreateDirectory(Output);

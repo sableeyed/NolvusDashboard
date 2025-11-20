@@ -141,59 +141,67 @@ WindowRounding=0.000000";
         
         protected override async Task DoExtract()
         {
-            var Tsk = Task.Run(() => 
+            await Task.Run(() =>
             {
                 try
                 {
                     ServiceSingleton.Logger.Log("Extracting reshade binaries");
 
-                    ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, Name), true);
+                    ServiceSingleton.Files.RemoveDirectory(
+                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, Name),
+                        true);
 
-                    Process ReshadeProcess = new Process
+                    string sevenZip = "/usr/bin/7z";
+
+                    string zipFile = this.Files.First().LocationFileName;
+                    string outDir = Path.Combine(ServiceSingleton.Folders.ExtractDirectory, Name);
+
+                    var psi = new ProcessStartInfo
                     {
-                        StartInfo = { WorkingDirectory = ServiceSingleton.Folders.DownloadDirectory, FileName = "cmd.exe", CreateNoWindow = true, UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden }
+                        FileName = sevenZip,
+                        Arguments = $"x -bsp1 -y \"{zipFile}\" -o\"{outDir}\" -mmt=off",
+                        WorkingDirectory = ServiceSingleton.Folders.DownloadDirectory,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
                     };
 
-                    string Args = string.Format("\"" + Path.Combine(ServiceSingleton.Folders.LibDirectory, "7z.exe") + "\" e \"{0}\" -o\"{1}\"", this.Files.First().LocationFileName, Path.Combine(ServiceSingleton.Folders.ExtractDirectory, Name));
-                    
-                    ReshadeProcess.StartInfo.Arguments = "/c \"" + Args + "\"";
-                    ReshadeProcess.StartInfo.RedirectStandardOutput = true;
-                    ReshadeProcess.StartInfo.RedirectStandardError = true;
+                    var proc = new Process { StartInfo = psi };
+                    var output = new List<string>();
 
-                    List<string> Output = new List<string>();
-
-                    ReshadeProcess.OutputDataReceived += delegate (object s, DataReceivedEventArgs e) {
-                        if (e.Data != null)
-                        {
-                            Output.Add(e.Data);
-                        }
-                    };
-                    ReshadeProcess.ErrorDataReceived += delegate (object s, DataReceivedEventArgs e) {
-                        if (e.Data != null)
-                        {
-                            Output.Add(e.Data);
-                        }
-                    };
-
-                    ReshadeProcess.Start();
-                    ReshadeProcess.BeginOutputReadLine();
-                    ReshadeProcess.BeginErrorReadLine();
-                    ReshadeProcess.WaitForExit();
-
-                    if (ReshadeProcess.ExitCode != 0)
+                    proc.OutputDataReceived += (s, e) =>
                     {
-                        throw new Exception("Error during reshade binaries extraction!" + Environment.NewLine + string.Join(Environment.NewLine, Output.ToArray()));
-                    }                    
+                        if (!string.IsNullOrEmpty(e.Data))
+                            output.Add(e.Data);
+                    };
+
+                    proc.ErrorDataReceived += (s, e) =>
+                    {
+                        if (!string.IsNullOrEmpty(e.Data))
+                            output.Add(e.Data);
+                    };
+
+                    proc.Start();
+                    proc.BeginOutputReadLine();
+                    proc.BeginErrorReadLine();
+                    proc.WaitForExit();
+
+                    if (proc.ExitCode != 0)
+                    {
+                        throw new Exception("Error during reshade extraction:\n" +
+                                            string.Join("\n", output));
+                    }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    ServiceSingleton.Logger.Log(string.Format("Error during reshade binaries extraction with error {0}", ex.Message));
-                    throw ex;
+                    ServiceSingleton.Logger.Log(
+                        $"Error during reshade binaries extraction: {ex.Message}");
+                    throw;
                 }
             });
-
-            await Tsk;
         }
+
 
         protected override async Task DoCopy()
         {

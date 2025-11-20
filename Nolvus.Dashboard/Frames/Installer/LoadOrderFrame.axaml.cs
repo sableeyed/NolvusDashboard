@@ -131,8 +131,7 @@ namespace Nolvus.Dashboard.Frames.Installer
 
                 if (!Parameters.IsEmpty && Parameters["Mode"].ToString() == "Install")
                 {
-                    Console.WriteLine("Unimplemented: Finish Frame");
-                    //ServiceSingleton.Dashboard.LoadFrame<FinishFrame>();
+                    ServiceSingleton.Dashboard.LoadFrame<FinishFrame>();
                 }
                 else
                 {

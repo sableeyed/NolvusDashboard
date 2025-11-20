@@ -209,96 +209,67 @@ namespace Nolvus.Package.Files
         
         public async Task Download(DownloadProgressChangedHandler OnProgress, Action<string, int> HashProgress, int RetryCount, Func<IBrowserInstance> Browser)
         {
-            var Tsk = Task.Run(async () =>
+            //remove the task wrapping because of UI issues
+            try
             {
-                try
+                await InternalDownload(DownloadLink, OnProgress, HashProgress, RetryCount, Browser);
+            }
+            catch
+            {
+                if (MirrorDownloadLink != string.Empty)
                 {
-                    await InternalDownload(DownloadLink, OnProgress, HashProgress, RetryCount, Browser);
+                    await InternalDownload(MirrorDownloadLink, OnProgress, HashProgress, RetryCount, Browser);
                 }
-                catch(Exception ex)
+                else
                 {
-                    if (MirrorDownloadLink != string.Empty)
-                    {
-                        await InternalDownload(MirrorDownloadLink, OnProgress, HashProgress, RetryCount, Browser);
-                    }
-                    else
-                    {
-                        throw ex;
-                    }                  
+                    throw;
                 }
-            });
-
-            await Tsk;
+            }
         }
 
         private async Task InternalDownload(string Link, DownloadProgressChangedHandler OnProgress, Action<string, int> HashProgress, int RetryCount, Func<IBrowserInstance> Browser)
         {
-            var Tsk = Task.Run(async () =>
+            var Tries = 0;
+            Exception CaughtException = null;
+
+            if (!Exist())
             {
-                var Tries = 0;
-                Exception CaughtException = null;
-
-                while (true)
+                try
                 {
-                    ServiceSingleton.Logger.Log(string.Format("Checking file {0}", FileName));
-
-                    if (!Exist())
+                    if (RequireManualDownload)
                     {
-                        ServiceSingleton.Logger.Log(string.Format("File {0} not found!", FileName));
-                        ServiceSingleton.Logger.Log(string.Format("Trying to download file {0} ({1}/{2})", FileName, Tries.ToString(), RetryCount.ToString()));
-
-                        try
-                        {
-                            if (RequireManualDownload)
-                            {
-                                //using var hb = new HeadlessBrowser();
-                                await DownloadWithWget(Link, LocationFileName);
-                                //await Browser().AwaitUserDownload(Link, FileName, OnProgress);
-                            }
-                            else
-                            {
-                                await DoDownload(Link, OnProgress);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            CaughtException = ex;
-
-                            if (ex.InnerException != null) CaughtException = ex.InnerException;
-
-                            ServiceSingleton.Logger.Log(string.Format("Error during file download {0} with error {1}", FileName, CaughtException.Message));
-                        }
+                        await Browser().AwaitUserDownload(Link, FileName, OnProgress);
                     }
                     else
                     {
-                        ServiceSingleton.Logger.Log(string.Format("File exists ({0}), about to check crc", LocationFileName));
+                        await DoDownload(Link, OnProgress);
                     }
-
-                    if (await CRCCheck(HashProgress))
-                    {
-                        break;
-                    }
-                    else if (Tries == RetryCount)
-                    {
-                        ServiceSingleton.Logger.Log(string.Format("Download retry count reached for file {0}", FileName));
-
-                        if (CaughtException != null)
-                        {
-                            throw new Exception(string.Format("Unable to download file {0} after {1} retries with error {2}!", FileName, RetryCount.ToString(), CaughtException.Message));
-                        }
-                        else
-                        {
-                            throw new Exception(string.Format("Unable to download file {0} after {1} retries!", FileName, RetryCount.ToString()));
-                        }
-
-                    }
-
-                    Tries++;
                 }
-            });
+                catch (Exception ex)
+                {
+                    CaughtException = ex.InnerException ?? ex;
+                }
+            }
 
-            await Tsk;
-        }       
+            while (true)
+            {
+                if (await CRCCheck(HashProgress))
+                    break;
+
+                if (Tries == RetryCount)
+                {
+                    if (CaughtException != null)
+                        throw new Exception($"Unable to download file {FileName}...", CaughtException);
+                    else
+                        throw new Exception($"Unable to download file {FileName} after retries!");
+                }
+
+                Tries++;
+
+                await Task.Delay(200);
+            }
+        }
+       
 
         public async Task Extract(ExtractProgressChangedHandler OnProgress)
         {
@@ -336,29 +307,6 @@ namespace Nolvus.Package.Files
 
             await Tsk;
         }
-
-        private async Task DownloadWithWget(string url, string outputFullPath)
-        {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "wget",
-                Arguments = $"\"{url}\" -O \"{outputFullPath}\" --quiet --show-progress --tries=3",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            ServiceSingleton.Logger.Log($"WGET URL: {url}");
-            ServiceSingleton.Logger.Log($"WGET OUTPUT: {outputFullPath}");
-
-            using var proc = Process.Start(psi);
-            await proc.WaitForExitAsync();
-
-            if (proc.ExitCode != 0)
-                throw new Exception("wget failed");
-        }
-
 
         #endregion        
     }

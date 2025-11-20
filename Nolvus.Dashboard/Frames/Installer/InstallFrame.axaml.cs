@@ -96,8 +96,7 @@ namespace Nolvus.Dashboard.Frames.Installer
 
                 _refreshCts?.Cancel();
 
-                Console.WriteLine("InstallFrame: Unimplemented Load Order Frame");
-                //await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>(new FrameParameters(new FrameParameter(){Key = "Mode", Value = "Install"}));
+                await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>(new FrameParameters(new FrameParameter(){Key = "Mode", Value = "Install"}));
             }
             catch
             {

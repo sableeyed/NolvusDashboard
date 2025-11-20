@@ -10,31 +10,31 @@ namespace Nolvus.Browser.Core
 {
     public class Browser : IBrowserInstance
     {
-
         private readonly AvaloniaCefBrowser? _browser;
         private readonly ChromeDownloaderHandler _downloadHandler;
         private WebSite website;
         private string file;
         private string modId;
         private string _url;
-        public string Url { get { return _url; } }
+        public string Url => _url;
 
-        private TaskCompletionSource<string>? _manualLinkTcs;
         private TaskCompletionSource<bool>? _downloadTcs;
-        private TaskCompletionSource<bool>? _ssoTcs;
+
         public event OnBrowserClosedHandler? OnBrowserClosed;
         public event Action? HideLoadingRequested;
         public event Action<string>? PageInfoChanged;
         public event Action<string>? NavigationRequested;
         public event OnFileDownloadRequestedHandler? OnFileDownloadRequest;
         public event OnFileDownloadRequestedHandler? OnFileDownloadCompleted;
-        //GUI MODE
+
+        // GUI MODE
         public Browser(AvaloniaCefBrowser chromeBrowser)
         {
             _browser = chromeBrowser;
 
             _downloadHandler = new ChromeDownloaderHandler(false);
             _browser.DownloadHandler = _downloadHandler;
+
             _downloadHandler.OnFileDownloadCompleted += HandleDownloadCompleted;
             _downloadHandler.OnFileDownloadRequest += HandleDownloadRequest;
 
@@ -55,40 +55,48 @@ namespace Nolvus.Browser.Core
             else
                 website = WebSite.Other;
 
-            // Notify UI that navigation has begun (optional)
             PageInfoChanged?.Invoke(url);
-
             _browser!.Address = url;
         }
-        
-        //IDK ABOUT THIS
+
+        // === MANUAL DOWNLOAD (GUI MODE) ===
         public async Task AwaitUserDownload(string link, string fileName, DownloadProgressChangedHandler progress)
         {
+            file = fileName;
             _downloadTcs = new TaskCompletionSource<bool>();
 
             if (progress != null)
                 _downloadHandler.DownloadProgressChanged += progress;
 
+            // Navigate first
             _browser!.Address = link;
 
             await WaitForMainFrameLoad();
 
-            int loginNeeded = await EvaluateJsInt(ScriptManager.GetIsLoginNeeded());
-            if (loginNeeded == 1)
+            // ENB MODE – do NOT run Nexus logic here
+            if (website == WebSite.EnbDev)
             {
-                _browser.ExecuteJavaScript(ScriptManager.GetRedirectToLogin());
-                return;
+                HandleEnbDev();
             }
+            // else
+            // {
+            //     int loginNeeded = await EvaluateJsInt(ScriptManager.GetIsLoginNeeded());
+            //     if (loginNeeded == 1)
+            //     {
+            //         _browser.ExecuteJavaScript(ScriptManager.GetRedirectToLogin());
+            //         return;
+            //     }
 
-            int isAvailable = await EvaluateJsInt(ScriptManager.GetIsDownloadAvailable());
-            if (isAvailable == 1)
-            {
-                _browser.ExecuteJavaScript(ScriptManager.GetNexusManualDownload());
-            }
-            else
-            {
-                throw new Exception("Slow download button not found.");
-            }
+            //     int isAvailable = await EvaluateJsInt(ScriptManager.GetIsDownloadAvailable());
+            //     if (isAvailable == 1)
+            //     {
+            //         _browser.ExecuteJavaScript(ScriptManager.GetNexusManualDownload());
+            //     }
+            //     else
+            //     {
+            //         throw new Exception("Slow download button not found.");
+            //     }
+            // }
 
             await _downloadTcs.Task;
 
@@ -96,19 +104,9 @@ namespace Nolvus.Browser.Core
                 _downloadHandler.DownloadProgressChanged -= progress;
         }
 
-
-        //STUB
-        public async Task<string> GetNexusManualDownloadLink(string ModName, string Link, string NexusModId)
+        public Task<string> GetNexusManualDownloadLink(string ModName, string Link, string NexusModId)
         {
-            // _manualLinkTcs = new TaskCompletionSource<string>();
-
-            // _downloadHandler.SetLinkyOnly(true);
-
-            // void OnLinkRequested(object? sender, FileDownloadRequestEvent e)
-            // {
-            //     _manualLinkTcs.TrySetResult(e.DownloadUrl);
-            // }
-            return "Unimplemented";
+            return Task.FromResult("Unimplemented");
         }
 
         public Task NexusSSOAuthentication(string id, string slug)
@@ -121,15 +119,13 @@ namespace Nolvus.Browser.Core
             return Task.CompletedTask;
         }
 
-
         public void CloseBrowser()
         {
-            return;
+            // No-op for now
         }
 
         private void HandleDownloadCompleted(object? sender, FileDownloadRequestEvent e)
         {
-            //Forward to Browser/UI?
             OnFileDownloadCompleted?.Invoke(this, e);
             _downloadTcs?.TrySetResult(true);
         }
@@ -137,12 +133,11 @@ namespace Nolvus.Browser.Core
         private void HandleDownloadRequest(object? sender, FileDownloadRequestEvent e)
         {
             OnFileDownloadRequest?.Invoke(this, e);
-            _downloadTcs?.TrySetResult(true);
         }
 
         private void Browser_LoadStart(object? sender, LoadStartEventArgs e)
         {
-            return;
+            // no-op
         }
 
         private void Browser_LoadEnd(object? sender, LoadEndEventArgs e)
@@ -152,9 +147,14 @@ namespace Nolvus.Browser.Core
 
             var url = e.Frame.Url;
             PageInfoChanged?.Invoke(url);
+
+            if (website == WebSite.EnbDev)
+            {
+                // Auto-run ENB click script
+                HandleEnbDev();
+            }
         }
 
-        //IDK ABOUT THIS
         private Task WaitForMainFrameLoad()
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -169,17 +169,22 @@ namespace Nolvus.Browser.Core
             }
 
             _browser.LoadEnd += Handler;
-
             return tcs.Task;
         }
 
         private async Task<int> EvaluateJsInt(string script)
         {
-            var result = await _browser.EvaluateJavaScript<int>(script);
+            var result = await _browser!.EvaluateJavaScript<int>(script);
             return result;
         }
 
+        private void HandleEnbDev()
+        {
+            if (string.IsNullOrEmpty(file))
+                return;
 
-
+            string script = ScriptManager.GetHandleENBDev(file);
+            _browser!.ExecuteJavaScript(script);
+        }
     }
 }

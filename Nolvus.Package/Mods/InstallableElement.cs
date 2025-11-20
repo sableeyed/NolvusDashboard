@@ -209,45 +209,35 @@ namespace Nolvus.Package.Mods
         public abstract bool IsInstallable();        
         protected virtual async Task DoDownload(Func<IBrowserInstance> Browser)
         {
-            var Tsk = Task.Run(async () =>
+            try
             {
-                try
-                {
-                    foreach (var File in Files)
-                    {                        
-                        await File.Download(DownloadingProgress, HashingProgress, ServiceSingleton.Settings.RetryCount, Browser);
-                    }
+                foreach (var File in Files)
+                {                        
+                    await File.Download(DownloadingProgress, HashingProgress, ServiceSingleton.Settings.RetryCount, Browser);
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            });
-
-            await Tsk;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         protected virtual async Task DoExtract()
         {
-            var Tsk = Task.Run(async () =>
+            try
             {
-                try
-                {
-                    ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+                ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
 
-                    foreach (var File in Files)
-                    {
-                        await File.Extract(ExtractingProgress);
-                    }
-                }
-                catch(Exception ex)
+                foreach (var File in Files)
                 {
-                    ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
-                    throw ex;
+                    await File.Extract(ExtractingProgress);
                 }
-            });
-
-            await Tsk;
+            }
+            catch(Exception ex)
+            {
+                ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+                throw ex;
+            }
         }
         protected abstract Task DoUnpack();
         protected abstract Task DoCopy();
@@ -303,48 +293,43 @@ namespace Nolvus.Package.Mods
             
         public virtual async Task Install(CancellationToken Token, ModInstallSettings Settings = null)
         {            
-            var Tsk = Task.Run(async () =>
+            try
             {
-                try
-                {
-                    Token.ThrowIfCancellationRequested();                    
+                Token.ThrowIfCancellationRequested();                    
 
-                    if (Settings != null && Settings.Browser == null) throw new Exception("Browser is not set!");
+                if (Settings != null && Settings.Browser == null) throw new Exception("Browser is not set!");
                     
-                    switch (Action)
-                    {
-                        case ElementAction.Add:
-                        case ElementAction.Update:                            
-                            await DoDownload(Settings.Browser);
-                            Progress.GlobalDone = 15;                     
-                            await DoExtract();
-                            Progress.GlobalDone = 30;
-                            await DoUnpack();
-                            Progress.GlobalDone = 45;
-                            await DoCopy();
-                            Progress.GlobalDone = 60;
-                            await DoPatch();
-                            Progress.GlobalDone = 75;
-                            await DoArchive();
-                            Progress.GlobalDone = 100;
-                            break;
-                        case ElementAction.Remove:
-                            await Remove();
-                            break;
-                    }                    
-                }
-                catch(Exception ex)
-                {                    
-                    Progress.GlobalDone = 0;
-                    Progress.PercentDone = 0;
-                    Progress.Mbs = 0;
-                    Progress.Action = string.Empty;
-                    ServiceSingleton.Logger.Log("Error during mod installation(" + Name + ") with message : " + ex.Message + Environment.NewLine + "Stack => " + ex.StackTrace);                    
-                    throw ex;
-                }
-            });
-
-            await Tsk;
+                switch (Action)
+                {
+                    case ElementAction.Add:
+                    case ElementAction.Update:                            
+                        await DoDownload(Settings.Browser);
+                        Progress.GlobalDone = 15;                     
+                        await DoExtract();
+                        Progress.GlobalDone = 30;
+                        await DoUnpack();
+                        Progress.GlobalDone = 45;
+                        await DoCopy();
+                        Progress.GlobalDone = 60;
+                        await DoPatch();
+                        Progress.GlobalDone = 75;
+                        await DoArchive();
+                        Progress.GlobalDone = 100;
+                        break;
+                    case ElementAction.Remove:
+                        await Remove();
+                        break;
+                }                    
+            }
+            catch(Exception ex)
+            {                    
+                Progress.GlobalDone = 0;
+                Progress.PercentDone = 0;
+                Progress.Mbs = 0;
+                Progress.Action = string.Empty;
+                ServiceSingleton.Logger.Log("Error during mod installation(" + Name + ") with message : " + ex.Message + Environment.NewLine + "Stack => " + ex.StackTrace);                    
+                throw ex;
+            }
         }
 
         public async Task<ModProgress> PrepareProgress()
@@ -354,51 +339,6 @@ namespace Nolvus.Package.Mods
                 return Progress;              
             });
         }
-
-        // Map lowercase folder names to their Windows-canonical casing
-        // private static readonly Dictionary<string, string> FolderCaseMap = new()
-        // {
-        //     { "data", "Data" },
-        //     { "skse", "SKSE" },
-        //     { "skse64", "SKSE" },
-        //     { "plugins", "Plugins" },
-        //     { "meshes", "Meshes" },
-        //     { "textures", "Textures" },
-        //     { "interface", "Interface" },
-        //     { "scripts", "Scripts" }
-        // };
-
-        // private void NormalizeFolderCasing(string root)
-        // {
-        //     if (!Directory.Exists(root))
-        //         return;
-
-        //     // Get all directories in a flat list
-        //     var allDirs = Directory.GetDirectories(root, "*", SearchOption.AllDirectories)
-        //         .Select(d => new DirectoryInfo(d))
-        //         // Sort deepest path first so children are renamed before parents
-        //         .OrderByDescending(d => d.FullName.Count(c => c == Path.DirectorySeparatorChar))
-        //         .ToList();
-
-        //     foreach (var di in allDirs)
-        //     {
-        //         var lower = di.Name.ToLowerInvariant();
-
-        //         if (FolderCaseMap.TryGetValue(lower, out var canonicalName) &&
-        //             canonicalName != di.Name)
-        //         {
-        //             var newPath = Path.Combine(di.Parent!.FullName, canonicalName);
-
-        //             if (!Directory.Exists(newPath))
-        //             {
-        //                 ServiceSingleton.Logger.Log(
-        //                     $"NormalizeFolderCasing: {di.FullName} → {newPath}");
-        //                 Directory.Move(di.FullName, newPath);
-        //             }
-        //         }
-        //     }
-        // }
-
 
         #endregion                                                                                          
       

@@ -45,19 +45,22 @@ namespace Nolvus.Browser.Core {
 		protected override void OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string name, CefBeforeDownloadCallback callback) {
             OnBeforeDownloadFired?.Invoke(this, downloadItem);
 
-            if (LinkOnly)
+            string downloads = ServiceSingleton.Folders.DownloadDirectory;
+            string suggested = downloadItem.SuggestedFileName;
+
+            // ENB returns no filename → user clicked HTML page not an archive
+            if (string.IsNullOrWhiteSpace(suggested))
             {
-                OnFileDownloadRequest?.Invoke(this, new FileDownloadRequestEvent(downloadItem.Url));
-                return;
+                // Fallback to the URL's last segment OR a generic filename
+                suggested = Path.GetFileName(new Uri(downloadItem.Url).LocalPath);
+
+                if (string.IsNullOrWhiteSpace(suggested))
+                    suggested = "download.bin"; // last fallback
             }
 
-            string DownloadsDirectoryPath = ServiceSingleton.Folders.DownloadDirectory;
+            string fullPath = Path.Combine(downloads, suggested);
 
-            OnFileDownloadRequest?.Invoke(this, new FileDownloadRequestEvent(downloadItem.Url));
-
-            SW.Start();
-
-            callback.Continue(Path.Combine(DownloadsDirectoryPath, downloadItem.SuggestedFileName), showDialog: false);
+            callback.Continue(fullPath, showDialog: false);
 		}
 
 		protected override void OnDownloadUpdated(CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {

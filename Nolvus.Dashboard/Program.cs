@@ -20,6 +20,7 @@ using System.Reflection;
 using Xilium.CefGlue;
 using Xilium.CefGlue.Common;
 using System.Text;
+using Nolvus.Dashboard.Services.Wine;
 
 namespace Nolvus.Dashboard;
 
@@ -104,6 +105,12 @@ internal static class Program
             Environment.Exit(-1);
         }
 
+        if (!File.Exists("/usr/bin/wine"))
+        {
+            Console.WriteLine("Wine is required and expected to be accessible at /usr/bin/wine");
+            Environment.Exit(-1);
+        }
+
         DebugMode = args.Contains("--debugging");
 
         var current = Process.GetCurrentProcess();
@@ -130,18 +137,6 @@ internal static class Program
         ServiceSingleton.Logger.Log("***Nolvus Dashboard Initialization***");
         ServiceSingleton.Logger.Log("Starting new session : " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
         ServiceSingleton.Logger.Log("Architecture : " + (Environment.Is64BitProcess ? "x64" : "x86"));
-
-        var handler = new SocketsHttpHandler
-        {
-            SslOptions = new SslClientAuthenticationOptions
-            {
-                EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
-            },
-            PooledConnectionLifetime = TimeSpan.FromMinutes(10),
-            MaxConnectionsPerServer = 100
-        };
-
-        var http = new HttpClient(handler);
 
         var PackageService = new PackageService();
 

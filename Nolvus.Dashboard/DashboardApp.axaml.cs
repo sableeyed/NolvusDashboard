@@ -12,7 +12,7 @@ public partial class DashboardApp : Application
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new DashboardWindow();
+            desktop.MainWindow = new SplashWindow();
 
         base.OnFrameworkInitializationCompleted();
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Nolvus.Core.Services;
+using Nolvus.Package.Utilities;
 
 namespace Nolvus.Package.Rules
 {
@@ -25,43 +26,73 @@ namespace Nolvus.Package.Rules
             if (!CanExecute(gamePath, modDir))
                 return;
 
+            // Determine base destination
             string destBase =
                 Destination == 0 ? modDir :
                 Destination == 1 ? gamePath :
                 instanceDir;
 
-            string sourceAbsolute = Path.Combine(extractDir, Source);
-            if (!Directory.Exists(sourceAbsolute))
+            // ------------------------------------------------------------
+            // 1) Try resolving Source path segment-by-segment
+            //    Works for: "NetScriptFramework/Plugins", "_core/meshes", etc.
+            // ------------------------------------------------------------
+            string? resolvedSource = PathResolver.ResolvePathSegments(extractDir, Source);
+
+            // ------------------------------------------------------------
+            // 2) Fallback for FLAT archives (files directly at extract root)
+            // ------------------------------------------------------------
+            if (resolvedSource == null)
             {
-                ServiceSingleton.Logger.Log($"DirectoryCopy skipped: source not found: {sourceAbsolute}");
+                bool extractHasRootFiles = Directory.GetFiles(extractDir).Any();
+
+                if (extractHasRootFiles)
+                {
+                    ServiceSingleton.Logger.Log(
+                        $"DirectoryCopy fallback: using extract root '{extractDir}' because '{Source}' not found.");
+                    resolvedSource = extractDir;
+                }
+            }
+
+            // ------------------------------------------------------------
+            // 3) If still null → path truly not found
+            // ------------------------------------------------------------
+            if (resolvedSource == null)
+            {
+                ServiceSingleton.Logger.Log($"DirectoryCopy skipped: source not found: {Source}");
                 return;
             }
 
-            // If no subdirectory override, copy into root of destination
-            string finalDestination = destBase;
+            string sourceAbsolute = resolvedSource;
 
-            if (!CopyToRoot)
-            {
-                finalDestination = Path.Combine(destBase, DestinationDirectory);
-            }
+            // ------------------------------------------------------------
+            // 4) Determine final destination path
+            // ------------------------------------------------------------
+            string finalDestination =
+                CopyToRoot
+                    ? destBase
+                    : Path.Combine(destBase, DestinationDirectory);
 
             Directory.CreateDirectory(finalDestination);
 
+            // ------------------------------------------------------------
+            // 5) Copy directories
+            // ------------------------------------------------------------
             if (!IncludeRootDirectory)
             {
-                // Copy CONTENTS of the directory
+                // Only contents
                 CopyDirectoryContents(sourceAbsolute, finalDestination);
             }
             else
             {
-                // Copy directory including the root folder
+                // Include root folder name
                 string rootName = new DirectoryInfo(sourceAbsolute).Name;
                 string destWithRoot = Path.Combine(finalDestination, rootName);
-                Directory.CreateDirectory(destWithRoot);
 
+                Directory.CreateDirectory(destWithRoot);
                 CopyDirectoryContents(sourceAbsolute, destWithRoot);
             }
         }
+
 
         private void CopyDirectoryContents(string src, string dst)
         {

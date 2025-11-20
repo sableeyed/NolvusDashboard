@@ -7,6 +7,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Nolvus.Core.Services;
 using Nolvus.StockGame.Patcher;
+using Nolvus.Package.Utilities;
+using Nolvus.NexusApi.Responses;
 
 namespace Nolvus.Package.Patchers
 {
@@ -53,56 +55,106 @@ namespace Nolvus.Package.Patchers
             return Result;
         }
         public async Task Patch(string ModDir, string GameDir, string ExtractDir)
-        {            
-            var Tsk = Task.Run(async ()=>
+        {
+            var Tsk = Task.Run(async () =>
             {
                 try
                 {
-                    var PatcherManager = new PatcherManager(ServiceSingleton.Folders.DownloadDirectory, ServiceSingleton.Folders.LibDirectory, ServiceSingleton.Folders.PatchDirectory);
+                    var PatcherManager = new PatcherManager(
+                        ServiceSingleton.Folders.DownloadDirectory,
+                        ServiceSingleton.Folders.LibDirectory,
+                        ServiceSingleton.Folders.PatchDirectory);
 
-                    var Dir = ModDir;
+                    // Determine working directory (mod or game)
+                    var Dir = System.IO.Directory.Exists(ModDir) ? ModDir : GameDir;
+                    Dir = PathResolver.ResolveCaseInsensitiveDirectory(null, Dir)
+                        ?? Dir; // fallback if no changes
 
-                    if (!System.IO.Directory.Exists(ModDir))
+                    FileInfo? SourceFileToPatch = null;
+
+                    if (string.IsNullOrWhiteSpace(Directory))
                     {
-                        Dir = GameDir;
-                    }
+                        // -----------------------------------------------------------
+                        // CASE 1: <Directory> is EMPTY → Search ENTIRE mod directory
+                        // -----------------------------------------------------------
+                        ServiceSingleton.Logger.Log($"[PATCH] Searching recursively in: {Dir}");
 
-                    FileInfo SourceFileToPatch = null;
+                        var allFiles = System.IO.Directory.GetFiles(Dir, "*", SearchOption.AllDirectories);
 
-                    if (Directory == string.Empty)
-                    {
-                        SourceFileToPatch = ServiceSingleton.Files.GetFiles(Dir).Where(x => x.Name == DestinationFileName).Where(y => ServiceSingleton.Files.GetHash(y.FullName) == HashBefore).FirstOrDefault();
+                        SourceFileToPatch = allFiles
+                            .Where(f => Path.GetFileName(f)
+                                .Equals(DestinationFileName, StringComparison.OrdinalIgnoreCase))
+                            .Select(f => new FileInfo(f))
+                            .Where(f => ServiceSingleton.Files.GetHash(f.FullName) == HashBefore)
+                            .FirstOrDefault();
                     }
                     else
                     {
-                        SourceFileToPatch = ServiceSingleton.Files.GetFiles(Dir).Where(x => x.FullName == Path.Combine(Dir, Directory, DestinationFileName)).Where(y => ServiceSingleton.Files.GetHash(y.FullName) == HashBefore).FirstOrDefault();
-                    }                    
+                        // -----------------------------------------------------------
+                        // CASE 2: A Directory is provided → Try to resolve it
+                        // -----------------------------------------------------------
+                        string? resolvedFolder = PathResolver.ResolveCaseInsensitiveDirectory(Dir, Directory);
 
-                    if (SourceFileToPatch != null)
-                    {
-                        ServiceSingleton.Logger.Log(string.Format("Patching file {0}", SourceFileToPatch.Name));
-
-                        var DestinationFileToPatch = new FileInfo(Path.Combine(ExtractDir, DestinationFileName));
-
-                        await PatcherManager.PatchFile(SourceFileToPatch.FullName, DestinationFileToPatch.FullName, Path.Combine(ExtractDir, PatchFileName));
-
-                        if (ServiceSingleton.Files.GetHash(CopyPatchedFile(SourceFileToPatch, DestinationFileToPatch).FullName) != HashAfter)
+                        if (resolvedFolder != null)
                         {
-                            throw new Exception("Hash for file : " + DestinationFileName + " does not match!");
+                            ServiceSingleton.Logger.Log($"[PATCH] Searching in directory: {resolvedFolder}");
+
+                            var files = System.IO.Directory.GetFiles(resolvedFolder, "*", SearchOption.AllDirectories);
+
+                            SourceFileToPatch = files
+                                .Where(f => Path.GetFileName(f)
+                                    .Equals(DestinationFileName, StringComparison.OrdinalIgnoreCase))
+                                .Select(f => new FileInfo(f))
+                                .Where(f => ServiceSingleton.Files.GetHash(f.FullName) == HashBefore)
+                                .FirstOrDefault();
+                        }
+                        else
+                        {
+                            ServiceSingleton.Logger.Log(
+                                $"[PATCH] Could not resolve directory '{Directory}' inside '{Dir}'");
                         }
                     }
-                    else
+
+                    // -----------------------------------------------------------
+                    // FAILURE: File not found anywhere
+                    // -----------------------------------------------------------
+                    if (SourceFileToPatch == null)
                     {
-                        throw new Exception("File name to patch does not exist (" + DestinationFileName + ") hash : " + HashBefore + " in " + Dir);
+                        throw new Exception(
+                            $"File name to patch does not exist ({DestinationFileName}) " +
+                            $"hash : {HashBefore} in {Dir}");
+                    }
+
+                    // -----------------------------------------------------------
+                    // SUCCESS: Found the file, now patch it
+                    // -----------------------------------------------------------
+                    ServiceSingleton.Logger.Log($"[PATCH] Patching file {SourceFileToPatch.FullName}");
+
+                    var DestinationFileToPatch =
+                        new FileInfo(Path.Combine(ExtractDir, DestinationFileName));
+
+                    await PatcherManager.PatchFile(
+                        SourceFileToPatch.FullName,
+                        DestinationFileToPatch.FullName,
+                        Path.Combine(ExtractDir, PatchFileName));
+
+                    // Validate HashAfter
+                    var newFile = CopyPatchedFile(SourceFileToPatch, DestinationFileToPatch);
+
+                    if (ServiceSingleton.Files.GetHash(newFile.FullName) != HashAfter)
+                    {
+                        throw new Exception($"Hash for file '{DestinationFileName}' does not match after patch!");
                     }
                 }
-                catch(Exception ex)
-                {                    
-                    throw ex;
+                catch (Exception ex)
+                {
+                    // Re-throw preserving stack trace
+                    throw;
                 }
             });
 
             await Tsk;
         }
+
     }
 }

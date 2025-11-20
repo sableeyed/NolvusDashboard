@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Xml;
 using Nolvus.Core.Services;
+using Nolvus.NexusApi.Responses;
 
 namespace Nolvus.Package.Rules
 {

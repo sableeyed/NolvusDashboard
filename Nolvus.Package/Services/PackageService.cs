@@ -201,7 +201,7 @@ namespace Nolvus.Package.Services
                 }
                 finally
                 {
-                    File.Delete(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, "InstallPackage.xml"));
+                    //File.Delete(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, "InstallPackage.xml"));
                 }
             });
 
@@ -286,7 +286,7 @@ namespace Nolvus.Package.Services
                 }
                 finally
                 {
-                    File.Delete(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, "UpdatePackage.xml"));
+                    //File.Delete(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, "UpdatePackage.xml"));
                 }
             });
 

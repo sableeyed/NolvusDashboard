@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Xml;
 using System.Linq;
 using System.IO;
@@ -250,7 +251,9 @@ namespace Nolvus.Package.Files
                         {
                             if (RequireManualDownload)
                             {
-                                await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                                //using var hb = new HeadlessBrowser();
+                                await DownloadWithWget(Link, LocationFileName);
+                                //await Browser().AwaitUserDownload(Link, FileName, OnProgress);
                             }
                             else
                             {
@@ -333,6 +336,29 @@ namespace Nolvus.Package.Files
 
             await Tsk;
         }
+
+        private async Task DownloadWithWget(string url, string outputFullPath)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "wget",
+                Arguments = $"\"{url}\" -O \"{outputFullPath}\" --quiet --show-progress --tries=3",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            ServiceSingleton.Logger.Log($"WGET URL: {url}");
+            ServiceSingleton.Logger.Log($"WGET OUTPUT: {outputFullPath}");
+
+            using var proc = Process.Start(psi);
+            await proc.WaitForExitAsync();
+
+            if (proc.ExitCode != 0)
+                throw new Exception("wget failed");
+        }
+
 
         #endregion        
     }

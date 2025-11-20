@@ -42,17 +42,6 @@ namespace Nolvus.Browser.Core
             _browser.LoadEnd += Browser_LoadEnd;
         }
 
-        //HEADLESS MODE
-        public Browser()
-        {
-            _browser = new AvaloniaCefBrowser();
-            _downloadHandler = new ChromeDownloaderHandler(false);
-            _browser.DownloadHandler = _downloadHandler;
-
-            _browser.LoadStart += Browser_LoadStart;
-            _browser.LoadEnd += Browser_LoadEnd;
-        }
-
         public void Navigate(string url, string? title = null)
         {
             _url = url;

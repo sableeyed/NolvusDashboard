@@ -51,6 +51,11 @@ namespace Nolvus.Browser
                 Dispatcher.UIThread.Post(() => { TitleBar.Title = Title; });
             };
 
+            BrowserEngine.OnBrowserClosed +=(_, __) =>
+            {
+                Dispatcher.UIThread.Post(Close);
+            };
+
             // BrowserEngine.HideLoadingRequested += () =>
             // {
             //     Dispatcher.UIThread.Post(HideLoading);

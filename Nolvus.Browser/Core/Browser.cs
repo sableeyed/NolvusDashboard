@@ -5,6 +5,8 @@ using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 using Xilium.CefGlue.Avalonia;
 using Xilium.CefGlue.Common.Events;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Nolvus.Browser.Core
 {
@@ -27,7 +29,6 @@ namespace Nolvus.Browser.Core
         public event OnFileDownloadRequestedHandler? OnFileDownloadRequest;
         public event OnFileDownloadRequestedHandler? OnFileDownloadCompleted;
 
-        // GUI MODE
         public Browser(AvaloniaCefBrowser chromeBrowser)
         {
             _browser = chromeBrowser;
@@ -59,7 +60,6 @@ namespace Nolvus.Browser.Core
             _browser!.Address = url;
         }
 
-        // === MANUAL DOWNLOAD (GUI MODE) ===
         public async Task AwaitUserDownload(string link, string fileName, DownloadProgressChangedHandler progress)
         {
             file = fileName;
@@ -68,37 +68,21 @@ namespace Nolvus.Browser.Core
             if (progress != null)
                 _downloadHandler.DownloadProgressChanged += progress;
 
-            // Navigate first
-            _browser!.Address = link;
+            Navigate(link);
 
             await WaitForMainFrameLoad();
 
-            // ENB MODE – do NOT run Nexus logic here
             if (website == WebSite.EnbDev)
             {
                 HandleEnbDev();
             }
-            // else
-            // {
-            //     int loginNeeded = await EvaluateJsInt(ScriptManager.GetIsLoginNeeded());
-            //     if (loginNeeded == 1)
-            //     {
-            //         _browser.ExecuteJavaScript(ScriptManager.GetRedirectToLogin());
-            //         return;
-            //     }
-
-            //     int isAvailable = await EvaluateJsInt(ScriptManager.GetIsDownloadAvailable());
-            //     if (isAvailable == 1)
-            //     {
-            //         _browser.ExecuteJavaScript(ScriptManager.GetNexusManualDownload());
-            //     }
-            //     else
-            //     {
-            //         throw new Exception("Slow download button not found.");
-            //     }
-            // }
 
             await _downloadTcs.Task;
+
+            await EnsureFileFullyWritten(Path.Combine(
+                ServiceSingleton.Folders.DownloadDirectory,
+                fileName
+            ));
 
             if (progress != null)
                 _downloadHandler.DownloadProgressChanged -= progress;
@@ -119,15 +103,18 @@ namespace Nolvus.Browser.Core
             return Task.CompletedTask;
         }
 
+        //Required by IBrowserInstance
         public void CloseBrowser()
         {
-            // No-op for now
+            OnBrowserClosed?.Invoke(this, EventArgs.Empty);
         }
+
 
         private void HandleDownloadCompleted(object? sender, FileDownloadRequestEvent e)
         {
             OnFileDownloadCompleted?.Invoke(this, e);
             _downloadTcs?.TrySetResult(true);
+            OnBrowserClosed?.Invoke(this, EventArgs.Empty);
         }
 
         private void HandleDownloadRequest(object? sender, FileDownloadRequestEvent e)
@@ -150,7 +137,6 @@ namespace Nolvus.Browser.Core
 
             if (website == WebSite.EnbDev)
             {
-                // Auto-run ENB click script
                 HandleEnbDev();
             }
         }
@@ -185,6 +171,40 @@ namespace Nolvus.Browser.Core
 
             string script = ScriptManager.GetHandleENBDev(file);
             _browser!.ExecuteJavaScript(script);
+        }
+
+        private async Task EnsureFileFullyWritten(string filePath)
+        {
+            const int stableChecks = 3;
+            long lastSize = -1;
+            int stableCount = 0;
+
+            while (true)
+            {
+                if (!File.Exists(filePath))
+                {
+                    await Task.Delay(100);
+                    continue;
+                }
+
+                long size = new FileInfo(filePath).Length;
+
+                if (size == lastSize)
+                {
+                    stableCount++;
+                    if (stableCount >= stableChecks)
+                        break;
+                }
+                else
+                {
+                    stableCount = 0;
+                    lastSize = size;
+                }
+
+                await Task.Delay(150);
+            }
+
+            await Task.Delay(150);
         }
     }
 }

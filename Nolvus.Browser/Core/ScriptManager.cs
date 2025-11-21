@@ -58,52 +58,68 @@ namespace Nolvus.Browser.Core
 
         public static string GetHandleVector(string Url)
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\HandleVector.js").Replace("{0}", Url);
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/HandleVector.js").Replace("{0}", Url);
         }
 
         public static string GetVectorLogin()
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\VectorLogin.js");
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/VectorLogin.js");
         }
 
         public static string GetVectorDownload(string Url)
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\VectorDownload.js").Replace("{0}", Url);
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/VectorDownload.js").Replace("{0}", Url);
         }
 
         public static string GetVectorDownLoadInit(string FileName)
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\VectorDownloadInit.js").Replace("{0}", FileName);
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/VectorDownloadInit.js").Replace("{0}", FileName);
         }
 
         public static string GetHandleENBDev(string FileName)
         {            
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\HandleENBDev.js").Replace("{0}", FileName);
+            //return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/HandleENBDev.js").Replace("{0}", FileName);
+            string script = ReadEmbeddedScript("HandleENBDev.js");
+            return script.Replace("{0}", FileName);
         }
 
         public static string GetHandleAFK()
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\HandleAFK.js");
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/HandleAFK.js");
         }
 
         public static string GetAFKDownLoad()
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\AFKDownLoad.js");
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/AFKDownLoad.js");
         }
 
         public static string GetHandleLoverslab()
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\HandleLoverslab.js");
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/HandleLoverslab.js");
         }
 
         public static string GetLoverslabDownLoad()
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\LoverslabDownLoad.js");
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/LoverslabDownLoad.js");
         }
 
         public static string GetLoverslabDownLoadInit(string FileName)
         {
-            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\LoverslabDownloadInit.js").Replace("{0}", FileName);
+            return ScriptManager.ReadScript(AppDomain.CurrentDomain.BaseDirectory + "/Scripts/LoverslabDownloadInit.js").Replace("{0}", FileName);
+        }
+
+        private static string ReadEmbeddedScript(string resourceName)
+        {
+            var assembly = typeof(ScriptManager).Assembly;
+            var fullName = assembly.GetManifestResourceNames()
+                                .FirstOrDefault(n => n.EndsWith(resourceName));
+
+            if (fullName == null)
+                throw new FileNotFoundException("Embedded script not found: " + resourceName);
+
+            using var stream = assembly.GetManifestResourceStream(fullName);
+            using var reader = new StreamReader(stream!);
+            return reader.ReadToEnd();
         }
     }
 }

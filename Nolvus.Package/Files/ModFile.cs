@@ -8,6 +8,8 @@ using Nolvus.Core.Interfaces;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
 using Nolvus.Package.Mods;
+using Nolvus.Core.Enums;
+using Avalonia.Controls;
 
 namespace Nolvus.Package.Files
 {
@@ -227,10 +229,23 @@ namespace Nolvus.Package.Files
             }
         }
 
+        private WebSite DetectSiteFromUrl(string url)
+        {
+            if (url.Contains("enbdev.com", StringComparison.OrdinalIgnoreCase))
+                return WebSite.EnbDev;
+
+            if (url.Contains("nexusmods.com", StringComparison.OrdinalIgnoreCase))
+                return WebSite.Nexus;
+
+            return WebSite.Other;
+        }
+
+
         private async Task InternalDownload(string Link, DownloadProgressChangedHandler OnProgress, Action<string, int> HashProgress, int RetryCount, Func<IBrowserInstance> Browser)
         {
             var Tries = 0;
             Exception CaughtException = null;
+            var site = DetectSiteFromUrl(Link);
 
             if (!Exist())
             {
@@ -238,7 +253,15 @@ namespace Nolvus.Package.Files
                 {
                     if (RequireManualDownload)
                     {
-                        await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                        switch(site)
+                        {
+                            case WebSite.EnbDev:
+                                await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                                break;
+                            default:
+                                await DoDownload(Link, OnProgress);
+                                break;
+                        }
                     }
                     else
                     {
@@ -254,7 +277,10 @@ namespace Nolvus.Package.Files
             while (true)
             {
                 if (await CRCCheck(HashProgress))
+                {
+                    await WaitForFileReady(LocationFileName);
                     break;
+                }
 
                 if (Tries == RetryCount)
                 {
@@ -307,6 +333,23 @@ namespace Nolvus.Package.Files
 
             await Tsk;
         }
+
+        private static async Task WaitForFileReady(string path)
+        {
+            while (true)
+            {
+                try
+                {
+                    using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);
+                    return;
+                }
+                catch
+                {
+                    await Task.Delay(100);
+                }
+            }
+        }
+
 
         #endregion        
     }

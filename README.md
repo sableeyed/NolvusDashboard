@@ -1,6 +1,6 @@
 # Welcome
 
-This product is for Linux only. If you are looking for the Windows version it is [here]("https://github.com/vektor999/NolvusDashboard")
+This product is for Linux only. If you are looking for the Windows version it is [here](https://github.com/vektor999/NolvusDashboard)
 Upates are being made daily. Please check back periodically.
 
 # Known Issues

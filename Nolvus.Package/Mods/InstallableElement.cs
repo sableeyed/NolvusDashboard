@@ -224,20 +224,27 @@ namespace Nolvus.Package.Mods
 
         protected virtual async Task DoExtract()
         {
-            try
+            var Tsk = Task.Run(async () =>
             {
-                ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
-
-                foreach (var File in Files)
+                try
                 {
-                    await File.Extract(ExtractingProgress);
+                    ServiceSingleton.Files.RemoveDirectory(
+                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+
+                    foreach (var File in Files)
+                    {
+                        await File.Extract(ExtractingProgress);
+                    }
                 }
-            }
-            catch(Exception ex)
-            {
-                ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
-                throw ex;
-            }
+                catch(Exception)
+                {
+                    ServiceSingleton.Files.RemoveDirectory(
+                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+                    throw;
+                }
+            });
+
+            await Tsk;
         }
         protected abstract Task DoUnpack();
         protected abstract Task DoCopy();

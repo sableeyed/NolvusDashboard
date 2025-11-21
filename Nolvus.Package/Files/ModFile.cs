@@ -257,6 +257,7 @@ namespace Nolvus.Package.Files
                         {
                             case WebSite.EnbDev:
                                 await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                                await WaitForFileReady(LocationFileName);
                                 break;
                             default:
                                 await DoDownload(Link, OnProgress);
@@ -277,10 +278,7 @@ namespace Nolvus.Package.Files
             while (true)
             {
                 if (await CRCCheck(HashProgress))
-                {
-                    await WaitForFileReady(LocationFileName);
                     break;
-                }
 
                 if (Tries == RetryCount)
                 {

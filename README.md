@@ -7,6 +7,8 @@ Upates are being made daily. Please check back periodically.
 - v6 installation is not implemented
 - Instance management is not implemented
 - This requires Nexus Premium. I do not plan to implement what's needed for free accounts at this time
+- ENB will fail to install the first time. Close the Dashboard and run through again.
+- DynDOLOD output will appear to be stuck at 47% hashing. Just let it finish.
 
 # Wine
 A wine prefix will be created for you in ~/.local/share/NolvusDashboard/prefix

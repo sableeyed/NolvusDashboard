@@ -13,7 +13,7 @@ using Nolvus.Package.Conditions;
 using Nolvus.Dashboard.Controls;
 using Nolvus.Core.Enums;
 using Nolvus.Dashboard.Frames.Installer;
-//using Nolvus.Dashboard.Frames.Instance;
+using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Dashboard.Frames.Settings;
 using System.Diagnostics.CodeAnalysis;
 
@@ -61,7 +61,7 @@ namespace Nolvus.Dashboard.Frames
                             break;
                         case InstanceCheck.InstalledInstances:
                             ServiceSingleton.Logger.Log("Dashboard ready to play");
-                            //ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>(); //Unimplemented
+                            ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
                             break;
                     }
                     //var owner = TopLevel.GetTopLevel(this) as Window;

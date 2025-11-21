@@ -1,7 +1,10 @@
 <UserControl
+    x:Class="Nolvus.Dashboard.Frames.Instance.InstancesFrame"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:Class="Nolvus.Dashboard.Frames.Instance.InstancesFrame"
+    xmlns:controls="clr-namespace:Nolvus.Dashboard.Controls;assembly=Nolvus.Dashboard"
+    xmlns:nc="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
     Background="#363636">
+
 
 </UserControl>

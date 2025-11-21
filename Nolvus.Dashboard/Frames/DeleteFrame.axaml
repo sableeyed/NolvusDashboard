@@ -1,0 +1,98 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
+    x:Class="Nolvus.Dashboard.Frames.DeleteFrame"
+    Background="#363636">
+
+    <Grid RowDefinitions="Auto, *"
+          ColumnDefinitions="*">
+
+        <!-- STEP TEXT BAR -->
+        <Border Grid.Row="0"
+                Background="#363636"
+                Padding="8">
+            <TextBlock x:Name="LblStepText"
+                       Text="Delete Nolvus Instance"
+                       Foreground="White"
+                       FontSize="16"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <!-- MAIN GRID -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*, 344"
+              Margin="0,10,0,0"
+              ColumnSpacing="12">
+
+            <!-- LEFT PANEL -->
+            <Border Grid.Column="0"
+                    BorderBrush="#5A5A5A"
+                    BorderThickness="1"
+                    Background="#2E2E2E"
+                    Padding="12">
+
+                <StackPanel Spacing="10">
+
+                    <!-- Instance Label Group -->
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock x:Name="LblInstanceInfo"
+                                   Text="Instance to delete "
+                                   Foreground="White"
+                                   FontSize="13"/>
+
+                        <TextBlock x:Name="LblInstance"
+                                   Text="[INSTANCE]"
+                                   Foreground="#F28F1A"
+                                   FontSize="13"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="LblDeleteInfo"
+                               Text="Deleting instance..."
+                               Foreground="White"
+                               FontSize="13"
+                               IsVisible="False"/>
+
+                </StackPanel>
+            </Border>
+
+            <!-- RIGHT PANEL -->
+            <Border Grid.Column="1"
+                    BorderBrush="#5A5A5A"
+                    BorderThickness="1"
+                    Background="#2E2E2E"
+                    Padding="12">
+
+                <Grid RowDefinitions="Auto, * , Auto"
+                      RowSpacing="10">
+
+                    <!-- Info Label -->
+                    <TextBlock x:Name="LblInfo"
+                               Text="Click on the Delete button to delete your instance. WARNING, this will not be reversible."
+                               Foreground="White"
+                               FontSize="13"
+                               TextWrapping="Wrap"/>
+
+                    <Border/>
+
+                    <!-- Buttons Row -->
+                    <StackPanel Grid.Row="2"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Spacing="10">
+
+                        <Button x:Name="BtnBack"
+                                Width="88" Height="40"
+                                Content="Back"/>
+
+                        <Button x:Name="BtnAction"
+                                Width="88" Height="40"
+                                Content="[Action]"/>
+                    </StackPanel>
+
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Grid>
+</UserControl>

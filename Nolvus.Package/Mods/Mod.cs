@@ -371,26 +371,19 @@ namespace Nolvus.Package.Mods
         protected override async Task DoPatch()
         {
             var Tsk = Task.Run(async () => 
-            {
-                //try
-                //{                                        
-                    if (Patcher != null)
-                    {
-                        ServiceSingleton.Logger.Log(string.Format("Patching mod {0}", Name));
+            {                  
+                if (Patcher != null)
+                {
+                    ServiceSingleton.Logger.Log(string.Format("Patching mod {0}", Name));
 
-                        PatchingProgress(string.Empty, 0, 0);
+                    PatchingProgress(string.Empty, 0, 0);
 
-                        await Patcher.PatchFiles(MoDirectoryFullName, 
-                                                 ServiceSingleton.Instances.WorkingInstance.StockGame, 
-                                                 DownloadingProgress, 
-                                                 ExtractingProgress, 
-                                                 PatchingProgress);
-                    }                                        
-                //}
-                //catch (Exception ex)
-                //{
-                //    throw ex;
-                //}
+                    await Patcher.PatchFiles(MoDirectoryFullName, 
+                                            ServiceSingleton.Instances.WorkingInstance.StockGame, 
+                                            DownloadingProgress, 
+                                            ExtractingProgress, 
+                                            PatchingProgress);
+                }
             });
 
             await Tsk;

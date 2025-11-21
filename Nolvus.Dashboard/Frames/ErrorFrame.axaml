@@ -1,0 +1,86 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="Nolvus.Dashboard.Frames.ErrorFrame"
+    Background="#363636">
+
+    <Grid RowDefinitions="Auto, Auto, *, Auto"
+          Margin="0">
+
+        <!-- TITLE PANEL -->
+        <Border Grid.Row="0"
+                x:Name="PnlTitle"
+                Background="#2E2E2E"
+                BorderBrush="#5A5A5A"
+                BorderThickness="1"
+                Padding="12"
+                Margin="3,3,3,0">
+
+            <Grid ColumnDefinitions="Auto, *"
+                  VerticalAlignment="Center"
+                  ColumnSpacing="12">
+
+                <!-- Error Icon -->
+                <Image x:Name="ImgWarning"
+                       Width="32"
+                       Height="32"
+                       Source="avares://NolvusDashboard/Assets/Warning-Message.png"/>
+
+                <!-- Title -->
+                <TextBlock x:Name="LblTitle"
+                           Text="[Title]"
+                           Foreground="White"
+                           FontSize="18"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- ERROR TEXT -->
+        <Border Grid.Row="1"
+                Margin="3,10,3,0">
+            <TextBlock x:Name="LblError"
+                       Text="[Error]"
+                       Foreground="Red"
+                       FontSize="14"
+                       TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- TRACE TEXT -->
+        <Border Grid.Row="2"
+                Margin="3,10,3,0">
+            <ScrollViewer>
+                <TextBlock x:Name="LblTrace"
+                           Text="[Trace]"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </Border>
+
+        <!-- BUTTONS -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="10"
+                    Margin="3,10,3,10">
+
+            <!-- Help button (hidden by default) -->
+            <Button x:Name="BtnHelp"
+                    Content="Click here to fix"
+                    Width="120" Height="36"
+                    Background="#2E2E2E"
+                    Foreground="White"
+                    BorderBrush="White"
+                    IsVisible="False"/>
+
+            <!-- Retry button -->
+            <Button x:Name="BtnRetry"
+                    Content="Retry"
+                    Width="120" Height="36"
+                    Background="#2E2E2E"
+                    Foreground="White"
+                    BorderBrush="White"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

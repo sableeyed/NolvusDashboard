@@ -7,6 +7,7 @@ using Nolvus.Core.Enums;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Nolvus.Dashboard.Controls;
+using System.Diagnostics;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -48,7 +49,16 @@ namespace Nolvus.Dashboard.Frames.Installer
 
         private void BtnFix_Click(object? sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.nolvus.net/appendix/installer/faq");
+            var url = "https://www.nolvus.net/appendix/installer/faq";
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }
 
         private void LoadErrors()

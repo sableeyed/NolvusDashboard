@@ -5,7 +5,7 @@ using Vcc.Nolvus.Api.Installer.Services;
 using Vcc.Nolvus.Api.Installer.Library;
 using Nolvus.Core.Enums;
 using Nolvus.Dashboard.Frames.Installer;
-//using Nolvus.Dashboard.Frames.Instance;
+using Nolvus.Dashboard.Frames.Instance;
 
 namespace Nolvus.Dashboard.Frames
 {

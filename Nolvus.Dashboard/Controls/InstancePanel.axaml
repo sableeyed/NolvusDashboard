@@ -84,6 +84,8 @@
                                  Height="35"
                                  Content="Update"
                                  Background="Black"
+                                HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
                                  BorderBrush="White"
                                  Foreground="White"
                                  IsVisible="False"/>
@@ -95,6 +97,8 @@
                                  Width="92"
                                  Height="35"
                                  Content="Manage"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
                                  Background="#363636"
                                  BorderBrush="White"
                                  Foreground="White"/>
@@ -106,6 +110,8 @@
                                  Width="92"
                                  Height="35"
                                  Content="Play"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
                                  Background="#363636"
                                  BorderBrush="White"
                                  Foreground="White"/>

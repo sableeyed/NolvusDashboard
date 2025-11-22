@@ -35,6 +35,8 @@
                              Content="Patreon"
                              Width="90" Height="40"
                              Margin="5,0"
+                             HorizontalContentAlignment="Center"
+                             VerticalContentAlignment="Center"
                              Background="#363636"
                              BorderBrush="White"
                              Foreground="White"/>
@@ -44,6 +46,8 @@
                              Content="Donate"
                              Width="90" Height="40"
                              Margin="5,0"
+                             HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
                              Background="#363636"
                              BorderBrush="White"
                              Foreground="White"/>
@@ -53,6 +57,8 @@
                              Content="Discord"
                              Width="90" Height="40"
                              Margin="5,0"
+                             HorizontalContentAlignment="Center"
+                             VerticalContentAlignment="Center"
                              Background="#363636"
                              BorderBrush="White"
                              Foreground="White"/>
@@ -62,6 +68,8 @@
                              Content="Add Instance"
                              Width="114" Height="40"
                              Margin="5,0"
+                             HorizontalContentAlignment="Center"
+                             VerticalContentAlignment="Center"
                              Background="#363636"
                              BorderBrush="White"
                              Foreground="White"/>

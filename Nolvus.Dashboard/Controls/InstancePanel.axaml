@@ -1,0 +1,117 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Controls.InstancePanel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
+    Width="654" Height="171">
+
+    <Border Background="#363636">
+
+        <!-- Absolute layout to match WinForms coordinates EXACTLY -->
+        <Canvas>
+
+            <!-- Background image -->
+            <Image Source="avares://NolvusDashboard/Assets/InstanceBoard.png"
+                   Stretch="Fill"
+                   Width="654" Height="171"/>
+
+            <!-- Instance image -->
+            <Image x:Name="PicInstanceImage"
+                   Canvas.Left="46"
+                   Canvas.Top="20"
+                   Width="206"
+                   Height="128"
+                   Stretch="UniformToFill"
+                   />
+
+            <!-- Loading label overlay -->
+            <Border Canvas.Left="43"
+                    Canvas.Top="20"
+                    Width="209"
+                    Height="130"
+                    Background="Black">
+                <TextBlock x:Name="LblImageLoading"
+                           Text="Loading..."
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Foreground="White"/>
+            </Border>
+
+
+            <!-- Instance name -->
+            <TextBlock x:Name="LblInstanceName"
+                       Canvas.Left="258"
+                       Canvas.Top="12"
+                       Width="333"
+                       Height="28"
+                       Text="Nolvus Regular"
+                       Foreground="White"
+                       FontSize="15"
+                       />
+
+            <!-- Description -->
+            <TextBlock x:Name="LblDesc"
+                       Canvas.Left="261"
+                       Canvas.Top="42"
+                       Width="368"
+                       Height="31"
+                       Text="[Description]"
+                       TextWrapping="Wrap"
+                       Foreground="White"/>
+
+            <!-- Version -->
+            <TextBlock x:Name="LblVersion"
+                       Canvas.Left="260"
+                       Canvas.Top="75"
+                       Text="5.0.2"
+                       Foreground="White"/>
+
+            <!-- Status -->
+            <TextBlock x:Name="LblStatus"
+                       Canvas.Left="260"
+                       Canvas.Top="92"
+                       Width="252"
+                       Height="14"
+                       Text="Loading status..."
+                       Foreground="White"/>
+
+
+            <!-- Update button -->
+            <Button x:Name="BtnUpdate"
+                                 Canvas.Left="314"
+                                 Canvas.Top="115"
+                                 Width="92"
+                                 Height="35"
+                                 Content="Update"
+                                 Background="Black"
+                                 BorderBrush="White"
+                                 Foreground="White"
+                                 IsVisible="False"/>
+
+            <!-- Manage button -->
+            <Button x:Name="BtnView"
+                                 Canvas.Left="412"
+                                 Canvas.Top="115"
+                                 Width="92"
+                                 Height="35"
+                                 Content="Manage"
+                                 Background="#363636"
+                                 BorderBrush="White"
+                                 Foreground="White"/>
+
+            <!-- Play button -->
+            <Button x:Name="BtnPlay"
+                                 Canvas.Left="510"
+                                 Canvas.Top="115"
+                                 Width="92"
+                                 Height="35"
+                                 Content="Play"
+                                 Background="#363636"
+                                 BorderBrush="White"
+                                 Foreground="White"/>
+
+        </Canvas>
+
+    </Border>
+
+</UserControl>

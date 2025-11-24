@@ -17,6 +17,7 @@ using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Package.Mods;
 using Vcc.Nolvus.Api.Installer.Services;
 using Nolvus.Dashboard.Frames.Instance.v5;
+using Nolvus.Dashboard.Services;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -290,10 +291,14 @@ namespace Nolvus.Dashboard.Controls
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
             try
             {
-                string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                string shortcutPath = Path.Combine(desktop, $"{_instance.Name}.lnk");
+                string winePrefix = WinePrefix.PrefixPath;
+                string mo2Path = Path.Combine(_instance.InstallDir, "MO2", "ModOrganizer.exe");
+                string exec = $"env WINEPREFIX=\"{winePrefix}\" wine \"{mo2Path}\"";
+                var name = _instance.Name;
+                var comment = $"Desktop shortcut for your {_instance.Name} instance.";
+                var icon = Path.Combine(AppContext.BaseDirectory, "nolvus-ico.jpg");
 
-                //ShortcutCreator.CreateWindowsShortcut(shortcutPath, Path.Combine(_instance.InstallDir, "MO2", "ModOrganizer.exe"), $"Desktop shortcut for your {_instance.Name} instance.");
+                CreateDesktopShortcut(name, exec, comment, icon);
 
                 NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop.", MessageBoxType.Info);
             }
@@ -324,6 +329,27 @@ namespace Nolvus.Dashboard.Controls
             return SixLabors.ImageSharp.Image.Load(stream);
         }
 
+        private void CreateDesktopShortcut(string name, string execPath, string comment, string iconPath = "")
+        {
+            string desktopFile = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+                $"{name}.desktop");
+
+            string contents =
+$@"[Desktop Entry]
+Type=Application
+Name={name}
+Comment={comment}
+Exec={execPath}
+Icon={iconPath}
+Terminal=false
+Categories=Game;Utility;
+";
+
+            File.WriteAllText(desktopFile, contents);
+
+            Process.Start("chmod", $"+x \"{desktopFile}\"");
+        }
 
     }
 }

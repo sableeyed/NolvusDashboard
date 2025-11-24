@@ -15,6 +15,7 @@ using Nolvus.Package.Rules;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats.Png;
+using System.Text.RegularExpressions;
 
 namespace Nolvus.Package.Mods
 {
@@ -2334,7 +2335,10 @@ ccafdsse001-dwesanctuary.esm";
 
             File.Create(FileName).Dispose();
 
-            File.WriteAllText(FileName, string.Format(IniFile, Profile, GameDir.Replace(@"\", @"\\"), DataDir));
+            string WineGameDir = ToWineIniPath(GameDir);
+            string WineDataDir = ToWineIniPath(DataDir);
+
+            File.WriteAllText(FileName, string.Format(IniFile, Profile, WineGameDir, WineDataDir));
         }
 
         public static string GetIni(bool Pref, IniLevel Level, INolvusInstance Instance)
@@ -2399,7 +2403,10 @@ ccafdsse001-dwesanctuary.esm";
 
         public void AddExecutable(string IniDir, string Args, string Binary, bool Hide, bool OwnIcon, string Title, bool Toolbar, string WorkingDirectory)
         {
-            string IniFilePath = Path.Combine(IniDir, "ModOrganizer.ini");            
+            string IniFilePath = Path.Combine(IniDir, "ModOrganizer.ini");     
+
+            string WineBinary = ModOrganizer.ToWinePath(Binary);    
+            string WineWorkingDir = ModOrganizer.ToWinePath(WorkingDirectory);
 
             var SizeData = ServiceSingleton.Settings.GetIniValue(Path.Combine(IniDir, "ModOrganizer.ini"), "customExecutables", "size");
 
@@ -2415,13 +2422,13 @@ ccafdsse001-dwesanctuary.esm";
             AppendToIni(IniDir, "customExecutables", "size", Size.ToString());
 
             AppendToIni(IniDir, "customExecutables", Size + "\\arguments", Args);
-            AppendToIni(IniDir, "customExecutables", Size + "\\binary", Binary);
+            AppendToIni(IniDir, "customExecutables", Size + "\\binary", WineBinary);
             AppendToIni(IniDir, "customExecutables", Size + "\\hide", Hide.ToString().ToLower());
             AppendToIni(IniDir, "customExecutables", Size + "\\ownicon", OwnIcon.ToString().ToLower());
             AppendToIni(IniDir, "customExecutables", Size + "\\steamAppID", string.Empty);
             AppendToIni(IniDir, "customExecutables", Size + "\\title", Title);
             AppendToIni(IniDir, "customExecutables", Size + "\\toolbar", Toolbar.ToString().ToLower());
-            AppendToIni(IniDir, "customExecutables", Size + "\\workingDirectory", WorkingDirectory);
+            AppendToIni(IniDir, "customExecutables", Size + "\\workingDirectory", WineWorkingDir);
         }              
 
         private void CreateBaseDirectories()
@@ -2475,7 +2482,7 @@ ccafdsse001-dwesanctuary.esm";
             // Add SKSE, Skyrim, Launcher
             AddExecutable(MO2Folder, string.Empty,
                 Path.Combine(Instance.StockGame, "skse64_loader.exe").Replace(@"\", @"/"),
-                true, true, "SKSE", true, Instance.StockGame.Replace(@"\", @"/"));
+                false, true, "SKSE", true, Instance.StockGame.Replace(@"\", @"/"));
 
             AddExecutable(MO2Folder, string.Empty,
                 Path.Combine(Instance.StockGame, "SkyrimSE.exe").Replace(@"\", @"/"),
@@ -2584,47 +2591,6 @@ ccafdsse001-dwesanctuary.esm";
             await Tsk;
         }
 
-
-        // protected override async Task DoCopy()
-        // {
-        //     var Tsk = Task.Run(() =>
-        //     {
-        //         try
-        //         {
-        //             try
-        //             {
-        //                 var Instance = ServiceSingleton.Instances.WorkingInstance;
-
-        //                 CreateBaseDirectories();
-        //                 CreateProfileBaseFiles();
-        //                 CreateLauncher();
-        //                 AddExecutables();
-
-        //                 var Rules = new DirectoryCopy().CreateFileRules(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 2, string.Empty, string.Empty);
-        //                 var Counter = 0;
-
-        //                 foreach (var Rule in Rules)
-        //                 {
-        //                     Rule.Execute(Instance.StockGame, Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), Path.Combine(Instance.InstallDir, "MO2"), Path.Combine(Instance.InstallDir, "MO2"));
-        //                     CopyingProgress(++Counter, Rules.Count);
-        //                 }
-
-        //                 AddSplash();
-        //             }
-        //             finally
-        //             {
-        //                 ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
-        //             }
-        //         }
-        //         catch (Exception ex)
-        //         {
-        //             throw ex;
-        //         }
-        //     });
-
-        //     await Tsk;
-        // }
-
         private string GetModListFile()
         {
             return Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MODS", "profiles", ServiceSingleton.Instances.WorkingInstance.Name, "modlist.txt");
@@ -2723,6 +2689,33 @@ ccafdsse001-dwesanctuary.esm";
         {
             return await DoGetModsMetaData(Profile, Progress);
         }
+
+        public static string ToWinePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            path = path.Replace("\\", "/").Trim();
+
+            if (path.StartsWith("Z:/", StringComparison.OrdinalIgnoreCase) ||
+                path.StartsWith("Z:\\", StringComparison.OrdinalIgnoreCase))
+                return path.Replace("/", "\\");
+
+            if (Regex.IsMatch(path, @"^[A-Za-z]:/"))
+                return path.Replace("/", "\\");
+
+            if (path.StartsWith("/"))
+                return "Z:" + path.Replace("/", "\\");
+
+            return path.Replace("/", "\\");
+        }
+
+        public static string ToWineIniPath(string path)
+        {
+            var wine = ToWinePath(path);
+            return wine.Replace("\\", "\\\\");
+        }
+
 
         #endregion                       
     }

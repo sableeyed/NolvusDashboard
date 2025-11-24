@@ -1,18 +1,14 @@
 <UserControl
     x:Class="Nolvus.Dashboard.Controls.InstancesPanel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Width="762" Height="435">
-
-    <Border Background="#363636">
-
-    <ScrollViewer>
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel x:Name="InstancesHost"
                     Orientation="Vertical"
                     Spacing="12"
-                    Margin="8"/>
+                    Margin="8"
+                    VerticalAlignment="Top"/>
     </ScrollViewer>
-
-    </Border>
 
 </UserControl>

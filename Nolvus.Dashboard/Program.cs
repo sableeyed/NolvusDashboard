@@ -21,6 +21,8 @@ using Xilium.CefGlue;
 using Xilium.CefGlue.Common;
 using System.Text;
 using Nolvus.Dashboard.Services.Wine;
+using QuestPDF.Drawing;
+using QuestPDF.Fluent;
 
 namespace Nolvus.Dashboard;
 
@@ -154,6 +156,10 @@ internal static class Program
         ServiceSingleton.RegisterService<ICheckerService>(new CheckerService());
         ServiceSingleton.RegisterService<IWineRunner>(new WineRunner());
 
+        QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+        QuestPDF.Settings.FontDiscoveryPaths.Clear();
+        QuestPDF.Settings.FontDiscoveryPaths.Add(Path.Combine("/usr/share/fonts"));
+
         AppDomain.CurrentDomain.AssemblyResolve += Resolver;
         AppDomain.CurrentDomain.AssemblyLoad += Loader;
         AppDomain.CurrentDomain.UnhandledException += ExceptionHandler;
@@ -161,4 +167,5 @@ internal static class Program
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
+
 }

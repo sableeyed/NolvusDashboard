@@ -2700,7 +2700,7 @@ ccafdsse001-dwesanctuary.esm";
                         Result.Add(ModObject);
                     }
 
-                    Progress("Loading Mod Organizer data file", System.Convert.ToInt16(Math.Round(((double)++Counter / Mods.Count * 100))));
+                    Progress?.Invoke("Loading Mod Organizer data file", System.Convert.ToInt16(Math.Round(((double)++Counter / Mods.Count * 100))));
                 }
 
                 return Result;

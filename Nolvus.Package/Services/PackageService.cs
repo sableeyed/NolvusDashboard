@@ -490,7 +490,7 @@ namespace Nolvus.Package.Services
                             StatusText = "OK"
                         };
 
-                        Progress("Loading mods from nolvus package", System.Convert.ToInt16(Math.Round(((double)++Counter / InstallList.Count * 100))));
+                        Progress?.Invoke("Loading mods from nolvus package", System.Convert.ToInt16(Math.Round(((double)++Counter / InstallList.Count * 100))));
 
                         return Mod;
 

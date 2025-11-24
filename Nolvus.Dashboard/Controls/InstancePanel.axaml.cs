@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.Platform;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -15,6 +16,7 @@ using Nolvus.Dashboard.Frames.Installer;
 using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Package.Mods;
 using Vcc.Nolvus.Api.Installer.Services;
+using Nolvus.Dashboard.Frames.Instance.v5;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -27,7 +29,9 @@ namespace Nolvus.Dashboard.Controls
         {
             InitializeComponent();
             _parent = parent;
-            //SetupContextMenu();
+            SetupContextMenu();
+
+            BtnView.Click += BtnView_Click;
         }
 
         private void LockButtons()
@@ -70,11 +74,11 @@ namespace Nolvus.Dashboard.Controls
 
             LblStatus.Text = await _instance.GetState();
 
-            // if (_instance.Name == Strings.NolvusAscension)
-            //     SetInstanceImage(Properties.Resources.Nolvus_V5);
+            if (_instance.Name == Strings.NolvusAscension)
+                SetInstanceImage("avares://NolvusDashboard/Assets/Nolvus_V5.png");
 
-            // else if (_instance.Name == Strings.NolvusAwakening)
-            //     SetInstanceImage(Properties.Resources.Nolvus_V6);
+            else if (_instance.Name == Strings.NolvusAwakening)
+                SetInstanceImage("avares://NolvusDashboard/Assets/Nolvus_V6.png");
 
             LblImageLoading.IsVisible = false;
 
@@ -89,15 +93,12 @@ namespace Nolvus.Dashboard.Controls
             }
         }
 
-        // private void SetInstanceImage(System.Drawing.Image img)
-        // {
-        //     using (var ms = new MemoryStream())
-        //     {
-        //         img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        //         ms.Position = 0;
-        //         PicInstanceImage.Source = new Bitmap(ms);
-        //     }
-        // }
+        private void SetInstanceImage(string Path)
+        {
+            var uri = new Uri(Path);
+            var asset = AssetLoader.Open(uri);
+            PicInstanceImage.Source = new Bitmap(asset);
+        }
 
         private void BtnPlay_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
@@ -137,28 +138,66 @@ namespace Nolvus.Dashboard.Controls
 
         private void BtnView_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
+            Console.WriteLine("Manage button clicked");
             BtnView.ContextMenu.Open();
         }
 
         private void SetupContextMenu()
         {
-            // BtnView.ContextMenu = new ContextMenu
-            // {
-            //     Items =
-            //     {
-            //         new MenuItem { Header = "Instance", Command = ReactiveCommand.Create(BrItmMods_Click) },
-            //         new MenuItem { Header = "Add Desktop Shortcut", Command = ReactiveCommand.Create(BrItmShortCut_Click) },
-            //         new Separator(),
-            //         new MenuItem { Header = "Report to PDF", Command = ReactiveCommand.Create(BrItmReport_Click) },
-            //         new Separator(),
-            //         new MenuItem { Header = "Keybinds", Command = ReactiveCommand.Create(BrItmKeyBinds_Click) },
-            //         new Separator(),
-            //         new MenuItem { Header = "User Manual", Command = ReactiveCommand.Create(BrItmManual_Click) },
-            //         new Separator(),
-            //         new MenuItem { Header = "Delete Instance", Command = ReactiveCommand.Create(BrItmDelete_Click) }
-            //     }
-            // };
+            var menu = new ContextMenu();
+
+            var items = new List<object>();
+
+            // Instance
+            var miInstance = new MenuItem { Header = "Instance" };
+            miInstance.Click += (_, __) => BrItmMods_Click();
+            items.Add(miInstance);
+
+            // Add Desktop Shortcut
+            var miShortcut = new MenuItem { Header = "Add Desktop Shortcut" };
+            miShortcut.Click += (_, __) => BrItmShortCut_Click();
+            items.Add(miShortcut);
+
+            // Separator
+            items.Add(new Separator());
+
+            // Report to PDF
+            var miReport = new MenuItem { Header = "Report to PDF" };
+            miReport.Click += (_, __) => BrItmReport_Click();
+            items.Add(miReport);
+
+            // Separator
+            items.Add(new Separator());
+
+            // Keybinds
+            var miKeybinds = new MenuItem { Header = "Keybinds" };
+            miKeybinds.Click += (_, __) => BrItmKeyBinds_Click();
+            items.Add(miKeybinds);
+
+            // Separator
+            items.Add(new Separator());
+
+            // User Manual
+            var miManual = new MenuItem { Header = "User Manual" };
+            miManual.Click += (_, __) => BrItmManual_Click();
+            items.Add(miManual);
+
+            // Separator
+            items.Add(new Separator());
+
+            // Delete Instance
+            var miDelete = new MenuItem { Header = "Delete Instance" };
+            miDelete.Click += (_, __) => BrItmDelete_Click();
+            items.Add(miDelete);
+
+            // Bind to menu
+            menu.ItemsSource = items;
+
+            // Attach to button
+            BtnView.ContextMenu = menu;
         }
+
+
 
         private async void BrItmMods_Click()
         {
@@ -166,69 +205,77 @@ namespace Nolvus.Dashboard.Controls
             await ServiceSingleton.Dashboard.LoadFrameAsync<PackageFrame>();
         }
 
-        // private async void BrItmReport_Click()
-        // {
-        //     var window = TopLevel.GetTopLevel(this) as DashboardWindow;
-        //     ServiceSingleton.Instances.WorkingInstance = _instance;
-        //     IDashboard dashboard = ServiceSingleton.Dashboard;
+        private async void BrItmReport_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            ServiceSingleton.Instances.WorkingInstance = _instance;
+            IDashboard dashboard = ServiceSingleton.Dashboard;
 
-        //     LockButtons();
+            LockButtons();
 
-        //     try
-        //     {
-        //         await ServiceSingleton.Packages.Load(
-        //             await ApiManager.Service.Installer.GetPackage(_instance.Id, _instance.Version),
-        //             (s, p) =>
-        //             {
-        //                 dashboard.Status($"{s} ({p}%)");
-        //                 dashboard.Progress(p);
-        //             });
+            try
+            {
+                await ServiceSingleton.Packages.Load(
+                    await ApiManager.Service.Installer.GetPackage(_instance.Id, _instance.Version),
+                    (s, p) =>
+                    {
+                        dashboard.Status($"{s} ({p}%)");
+                        dashboard.Progress(p);
+                    });
 
-        //         await ServiceSingleton.Report.GenerateReportToPdf(
-        //             await ServiceSingleton.CheckerService.CheckModList(
-        //                 await ServiceSingleton.SoftwareProvider.ModOrganizer2.GetModsMetaData(),
-        //                 await ServiceSingleton.Packages.GetModsMetaData(),
-        //                 s => dashboard.Status(s)),
-        //             Properties.Resources.background_nolvus,
-        //             (s, p) =>
-        //             {
-        //                 dashboard.Status($"{s} ({p}%)");
-        //                 dashboard.Progress(p);
-        //             });
+                var pdf = await ServiceSingleton.Report.GenerateReportToPdf(
+                    await ServiceSingleton.CheckerService.CheckModList(
+                        await ServiceSingleton.SoftwareProvider.ModOrganizer2.GetModsMetaData(),
+                        await ServiceSingleton.Packages.GetModsMetaData(),
+                        s => dashboard.Status(s)),
+                    LoadImageSharpFromAsset("avares://NolvusDashboard/Assets/background-nolvus.jpg"),
+                    (s, p) =>
+                    {
+                        dashboard.Status($"{s} ({p}%)");
+                        dashboard.Progress(p);
+                    });
 
-        //         dashboard.NoStatus();
-        //         dashboard.ProgressCompleted();
+                dashboard.NoStatus();
+                dashboard.ProgressCompleted();
 
-        //         NolvusMessageBox.Show(window, "Information", $"PDF report has been generated in {ServiceSingleton.Folders.ReportDirectory}", MessageBoxType.Info);
+                var outputPath = Path.Combine(ServiceSingleton.Folders.ReportDirectory, "report.pdf");
+                if (!Directory.Exists(ServiceSingleton.Folders.ReportDirectory))
+                {
+                    Directory.CreateDirectory(ServiceSingleton.Folders.ReportDirectory);
+                } 
+                File.WriteAllBytes(outputPath, pdf);
 
-        //         Process.Start(ServiceSingleton.Folders.ReportDirectory);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         dashboard.NoStatus();
-        //         dashboard.ProgressCompleted();
-        //         NolvusMessageBox.Show(window, "Error during report generation", ex.Message, MessageBoxType.Error);
-        //     }
-        //     finally
-        //     {
-        //         UnlockButtons();
-        //         ServiceSingleton.Instances.UnloadWorkingIntance();
-        //     }
-        // }
+                NolvusMessageBox.Show(window, "Information", $"PDF report has been generated in {ServiceSingleton.Folders.ReportDirectory}", MessageBoxType.Info);
 
-        // private void BrItmKeyBinds_Click()
-        // {
-        //     switch (_instance.Name)
-        //     {
-        //         case Strings.NolvusAscension:
-        //             ServiceSingleton.Dashboard.LoadFrame<Nolvus.Dashboard.Frames.Instance.v5.KeysBindingFrame>();
-        //             break;
+                //Process.Start(ServiceSingleton.Folders.ReportDirectory);
+            }
+            catch (Exception ex)
+            {
+                dashboard.NoStatus();
+                dashboard.ProgressCompleted();
+                ServiceSingleton.Logger.Log(ex.ToString());
+                //NolvusMessageBox.Show(window, "Error during report generation", ex.Message, MessageBoxType.Error);
+            }
+            finally
+            {
+                UnlockButtons();
+                ServiceSingleton.Instances.UnloadWorkingIntance();
+            }
+        }
 
-        //         case Strings.NolvusAwakening:
-        //             ServiceSingleton.Dashboard.LoadFrame<Nolvus.Dashboard.Frames.Instance.v6.KeysBindingFrame>();
-        //             break;
-        //     }
-        // }
+        private void BrItmKeyBinds_Click()
+        {
+            switch (_instance.Name)
+            {
+                case Strings.NolvusAscension:
+                    ServiceSingleton.Dashboard.LoadFrame<Nolvus.Dashboard.Frames.Instance.v5.KeysBindingFrame>();
+                    break;
+
+                case Strings.NolvusAwakening:
+                    //ServiceSingleton.Dashboard.LoadFrame<Nolvus.Dashboard.Frames.Instance.v6.KeysBindingFrame>();
+                    break;
+            }
+        }
 
         private void BrItmDelete_Click()
         {
@@ -238,23 +285,23 @@ namespace Nolvus.Dashboard.Controls
                     new FrameParameter { Key = "Action", Value = InstanceAction.Delete }));
         }
 
-        // private void BrItmShortCut_Click()
-        // {
-        //     var window = TopLevel.GetTopLevel(this) as DashboardWindow;
-        //     try
-        //     {
-        //         string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        //         string shortcutPath = Path.Combine(desktop, $"{_instance.Name}.lnk");
+        private void BrItmShortCut_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            try
+            {
+                string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                string shortcutPath = Path.Combine(desktop, $"{_instance.Name}.lnk");
 
-        //         ShortcutCreator.CreateWindowsShortcut(shortcutPath, Path.Combine(_instance.InstallDir, "MO2", "ModOrganizer.exe"), $"Desktop shortcut for your {_instance.Name} instance.");
+                //ShortcutCreator.CreateWindowsShortcut(shortcutPath, Path.Combine(_instance.InstallDir, "MO2", "ModOrganizer.exe"), $"Desktop shortcut for your {_instance.Name} instance.");
 
-        //         NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop.", MessageBoxType.Info);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         NolvusMessageBox.Show(window, "Error", ex.Message, MessageBoxType.Error);
-        //     }
-        // }
+                NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop.", MessageBoxType.Info);
+            }
+            catch (Exception ex)
+            {
+                NolvusMessageBox.Show(window, "Error", ex.Message, MessageBoxType.Error);
+            }
+        }
 
         private void BrItmManual_Click()
         {
@@ -269,5 +316,14 @@ namespace Nolvus.Dashboard.Controls
                     break;
             }
         }
+
+        private SixLabors.ImageSharp.Image LoadImageSharpFromAsset(string assetPath)
+        {
+            var uri = new Uri(assetPath);
+            using var stream = Avalonia.Platform.AssetLoader.Open(uri);
+            return SixLabors.ImageSharp.Image.Load(stream);
+        }
+
+
     }
 }

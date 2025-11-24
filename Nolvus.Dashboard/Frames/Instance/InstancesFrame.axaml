@@ -3,12 +3,11 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Nolvus.Dashboard.Controls;assembly=NolvusDashboard"
-    Background="#363636"
-    Width="726" Height="410">
+    Background="#363636">
 
-    <Grid RowDefinitions="Auto,* ,Auto" ColumnDefinitions="*">
+    <Grid RowDefinitions="*,Auto,Auto">
 
-        <!-- Top InstancePanel (fills entire main area) -->
+        <!-- Main InstancePanel (fills available space) -->
         <controls:InstancesPanel x:Name="InstancesPanel"
                                  Grid.Row="0"
                                  Margin="3,3,3,6"/>
@@ -29,51 +28,49 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Right-aligned bottom buttons -->
             <Button x:Name="BtnPatreon"
-                             Grid.Column="1"
-                             Content="Patreon"
-                             Width="90" Height="40"
-                             Margin="5,0"
-                             HorizontalContentAlignment="Center"
-                             VerticalContentAlignment="Center"
-                             Background="#363636"
-                             BorderBrush="White"
-                             Foreground="White"/>
+                    Grid.Column="1"
+                    Content="Patreon"
+                    Width="90" Height="40"
+                    Margin="5,0"
+                    Background="#363636"
+                    BorderBrush="White"
+                    Foreground="White"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"/>
 
             <Button x:Name="BtnDonate"
-                             Grid.Column="2"
-                             Content="Donate"
-                             Width="90" Height="40"
-                             Margin="5,0"
-                             HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                             Background="#363636"
-                             BorderBrush="White"
-                             Foreground="White"/>
+                    Grid.Column="2"
+                    Content="Donate"
+                    Width="90" Height="40"
+                    Margin="5,0"
+                    Background="#363636"
+                    BorderBrush="White"
+                    Foreground="White"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"/>
 
             <Button x:Name="BtnDiscord"
-                             Grid.Column="3"
-                             Content="Discord"
-                             Width="90" Height="40"
-                             Margin="5,0"
-                             HorizontalContentAlignment="Center"
-                             VerticalContentAlignment="Center"
-                             Background="#363636"
-                             BorderBrush="White"
-                             Foreground="White"/>
+                    Grid.Column="3"
+                    Content="Discord"
+                    Width="90" Height="40"
+                    Margin="5,0"
+                    Background="#363636"
+                    BorderBrush="White"
+                    Foreground="White"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"/>
 
             <Button x:Name="BtnNewInstance"
-                             Grid.Column="4"
-                             Content="Add Instance"
-                             Width="114" Height="40"
-                             Margin="5,0"
-                             HorizontalContentAlignment="Center"
-                             VerticalContentAlignment="Center"
-                             Background="#363636"
-                             BorderBrush="White"
-                             Foreground="White"/>
-
+                    Grid.Column="4"
+                    Content="Add Instance"
+                    Width="114" Height="40"
+                    Margin="5,0"
+                    Background="#363636"
+                    BorderBrush="White"
+                    Foreground="White"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"/>
         </Grid>
 
     </Grid>

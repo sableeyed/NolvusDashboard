@@ -3,7 +3,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
-    Width="654" Height="171">
+    Width="654" Height="175">
 
     <Border Background="#363636">
 
@@ -41,9 +41,9 @@
             <!-- Instance name -->
             <TextBlock x:Name="LblInstanceName"
                        Canvas.Left="258"
-                       Canvas.Top="12"
+                       Canvas.Top="20"
                        Width="333"
-                       Height="28"
+                       Height="32"
                        Text="Nolvus Regular"
                        Foreground="White"
                        FontSize="15"
@@ -52,9 +52,9 @@
             <!-- Description -->
             <TextBlock x:Name="LblDesc"
                        Canvas.Left="261"
-                       Canvas.Top="42"
+                       Canvas.Top="44"
                        Width="368"
-                       Height="31"
+                       Height="36"
                        Text="[Description]"
                        TextWrapping="Wrap"
                        Foreground="White"/>
@@ -69,9 +69,9 @@
             <!-- Status -->
             <TextBlock x:Name="LblStatus"
                        Canvas.Left="260"
-                       Canvas.Top="92"
+                       Canvas.Top="94"
                        Width="252"
-                       Height="14"
+                       Height="18"
                        Text="Loading status..."
                        Foreground="White"/>
 

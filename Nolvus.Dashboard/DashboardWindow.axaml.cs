@@ -30,7 +30,6 @@ namespace Nolvus.Dashboard;
 
 public partial class DashboardWindow : Window, IDashboard
 {
-    private int DefaultDpi = 96;
     private DashboardFrame LoadedFrame;
     public const int WM_NCLBUTTONDOWN = 0xA1; //?
     public const int HT_CAPTION = 0x2; //?
@@ -468,8 +467,8 @@ public partial class DashboardWindow : Window, IDashboard
         ServiceSingleton.Dashboard.ProgressCompleted();
         ServiceSingleton.Logger.Log("Error Form => " + Message);
 
-        // await LoadFrameAsync<ErrorFrame>(new FrameParameters(FrameParameter.Create("Title", Title), FrameParameter.Create("Message", Message),
-        //     FrameParameter.Create("Trace", Trace), FrameParameter.Create("Restry", Retry)));
+        await LoadFrameAsync<ErrorFrame>(new FrameParameters(FrameParameter.Create("Title", Title), FrameParameter.Create("Message", Message),
+            FrameParameter.Create("Trace", Trace), FrameParameter.Create("Restry", Retry)));
 
     }
 

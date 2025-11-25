@@ -2,6 +2,7 @@ using Avalonia.Interactivity;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
+using Nolvus.Dashboard.Frames.Instance;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -23,7 +24,7 @@ namespace Nolvus.Dashboard.Frames.Installer
 
         private void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Manage Instances: Unimplemented");
+            ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
         }
 
         private void BtnPatreon_Click(object? sender, RoutedEventArgs e)

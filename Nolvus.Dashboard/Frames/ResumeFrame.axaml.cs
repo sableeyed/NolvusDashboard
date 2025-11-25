@@ -90,17 +90,17 @@ namespace Nolvus.Dashboard.Frames
             bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Cancel Install?", "Are you sure you want to cancel installation? Your current installation will be deleted.");
             if (result == true)
             {
-                // ServiceSingleton.Dashboard.LoadFrame<DeleteFrame>(
-                //     new FrameParameters(
-                //         new FrameParameter()
-                //         {
-                //             Key ="Instance", Value= DrpDwnLstInstances.SelectedItem as INolvusInstance
-                //         }, 
-                //         new FrameParameter()
-                //         {
-                //             Key ="Action", Value=InstanceAction.Cancel
-                //         }
-                //     ));   
+                ServiceSingleton.Dashboard.LoadFrame<DeleteFrame>(
+                    new FrameParameters(
+                        new FrameParameter()
+                        {
+                            Key ="Instance", Value= DrpDwnLstInstances.SelectedItem as INolvusInstance
+                        }, 
+                        new FrameParameter()
+                        {
+                            Key ="Action", Value=InstanceAction.Cancel
+                        }
+                    ));   
             }
         }
 

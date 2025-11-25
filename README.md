@@ -1,7 +1,10 @@
 # Welcome
 
-This product is for Linux only. If you are looking for the Windows version it is [here](https://github.com/vektor999/NolvusDashboard)
+This product is for Linux only. If you are looking for the Windows version it is [here.](https://github.com/vektor9999/NolvusDashboard)
 Upates are being made daily. Please check back periodically.
+
+# Contributing
+If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/RmTsQcU8WV)
 
 # Known Issues
 - v6 installation is not implemented

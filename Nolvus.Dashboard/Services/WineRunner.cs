@@ -74,5 +74,38 @@ namespace Nolvus.Dashboard.Services.Wine
             linuxPath = linuxPath.TrimEnd('/', '\\'); // prevent \Z:\ bug
             return WinePrefix.ToWinePath(linuxPath);
         }
+
+        public Process Run(string exePath, string workingDir = null, string arguments = "")
+        {
+            // Convert Linux → Wine
+            var wineExePath = ToWinePath(exePath);
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = "wine",
+                UseShellExecute = false,
+                RedirectStandardOutput = false,
+                RedirectStandardError = false,
+                CreateNoWindow = true
+            };
+
+            psi.ArgumentList.Add(wineExePath);
+
+            if (!string.IsNullOrWhiteSpace(arguments))
+            {
+                foreach (var part in arguments.Split(' '))
+                    psi.ArgumentList.Add(part);
+            }
+
+            if (!string.IsNullOrWhiteSpace(workingDir))
+                psi.WorkingDirectory = workingDir;
+
+            psi.Environment["WINEPREFIX"] = WinePrefix.PrefixPath;
+            psi.Environment["WINEDEBUG"] = "-all";
+
+            ServiceSingleton.Logger.Log("[WINE] Run: wine " + wineExePath + " " + arguments);
+
+            return Process.Start(psi);
+        }
     }
 }

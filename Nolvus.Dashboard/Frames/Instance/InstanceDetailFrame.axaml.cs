@@ -197,7 +197,7 @@ namespace Nolvus.Dashboard.Frames.Instance
             switch (inst.Name)
             {
                 case Strings.NolvusAscension:
-                    //await ServiceSingleton.Dashboard.LoadFrameAsync<v5.InstanceSettingsFrame>();
+                    await ServiceSingleton.Dashboard.LoadFrameAsync<v5.InstanceSettingsFrame>();
                     break;
 
                 case Strings.NolvusAwakening:

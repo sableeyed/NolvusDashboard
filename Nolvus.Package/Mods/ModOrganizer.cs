@@ -2393,6 +2393,7 @@ ccafdsse001-dwesanctuary.esm";
 
         public static Process Start(string InstallDir)
         {
+            //Launch with wine instead - this crashes
             return Process.Start(Path.Combine(InstallDir, "MO2", "ModOrganizer.exe"));
         }
 

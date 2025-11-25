@@ -164,6 +164,19 @@ internal static class Program
         AppDomain.CurrentDomain.AssemblyLoad += Loader;
         AppDomain.CurrentDomain.UnhandledException += ExceptionHandler;
 
+        /* Debugging Stuff
+        AppDomain.CurrentDomain.FirstChanceException += (s, e) =>
+        {
+            Console.WriteLine("FirstChance: " + e.Exception);
+        };
+
+        AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+        {
+            Console.WriteLine("Unhandled: " + e.ExceptionObject);
+        };
+        */
+
+
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }

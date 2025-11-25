@@ -15,6 +15,9 @@ namespace Nolvus.Dashboard.Frames
         public DeleteFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
+
+            BtnBack.Click += BtnBack_Click;
+            BtnAction.Click += BtnAction_Click;
         }
 
         protected override async Task OnLoadedAsync()

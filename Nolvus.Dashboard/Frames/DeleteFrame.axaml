@@ -82,10 +82,14 @@
                                 Spacing="10">
 
                         <Button x:Name="BtnBack"
+                                VerticalContentAlignment="Center"
+                                HorizontalContentAlignment="Center"
                                 Width="88" Height="40"
                                 Content="Back"/>
 
                         <Button x:Name="BtnAction"
+                                VerticalContentAlignment="Center"
+                                HorizontalContentAlignment="Center"
                                 Width="88" Height="40"
                                 Content="[Action]"/>
                     </StackPanel>

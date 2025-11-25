@@ -37,11 +37,11 @@ namespace Nolvus.Dashboard.Frames
                             break;
 
                         case InstanceInstallStatus.Updating:                            
-                            // await Update(Instance);
+                            await Update(Instance);
                             break;
 
                         default:
-                            // await View(Instance);
+                            await View(Instance);
                             break;
 
                     }                  
@@ -75,33 +75,33 @@ namespace Nolvus.Dashboard.Frames
             await ServiceSingleton.Dashboard.LoadFrameAsync<StockGameFrame>();
         }
 
-        // protected async Task Update(INolvusInstance Instance)
-        // {
-        //     var Packages = await ApiManager.Service.Installer.GetLatestPackages(Instance.Id, Instance.Version);
+        protected async Task Update(INolvusInstance Instance)
+        {
+            var Packages = await ApiManager.Service.Installer.GetLatestPackages(Instance.Id, Instance.Version);
 
-        //     await ServiceSingleton.Packages.Merge(Packages, (s, p) =>
-        //     {
-        //         ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
-        //         ServiceSingleton.Dashboard.Progress(p);
-        //     });
+            await ServiceSingleton.Packages.Merge(Packages, (s, p) =>
+            {
+                ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                ServiceSingleton.Dashboard.Progress(p);
+            });
 
-        //     ServiceSingleton.Logger.Log(string.Format("Updating {0} - v {1} to v {2}...", Instance.Name, Instance.Version, Packages.Last().Version));
+            ServiceSingleton.Logger.Log(string.Format("Updating {0} - v {1} to v {2}...", Instance.Name, Instance.Version, Packages.Last().Version));
 
-        //     await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>();
-        // }
+            await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>();
+        }
 
-        // protected async Task View(INolvusInstance Instance)
-        // {
-        //     await ServiceSingleton.Packages.Load(await ApiManager.Service.Installer.GetPackage(Instance.Id, Instance.Version), (s, p) =>
-        //     {
-        //         ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
-        //         ServiceSingleton.Dashboard.Progress(p);
-        //     });
+        protected async Task View(INolvusInstance Instance)
+        {
+            await ServiceSingleton.Packages.Load(await ApiManager.Service.Installer.GetPackage(Instance.Id, Instance.Version), (s, p) =>
+            {
+                ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                ServiceSingleton.Dashboard.Progress(p);
+            });
 
-        //     ServiceSingleton.Logger.Log(string.Format("Viewing {0} - v {1}...", Instance.Name, Instance.Version));
+            ServiceSingleton.Logger.Log(string.Format("Viewing {0} - v {1}...", Instance.Name, Instance.Version));
 
-        //     ServiceSingleton.Dashboard.LoadFrame<InstanceDetailFrame>();
-        // }
+            await ServiceSingleton.Dashboard.LoadFrameAsync<InstanceDetailFrame>();
+        }
 
         protected async Task Resume(INolvusInstance Instance)
         {

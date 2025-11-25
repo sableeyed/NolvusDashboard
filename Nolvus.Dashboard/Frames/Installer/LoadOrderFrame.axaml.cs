@@ -3,6 +3,7 @@ using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 using Nolvus.Core.Enums;
 using Vcc.Nolvus.Api.Installer.Services;
+using Nolvus.Dashboard.Frames.Instance;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -135,8 +136,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                 }
                 else
                 {
-                    Console.Write("Unimplemented: Instances Frame");
-                    //ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
+                    ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
                 }
             }
             catch (Exception ex)

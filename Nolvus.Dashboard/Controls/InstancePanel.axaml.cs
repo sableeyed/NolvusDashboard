@@ -139,7 +139,6 @@ namespace Nolvus.Dashboard.Controls
 
         private void BtnView_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            Console.WriteLine("Manage button clicked");
             BtnView.ContextMenu.Open();
         }
 
@@ -147,56 +146,47 @@ namespace Nolvus.Dashboard.Controls
         {
             var menu = new ContextMenu();
 
-            var items = new List<object>();
-
             // Instance
             var miInstance = new MenuItem { Header = "Instance" };
             miInstance.Click += (_, __) => BrItmMods_Click();
-            items.Add(miInstance);
+            menu.Items.Add(miInstance);
 
             // Add Desktop Shortcut
             var miShortcut = new MenuItem { Header = "Add Desktop Shortcut" };
             miShortcut.Click += (_, __) => BrItmShortCut_Click();
-            items.Add(miShortcut);
+            menu.Items.Add(miShortcut);
 
-            // Separator
-            items.Add(new Separator());
+            menu.Items.Add(new Separator());
 
             // Report to PDF
             var miReport = new MenuItem { Header = "Report to PDF" };
             miReport.Click += (_, __) => BrItmReport_Click();
-            items.Add(miReport);
+            menu.Items.Add(miReport);
 
-            // Separator
-            items.Add(new Separator());
+            menu.Items.Add(new Separator());
 
             // Keybinds
             var miKeybinds = new MenuItem { Header = "Keybinds" };
             miKeybinds.Click += (_, __) => BrItmKeyBinds_Click();
-            items.Add(miKeybinds);
+            menu.Items.Add(miKeybinds);
 
-            // Separator
-            items.Add(new Separator());
+            menu.Items.Add(new Separator());
 
             // User Manual
             var miManual = new MenuItem { Header = "User Manual" };
             miManual.Click += (_, __) => BrItmManual_Click();
-            items.Add(miManual);
+            menu.Items.Add(miManual);
 
-            // Separator
-            items.Add(new Separator());
+            menu.Items.Add(new Separator());
 
             // Delete Instance
             var miDelete = new MenuItem { Header = "Delete Instance" };
             miDelete.Click += (_, __) => BrItmDelete_Click();
-            items.Add(miDelete);
+            menu.Items.Add(miDelete);
 
-            // Bind to menu
-            menu.ItemsSource = items;
-
-            // Attach to button
             BtnView.ContextMenu = menu;
         }
+
 
 
 

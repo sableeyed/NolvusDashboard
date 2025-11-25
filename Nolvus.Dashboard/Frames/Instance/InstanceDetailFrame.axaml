@@ -2,8 +2,156 @@
     x:Class="Nolvus.Dashboard.Frames.Instance.InstanceDetailFrame"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:Nolvus.Dashboard.Controls;assembly=NolvusDashboard"
-    Background="#363636"
-    Width="726" Height="410">
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
+    mc:Ignorable="d"
+    Background="#363636">
 
+    <Grid Margin="7"
+          RowDefinitions="Auto,*"
+          ColumnDefinitions="*">
+
+        <!-- =======================
+             HEADER PANEL (top bar)
+             ======================= -->
+        <Border Grid.Row="0"
+                Background="#363636"
+                Height="45">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+
+                <!-- Icon -->
+                <Image Source="avares://NolvusDashboard/Assets/nolvus-ico.jpg"
+                       Width="32"
+                       Height="32"
+                       Margin="6"/>
+
+                <!-- Header text -->
+                <TextBlock x:Name="LblHeader"
+                           Grid.Column="1"
+                           VerticalAlignment="Center"
+                           FontSize="18"
+                           Foreground="White"
+                           Text="Instance" />
+
+                <!-- Profiles dropdown -->
+                <ComboBox x:Name="DrpDwnLstProfiles"
+                          Grid.Column="2"
+                          Width="190"
+                          Margin="0,8,0,8"
+                          HorizontalAlignment="Right" />
+            </Grid>
+        </Border>
+
+        <!-- =======================
+             MAIN CONTENT AREA
+             ======================= -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,Auto"
+              RowDefinitions="*">
+
+            <!-- =======================
+                 LEFT SIDE: Mods Grid
+                 ======================= -->
+            <Grid Grid.Column="0">
+
+                <!-- Mods grid -->
+                <DataGrid x:Name="ModsGrid"
+                          Background="#363636"
+                          Foreground="White"
+                          AutoGenerateColumns="False"
+                          RowHeight="28"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="All"
+                          CanUserResizeColumns="True">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Priority"
+                                            Binding="{Binding Priority}"
+                                            Width="75" />
+                        <DataGridTextColumn Header="Mod"
+                                            Binding="{Binding Name}"
+                                            Width="400" />
+                        <DataGridTextColumn Header="Version"
+                                            Binding="{Binding Version}"
+                                            Width="100" />
+                        <DataGridTextColumn Header="Category"
+                                            Binding="{Binding Category}"
+                                            IsVisible="False" />
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding StatusText}"
+                                            Width="200" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- =======================
+                     LOADING OVERLAY COG
+                     ======================= -->
+                <Border x:Name="PicBoxLoading"
+                        Background="#363636"
+                        Opacity="0.85"
+                        IsHitTestVisible="True"
+                        IsVisible="True">
+                    <gif:GifImage Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif"
+                                  Height="150"
+                                  Width="150"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                </Border>
+            </Grid>
+
+            <!-- =======================
+                 RIGHT SIDE BUTTON STACK
+                 ======================= -->
+            <StackPanel Grid.Column="1"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Top"
+                        Spacing="8"
+                        Width="140">
+
+                <Button x:Name="BtnPlay"
+                        Content="Play"
+                        Height="40"
+                        Background="#363636"
+                        Foreground="#F28F1A" />
+
+                <!-- <Button x:Name="BtnExpand"
+                        Content="Expand"
+                        Height="40"
+                        Background="#363636"
+                        Foreground="#F28F1A" />
+
+                <Button x:Name="BtnCollapse"
+                        Content="Collapse"
+                        Height="40"
+                        Background="#363636"
+                        Foreground="#F28F1A" /> -->
+
+                <Button x:Name="BtnSettings"
+                        Content="Settings"
+                        Height="40"
+                        Background="#363636"
+                        Foreground="#F28F1A" />
+
+                <Button x:Name="BtnReport"
+                        Content="Report"
+                        Height="40"
+                        Background="#363636"
+                        Foreground="#F28F1A" />
+
+                <Button x:Name="BtnLoadOrder"
+                        Content="Apply Order"
+                        Height="40"
+                        Background="#363636"
+                        Foreground="#F28F1A" />
+
+                <Button x:Name="BtnBack"
+                        Content="Back to instances"
+                        Margin="0,30,0,0"
+                        Height="40"
+                        Background="#363636"
+                        Foreground="#F28F1A" />
+            </StackPanel>
+        </Grid>
+    </Grid>
 </UserControl>

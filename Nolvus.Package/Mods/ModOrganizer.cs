@@ -2405,8 +2405,8 @@ ccafdsse001-dwesanctuary.esm";
         {
             string IniFilePath = Path.Combine(IniDir, "ModOrganizer.ini");     
 
-            string WineBinary = ModOrganizer.ToWinePath(Binary);    
-            string WineWorkingDir = ModOrganizer.ToWinePath(WorkingDirectory);
+            string WineBinary = ModOrganizer.ToWineIniPath(Binary);    
+            string WineWorkingDir = ModOrganizer.ToWineIniPath(WorkingDirectory);
 
             var SizeData = ServiceSingleton.Settings.GetIniValue(Path.Combine(IniDir, "ModOrganizer.ini"), "customExecutables", "size");
 

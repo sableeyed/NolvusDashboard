@@ -32,8 +32,6 @@ This prefix is required to run certain tools like BSArch
 - xdelta3
 - .NET Runtime 9.x
 
-# Untested
-- The entire MO2 stack
 
 # Fully Implemented
 - Nolvus.NexusApi
@@ -43,6 +41,8 @@ This prefix is required to run certain tools like BSArch
 - Nolvus.Components
 - Nolvus.Service
 - Nolvus.Instance
+- Nolvus.Launcher
+- MO2
 
 # Partially Implemented
 - Nolvus.Dashboard
@@ -55,8 +55,6 @@ This prefix is required to run certain tools like BSArch
 # Refactor Needed
 - Nolvus.Updater
 
-# Won't Implement
-- Nolvus.Launcher
 
 # TODO
 - Unify the theme and layout of all UI components/frames

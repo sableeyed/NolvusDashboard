@@ -12,17 +12,12 @@ using Nolvus.Services.Files;
 using Nolvus.Services.Checker;
 using Nolvus.Package.Services;
 using Nolvus.Instance.Services;
-using System.Net.Security;
-using System.Security.Authentication;
-using Vcc.Nolvus.Api.Installer.Core;
 using System.Diagnostics;
 using System.Reflection;
 using Xilium.CefGlue;
 using Xilium.CefGlue.Common;
 using System.Text;
 using Nolvus.Dashboard.Services.Wine;
-using QuestPDF.Drawing;
-using QuestPDF.Fluent;
 
 namespace Nolvus.Dashboard;
 

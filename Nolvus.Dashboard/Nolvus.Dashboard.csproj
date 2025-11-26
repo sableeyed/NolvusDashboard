@@ -31,10 +31,15 @@
     <PackageReference Include="CefGlue.Avalonia" Version="120.6099.211" />
     <PackageReference Include="ReactiveUI" Version="20.1.1" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
+    <PackageReference Include="ValveKeyValue" Version="0.20.0.417" />
   </ItemGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources/NolvusLauncher.exe" />
   </ItemGroup>
 
   <!-- These link Core and Services like before -->

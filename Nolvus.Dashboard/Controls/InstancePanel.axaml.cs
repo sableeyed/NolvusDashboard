@@ -18,6 +18,10 @@ using Nolvus.Package.Mods;
 using Vcc.Nolvus.Api.Installer.Services;
 using Nolvus.Dashboard.Frames.Instance.v5;
 using Nolvus.Dashboard.Services;
+using ValveKeyValue;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -25,6 +29,8 @@ namespace Nolvus.Dashboard.Controls
     {
         private INolvusInstance _instance;
         private InstancesPanel _parent;
+        private const string LauncherHash = "03559ba20b8cae267508c4a4849bc2a6";
+        private const string NolvusHash = "d28d77bf715d577f21145bb792e70af8";
 
         public InstancePanel(InstancesPanel parent)
         {
@@ -155,6 +161,10 @@ namespace Nolvus.Dashboard.Controls
             var miShortcut = new MenuItem { Header = "Add Desktop Shortcut" };
             miShortcut.Click += (_, __) => BrItmShortCut_Click();
             menu.Items.Add(miShortcut);
+
+            var miRedirector = new MenuItem { Header = "Setup Steam Redirector" };
+            miRedirector.Click += (_, __) => BrItmRedirector_Click();
+            menu.Items.Add(miRedirector);
 
             menu.Items.Add(new Separator());
 
@@ -311,6 +321,171 @@ namespace Nolvus.Dashboard.Controls
                     break;
             }
         }
+
+        private void BrItmRedirector_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); //get hpme folder
+            string vdfPath = Path.Combine(home, ".steam", "steam", "config", "libraryfolders.vdf"); //get path to vdf
+            string? libraryPath = GetSteamLibraryForApp(vdfPath); //get path to the steam library from vdf
+            string? skyrimPath = Path.Combine(libraryPath, "steamapps", "common", "Skyrim Special Edition"); //combine paths to get skyrim path
+
+            if (skyrimPath == null)
+            {
+                ServiceSingleton.Logger.Log("Skyrim Path not found - manual intervention required");
+                return;
+            }
+
+            string? launcherPath = Path.Combine(skyrimPath, "SkyrimSELauncher.exe");
+            if (!File.Exists(launcherPath))
+            {
+                NolvusMessageBox.Show(window, "Error", "SkyrimSE.exe not found. If you believe this is a bug, install the launcher manually.", MessageBoxType.Error);
+                return;
+            }
+
+            //Check if the launcher is already installed
+            string? md5 = GetFileMd5(launcherPath);
+            if(md5 != null && md5.ToLowerInvariant() == NolvusHash)
+            {
+                NolvusMessageBox.Show(window, "Error", "Redirector already exists - Update your instancepath.txt manually", MessageBoxType.Error);
+                return;
+            }
+
+            //setup launcher if not
+            if(md5 != null && md5.ToLowerInvariant() == LauncherHash)
+            {
+                string temp = launcherPath + ".new";
+
+                ExtractLauncher(temp);
+
+                File.Move(launcherPath, launcherPath + ".bak");
+                File.Move(temp, launcherPath);
+                NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
+            }
+        }
+
+        private static void ReplaceLauncher(string oldPath, string newExe, string tempExe)
+        {
+            string backup = oldPath + ".bak";
+
+            if (File.Exists(backup))
+                File.Delete(backup);
+
+            File.Move(oldPath, backup);
+
+            File.Move(tempExe, oldPath);
+
+            File.SetAttributes(oldPath, FileAttributes.Normal);
+        }
+
+        private static void ExtractLauncher(string output)
+        {
+            var asm = typeof(DashboardApp).Assembly;
+
+            string resourceName = asm.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("NolvusLauncher.exe"));
+
+            if (resourceName == null)
+                throw new Exception("Launcher not found");
+
+            using Stream? resStream = asm.GetManifestResourceStream(resourceName);
+
+            if (resStream == null)
+                throw new Exception("Failed to load launcher");
+
+            using FileStream fs = File.Create(output);
+            resStream.CopyTo(fs);
+        }
+
+        private static string? GetFileMd5(string path)
+        {
+            if (!File.Exists(path))
+                return null;
+
+            using var md5 = MD5.Create();
+            using var stream = File.OpenRead(path);
+
+            byte[] hash = md5.ComputeHash(stream);
+            var sb = new StringBuilder(hash.Length * 2);
+            foreach (byte b in hash)
+                sb.Append(b.ToString("x2"));
+            
+            return sb.ToString();
+        }
+
+        public static string? GetSteamLibraryForApp(string vdfPath, string appId = "489830")
+        {
+            if (!File.Exists(vdfPath))
+                return null;
+
+            string[] lines = File.ReadAllLines(vdfPath);
+
+            string? currentPath = null;
+            bool insideLibrary = false;
+            bool insideApps = false;
+
+            foreach (var raw in lines)
+            {
+                string line = raw.Trim();
+
+                // Start of a library entry: "0", "1", "2", ...
+                if (line.StartsWith("\"") && line.EndsWith("\"") && line.Length <= 4)
+                {
+                    // New library block starting
+                    insideLibrary = true;
+                    insideApps = false;
+                    currentPath = null;
+                    continue;
+                }
+
+                if (!insideLibrary)
+                    continue;
+
+                // Detect path
+                if (line.StartsWith("\"path\""))
+                {
+                    // Extract value between quotes: "path"   "xxxxx"
+                    int idx = line.IndexOf('"', 7);
+                    if (idx > 0)
+                    {
+                        int end = line.IndexOf('"', idx + 1);
+                        if (end > idx)
+                            currentPath = line.Substring(idx + 1, end - (idx + 1));
+                    }
+                    continue;
+                }
+
+                // Detect entering apps block
+                if (line.StartsWith("\"apps\""))
+                {
+                    insideApps = true;
+                    continue;
+                }
+
+                // Inside apps block, check for appId
+                if (insideApps && line.StartsWith($"\"{appId}\""))
+                {
+                    // Found Skyrim SE inside this library
+                    return currentPath;
+                }
+
+                // Leaving blocks
+                if (line == "}")
+                {
+                    if (insideApps)
+                    {
+                        insideApps = false;
+                    }
+                    else if (insideLibrary)
+                    {
+                        insideLibrary = false;
+                        currentPath = null;
+                    }
+                }
+            }
+
+            return null;
+        }
+
 
         private SixLabors.ImageSharp.Image LoadImageSharpFromAsset(string assetPath)
         {

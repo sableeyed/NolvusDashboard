@@ -1,66 +1,51 @@
 #!/bin/bash
 set -e
 
-# Root of the project
 PROJECT_ROOT=$(pwd)
-BIN_DIR="$PROJECT_ROOT/bin"
+OUT_DIR="$PROJECT_ROOT/bin"
 
 echo "Cleaning previous build..."
-rm -rf "$BIN_DIR"
-mkdir -p "$BIN_DIR"
+rm -rf "$OUT_DIR"
+mkdir -p "$OUT_DIR/Dashboard"
+mkdir -p "$OUT_DIR/Updater"
+mkdir -p "$OUT_DIR/Browser"
 
-echo "Building class library projects as DLLs..."
-
-# List of library projects (DLLs)
-LIB_PROJECTS=(
-    "Nolvus.Browser"
-    "Nolvus.Components"
-    "Nolvus.Core"
-    #"Nolvus.Api.Installer"
-    "Nolvus.Downgrader"
-    "Nolvus.GrassCache"
-    "Nolvus.Instance"
-    "Nolvus.Launcher"
-    "Nolvus.NexusApi"
-    "Nolvus.Package"
-    "Nolvus.Services"
-    "Nolvus.StockGame"
-    # Add other library projects here if any
-)
-
-for proj in "${LIB_PROJECTS[@]}"; do
-    echo "Building $proj..."
-    dotnet build "$PROJECT_ROOT/$proj/$proj.csproj" \
-        -c Release \
-        -r linux-x64 \
-        -o "$BIN_DIR"
-done
-
-echo "Building Nolvus.Api.Installer..."
-dotnet build "$PROJECT_ROOT/Nolvus.Api.Library.Installer/Nolvus.Api.Installer.csproj" \
+###########################################
+# 1. Publish Browser Process (CEF extracted)
+###########################################
+echo "Publishing Browser..."
+dotnet publish "$PROJECT_ROOT/Nolvus.Browser/Nolvus.Browser.csproj" \
     -c Release \
     -r linux-x64 \
-    -o "$BIN_DIR"
+    --self-contained true \
+    -p:PublishSingleFile=false \
+    -o "$OUT_DIR/Browser"
 
-echo "Publishing executables..."
+###########################################
+# 2. Publish Dashboard as fully self-contained single file
+#    (csproj already has PublishSingleFile/SelfContained set)
+###########################################
+echo "Publishing Nolvus.Dashboard..."
+dotnet publish "$PROJECT_ROOT/Nolvus.Dashboard/Nolvus.Dashboard.csproj" \
+    -c Release \
+    -r linux-x64 \
+    -o "$OUT_DIR/Dashboard"
 
-# List of executable projects
-EXE_PROJECTS=(
-    "Nolvus.Dashboard"
-    "Nolvus.Updater"
-)
+###########################################
+# 3. Publish Updater as fully self-contained single file
+###########################################
+echo "Publishing Nolvus.Updater..."
+dotnet publish "$PROJECT_ROOT/Nolvus.Updater/Nolvus.Updater.csproj" \
+    -c Release \
+    -r linux-x64 \
+    -o "$OUT_DIR/Updater"
 
-for proj in "${EXE_PROJECTS[@]}"; do
-    echo "Publishing $proj..."
-    dotnet publish "$PROJECT_ROOT/$proj/$proj.csproj" \
-        -c Release \
-        -r linux-x64 \
-        --self-contained true \
-        /p:PublishSingleFile=true \
-        -o "$BIN_DIR"
-done
+echo "Renaming Updater..."
+if [ -f "$OUT_DIR/Updater/Nolvus.Updater" ]; then
+    mv "$OUT_DIR/Updater/Nolvus.Updater" "$OUT_DIR/Updater/NolvusUpdater"
+fi
 
-mv $BIN_DIR/Nolvus.Dashboard $BIN_DIR/NolvusDashboard
-mv $BIN_DIR/Nolvus.Updater $BIN_DIR/NolvusUpdater
-
-echo "Build complete! All DLLs and executables are in $BIN_DIR"
+echo "Build complete!"
+echo "Dashboard: $OUT_DIR/Dashboard"
+echo "Updater:   $OUT_DIR/Updater"
+echo "Browser:   $OUT_DIR/Browser"

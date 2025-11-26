@@ -13,6 +13,11 @@ If you have found a bug or have a suggestion, open an issue or join the [discord
 - ENB will fail to install the first time. Close the Dashboard and run through again.
 - DynDOLOD output will appear to be stuck at 47% hashing. Just let it finish.
 
+# TODO
+- v6
+- ChangeLogFrame
+- Dashboard.CheckForUpdates
+
 # Wine
 A wine prefix will be created for you in ~/.local/share/NolvusDashboard/prefix
 Do not modify this unless you know what you are doing

@@ -2327,6 +2327,8 @@ ccafdsse001-dwesanctuary.esm";
             get { return "Mod Organizer 2"; }
         }
 
+        private static readonly Encoding IniEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
         #region Methods        
 
         private void CreateModOrganizerIni(string InstallDir, string Profile, string GameDir, string DataDir)
@@ -2338,7 +2340,9 @@ ccafdsse001-dwesanctuary.esm";
             string WineGameDir = ToWineIniPath(GameDir);
             string WineDataDir = ToWineIniPath(DataDir);
 
-            File.WriteAllText(FileName, string.Format(IniFile, Profile, WineGameDir, WineDataDir));
+            NormalizeLineEndings(FileName, string.Format(IniFile, Profile, WineGameDir, WineDataDir));
+
+            //File.WriteAllText(FileName, string.Format(IniFile, Profile, WineGameDir, WineDataDir));
         }
 
         public static string GetIni(bool Pref, IniLevel Level, INolvusInstance Instance)
@@ -2398,7 +2402,8 @@ ccafdsse001-dwesanctuary.esm";
         }
 
         public void AppendToIni(string IniDir, string Section, string Key, string Value)
-        {            
+        {        
+            Value = CRLF(Value);    
             ServiceSingleton.Settings.StoreIniValue(Path.Combine(IniDir, "ModOrganizer.ini"), Section, Key, Value);
         }
 
@@ -2454,15 +2459,25 @@ ccafdsse001-dwesanctuary.esm";
             var ProfileFolder = Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name);
             var MO2Folder = Path.Combine(Instance.InstallDir, "MO2");
 
-            File.WriteAllText(Path.Combine(ProfileFolder, "Skyrim.ini"), ModOrganizer.GetIni(false, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
-            File.WriteAllText(Path.Combine(ProfileFolder, "SkyrimPrefs.ini"), ModOrganizer.GetIni(true, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
-            File.WriteAllText(Path.Combine(ProfileFolder, "loadorder.txt"), LoadOrderAE);
-            File.WriteAllText(Path.Combine(ProfileFolder, "modlist.txt"), ModListAE);
-            File.WriteAllText(Path.Combine(ProfileFolder, "lockedorder.txt"), LockedLoadOrder);
-            File.WriteAllText(Path.Combine(ProfileFolder, "plugins.txt"), Plugins);
-            File.WriteAllText(Path.Combine(ProfileFolder, "settings.ini"), SettingsIni);
-            File.WriteAllText(Path.Combine(ProfileFolder, "skyrimcustom.ini"), string.Empty);
-            File.WriteAllText(Path.Combine(MO2Folder, "nxmhandler.ini"), nxmhandler);
+            //File.WriteAllText(Path.Combine(ProfileFolder, "Skyrim.ini"), ModOrganizer.GetIni(false, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
+            //File.WriteAllText(Path.Combine(ProfileFolder, "SkyrimPrefs.ini"), ModOrganizer.GetIni(true, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
+            //File.WriteAllText(Path.Combine(ProfileFolder, "loadorder.txt"), LoadOrderAE);
+            //File.WriteAllText(Path.Combine(ProfileFolder, "modlist.txt"), ModListAE);
+            //File.WriteAllText(Path.Combine(ProfileFolder, "lockedorder.txt"), LockedLoadOrder);
+            //File.WriteAllText(Path.Combine(ProfileFolder, "plugins.txt"), Plugins);
+            //File.WriteAllText(Path.Combine(ProfileFolder, "settings.ini"), SettingsIni);
+            //File.WriteAllText(Path.Combine(ProfileFolder, "skyrimcustom.ini"), string.Empty);
+            //File.WriteAllText(Path.Combine(MO2Folder, "nxmhandler.ini"), nxmhandler);
+
+            NormalizeLineEndings(Path.Combine(ProfileFolder, "Skyrim.ini"), ModOrganizer.GetIni(false, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
+            NormalizeLineEndings(Path.Combine(ProfileFolder, "SkyrimPrefs.ini"), ModOrganizer.GetIni(true, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
+            NormalizeLineEndings(Path.Combine(ProfileFolder, "loadorder.txt"), LoadOrderAE);
+            NormalizeLineEndings(Path.Combine(ProfileFolder, "modlist.txt"), ModListAE);
+            NormalizeLineEndings(Path.Combine(ProfileFolder, "lockedorder.txt"), LockedLoadOrder);
+            NormalizeLineEndings(Path.Combine(ProfileFolder, "plugins.txt"), Plugins);
+            NormalizeLineEndings(Path.Combine(ProfileFolder, "settings.ini"), SettingsIni);
+            NormalizeLineEndings(Path.Combine(ProfileFolder, "skyrimcustom.ini"), string.Empty);
+            NormalizeLineEndings(Path.Combine(MO2Folder, "nxmhandler.ini"), nxmhandler);
 
             CreateModOrganizerIni(MO2Folder, Instance.Name, Instance.StockGame, (Instance.InstallDir + "\\MODS").Replace("\\", "/"));
         }
@@ -2714,6 +2729,25 @@ ccafdsse001-dwesanctuary.esm";
         public static string ToWineIniPath(string path)
         {
             return ToWinePath(path).Replace("\\", "\\\\");
+        }
+
+        private static void NormalizeLineEndings(string path, string content)
+        {
+            content = CRLF(content);
+            
+            using (var sw = new StreamWriter(path, false, IniEncoding))
+            {
+                sw.NewLine = "\r\n";
+                sw.Write(content);
+            }
+        }
+
+        private static string CRLF(string text)
+        {
+            if (string.IsNullOrEmpty(text)) 
+                return text;
+
+            return text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
         }
 
         #endregion                       

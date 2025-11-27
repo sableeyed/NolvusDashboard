@@ -264,8 +264,8 @@ namespace Nolvus.StockGame.Core
                 }
                 finally
                 {
-                    //File.Delete(DownloadedFile);
-                    //File.Delete(ManifestFile);
+                    File.Delete(DownloadedFile);
+                    File.Delete(ManifestFile);
                 }
             });
 

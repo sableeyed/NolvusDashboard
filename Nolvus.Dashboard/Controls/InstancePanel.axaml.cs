@@ -364,20 +364,6 @@ namespace Nolvus.Dashboard.Controls
             }
         }
 
-        private static void ReplaceLauncher(string oldPath, string newExe, string tempExe)
-        {
-            string backup = oldPath + ".bak";
-
-            if (File.Exists(backup))
-                File.Delete(backup);
-
-            File.Move(oldPath, backup);
-
-            File.Move(tempExe, oldPath);
-
-            File.SetAttributes(oldPath, FileAttributes.Normal);
-        }
-
         private static void ExtractLauncher(string output)
         {
             var asm = typeof(DashboardApp).Assembly;

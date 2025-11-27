@@ -2698,25 +2698,23 @@ ccafdsse001-dwesanctuary.esm";
 
             path = path.Replace("\\", "/").Trim();
 
-            if (path.StartsWith("Z:/", StringComparison.OrdinalIgnoreCase) ||
-                path.StartsWith("Z:\\", StringComparison.OrdinalIgnoreCase))
+            int idx = path.IndexOf("/Instances", StringComparison.OrdinalIgnoreCase);
+            if (idx == -1)
+            {
+                if (path.StartsWith("/"))
+                    return "X:" + path.Replace("/", "\\");
                 return path.Replace("/", "\\");
+            }
 
-            if (Regex.IsMatch(path, @"^[A-Za-z]:/"))
-                return path.Replace("/", "\\");
-
-            if (path.StartsWith("/"))
-                return "Z:" + path.Replace("/", "\\");
-
-            return path.Replace("/", "\\");
+            string trimmed = path.Substring(idx);     // "/Instances/...."
+            return "X:" + trimmed.Replace("/", "\\"); // "X:\Instances\...."
         }
+
 
         public static string ToWineIniPath(string path)
         {
-            var wine = ToWinePath(path);
-            return wine.Replace("\\", "\\\\");
+            return ToWinePath(path).Replace("\\", "\\\\");
         }
-
 
         #endregion                       
     }

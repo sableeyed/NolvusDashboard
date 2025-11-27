@@ -21,10 +21,10 @@ namespace Nolvus.StockGame.Core
         private const string ExeNameKey = "GameManifest/ExeName";
         private const string VersionKey = "GameManifest/Version";
         private const string FileKey = "GameManifest/Files/File";
-        private const string InstructionKey = "GameManifest/Patcher/Instruction";   
+        private const string InstructionKey = "GameManifest/Patcher/Instruction";
 
         //We have to work around case sensitivity on Linux in a user friendly way.
-        private Dictionary<string, string> FileDict = new Dictionary<string, string>();     
+        private Dictionary<string, string> FileDict = new Dictionary<string, string>();
 
         #region Fields
 
@@ -49,7 +49,7 @@ namespace Nolvus.StockGame.Core
         private XmlDocument Storage
         {
             get { return _Storage; }
-        }       
+        }
 
         protected string ManifestFile
         {
@@ -88,7 +88,7 @@ namespace Nolvus.StockGame.Core
         #region Events
 
         public event DownloadProgressChangedHandler OnDownload;
-        public event ExtractProgressChangedHandler OnExtract;        
+        public event ExtractProgressChangedHandler OnExtract;
 
         event OnItemProcessedHandler OnItemProcessedEvent;
 
@@ -153,7 +153,7 @@ namespace Nolvus.StockGame.Core
         #endregion
 
         public StockGameManager(string WorkingDir, string LibDir, string PatchDir, string GameDir, INolvusInstance Instance, IGamePackageDTO GamePackage, bool KeepPatches = false)
-        {            
+        {
             _WorkingDir = WorkingDir;
             _LibDir = LibDir;
             _PatchDir = PatchDir;
@@ -168,7 +168,7 @@ namespace Nolvus.StockGame.Core
             _Patcher.OnDownload += Downloading;
             _Patcher.OnExtract += Extracting;
             _Patcher.OnStepProcessed += StepProcessing;
-            _Patcher.OnItemProcessed += ItemProcessing;                        
+            _Patcher.OnItemProcessed += ItemProcessing;
         }
 
         public StockGameManager(string WorkingDir, string LibDir, string PatchDir, string GameDir, string StockGameDir, string LgName, string LgCode, IGamePackageDTO GamePackage, bool KeepPatches = false)
@@ -231,12 +231,11 @@ namespace Nolvus.StockGame.Core
             StepProcessedEventArgs Event = new StepProcessedEventArgs(0, 0, Step);
             if (Handler != null) Handler(this, Event);
         }
-        //Rewrite to handle files with spaces in their name because of breaking problems on Linux.
+
         public async Task Load()
-        {            
-            var Tsk = Task.Run(async () => 
+        {
+            var Tsk = Task.Run(async () =>
             {
-                //string DownloadedFile = Path.Combine(_WorkingDir, _GamePackage.Name + ".zip");
                 string DownloadedFile = "";
                 try
                 {
@@ -252,7 +251,7 @@ namespace Nolvus.StockGame.Core
                         this.StepProcessed("Initializing stock game installation");
                         this.StepProcessed("Using game directory : " + _GameDir);
                         this.StepProcessed("Using stock game directory : " + _StockGameDir);
-                        this.StepProcessed("Using language : " + _Language);                        
+                        this.StepProcessed("Using language : " + _Language);
 
                         await ServiceSingleton.Files.DownloadFile(_GamePackage.DownloadLink, DownloadedFile, Downloading);
                         await ServiceSingleton.Files.ExtractFile(DownloadedFile, _WorkingDir, Extracting);
@@ -265,19 +264,20 @@ namespace Nolvus.StockGame.Core
                 }
                 finally
                 {
-                    File.Delete(DownloadedFile);
-                    File.Delete(ManifestFile);
+                    //File.Delete(DownloadedFile);
+                    //File.Delete(ManifestFile);
                 }
             });
 
-            await Tsk;                                   
+            await Tsk;
         }
 
         private async Task DoLoad()
         {
             this.StepProcessed("Pre-computing hashes. Please be patient.");
             BuildHashTable();
-            var Tsk = Task.Run(() => 
+
+            var Tsk = Task.Run(() =>
             {
                 try
                 {
@@ -298,15 +298,31 @@ namespace Nolvus.StockGame.Core
 
                     foreach (XmlNode FileNode in FileElements)
                     {
+                        string expectedName = FileNode["Name"]?.InnerText?.Trim();
+                        string location = FileNode["Location"]?.InnerText?.Trim();
                         string hash = FileNode["Hash"]?.InnerText?.Trim()?.ToLowerInvariant();
-                        //_Package.AddFile(FileNode);
 
-                        //var addedFile = _Package.Files.Last();
                         if (!string.IsNullOrWhiteSpace(hash) &&
-                            FileDict.TryGetValue(hash, out var correctedName))
+                            FileDict.TryGetValue(hash, out var actualName))
                         {
-                            // override the XML node so GameFile.Parse() sees the correct filename
-                            FileNode["Name"].InnerText = correctedName;
+                            // ★ RENAME BLOCK ★
+                            if (!string.Equals(actualName, expectedName, StringComparison.Ordinal))
+                            {
+                                string targetDir = location == "Data"
+                                    ? Path.Combine(_GameDir, "Data")
+                                    : _GameDir;
+
+                                string actualPath = Path.Combine(targetDir, actualName);
+                                string expectedPath = Path.Combine(targetDir, expectedName);
+
+                                if (File.Exists(actualPath) &&
+                                    !File.Exists(expectedPath))
+                                {
+                                    File.Move(actualPath, expectedPath);
+                                }
+                            }
+                            // Update XML so downstream logic sees correct casing
+                            FileNode["Name"].InnerText = expectedName;
                         }
 
                         _Package.AddFile(FileNode);
@@ -334,14 +350,14 @@ namespace Nolvus.StockGame.Core
 
                     StepProcessed("Game meta data package loaded");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw ex;
                 }
             });
 
-            await Tsk;                    
-        }       
+            await Tsk;
+        }
 
         public async Task CheckIntegrity()
         {
@@ -360,14 +376,14 @@ namespace Nolvus.StockGame.Core
                     {
                         StepProcessed("Checking game file : " + GameFile.Name);
 
-                        GameFile.Check(_GameDir, _LanguageCode);                        
+                        GameFile.Check(_GameDir, _LanguageCode);
 
-                        ElementProcessed(Counter, Total, StockGameProcessStep.GameFilesChecking, GameFile.Name);                        
+                        ElementProcessed(Counter, Total, StockGameProcessStep.GameFilesChecking, GameFile.Name);
 
                         Counter++;
                     }
 
-                    StepProcessed("Game files validated");                    
+                    StepProcessed("Game files validated");
                 }
                 catch (Exception ex)
                 {
@@ -379,8 +395,8 @@ namespace Nolvus.StockGame.Core
         }
 
         public async Task CopyGameFiles()
-        {            
-            var Tsk =  Task.Run(() =>
+        {
+            var Tsk = Task.Run(() =>
             {
                 try
                 {
@@ -400,7 +416,7 @@ namespace Nolvus.StockGame.Core
                         Counter++;
                     }
 
-                    StepProcessed("Game files copied");                    
+                    StepProcessed("Game files copied");
                 }
                 catch (Exception ex)
                 {
@@ -409,21 +425,21 @@ namespace Nolvus.StockGame.Core
             });
 
             await Tsk;
-        }        
+        }
 
         public async Task PatchGameFiles()
-        {            
+        {
             var Tsk = Task.Run(async () =>
             {
                 try
                 {
-                    StepProcessed("Patching game files");                    
-                                           
+                    StepProcessed("Patching game files");
+
                     int Total = _Package.Instructions.Count;
-                    int Counter = 1;                        
+                    int Counter = 1;
 
                     foreach (var Instruction in _Package.Instructions)
-                    {                                                
+                    {
                         await _Patcher.PatchFile(Instruction, _GameDir, _StockGameDir, _KeepPatches);
 
                         ElementProcessed(Counter, Total, StockGameProcessStep.GameFilesPatching, Instruction.DestFile.Name);
@@ -431,7 +447,7 @@ namespace Nolvus.StockGame.Core
                         Counter++;
                     }
 
-                    StepProcessed("Game files patched");                                                           
+                    StepProcessed("Game files patched");
                 }
                 catch (Exception ex)
                 {
@@ -447,7 +463,7 @@ namespace Nolvus.StockGame.Core
             await Load();
             await CheckIntegrity();
             await CopyGameFiles();
-            await PatchGameFiles();            
+            await PatchGameFiles();
         }
 
         private void BuildHashTable()

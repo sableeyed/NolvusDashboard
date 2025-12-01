@@ -115,8 +115,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                     ServiceSingleton.Dashboard.LoadFrameAsync<v5.PerformanceFrame>();
                     break;
                 case Strings.NolvusAwakening:
-                    //ServiceSingleton.Dashboard.LoadFrameAsync<v6.PerformanceFrame>();
-                    ServiceSingleton.Logger.Log("v6 Performance Frame Unimplemented Exception");
+                    ServiceSingleton.Dashboard.LoadFrameAsync<v6.PerformanceFrame>();
                     break;
             }
         }

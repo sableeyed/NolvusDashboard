@@ -64,16 +64,6 @@ namespace Nolvus.Dashboard.Frames
                             ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
                             break;
                     }
-                    //var owner = TopLevel.GetTopLevel(this) as Window;
-                    //Console.WriteLine("Unimpl StartFrame Exception");
-                    //await NolvusMessageBox.Show(owner, "Error", "You have a .ini present but installation is not implemented", MessageBoxType.Error);
-                    //await CheckNolvus();
-                    // await CheckForUpdates();
-                    // await CheckNexus();
-
-                    // var InstancesCheck = await CheckInstances();
-
-                    // ServiceSingleton.Dashboard.EnableSettings();
                 }
             } catch (Exception ex)
             {

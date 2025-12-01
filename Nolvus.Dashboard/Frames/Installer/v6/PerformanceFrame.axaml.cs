@@ -165,8 +165,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 var Variants = await ApiManager.Service.Installer.GetNolvusVariants();
 
                 DrpDwnLstVariant.ItemsSource = Variants;
-                // DrpDwnLstVariant.DisplayMember = "Name";
-                // DrpDwnLstVariant.ValueMember = "Id";
                 DrpDwnLstVariant.SelectedIndex = VariantIndex(Variants);
 
                 //TglBtnSREX.ToggleStateChanging -= TglBtnSREX_ToggleStateChanging;
@@ -194,5 +192,28 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
         }
+
+        private void BtnContinue_Click(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void OnDownscaleChanged(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void OnSREXChanged(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private async void OnVariantChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            
+        }
+
+
+
     }
 }

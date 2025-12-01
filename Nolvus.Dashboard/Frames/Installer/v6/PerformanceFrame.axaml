@@ -367,7 +367,7 @@
 
 
 
-                <!-- RIGHT PANEL (unchanged) -->
+                <!-- RIGHT PANEL -->
                 <Border Grid.Column="1"
                         Background="#363636"
                         BorderBrush="#444"

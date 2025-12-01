@@ -6,327 +6,368 @@
     <Border Padding="32" Background="#2E2E2E">
         <Grid RowDefinitions="Auto,*,Auto" RowSpacing="24">
 
-            <!-- HEADER (v6: LblStepText) -->
+            <!-- HEADER -->
             <TextBlock x:Name="LblStepText"
                        Text="Graphics and Performance Options"
                        Foreground="White"
                        FontSize="20"
                        FontWeight="SemiBold"/>
 
-            <!-- MAIN CONTENT AREA -->
+            <!-- MAIN CONTENT -->
             <Grid Grid.Row="1"
                   ColumnDefinitions="*,350"
                   ColumnSpacing="24">
 
-                <!-- LEFT PANEL -->
-                <Border Background="#363636"
-                        BorderBrush="#444"
-                        CornerRadius="4"
-                        Padding="16">
+                <!-- LEFT SCROLL AREA -->
+                <ScrollViewer>
+                    <Grid RowDefinitions="Auto,Auto,Auto"
+                          ColumnDefinitions="*,*"
+                          RowSpacing="24"
+                          ColumnSpacing="24">
 
-                    <ScrollViewer>
-                        <StackPanel Spacing="20" VerticalAlignment="Top">
 
-                            <!-- TOP ROW: DROPDOWNS + HARDWARE PANEL -->
-                            <Grid ColumnDefinitions="Auto,Auto,*"
-                                  RowDefinitions="Auto,Auto,Auto,Auto"
-                                  ColumnSpacing="12"
-                                  RowSpacing="10"
-                                  HorizontalAlignment="Stretch">
 
-                                <!-- ===== Row 0: VARIANT ===== -->
-                                <TextBlock Grid.Row="0" Grid.Column="0"
-                                           Text="Variant"
-                                           Foreground="White" />
+                        <!-- ==================================================== -->
+                        <!-- RESOLUTION GROUP (Row 0, Col 0)                      -->
+                        <!-- ==================================================== -->
+                        <Border Grid.Row="0" Grid.Column="0"
+                                Background="#363636"
+                                BorderBrush="#555"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="16">
 
-                                <ComboBox Grid.Row="0" Grid.Column="1"
-                                          x:Name="DrpDwnLstVariant"
-                                          MinWidth="180"
-                                          Background="#2E2E2E"
-                                          Foreground="White" />
+                            <StackPanel Spacing="16">
 
-                                <!-- Hardware Requirements (v6 groupBox2) -->
-                                <Border Grid.Row="0" Grid.Column="2"
-                                        Grid.RowSpan="4"
-                                        Background="#2E2E2E"
-                                        BorderBrush="#555"
-                                        BorderThickness="1"
-                                        CornerRadius="4"
-                                        Padding="8"
-                                        Margin="12,0,16,0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top">
-
-                                    <StackPanel Spacing="6">
-                                        <TextBlock Text="Hardware Requirements"
-                                                   Foreground="White"
-                                                   FontSize="14"
-                                                   FontWeight="SemiBold"/>
-
-                                        <!-- Selected Resolution -->
-                                        <TextBlock x:Name="LblSelRes"
-                                                   Foreground="White"
-                                                   FontWeight="Bold"
-                                                   Text="[RES]"/>
-
-                                        <!-- Min / Rec table -->
-                                        <Grid ColumnDefinitions="Auto,Auto,Auto"
-                                              RowDefinitions="Auto,Auto,Auto,Auto,Auto"
-                                              ColumnSpacing="8"
-                                              RowSpacing="4">
-
-                                            <!-- Headers -->
-                                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                                       Text="Minimum"
-                                                       Foreground="White"
-                                                       FontWeight="Bold"/>
-                                            <TextBlock Grid.Row="0" Grid.Column="2"
-                                                       Text="Recommended"
-                                                       Foreground="White"
-                                                       FontWeight="Bold"/>
-
-                                            <!-- CPU -->
-                                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                                       Text="CPU"
-                                                       Foreground="White"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                                       x:Name="LblMinCPU"
-                                                       Foreground="#F28F1A"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="2"
-                                                       x:Name="LblMaxCPU"
-                                                       Foreground="#F28F1A"/>
-
-                                            <!-- GPU -->
-                                            <TextBlock Grid.Row="2" Grid.Column="0"
-                                                       Text="GPU"
-                                                       Foreground="White"/>
-                                            <TextBlock Grid.Row="2" Grid.Column="1"
-                                                       x:Name="LblMinGPU"
-                                                       Foreground="#F28F1A"/>
-                                            <TextBlock Grid.Row="2" Grid.Column="2"
-                                                       x:Name="LblMaxGPU"
-                                                       Foreground="#F28F1A"/>
-
-                                            <!-- RAM -->
-                                            <TextBlock Grid.Row="3" Grid.Column="0"
-                                                       Text="RAM"
-                                                       Foreground="White"/>
-                                            <TextBlock Grid.Row="3" Grid.Column="1"
-                                                       x:Name="LblMinRAM"
-                                                       Foreground="#F28F1A"/>
-                                            <TextBlock Grid.Row="3" Grid.Column="2"
-                                                       x:Name="LblMaxRAM"
-                                                       Foreground="#F28F1A"/>
-
-                                            <!-- VRAM -->
-                                            <TextBlock Grid.Row="4" Grid.Column="0"
-                                                       Text="VRAM"
-                                                       Foreground="White"/>
-                                            <TextBlock Grid.Row="4" Grid.Column="1"
-                                                       x:Name="LblMinVRAM"
-                                                       Foreground="#F28F1A"/>
-                                            <TextBlock Grid.Row="4" Grid.Column="2"
-                                                       x:Name="LblMaxVRAM"
-                                                       Foreground="#F28F1A"/>
-
-                                        </Grid>
-
-                                        <!-- Installation / Download size -->
-                                        <StackPanel Spacing="4" Margin="0,6,0,0">
-                                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <TextBlock Text="Installation Size:"
-                                                           Foreground="White"/>
-                                                <TextBlock x:Name="LblMinInstallSize"
-                                                           Foreground="#F28F1A"/>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <TextBlock Text="Download Size:"
-                                                           Foreground="White"/>
-                                                <TextBlock x:Name="LblMinDownloadSize"
-                                                           Foreground="#F28F1A"/>
-                                            </StackPanel>
-                                        </StackPanel>
-
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- ===== Row 1: ANTI-ALIASING ===== -->
-                                <TextBlock Grid.Row="1" Grid.Column="0"
-                                           Text="Anti-Aliasing"
-                                           Foreground="White" />
-
-                                <ComboBox Grid.Row="1" Grid.Column="1"
-                                          x:Name="DrpDwnLstAntiAliasing"
-                                          MinWidth="180"
-                                          Background="#2E2E2E"
-                                          Foreground="White" />
-
-                                <!-- ===== Row 2: INI PROFILE ===== -->
-                                <TextBlock Grid.Row="2" Grid.Column="0"
-                                           Text="Skyrim INI Profile"
-                                           Foreground="White"/>
-
-                                <ComboBox Grid.Row="2" Grid.Column="1"
-                                          x:Name="DrpDwnLstIni"
-                                          MinWidth="180"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
-
-                                <!-- ===== Row 3: LODs ===== -->
-                                <TextBlock Grid.Row="3" Grid.Column="0"
-                                           Text="LODs"
-                                           Foreground="White"/>
-
-                                <ComboBox Grid.Row="3" Grid.Column="1"
-                                          x:Name="DrpDwnLstLODs"
-                                          MinWidth="180"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
-
-                            </Grid>
-
-                            <!-- VARIANT DETAILS (v6: LblTextures / LblTrees / LblCities / TglBtnSREX / BtnVariantPreviex) -->
-                            <StackPanel Spacing="8">
-                                <StackPanel Spacing="4">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock Text="Textures:"
-                                                   Foreground="White"/>
-                                        <TextBlock x:Name="LblTextures"
-                                                   Foreground="#F28F1A"
-                                                   Text="[TEXTURES]"/>
-                                    </StackPanel>
-
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock Text="Trees:"
-                                                   Foreground="White"/>
-                                        <TextBlock x:Name="LblTrees"
-                                                   Foreground="#F28F1A"
-                                                   Text="[TREES]"/>
-                                    </StackPanel>
-
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock Text="Towns and Cities:"
-                                                   Foreground="White"/>
-                                        <TextBlock x:Name="LblCities"
-                                                   Foreground="#F28F1A"
-                                                   Text="[TOWNS AND CITIES]"/>
-                                    </StackPanel>
-                                </StackPanel>
-
-                                <StackPanel Spacing="4">
-                                    <TextBlock Text="SR Exterior Cities"
-                                               Foreground="White"/>
-                                    <ToggleSwitch x:Name="TglBtnSREX"/>
-                                    <TextBlock Text="No loading time when entering or exiting a major city. This feature is performance heavy and consumes a lot of VRAM."
-                                               Foreground="#F28F1A"
-                                               TextWrapping="Wrap"/>
-                                </StackPanel>
-
-                                <StackPanel Spacing="4">
-                                    <TextBlock Text="Preview"
-                                               Foreground="White"/>
-                                    <Button x:Name="BtnVariantPreviex"
-                                            Content="View variant differences"
-                                            MinWidth="160"
-                                            HorizontalContentAlignment="Center"
-                                            VerticalContentAlignment="Center"
-                                            Foreground="White"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <!-- Physics -->
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Advanced Physics"
-                                           Foreground="White"/>
-                                <!-- v6 doesn't define LblPhysics/TglBtnPhysics, so keep this simple or name if you plan to add fields -->
-                                <ToggleSwitch x:Name="TglBtnPhysics"/>
-                                <TextBlock Text="Physics on hair and armors (can be taxing on cities)"
-                                           Foreground="#F28F1A"
-                                           TextWrapping="Wrap"/>
-                            </StackPanel>
-
-                            <!-- Global Illumination -->
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Global Illumination (Fake Raytracing)"
-                                           Foreground="White"/>
-                                <ToggleSwitch x:Name="TglBtnRayTracing"/>
-                                <TextBlock Text="Global Illumination will cost about 5–10 FPS."
-                                           Foreground="#F28F1A"
-                                           TextWrapping="Wrap"/>
-                            </StackPanel>
-
-                            <!-- FPS Stabilizer -->
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="FPS Stabilizer"
-                                           Foreground="White"/>
-                                <ToggleSwitch x:Name="TglBtnFPSStabilizer"/>
-                                <TextBlock Text="Auto-reduces draw distance to maintain smooth FPS."
-                                           Foreground="#F28F1A"
-                                           TextWrapping="Wrap"/>
-                            </StackPanel>
-
-                            <!-- Screen Ratio -->
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Screen Ratio"
-                                           Foreground="White"/>
-                                <ComboBox x:Name="DrpDwnLstRatios"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
-                            </StackPanel>
-
-                            <!-- Resolution (v6: DrpDwnLstScreenRes = native) -->
-                            <StackPanel Spacing="4">
                                 <TextBlock Text="Resolution"
-                                           Foreground="White"/>
-                                <ComboBox x:Name="DrpDwnLstScreenRes"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
-                                <TextBlock Text="The resolution must match your screen resolution. If you want to play at lower resolution, use the downscaling feature below."
-                                           Foreground="#CCCCCC"
-                                           TextWrapping="Wrap"/>
-                            </StackPanel>
+                                           Foreground="#F28F1A"
+                                           FontWeight="SemiBold"
+                                           FontSize="16"/>
 
-                            <!-- Downscaling (v6: TglBtnDownScale + DrpDwnLstDownscalingScreenRes) -->
-                            <Border BorderBrush="#555"
-                                    BorderThickness="1"
-                                    CornerRadius="4"
-                                    Padding="12">
-                                <StackPanel Spacing="12">
 
-                                    <TextBlock Text="Resolution Downscaling (Not Compatible with DLAA/FSR)"
-                                               Foreground="White"/>
+                                <!-- Screen Ratio -->
+                                <Grid ColumnDefinitions="150,*" RowDefinitions="Auto">
+                                    <TextBlock Text="Screen Ratio"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1"
+                                              x:Name="DrpDwnLstRatios"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                </Grid>
 
-                                    <TextBlock Text="Resolution downscaling allows you to play at a lower resolution than your monitor to improve performance."
-                                               Foreground="#FFFFFF"
-                                               TextWrapping="Wrap"/>
 
-                                    <TextBlock Text="With this option enabled you can play at 1080p on a 1440p monitor."
-                                               Foreground="#FFFFFF"
-                                               TextWrapping="Wrap"/>
+                                <!-- Resolution -->
+                                <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto">
+                                    <TextBlock Text="Resolution"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1"
+                                              x:Name="DrpDwnLstScreenRes"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
 
-                                    <TextBlock Text="Recommended setup is 720p on 1080p, 1080p on 1440p."
+                                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                                               Text="The resolution must match your monitor. Use downscaling below if you want to play at a lower resolution."
+                                               Foreground="#CCCCCC"
+                                               TextWrapping="Wrap"
+                                               Margin="0,8,0,0"/>
+                                </Grid>
+
+
+                                <!-- Downscaling -->
+                                <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto">
+                                    <TextBlock Text="Downscaling"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ToggleSwitch Grid.Column="1"
+                                                  x:Name="TglBtnDownScale"/>
+
+                                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                                               Text="Not compatible with DLAA/FSR/Frame Generation"
                                                Foreground="#F28F1A"
-                                               TextWrapping="Wrap"/>
+                                               TextWrapping="Wrap"
+                                               Margin="0,8,0,0"/>
 
-                                    <ToggleSwitch x:Name="TglBtnDownScale"/>
-
-                                    <StackPanel Spacing="4">
+                                    <!-- Downscaled Res -->
+                                    <Grid Grid.Row="2"
+                                          ColumnDefinitions="150,*"
+                                          RowDefinitions="Auto"
+                                          IsEnabled="{Binding IsChecked, ElementName=TglBtnDownScale}">
                                         <TextBlock Text="Downscaled Resolution"
-                                                   Foreground="White"/>
-                                        <ComboBox x:Name="DrpDwnLstDownscalingScreenRes"
+                                                   Foreground="White"
+                                                   VerticalAlignment="Center"/>
+                                        <ComboBox Grid.Column="1"
+                                                  x:Name="DrpDwnLstDownscalingScreenRes"
+                                                  MinWidth="180"
                                                   Background="#2E2E2E"
                                                   Foreground="White"/>
-                                    </StackPanel>
+                                    </Grid>
+                                </Grid>
+
+                            </StackPanel>
+                        </Border>
+
+
+
+                        <!-- ==================================================== -->
+                        <!-- GRAPHICS GROUP (Row 1, Col 0)                        -->
+                        <!-- ==================================================== -->
+                        <Border Grid.Row="1" Grid.Column="0"
+                                Background="#363636"
+                                BorderBrush="#555"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="16">
+
+                            <StackPanel Spacing="16">
+
+                                <TextBlock Text="Graphics"
+                                           Foreground="#F28F1A"
+                                           FontWeight="SemiBold"
+                                           FontSize="16"/>
+
+
+                                <!-- Anti-Aliasing -->
+                                <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto">
+                                    <TextBlock Text="Anti-Aliasing"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+
+                                    <ComboBox Grid.Column="1"
+                                              x:Name="DrpDwnLstAntiAliasing"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+
+                                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                                               Text="DLAA only available on Nvidia RTX."
+                                               Foreground="#F28F1A"
+                                               TextWrapping="Wrap"
+                                               Margin="0,8,0,0"/>
+                                </Grid>
+
+
+                                <!-- INI Profile -->
+                                <Grid ColumnDefinitions="150,*">
+                                    <TextBlock Text="INI Profile"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1"
+                                              x:Name="DrpDwnLstIni"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                </Grid>
+
+
+                                <!-- LODs -->
+                                <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto">
+                                    <TextBlock Text="LODs"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1"
+                                              x:Name="DrpDwnLstLODs"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                </Grid>
+
+
+                                <!-- Frame Generation -->
+                                <Grid ColumnDefinitions="150,*">
+                                    <TextBlock Text="Frame Generation"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ToggleSwitch Grid.Column="1"/>
+                                </Grid>
+
+                            </StackPanel>
+                        </Border>
+
+
+
+                        <!-- ==================================================== -->
+                        <!-- VARIANT GROUP (Row 0–1, Col 1)                      -->
+                        <!-- ==================================================== -->
+                        <Border Grid.Row="0" Grid.Column="1"
+                                Grid.RowSpan="2"
+                                Background="#363636"
+                                BorderBrush="#555"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="16">
+
+                            <StackPanel Spacing="16">
+
+                                <TextBlock Text="Variant"
+                                           Foreground="#F28F1A"
+                                           FontWeight="SemiBold"
+                                           FontSize="16"/>
+
+
+                                <!-- Variant Selection -->
+                                <Grid ColumnDefinitions="150,*">
+                                    <TextBlock Text="Variant"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1"
+                                              x:Name="DrpDwnLstVariant"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                </Grid>
+
+
+                                <!-- Properties (Textures/Trees/Cities) -->
+                                <StackPanel Spacing="6">
+
+                                    <Grid ColumnDefinitions="150,*">
+                                        <TextBlock Text="Textures:"
+                                                   Foreground="White"/>
+                                        <TextBlock Grid.Column="1"
+                                                   x:Name="LblTextures"
+                                                   Foreground="#F28F1A"/>
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="150,*">
+                                        <TextBlock Text="Trees:"
+                                                   Foreground="White"/>
+                                        <TextBlock Grid.Column="1"
+                                                   x:Name="LblTrees"
+                                                   Foreground="#F28F1A"/>
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="150,*">
+                                        <TextBlock Text="Towns and Cities:"
+                                                   Foreground="White"/>
+                                        <TextBlock Grid.Column="1"
+                                                   x:Name="LblCities"
+                                                   Foreground="#F28F1A"/>
+                                    </Grid>
 
                                 </StackPanel>
-                            </Border>
 
-                        </StackPanel>
-                    </ScrollViewer>
 
-                </Border>
+                                <!-- SR Exterior Cities -->
+                                <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto">
+                                    <TextBlock Text="SR Exterior Cities"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ToggleSwitch Grid.Column="1"
+                                                  x:Name="TglBtnSREX"/>
 
-                <!-- RIGHT PANEL -->
+                                    <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                                               Text="Removes loading screens entering/exiting major cities. Very heavy on CPU/GPU."
+                                               Foreground="#F28F1A"
+                                               TextWrapping="Wrap"
+                                               Margin="0,8,0,0"/>
+                                </Grid>
+
+
+                                <!-- Preview -->
+                                <Grid ColumnDefinitions="150,*">
+                                    <TextBlock Text="Preview"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <Button Grid.Column="1"
+                                            x:Name="BtnVariantPreviex"
+                                            MinWidth="160"
+                                            Content="View variant differences"
+                                            Foreground="White"/>
+                                </Grid>
+
+
+                                <!-- Note -->
+                                <TextBlock Text="A dedicated Skyrim INI profile exists for SR Exterior Cities to maintain acceptable performance."
+                                           Foreground="#CCCCCC"
+                                           TextWrapping="Wrap"/>
+
+                            </StackPanel>
+                        </Border>
+
+
+
+                        <!-- ==================================================== -->
+                        <!-- HARDWARE GROUP (Row 2, Col 0–1)                    -->
+                        <!-- ==================================================== -->
+                        <Border Grid.Row="2" Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Background="#363636"
+                                BorderBrush="#555"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="16">
+
+                            <StackPanel Spacing="16">
+
+                                <TextBlock Text="Hardware Requirement"
+                                           Foreground="#F28F1A"
+                                           FontWeight="SemiBold"
+                                           FontSize="16"/>
+
+                                <TextBlock x:Name="LblSelRes"
+                                           Foreground="White"
+                                           FontWeight="Bold"/>
+
+
+                                <!-- CPU / GPU / RAM / VRAM grid -->
+                                <Grid ColumnDefinitions="150,*,*"
+                                      RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                                      ColumnSpacing="12"
+                                      RowSpacing="6">
+
+                                    <TextBlock Grid.Row="0" Grid.Column="1"
+                                               Text="Minimum"
+                                               Foreground="White"
+                                               FontWeight="Bold"/>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="2"
+                                               Text="Recommended"
+                                               Foreground="White"
+                                               FontWeight="Bold"/>
+
+
+                                    <TextBlock Grid.Row="1" Text="CPU" Foreground="White"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblMinCPU" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" x:Name="LblMaxCPU" Foreground="#F28F1A"/>
+
+                                    <TextBlock Grid.Row="2" Text="GPU" Foreground="White"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblMinGPU" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" x:Name="LblMaxGPU" Foreground="#F28F1A"/>
+
+                                    <TextBlock Grid.Row="3" Text="RAM" Foreground="White"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblMinRAM" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" x:Name="LblMaxRAM" Foreground="#F28F1A"/>
+
+                                    <TextBlock Grid.Row="4" Text="VRAM" Foreground="White"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblMinVRAM" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="2" x:Name="LblMaxVRAM" Foreground="#F28F1A"/>
+                                </Grid>
+
+
+                                <!-- Installation & Download Sizes -->
+                                <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto" RowSpacing="6">
+
+                                    <TextBlock Text="Installation Size:" Foreground="White"/>
+                                    <TextBlock Grid.Column="1" x:Name="LblMinInstallSize" Foreground="#F28F1A"/>
+
+                                    <TextBlock Grid.Row="1" Text="Download Size:" Foreground="White"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblMinDownloadSize" Foreground="#F28F1A"/>
+
+                                </Grid>
+
+                            </StackPanel>
+                        </Border>
+
+                    </Grid>
+                </ScrollViewer>
+
+
+
+                <!-- RIGHT PANEL (unchanged) -->
                 <Border Grid.Column="1"
                         Background="#363636"
                         BorderBrush="#444"
@@ -335,39 +376,22 @@
 
                     <Grid RowDefinitions="*,Auto">
 
-                        <!-- INFO TEXT + HARDWARE SUMMARY -->
                         <ScrollViewer Grid.Row="0">
                             <StackPanel Spacing="12">
 
-                                <TextBlock Text="This new Nolvus version has some performance options."
+                                <TextBlock Text="This new Nolvus version has several performance-oriented options to better match your hardware."
                                            Foreground="#CCCCCC"
                                            TextWrapping="Wrap"/>
 
-                                <TextBlock Text="The Ultra variant is the graphically maxed out version of the list, the Redux is the same version gameplay wise but less heavy on vegetation and cities overhaul."
+                                <TextBlock Text="DLAA anti-aliasing is only available for NVIDIA RTX cards; fallback is TAA."
                                            Foreground="#CCCCCC"
                                            TextWrapping="Wrap"/>
 
-                                <TextBlock Text="DLAA anti aliasing is only available for Nvidia RTX cards. The option will be greyed out and set to TAA if you don't have an Nvidia RTX card."
+                                <TextBlock Text="Adjust resolution, variants, LODs and INI profiles to fit your configuration."
                                            Foreground="#CCCCCC"
                                            TextWrapping="Wrap"/>
 
-                                <TextBlock Text="Advanced physics provides physics on hair and armors. This configuration is recommended for high end computers."
-                                           Foreground="#CCCCCC"
-                                           TextWrapping="Wrap"/>
-
-                                <TextBlock Text="Select your ini profile (based on Bethini recommended settings)."
-                                           Foreground="#CCCCCC"
-                                           TextWrapping="Wrap"/>
-
-                                <TextBlock Text="If you selected the Ultra variant and want to spare some fps and vram consumption, you can also choose the LODs (Terrain, objects and trees in the distance) quality option."
-                                           Foreground="#CCCCCC"
-                                           TextWrapping="Wrap"/>
-
-                                <TextBlock Text="FPS Stabilizer is used to reduce draw distance on the fly to keep most fps possible. WARNING using this feature, you may gain 5-10 fps but some actors could pop really close to you. You may also experience objects and trees popins. Use this feature wisely."
-                                           Foreground="#CCCCCC"
-                                           TextWrapping="Wrap"/>
-
-                                <TextBlock Text="The mentioned requirements are an estimation only; all computer configurations are different from one user to another."
+                                <TextBlock Text="Requirements here are estimations only. Real performance varies."
                                            Foreground="#F28F1A"
                                            TextWrapping="Wrap"/>
 
@@ -375,44 +399,32 @@
                                            Foreground="White"
                                            Margin="0,16,0,4"/>
 
-                                <!-- HARDWARE INFO (v6: LblGPUs, LblCPU, LblRAM) -->
-                                <StackPanel Spacing="4">
+                                <StackPanel Spacing="6">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <TextBlock Text="GPU:" Foreground="White"/>
-                                        <TextBlock x:Name="LblGPUs"
-                                                   Foreground="#F28F1A"
-                                                   Text="[GPU]"/>
+                                        <TextBlock x:Name="LblGPUs" Foreground="#F28F1A"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <TextBlock Text="CPU:" Foreground="White"/>
-                                        <TextBlock x:Name="LblCPU"
-                                                   Foreground="#F28F1A"
-                                                   Text="[CPU]"/>
+                                        <TextBlock x:Name="LblCPU" Foreground="#F28F1A"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <TextBlock Text="RAM:" Foreground="White"/>
-                                        <TextBlock x:Name="LblRAM"
-                                                   Foreground="#F28F1A"
-                                                   Text="[RAM]"/>
+                                        <TextBlock x:Name="LblRAM" Foreground="#F28F1A"/>
                                     </StackPanel>
                                 </StackPanel>
 
-                                <!-- Supported GPUs button -->
                                 <Button x:Name="BtnSupportedGPUs"
                                         Content="View supported GPUs"
-                                        Margin="0,12,0,0"
                                         MinWidth="160"
-                                        HorizontalAlignment="Left"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        Foreground="White"/>
+                                        Foreground="White"
+                                        Margin="0,12,0,0"/>
 
                             </StackPanel>
                         </ScrollViewer>
 
-                        <!-- NAVIGATION BUTTONS -->
                         <StackPanel Grid.Row="1"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
@@ -422,21 +434,16 @@
                             <Button x:Name="BtnPrevious"
                                     Content="Previous"
                                     MinWidth="120"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
                                     Content="Continue"
                                     MinWidth="120"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
                                     Foreground="White"/>
 
                         </StackPanel>
 
                     </Grid>
-
                 </Border>
 
             </Grid>

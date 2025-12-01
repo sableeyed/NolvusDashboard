@@ -5,6 +5,7 @@ using Vcc.Nolvus.Api.Installer.Services;
 using Vcc.Nolvus.Api.Installer.Library;
 using Nolvus.Core.Enums;
 using Nolvus.Dashboard.Frames.Installer;
+using Avalonia.Interactivity;
 
 namespace Nolvus.Dashboard.Frames.Instance
 {
@@ -13,6 +14,7 @@ namespace Nolvus.Dashboard.Frames.Instance
         public InstancesFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
+            BtnNewInstance.Click += BtnNewInstance_Click;
         }
 
         public void LockButtons()
@@ -40,7 +42,7 @@ namespace Nolvus.Dashboard.Frames.Instance
             InstancesPanel.LoadInstances(ServiceSingleton.Instances.InstanceList);
         }
 
-        private async void BtnNewInstance_Click(object sender, EventArgs e)
+        private async void BtnNewInstance_Click(object sender, RoutedEventArgs e)
         {
             await ServiceSingleton.Dashboard.LoadFrameAsync<SelectInstanceFrame>(new FrameParameters(new FrameParameter() { Key = "Cancel", Value = true }));
         }

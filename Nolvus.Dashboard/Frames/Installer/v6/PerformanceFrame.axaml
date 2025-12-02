@@ -274,7 +274,7 @@
                                                Foreground="White"
                                                VerticalAlignment="Center"/>
                                     <Button Grid.Column="1"
-                                            x:Name="BtnVariantPreviex"
+                                            x:Name="BtnVariantPreview"
                                             MinWidth="160"
                                             Content="View variant differences"
                                             Foreground="White"/>

@@ -340,8 +340,8 @@
                                     <TextBlock Grid.Row="2" Grid.Column="2" x:Name="LblMaxGPU" Foreground="#F28F1A"/>
 
                                     <TextBlock Grid.Row="3" Text="RAM" Foreground="White"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblMinRAM" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="2" x:Name="LblMaxRAM" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblMinRAM" Text="16 GB" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" x:Name="LblMaxRAM" Text="32 GB" Foreground="#F28F1A"/>
 
                                     <TextBlock Grid.Row="4" Text="VRAM" Foreground="White"/>
                                     <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblMinVRAM" Foreground="#F28F1A"/>

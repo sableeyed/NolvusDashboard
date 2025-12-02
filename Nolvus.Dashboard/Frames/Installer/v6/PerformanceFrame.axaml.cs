@@ -266,7 +266,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         private async void OnVariantChanged(object? sender, SelectionChangedEventArgs e)
         {
             var Variant = (INolvusVariantDTO)DrpDwnLstVariant.SelectedItem!;
-
             ServiceSingleton.Instances.WorkingInstance.Performance.Variant = Variant.Name;
 
             LblTextures.Text = Variant.Textures;
@@ -283,8 +282,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 DrpDwnLstLODs.IsEnabled = false;
             }
 
-            MinRequirements = await ApiManager.Service.Installer.GetNolvusVariantMinimumRequirements(DrpDwnLstVariant.SelectedValue.ToString());
-            RecRequirements = await ApiManager.Service.Installer.GetNolvusVariantRecommendedRequirements(DrpDwnLstVariant.SelectedValue.ToString());
+            MinRequirements = await ApiManager.Service.Installer.GetNolvusVariantMinimumRequirements(Variant.Id.ToString()!);
+            RecRequirements = await ApiManager.Service.Installer.GetNolvusVariantRecommendedRequirements(Variant.Id.ToString()!);
 
             UpdateHardwareConfiguration();
         }
@@ -307,7 +306,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 if (DrpDwnLstAntiAliasing.SelectedValue.ToString() == "DLAA")
                 {
-                    if (!IsNvidiaRTX() && ServiceSingleton.Settings.ForceAA)
+                    if (!IsNvidiaRTX() && !ServiceSingleton.Settings.ForceAA)
                     {
                         ForceTAA("DLAA is only compatible with NVIDIA graphics cards!");
                     }
@@ -380,10 +379,10 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             if (MinRequirements != null)
             {
-                INolvusVariantRequirementDTO MinRequirement = MinRequirements.Where(x => x.Height!.ToString() == WorkingInstance.GetSelectedHeight() &&
+                INolvusVariantRequirementDTO MinRequirement = MinRequirements.Where(x => x.Height.ToString() == WorkingInstance.GetSelectedHeight() &&
                                                                                          x.Width.ToString() == WorkingInstance.GetSelectedWidth() &&
                                                                                          x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX &&
-                                                                                         x.Lods == WorkingInstance.Performance.LODs).FirstOrDefault()!; 
+                                                                                         x.Lods == WorkingInstance.Performance.LODs).FirstOrDefault()!;                
 
                 if (MinRequirement != null)
                 {
@@ -395,6 +394,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 }
                 else
                 {
+
                     MinRequirement = MinRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX && x.Lods == WorkingInstance.Performance.LODs).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.GetSelectedWidth()) - x.Width)).FirstOrDefault()!;
 
                     if ( MinRequirement != null)
@@ -412,7 +412,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                         LblMinVRAM.Text = "NA";
                         LblMinInstallSize.Text = "NA";
                         LblMinDownloadSize.Text = "NA";
-                    } 
+                    }                    
                 }
             }
 

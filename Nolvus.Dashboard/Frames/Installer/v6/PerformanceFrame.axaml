@@ -178,7 +178,7 @@
 
                                 <!-- Frame Generation -->
                                 <Grid ColumnDefinitions="150,*">
-                                    <TextBlock Text="Frame Generation"
+                                    <TextBlock Text="Frame Generation (Unimpl 3.7.10)"
                                                Foreground="White"
                                                VerticalAlignment="Center"/>
                                     <ToggleSwitch Grid.Column="1"/>

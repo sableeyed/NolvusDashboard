@@ -204,9 +204,24 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
         }
 
-        private void BtnContinue_Click(object? sender, RoutedEventArgs e)
+        private async void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
-            
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            var Instance = ServiceSingleton.Instances.WorkingInstance;
+            var Performance = Instance.Performance;            
+
+            if (Performance.DownScaling == "TRUE" && (Performance.DownScaling == "TRUE" && (Instance.Settings.Height == Performance.DownHeight || System.Convert.ToInt32(Performance.DownHeight) > System.Convert.ToInt32(Instance.Settings.Height)) && (Instance.Settings.Width == Performance.DownWidth || System.Convert.ToInt32(Performance.DownWidth) > System.Convert.ToInt32(Instance.Settings.Width))))
+            {
+                NolvusMessageBox.Show(owner, "Invalid Downscaling setting", "If downscaling is enabled, the downscaled resolution must be less than the monitor resolution!", MessageBoxType.Error);
+            }
+            else
+            {
+                bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "Remember, running the list without the right hardware requirement for the variant you choose can make the game unstable. The variant can not be changed after installation. Are you sure you want to continue?");
+                if (result == true)
+                {                    
+                    //ServiceSingleton.Dashboard.LoadFrame<v6.OptionsFrame>();                    
+                }                
+            }
         }
 
         private void OnDownscaleChanged(object? sender, RoutedEventArgs e)
@@ -302,7 +317,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             if (DrpDwnLstAntiAliasing.SelectedValue != null)
             {
-                ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = DrpDwnLstAntiAliasing.SelectedValue.ToString();
+                ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = DrpDwnLstAntiAliasing.SelectedValue!.ToString()!;
 
                 if (DrpDwnLstAntiAliasing.SelectedValue.ToString() == "DLAA")
                 {
@@ -329,9 +344,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
 
-            string Resolution = DrpDwnLstScreenRes.SelectedValue.ToString();
+            string Resolution = DrpDwnLstScreenRes.SelectedValue!.ToString()!;
 
-            string[] Reso = Resolution.Split(new char[] { 'x' });
+            string[] Reso = Resolution.Split(['x']);
 
             WorkingInstance.Settings.Width = Reso[0];
             WorkingInstance.Settings.Height = Reso[1];
@@ -343,9 +358,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             if (DrpDwnLstDownscalingScreenRes.SelectedValue != null)
             {
-                string Resolution = DrpDwnLstDownscalingScreenRes.SelectedValue.ToString();
+                string Resolution = DrpDwnLstDownscalingScreenRes.SelectedValue!.ToString()!;
 
-                string[] Reso = Resolution.Split(new char[] {'x'});
+                string[] Reso = Resolution.Split(['x']);
 
                 ServiceSingleton.Instances.WorkingInstance.Performance.DownWidth = Reso[0];
                 ServiceSingleton.Instances.WorkingInstance.Performance.DownHeight = Reso[1];
@@ -457,17 +472,17 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private void VerifyGPU(object? sender, RoutedEventArgs e)
         {        
-            // INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
+            INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
 
-            // ServiceSingleton.Dashboard.LoadFrameAsync<v6.GPUFrame>(
-            //     new FrameParameters(new FrameParameter()
-            //     {
-            //         Key = "VariantRequirement",
-            //         Value = MinRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX &&
-            //                                       x.Lods == WorkingInstance.Performance.LODs
-            //                                      ).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.GetSelectedWidth()) - x.Width)).FirstOrDefault()
-            //     })
-            // );
+            ServiceSingleton.Dashboard.LoadFrameAsync<v6.GPUFrame>(
+                new FrameParameters(new FrameParameter()
+                {
+                    Key = "VariantRequirement",
+                    Value = MinRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX &&
+                                                  x.Lods == WorkingInstance.Performance.LODs
+                                                 ).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.GetSelectedWidth()) - x.Width)).FirstOrDefault()
+                })
+            );
         }
 
         private void VariantPreview(object? sender, RoutedEventArgs e)

@@ -318,7 +318,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             if (DrpDwnLstAntiAliasing.SelectedValue != null)
             {
-                ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = DrpDwnLstAntiAliasing.SelectedValue!.ToString()!;
+                if (DrpDwnLstAntiAliasing.SelectedItem is string value)
+                    ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = value;
 
                 if (DrpDwnLstAntiAliasing.SelectedValue.ToString() == "DLAA")
                 {

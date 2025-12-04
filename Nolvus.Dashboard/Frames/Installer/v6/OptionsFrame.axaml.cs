@@ -167,12 +167,14 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private void OnAnimationsChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Options.CombatAnimation = DrpCombat.SelectedValue!.ToString()!;
+            if (DrpCombat.SelectedItem is string value)
+                ServiceSingleton.Instances.WorkingInstance.Options.CombatAnimation = value;
         }
 
         private void OnUIChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Options.UI = DrpUI.SelectedValue!.ToString()!;
+            if (DrpUI.SelectedItem is string value)
+                ServiceSingleton.Instances.WorkingInstance.Options.UI = value;
         }
 
         private void OnControllerChanged(object? sender, RoutedEventArgs e)

@@ -199,7 +199,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "The options you selected can not be changed after installation. Are you sure you want to continue?");
             if(result == true)
             {
-                //ServiceSingleton.Dashboard.LoadFrame<v6.ENBFrame>();
+                ServiceSingleton.Dashboard.LoadFrame<v6.ENBFrame>();
             }
         }
 
@@ -279,12 +279,14 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private void OnScalingChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Options.CombatScaling = DrpDwnLstCombatScaling.SelectedValue!.ToString()!;
+            if (DrpDwnLstCombatScaling.SelectedItem is string value)
+                ServiceSingleton.Instances.WorkingInstance.Options.CombatScaling = value;
         }
 
         private void OnPAChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Options.NerfPA = DrpDwnLstNerfPA.SelectedValue!.ToString()!;
+            if (DrpDwnLstNerfPA.SelectedItem is string value)
+                ServiceSingleton.Instances.WorkingInstance.Options.NerfPA = value;
         }
     }
 }

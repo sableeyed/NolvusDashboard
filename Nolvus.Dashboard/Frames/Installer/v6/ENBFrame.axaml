@@ -1,0 +1,156 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.v6.ENBFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Background="#2E2E2E" Padding="8">
+
+        <Grid RowDefinitions="Auto,*" RowSpacing="8">
+
+            <TextBlock x:Name="LblStepText"
+                       Grid.Row="0"
+                       Text="Select your ENB"
+                       FontSize="20"
+                       Foreground="White"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,310"
+                  ColumnSpacing="8">
+
+                <!-- LEFT PANEL WRAPPED IN SCROLLVIEWER -->
+                <ScrollViewer Grid.Column="0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+
+                    <Border BorderBrush="#444"
+                            BorderThickness="1"
+                            Background="#363636"
+                            CornerRadius="4"
+                            Padding="12">
+
+                        <!-- Use natural layout; preview image at the bottom -->
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*"
+                              RowSpacing="12">
+
+                            <!-- ENB label + dropdown -->
+                            <StackPanel Grid.Row="0"
+                                        Orientation="Horizontal"
+                                        Spacing="8">
+                                <TextBlock x:Name="LblENB"
+                                           Text="ENB"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstENB"
+                                          SelectionChanged="OnENBChanged"
+                                          MinWidth="200"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- Warning -->
+                            <StackPanel Grid.Row="1"
+                                        Orientation="Horizontal"
+                                        Spacing="8">
+                                <Image x:Name="ImgWarning"
+                                       Width="32"
+                                       Height="32"/>
+                                <TextBlock x:Name="TxtWarning"
+                                           Text="This application will auto install ENB and Reshade. Don’t swap presets if you want to keep intended visuals."
+                                           TextWrapping="Wrap"
+                                           Foreground="#F28F1A"
+                                           FontSize="11"
+                                           Width="500"/>
+                            </StackPanel>
+
+                            <!-- Description -->
+                            <Border Grid.Row="2"
+                                    BorderBrush="#444"
+                                    BorderThickness="1"
+                                    Background="#2E2E2E"
+                                    CornerRadius="4"
+                                    Padding="8">
+                                <TextBlock x:Name="LblENBDesc"
+                                           Foreground="White"
+                                           TextWrapping="Wrap"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Preview label -->
+                            <TextBlock Grid.Row="3"
+                                       x:Name="LblPreview"
+                                       Text="Preview"
+                                       Foreground="White"
+                                       Margin="0,8,0,4"/>
+
+                            <!-- Preview Image (fills remaining space, scrolls with rest) -->
+                            <Border Grid.Row="4"
+                                    BorderBrush="#444"
+                                    BorderThickness="1"
+                                    Background="#2E2E2E"
+                                    CornerRadius="4"
+                                    Padding="4">
+                                <Image x:Name="PicBoxENB"
+                                       Stretch="Uniform"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                            </Border>
+
+                        </Grid>
+                    </Border>
+                </ScrollViewer>
+
+                <!-- RIGHT PANEL -->
+                <Border Grid.Column="1"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        Background="#363636"
+                        CornerRadius="4"
+                        Padding="12">
+
+                    <Grid RowDefinitions="Auto,* ,Auto" RowSpacing="12">
+
+                        <TextBlock x:Name="TxtInfoENB"
+                                   Grid.Row="0"
+                                   Text="Select the ENB you want to install."
+                                   Foreground="White"
+                                   TextWrapping="Wrap"/>
+
+                        <StackPanel Grid.Row="1"/>
+
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="12">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    MinWidth="90"
+                                    Padding="10,6"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#2E2E2E"
+                                    Foreground="White"
+                                    BorderBrush="White"
+                                    BorderThickness="1"/>
+
+                            <Button x:Name="BtnContinue"
+                                    Content="Continue"
+                                    MinWidth="90"
+                                    Padding="10,6"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#2E2E2E"
+                                    Foreground="White"
+                                    BorderBrush="#F28F1A"
+                                    BorderThickness="1"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

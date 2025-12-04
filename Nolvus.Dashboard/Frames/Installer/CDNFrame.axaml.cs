@@ -56,7 +56,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                     ServiceSingleton.Dashboard.LoadFrame<v5.SummaryFrame>();
                     break;
                 case Strings.NolvusAwakening:
-                    //TODO v6 summary frame
+                    ServiceSingleton.Dashboard.LoadFrame<v6.SummaryFrame>();
                     break;
             }
         }

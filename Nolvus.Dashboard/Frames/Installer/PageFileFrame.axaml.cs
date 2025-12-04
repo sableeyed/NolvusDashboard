@@ -33,7 +33,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                     ServiceSingleton.Dashboard.LoadFrame<v5.ENBFrame>();
                     break;
                 case Strings.NolvusAwakening:
-                    Console.WriteLine("v6 not implemented");
+                    ServiceSingleton.Dashboard.LoadFrame<v6.ENBFrame>();
                     break;
             }
         }
@@ -56,7 +56,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                             ServiceSingleton.Dashboard.LoadFrame<v5.SummaryFrame>();
                             break;
                         case Strings.NolvusAwakening:
-                            //ServiceSingleton.Dashboard.LoadFrame<v6.SummaryFrame<>();
+                            ServiceSingleton.Dashboard.LoadFrame<v6.SummaryFrame>();
                             break;
                     }
                 }

@@ -9,5 +9,10 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             InitializeComponent();
         }
+
+        protected override async Task OnLoadedAsync()
+        {
+            
+        }
     }
 }

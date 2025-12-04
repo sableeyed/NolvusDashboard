@@ -70,6 +70,7 @@
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Combat Animations" Foreground="White"/>
                                 <ComboBox x:Name="DrpCombat"
+                                          SelectionChanged="OnAnimationsChanged"
                                           MinWidth="180"
                                           Background="#2E2E2E"
                                           Foreground="White"/>
@@ -115,6 +116,7 @@
                             <StackPanel Spacing="4">
                                 <TextBlock Text="User Interface" Foreground="White"/>
                                 <ComboBox x:Name="DrpUI"
+                                          SelectionChanged="OnUIChanged"
                                           MinWidth="180"
                                           Background="#2E2E2E"
                                           Foreground="White"/>

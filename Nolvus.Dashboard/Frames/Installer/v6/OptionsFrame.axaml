@@ -1,0 +1,184 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.v6.OptionsFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Outer background -->
+    <Border Background="#2E2E2E" Padding="12">
+
+        <Grid RowDefinitions="Auto,*" RowSpacing="12">
+
+            <!-- Title -->
+            <TextBlock x:Name="LblStepText"
+                       Grid.Row="0"
+                       Text="Additional Options"
+                       FontSize="20"
+                       Foreground="White"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+
+            <!-- Split Grid -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,320"
+                  ColumnSpacing="12">
+
+                <!-- LEFT PANEL with scroll -->
+                <Border Grid.Column="0"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12">
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="18">
+
+                            <!-- Nudity -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Enable nudity" Foreground="White"/>
+                                <ToggleSwitch x:Name="TglNudity"/>
+                                <TextBlock Text="When nudity is enabled all NPCs will be nude when undressed."
+                                           Foreground="#F28F1A"
+                                           FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Alternate Leveling -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Alternate Leveling" Foreground="White"/>
+                                <ToggleSwitch x:Name="TglLeveling"/>
+                                <TextBlock Text="When alternate leveling is disabled, the game uses vanilla skills based leveling. When this option is enabled the player gains xp when killing enemies, exploring the world and completing quests. Skill points are distributed manually by the player in every perk tree when leveling."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="None"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           MaxWidth="320"
+                                           FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Alternate Start -->
+                            <StackPanel Spacing="4" IsVisible="False">
+                                <TextBlock Text="Alternate Start" Foreground="White" IsVisible="False"/>
+                                <ToggleSwitch x:Name="TglAltStart" IsVisible="False"/>
+                                <TextBlock Text="Start the game in different scenarios rather than Helgen."
+                                           Foreground="#F28F1A"
+                                           IsVisible="False"
+                                           FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Combat Animations -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Combat Animations" Foreground="White"/>
+                                <ComboBox x:Name="DrpCombat"
+                                          MinWidth="180"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                                <TextBlock Text="Select between more flashy movesets or more conventional movesets for combat"
+                                           Foreground="#F28F1A"
+                                           FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Stances Perks Tree -->
+                            <StackPanel Spacing="4" IsVisible="False">
+                                <TextBlock Text="Stances Perks Tree" Foreground="White" IsVisible="False"/>
+                                <ToggleSwitch x:Name="TglStances" IsEnabled="False" IsVisible="False"/>
+                                <TextBlock Text="Perk system overhaul tied to stance-based combat."
+                                           Foreground="#F28F1A"
+                                           IsVisible="False"
+                                           FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Gore -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Gore" Foreground="White"/>
+                                <ToggleSwitch x:Name="TglGore"/>
+                                <TextBlock Text="Dismember your enemies."
+                                           Foreground="#F28F1A"
+                                           FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Controller Support -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Controller Support" Foreground="White"/>
+                                <ToggleSwitch x:Name="TglController"/>
+                                <TextBlock Text="Enable controller support. You can view the controller layout in the MCM menu when the list is installed. It is not recommended to play with mouse and keyboard when the controller mods are installed."
+                                           Foreground="#F28F1A"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="None"
+                                           HorizontalAlignment="Left"
+                                           TextAlignment="Left"
+                                           MaxWidth="320"
+                                           FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- UI Selector -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="User Interface" Foreground="White"/>
+                                <ComboBox x:Name="DrpUI"
+                                          MinWidth="180"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                                <TextBlock Text="Select between Untarnished UI or Edge UI."
+                                           Foreground="#F28F1A"
+                                           FontSize="12"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <!-- RIGHT PANEL -->
+                <Border Grid.Column="1"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12">
+
+                    <Grid RowDefinitions="Auto,*,Auto"
+                          RowSpacing="18">
+
+                        <TextBlock Grid.Row="0"
+                                   Text="Setup additional game and visual options."
+                                   Foreground="White"
+                                   FontSize="14"/>
+
+                        <TextBlock Grid.Row="1"
+                                   Text="⚠ These options cannot be changed after installation!"
+                                   Foreground="#F28F1A"
+                                   TextWrapping="Wrap"/>
+
+                        <!-- BUTTONS moved to bottom-right -->
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="10">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    MinWidth="90"
+                                    Padding="10,6"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#2E2E2E"
+                                    BorderBrush="White"
+                                    Foreground="White"/>
+
+                            <Button x:Name="BtnContinue"
+                                    Content="Continue"
+                                    MinWidth="90"
+                                    Padding="10,6"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#2E2E2E"
+                                    BorderBrush="#F28F1A"
+                                    Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

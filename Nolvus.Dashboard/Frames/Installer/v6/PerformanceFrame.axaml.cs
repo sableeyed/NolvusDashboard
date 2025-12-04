@@ -28,6 +28,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             InitializeComponent();
             BtnPrevious.Click += BtnPrevious_Click;
+            BtnContinue.Click += BtnContinue_Click;
             TglBtnDownScale.IsCheckedChanged += OnDownscaleChanged;
             TglBtnSREX.IsCheckedChanged += OnSREXChanged;
             DrpDwnLstVariant.SelectionChanged += OnVariantChanged;
@@ -219,7 +220,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "Remember, running the list without the right hardware requirement for the variant you choose can make the game unstable. The variant can not be changed after installation. Are you sure you want to continue?");
                 if (result == true)
                 {                    
-                    //ServiceSingleton.Dashboard.LoadFrame<v6.OptionsFrame>();                    
+                    ServiceSingleton.Dashboard.LoadFrame<v6.OptionsFrame>();                    
                 }                
             }
         }

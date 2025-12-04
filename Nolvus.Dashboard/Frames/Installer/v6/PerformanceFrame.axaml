@@ -276,6 +276,8 @@
                                     <Button Grid.Column="1"
                                             x:Name="BtnVariantPreview"
                                             MinWidth="160"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
                                             Content="View variant differences"
                                             Foreground="White"/>
                                 </Grid>
@@ -421,6 +423,8 @@
                                         Content="View supported GPUs"
                                         MinWidth="160"
                                         Foreground="White"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
                                         Margin="0,12,0,0"/>
 
                             </StackPanel>
@@ -435,11 +439,15 @@
                             <Button x:Name="BtnPrevious"
                                     Content="Previous"
                                     MinWidth="120"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
                                     Content="Continue"
                                     MinWidth="120"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
                                     Foreground="White"/>
 
                         </StackPanel>

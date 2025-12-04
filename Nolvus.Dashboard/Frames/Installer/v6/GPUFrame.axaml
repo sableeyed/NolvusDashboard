@@ -3,12 +3,10 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Root background to match dashboard -->
     <Border Background="#2E2E2E" Padding="16">
         <Grid RowDefinitions="Auto,*"
               RowSpacing="16">
 
-            <!-- TOP TITLE -->
             <TextBlock x:Name="LblStepText"
                        Grid.Row="0"
                        Text="Supported GPUs"
@@ -18,12 +16,10 @@
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"/>
 
-            <!-- MAIN CONTENT -->
             <Grid Grid.Row="1"
                   ColumnDefinitions="*,320"
                   ColumnSpacing="16">
 
-                <!-- LEFT PANEL: GPUs GRID -->
                 <Border Grid.Column="0"
                         Background="#363636"
                         BorderBrush="#444"
@@ -43,35 +39,27 @@
                               Foreground="White">
 
                         <DataGrid.Columns>
-                            <!-- GPU name -->
+
                             <DataGridTextColumn
                                 Header="GPU"
                                 Binding="{Binding GPU}"
                                 Width="2*"/>
 
-                            <!-- VRAM -->
                             <DataGridTextColumn
                                 Header="VRAM"
                                 Binding="{Binding VRAM}"
                                 Width="*"/>
 
-                            <!-- Supported: image / icon -->
-                            <DataGridTemplateColumn Header="Supported" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Image Source="{Binding Image}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               MaxHeight="16"
-                                               MaxWidth="16"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
+                            <!-- No icons. Yes/No only -->
+                            <DataGridTextColumn
+                                Header="Supported"
+                                Binding="{Binding Supported}"
+                                Width="*"/>
+
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
 
-                <!-- RIGHT PANEL: DETAILS + WARNING + BACK -->
                 <Border Grid.Column="1"
                         Background="#363636"
                         BorderBrush="#444"
@@ -82,97 +70,50 @@
                     <Grid RowDefinitions="Auto,Auto,*,Auto"
                           RowSpacing="12">
 
-                        <!-- Right-panel header -->
                         <TextBlock x:Name="label4"
                                    Grid.Row="0"
                                    Text="List of supported GPUs"
                                    FontSize="14"
                                    Foreground="White"/>
 
-                        <!-- Variant / Resolution / SREX -->
-                        <StackPanel Grid.Row="1"
-                                    Spacing="6">
-
-                            <!-- Variant -->
+                        <StackPanel Grid.Row="1" Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock x:Name="label3"
-                                           Text="Variant"
-                                           Foreground="White"
-                                           VerticalAlignment="Center"/>
-                                <TextBlock x:Name="LblVariant"
-                                           Text="[Variant]"
-                                           Foreground="#F28F1A"
-                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="Variant" Foreground="White"/>
+                                <TextBlock x:Name="LblVariant" Foreground="#F28F1A"/>
                             </StackPanel>
 
-                            <!-- Resolution -->
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock x:Name="label1"
-                                           Text="Resolution"
-                                           Foreground="White"
-                                           VerticalAlignment="Center"/>
-                                <TextBlock x:Name="LblResolution"
-                                           Text="[Resolution]"
-                                           Foreground="#F28F1A"
-                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="Resolution" Foreground="White"/>
+                                <TextBlock x:Name="LblResolution" Foreground="#F28F1A"/>
                             </StackPanel>
 
-                            <!-- SR Exterior Cities -->
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock x:Name="label2"
-                                           Text="SR Exterior Cities"
-                                           Foreground="White"
-                                           VerticalAlignment="Center"/>
-                                <TextBlock x:Name="LblSREX"
-                                           Text="[SREX]"
-                                           Foreground="#F28F1A"
-                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="SR Exterior Cities" Foreground="White"/>
+                                <TextBlock x:Name="LblSREX" Foreground="#F28F1A"/>
                             </StackPanel>
-
                         </StackPanel>
 
-                        <!-- Warning block -->
-                        <StackPanel Grid.Row="2"
-                                    Spacing="8">
-
-                            <!-- Icon + "Warning" title -->
-                            <StackPanel Orientation="Horizontal" Spacing="8"
-                                        VerticalAlignment="Center">
-
-                                <!-- Placeholder warning icon; set Source in code or XAML later -->
-                                <Image x:Name="ImgWarning"
-                                       Width="32"
-                                       Height="32"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Center"/>
-
-                                <TextBlock x:Name="label6"
-                                           Text="Warning"
+                        <StackPanel Grid.Row="2" Spacing="8">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Image x:Name="ImgWarning" Width="32" Height="32"/>
+                                <TextBlock Text="Warning"
                                            FontSize="16"
-                                           Foreground="#F28F1A"
-                                           VerticalAlignment="Center"/>
+                                           Foreground="#F28F1A"/>
                             </StackPanel>
 
-                            <!-- Long warning text -->
                             <TextBlock x:Name="label5"
                                        TextWrapping="Wrap"
-                                       Foreground="White"
-                                       Margin="0,4,0,0">
+                                       Foreground="White">
                                 The requirements listed in the table on the left are for a smooth and stable
                                 experience with the selected variant, resolution and SR Exterior Cities setting.
-                                If your GPU is below the recommended specifications, you may experience stuttering,
-                                low framerate, or instability. For 4K gaming, it is strongly advised to use frame
-                                generation or upscaling technologies and to ensure your GPU has enough VRAM.
+                                If your GPU is below the recommended specifications, you may experience stuttering
+                                or instability.
                             </TextBlock>
-
                         </StackPanel>
 
-                        <!-- Back button -->
                         <StackPanel Grid.Row="3"
                                     Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    Margin="0,8,0,0">
-
+                                    HorizontalAlignment="Right">
                             <Button x:Name="BtnBack"
                                     Content="Back"
                                     MinWidth="88"
@@ -180,9 +121,7 @@
                                     Background="#363636"
                                     Foreground="White"
                                     BorderBrush="White"
-                                    BorderThickness="1"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"/>
+                                    BorderThickness="1"/>
                         </StackPanel>
 
                     </Grid>

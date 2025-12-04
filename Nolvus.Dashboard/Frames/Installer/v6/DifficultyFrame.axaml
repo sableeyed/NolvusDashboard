@@ -1,0 +1,216 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.v6.DifficultyFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Background="#2E2E2E" Padding="12">
+        <Grid RowDefinitions="Auto,*" RowSpacing="12">
+
+            <!-- Top Title bar replacement -->
+            <TextBlock x:Name="LblStepText"
+                       Grid.Row="0"
+                       Text="Difficulty Options"
+                       FontSize="20"
+                       Foreground="White"
+                       FontWeight="SemiBold"/>
+
+            <!-- Split -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,320"
+                  ColumnSpacing="12">
+
+                <!-- LEFT (Preset + Options) -->
+                <Border Grid.Column="0"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="10">
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                        <StackPanel Spacing="18">
+
+                            <!-- Preset -->
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="Preset"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstPreset"
+                                          SelectionChanged="OnPresetChanged"
+                                          MinWidth="200"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
+                            </StackPanel>
+
+                            <!-- OPTIONS GROUP -->
+                            <StackPanel Spacing="18">
+
+                                <!-- Combat Scaling -->
+                                <StackPanel Spacing="4">
+                                    <TextBlock x:Name="LblScaling"
+                                               Text="Combat Scaling"
+                                               Foreground="White"/>
+                                    <ComboBox x:Name="DrpDwnLstCombatScaling"
+                                              MinWidth="200"
+                                              SelectionChanged="OnScalingChanged"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                    <TextBlock x:Name="ScalingDesc"
+                                               TextWrapping="Wrap"
+                                               TextTrimming="None"
+                                               HorizontalAlignment="Left"
+                                               TextAlignment="Left"
+                                               MaxWidth="400"
+                                               Foreground="#F28F1A"
+                                               FontSize="12"
+                                               Text="Combat scaling dictates how enemy levels will be scaled in relation to the player level. The easiest difficulty will allow the player to out level enemy factions earlier on, while the hardest will require substantially more time. Moderate is in between these two."/>
+                                </StackPanel>
+
+                                <!-- Exhaustion System -->
+                                <StackPanel Spacing="4">
+                                    <TextBlock x:Name="LblExhaustion"
+                                               Text="Exhaustion System"
+                                               Foreground="White"/>
+                                    <ToggleSwitch x:Name="TglBtnExhaustion"/>
+                                    <TextBlock x:Name="ExhaustionDesc"
+                                               TextWrapping="Wrap"
+                                               TextTrimming="None"
+                                               HorizontalAlignment="Left"
+                                               TextAlignment="Left"
+                                               MaxWidth="400"
+                                               Foreground="#F28F1A"
+                                               FontSize="12"
+                                               Text="When you reach 30% of your remaining stamina, your character will start to be out of breath. When you are exhausted (stamina reaches 0), you will do 25% less damage (you can still do normal attacks), your character will be slowed down by 20% and you lose 10% on damage resistance. Your stamina regeneration rate will be slower until you reach 30% of your stamina again."/>
+                                </StackPanel>
+
+                                <!-- Nerf Power Attacks -->
+                                <StackPanel Spacing="4">
+                                    <TextBlock x:Name="LblPA"
+                                               Text="Nerf Power Attacks"
+                                               Foreground="White"/>
+                                    <ComboBox x:Name="DrpDwnLstNerfPA"
+                                              MinWidth="200"
+                                              SelectionChanged="OnPAChanged"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                    <TextBlock x:Name="PADesc"
+                                               TextWrapping="Wrap"
+                                               TextTrimming="None"
+                                               HorizontalAlignment="Left"
+                                               TextAlignment="Left"
+                                               MaxWidth="400"
+                                               Foreground="#F28F1A"
+                                               FontSize="12"
+                                               Text="Power attack, dual wield attacks and dual wield power attacks damages are reduced by 30%"/>
+                                </StackPanel>
+
+                                <!-- Resistance System -->
+                                <StackPanel Spacing="4" IsVisible="False">
+                                    <TextBlock x:Name="LblResistance"
+                                               Text="Enemies resistance"
+                                               IsVisible="False"
+                                               Foreground="White"/>
+                                    <ToggleSwitch x:Name="TglBtnResistance" IsVisible="False"/>
+                                    <TextBlock x:Name="ResistanceDesc"
+                                               TextWrapping="Wrap"
+                                               IsVisible="False"
+                                               Foreground="#F28F1A"
+                                               FontSize="12"
+                                               Text="Creatures and enemies have specific armor resistances depending on weapon used."/>
+                                </StackPanel>
+
+                                <!-- Boss Encounter -->
+                                <StackPanel Spacing="4">
+                                    <TextBlock x:Name="LblBoss"
+                                               Text="Boss encounter"
+                                               Foreground="White"/>
+                                    <ToggleSwitch x:Name="TglBtnBoss"/>
+                                    <TextBlock x:Name="BossDesc"
+                                               TextWrapping="Wrap"
+                                               TextTrimming="None"
+                                               HorizontalAlignment="Left"
+                                               TextAlignment="Left"
+                                               MaxWidth="400"
+                                               Foreground="#F28F1A"
+                                               FontSize="12"
+                                               Text="Face new boss encounters. These bosses can be very hard to beat and don't scale with your level whether you selected the Deleveled Enemies options or not. You can even encounter some of them early game, be warned!!!"/>
+                                </StackPanel>
+
+                                <!-- Poise System -->
+                                <StackPanel Spacing="4" IsVisible="False">
+                                    <TextBlock x:Name="LblPoise"
+                                               Text="Poise system"
+                                               IsVisible="False"
+                                               Foreground="White"/>
+                                    <ToggleSwitch x:Name="TglBtnPoise" IsVisible="False"/>
+                                    <TextBlock x:Name="PoiseDesc"
+                                               IsVisible="False"
+                                               TextWrapping="Wrap"
+                                               Foreground="#F28F1A"
+                                               FontSize="12"
+                                               Text="Poise affects stagger thresholds and enemy resistances to stagger mechanics."/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+
+                <!-- RIGHT PANEL -->
+                <Border Grid.Column="1"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12">
+
+                    <Grid RowDefinitions="Auto,*,Auto"
+                          RowSpacing="16">
+
+                        <TextBlock x:Name="TxtWarningIntro"
+                                   Grid.Row="0"
+                                   Text="Select a difficulty preset. You can then enable/disable modifiers."
+                                   TextWrapping="Wrap"
+                                   Foreground="White"/>
+
+                        <TextBlock x:Name="TxtWarning"
+                                   Grid.Row="1"
+                                   Text="⚠ These difficulty options cannot be changed after installation!"
+                                   TextWrapping="Wrap"
+                                   Foreground="#F28F1A"/>
+
+                        <!-- Bottom Buttons -->
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="16">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    MinWidth="100"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#363636"
+                                    Foreground="White"
+                                    BorderBrush="White"
+                                    BorderThickness="1"/>
+
+                            <Button x:Name="BtnContinue"
+                                    Content="Continue"
+                                    MinWidth="100"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#363636"
+                                    Foreground="#F28F1A"
+                                    BorderBrush="#F28F1A"
+                                    BorderThickness="1"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

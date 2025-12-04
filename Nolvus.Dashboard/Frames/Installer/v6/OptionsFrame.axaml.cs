@@ -4,8 +4,10 @@ using Nolvus.Core.Enums;
 using Nolvus.Core.Services;
 using Nolvus.Instance.Core;
 using Nolvus.Dashboard.Core;
+using Nolvus.Dashboard.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Controls;
+using System.Threading.Tasks;
 
 namespace Nolvus.Dashboard.Frames.Installer.v6
 {
@@ -104,22 +106,41 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private async void BtnPrevious_Click(object? sender, RoutedEventArgs e)
         {
-            
+            await ServiceSingleton.Dashboard.LoadFrameAsync<v6.PerformanceFrame>();
         }
 
-        private void BtnContinue_Click(object? sender, RoutedEventArgs e)
+        private async void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
-            
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            bool? result = await NolvusMessageBox.ShowConfirmation(owner!, "Confirmation", "The options you selected can not be changed after installation. Are you sure you want to continue?");
+            if (result == true)
+            {
+                ServiceSingleton.Dashboard.LoadFrame<v6.DifficultyFrame>();
+            }
         }
 
         private void OnNudityChanged(object? sender, RoutedEventArgs e)
         {
-            
+            if (TglNudity.IsChecked == true)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.Nudity = "TRUE";
+            }
+            else
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.Nudity = "FALSE";
+            }
         }
 
         private void OnLevelingChanged(object? sender, RoutedEventArgs e)
         {
-            
+            if (TglLeveling.IsChecked == true)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.AlternateLeveling = "TRUE";
+            }
+            else
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.AlternateLeveling = "FALSE";
+            }
         }
 
         private void OnAlternateStartChanged(object? sender, RoutedEventArgs e)
@@ -134,22 +155,36 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private void OnGoreChanged(object? sender, RoutedEventArgs e)
         {
-
+            if (TglGore.IsChecked == true)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.Gore = "TRUE";
+            }
+            else
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.Gore = "FALSE";
+            }
         }
 
         private void OnAnimationsChanged(object? sender, SelectionChangedEventArgs e)
         {
-            
+            ServiceSingleton.Instances.WorkingInstance.Options.CombatAnimation = DrpCombat.SelectedValue!.ToString()!;
         }
 
         private void OnUIChanged(object? sender, SelectionChangedEventArgs e)
         {
-            
+            ServiceSingleton.Instances.WorkingInstance.Options.UI = DrpUI.SelectedValue!.ToString()!;
         }
 
         private void OnControllerChanged(object? sender, RoutedEventArgs e)
         {
-            
+            if (TglController.IsChecked == true)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.Controller = "TRUE";
+            }
+            else
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.Controller = "FALSE";
+            }
         }
 
     }

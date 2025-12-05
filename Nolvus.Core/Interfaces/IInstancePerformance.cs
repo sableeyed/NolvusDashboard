@@ -20,5 +20,6 @@ namespace Nolvus.Core.Interfaces
         string DownScaledResolution { get; }
         string FPSStabilizer { get; set; }
         string SREX { get; set; }
+        string FrameGeneration { get; set; }
     }
 }

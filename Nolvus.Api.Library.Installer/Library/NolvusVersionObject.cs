@@ -37,6 +37,8 @@ namespace Vcc.Nolvus.Api.Installer.Library
         Bitmap AvaloniaImage { get; set; }
 
         bool Maintenance { get; set; }
+        string MaintenanceReason { get; set; }
+        
     }
 
     public class NolvusVersionObject : InstallerApiObject
@@ -62,8 +64,8 @@ namespace Vcc.Nolvus.Api.Installer.Library
         public string Version { get; set; }
         public bool IsBeta { get; set; }
         public string Image { get; set; }
-
         public bool Maintenance { get; set; }
+        public string MaintenanceReason { get; set; }
     }
 
     public class NolvusVersionDTO : NolvusVersionObject, INolvusVersionDTO

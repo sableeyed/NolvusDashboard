@@ -72,22 +72,20 @@
                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="4">
                                     <TextBlock Text="Nudity" Foreground="White"/>
                                     <TextBlock Grid.Column="1" x:Name="LblNudity" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="1" Text="Stances perks tree" Foreground="White"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblStancesPerksTree" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="2" Text="Alternate Leveling" Foreground="White"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblLeveling" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="3" Text="Combat animations" Foreground="White"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblCombatAnims" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="4" Text="Alternate Start" Foreground="White"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblAltStart" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="5" Text="Gore" Foreground="White"/>
-                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblGore" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="6" Text="Controller" Foreground="White"/>
-                                    <TextBlock Grid.Row="6" Grid.Column="1" x:Name="LblController" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="7" Text="User Interface" Foreground="White"/>
-                                    <TextBlock Grid.Row="7" Grid.Column="1" x:Name="LblUI" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="8" Text="ENB" Foreground="White"/>
-                                    <TextBlock Grid.Row="8" Grid.Column="1" x:Name="LblENB" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="1" Text="Alternate Leveling" Foreground="White"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblLeveling" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="2" Text="Combat animations" Foreground="White"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblCombatAnims" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="3" Text="Gore" Foreground="White"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblGore" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="4" Text="Controller" Foreground="White"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblController" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="5" Text="User Interface" Foreground="White"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblUI" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="6" Text="ENB" Foreground="White"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1" x:Name="LblENB" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="6" Text="Frame Gen" Foreground="White"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1" x:Name="LblFrameGen" Foreground="#F28F1A"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -103,12 +101,8 @@
                                     <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblExhaustion" Foreground="#F28F1A"/>
                                     <TextBlock Grid.Row="2" Text="Nerf Power Attacks" Foreground="White"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblNerfPA" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="3" Text="Enemies Resistance" Foreground="White"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblEnemiesResistance" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="4" Text="Boss Encounter" Foreground="White"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblBoss" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="5" Text="Poise System" Foreground="White"/>
-                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblPoise" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="3" Text="Boss Encounter" Foreground="White"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblBoss" Foreground="#F28F1A"/>
                                 </Grid>
                             </StackPanel>
                         </Border>

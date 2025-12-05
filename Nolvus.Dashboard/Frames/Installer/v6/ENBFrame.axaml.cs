@@ -70,6 +70,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 case "PICHO":
                     PicBoxENB.Source = LoadImage("avares://NolvusDashboard/Assets/PiCho-ENB.jpg");
                     break;
+                case "AMON":
+                    PicBoxENB.Source = LoadImage("avares://NolvusDashboard/Assets/Amon-ENB.jpg");
+                    break;
             } 
         }
 

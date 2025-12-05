@@ -178,10 +178,11 @@
 
                                 <!-- Frame Generation -->
                                 <Grid ColumnDefinitions="150,*">
-                                    <TextBlock Text="Frame Generation (Unimpl 3.7.10)"
+                                    <TextBlock Text="Frame Generation"
                                                Foreground="White"
                                                VerticalAlignment="Center"/>
-                                    <ToggleSwitch Grid.Column="1"/>
+                                    <ToggleSwitch Grid.Column="1"
+                                                  x:Name="TglBtnFrameGen"/>
                                 </Grid>
 
                             </StackPanel>

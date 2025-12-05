@@ -116,6 +116,8 @@ namespace Nolvus.Core.Services
 
                     sb.AppendLine($"SR Exterior Cities : {(Instance.Performance.SREX == "TRUE" ? "Yes" : "No")}");
 
+                    sb.AppendLine($"Frame Generation : {(Instance.Performance.FrameGeneration == "TRUE" ? "Yes" : "No")}");
+
                     if (Instance.Performance.DownScaling == "TRUE")
                     {
                         sb.AppendLine("Downscaling : Yes");
@@ -152,16 +154,16 @@ namespace Nolvus.Core.Services
                 {
                     sb.AppendLine($"Combat Animations : {Instance.Options.CombatAnimation}");
                     sb.AppendLine($"Alternate leveling : {(Instance.Options.AlternateLeveling == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Alternate start : {(Instance.Options.AlternateStart == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Stances Perks Tree : {(Instance.Options.StancesPerksTree == "TRUE" ? "Yes" : "No")}");
+                    //sb.AppendLine($"Alternate start : {(Instance.Options.AlternateStart == "TRUE" ? "Yes" : "No")}");
+                    //sb.AppendLine($"Stances Perks Tree : {(Instance.Options.StancesPerksTree == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Nudity : {(Instance.Options.Nudity == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Gore : {(Instance.Options.Gore == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Combat Scaling : {Instance.Options.CombatScaling}");
                     sb.AppendLine($"Exhaustion : {(Instance.Options.Exhaustion == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Nerf Power Attacks : {Instance.Options.NerfPA}");
-                    sb.AppendLine($"Enemies Resistance : {(Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No")}");
+                    //sb.AppendLine($"Enemies Resistance : {(Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Boss : {(Instance.Options.Boss == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Poise : {(Instance.Options.Poise == "TRUE" ? "Yes" : "No")}");
+                    //sb.AppendLine($"Poise : {(Instance.Options.Poise == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Controller : {(Instance.Options.Controller == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"User Interface : {Instance.Options.UI}");
                 }
@@ -310,6 +312,8 @@ namespace Nolvus.Core.Services
                                 });
 
                                 AddRow(col, "SR Exterior Cities : ", Instance.Performance.SREX == "TRUE" ? "Yes" : "No");
+                                
+                                AddRow(col, "Frame Generation : ", Instance.Performance.FrameGeneration == "TRUE" ? "Yes" : "No");
 
                                 if (Instance.Performance.DownScaling == "TRUE")
                                 {
@@ -342,16 +346,16 @@ namespace Nolvus.Core.Services
                             {
                                 AddRow(col, "Combat Animations : ", Instance.Options.CombatAnimation);
                                 AddRow(col, "Alternate leveling : ", Instance.Options.AlternateLeveling == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Alternate start : ", Instance.Options.AlternateStart == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Stances Perks Tree : ", Instance.Options.StancesPerksTree == "TRUE" ? "Yes" : "No");
+                                //AddRow(col, "Alternate start : ", Instance.Options.AlternateStart == "TRUE" ? "Yes" : "No");
+                                //AddRow(col, "Stances Perks Tree : ", Instance.Options.StancesPerksTree == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Nudity : ", Instance.Options.Nudity == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Gore : ", Instance.Options.Gore == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Combat Scaling : ", Instance.Options.CombatScaling);
                                 AddRow(col, "Exhaustion : ", Instance.Options.Exhaustion == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Nerf power attacks : ", Instance.Options.NerfPA);
-                                AddRow(col, "Enemies resistance : ", Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No");
+                                //AddRow(col, "Enemies resistance : ", Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Boss : ", Instance.Options.Boss == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Poise system : ", Instance.Options.Poise == "TRUE" ? "Yes" : "No");
+                                //AddRow(col, "Poise system : ", Instance.Options.Poise == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Controller : ", Instance.Options.Controller == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "User Interface : ", Instance.Options.UI);
                             }

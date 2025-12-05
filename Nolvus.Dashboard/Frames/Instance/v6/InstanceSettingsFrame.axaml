@@ -53,14 +53,14 @@
                             <TextBlock Text="Resolution"
                                        Width="120"
                                        Foreground="White"/>
-                            <ComboBox x:Name="DrpDwnLstScreenRes" Width="220"/>
+                            <ComboBox x:Name="DrpDwnLstScreenRes" Width="220" SelectionChanged="OnScreenResolutionChanged"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="Screen ratio"
                                        Width="120"
                                        Foreground="White"/>
-                            <ComboBox x:Name="DrpDwnLstRatios" Width="220"/>
+                            <ComboBox x:Name="DrpDwnLstRatios" Width="220" SelectionChanged="OnRatioChanged"/>
                         </StackPanel>
 
                         <Button x:Name="BtnApplyRes"
@@ -92,7 +92,7 @@
                             <TextBlock Text="Download location"
                                        Width="140"
                                        Foreground="White"/>
-                            <ComboBox x:Name="DrpDwnLstDownLoc" Width="180"/>
+                            <ComboBox x:Name="DrpDwnLstDownLoc" Width="180" SelectionChanged="OnDownloadLocationChanged"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Spacing="10">
@@ -183,7 +183,7 @@
                             <TextBlock Text="Downscaled resolution"
                                        Width="160"
                                        Foreground="White"/>
-                            <ComboBox x:Name="DrpDwnLstDownRes" Width="160"/>
+                            <ComboBox x:Name="DrpDwnLstDownRes" Width="160" SelectionChanged="OnDownScaleResolutionChanged"/>
                         </StackPanel>
 
                         <Button x:Name="BtnApplyDownScaling"
@@ -223,13 +223,13 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Combat Animations" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblCombatAnims" Foreground="#F28F1A"/>
+                                <TextBlock Text="Frame Generation" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblFrameGen" Foreground="#F28F1A"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Stances perks tree" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblStances" Foreground="#F28F1A"/>
+                                <TextBlock Text="Combat Animations" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblCombatAnims" Foreground="#F28F1A"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal">
@@ -258,11 +258,6 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Alternate Start" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblAltStart" Foreground="#F28F1A"/>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="ENB" Width="120" Foreground="White"/>
                                 <TextBlock x:Name="LblENB" Foreground="#F28F1A"/>
                             </StackPanel>
@@ -270,16 +265,6 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Combat Scaling" Width="120" Foreground="White"/>
                                 <TextBlock x:Name="LblCombatScaling" Foreground="#F28F1A"/>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Enemies Resistance" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblEnemiesResistance" Foreground="#F28F1A"/>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Poise System" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblPoise" Foreground="#F28F1A"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal">
@@ -311,7 +296,7 @@
                                 <TextBlock Text="Skyrim Ini profile"
                                            Width="140"
                                            Foreground="White"/>
-                                <ComboBox x:Name="DrpDwnLstIni" Width="150"/>
+                                <ComboBox x:Name="DrpDwnLstIni" Width="150" SelectionChanged="OnIniChanged"/>
                             </StackPanel>
 
                         </StackPanel>

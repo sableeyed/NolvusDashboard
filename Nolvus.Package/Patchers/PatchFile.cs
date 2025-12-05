@@ -54,7 +54,14 @@ namespace Nolvus.Package.Patchers
 
             return Result;
         }
-        public async Task Patch(string ModDir, string GameDir, string ExtractDir)
+
+        private FileInfo CopyFileToPatch(FileInfo Source, string Destination)
+        {
+            Source.CopyTo(Path.Combine(Destination, Source.Name), true);
+            return new FileInfo(Path.Combine(Destination, Source.Name));
+        }
+
+        public async Task Patch(string ModDir, string GameDir, string ExtractDir, string BinPatchDir)
         {
             var Tsk = Task.Run(async () =>
             {
@@ -64,6 +71,8 @@ namespace Nolvus.Package.Patchers
                         ServiceSingleton.Folders.DownloadDirectory,
                         ServiceSingleton.Folders.LibDirectory,
                         ServiceSingleton.Folders.PatchDirectory);
+
+                        ServiceSingleton.Files.RemoveDirectory(BinPatchDir, false);
 
                     // Determine working directory (mod or game)
                     var Dir = System.IO.Directory.Exists(ModDir) ? ModDir : GameDir;
@@ -133,8 +142,10 @@ namespace Nolvus.Package.Patchers
                     var DestinationFileToPatch =
                         new FileInfo(Path.Combine(ExtractDir, DestinationFileName));
 
+                    var BinarySourceFileToPatch = CopyFileToPatch(SourceFileToPatch, BinPatchDir);
+
                     await PatcherManager.PatchFile(
-                        SourceFileToPatch.FullName,
+                        BinarySourceFileToPatch.FullName,
                         DestinationFileToPatch.FullName,
                         Path.Combine(ExtractDir, PatchFileName));
 

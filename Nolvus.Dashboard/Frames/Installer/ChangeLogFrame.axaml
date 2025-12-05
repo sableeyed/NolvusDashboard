@@ -1,0 +1,49 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.ChangeLogFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
+    Background="#363636">
+
+    <Grid RowDefinitions="*,Auto" Margin="4">
+
+        <!-- CONTENT PANEL -->
+        <Border Grid.Row="0"
+                x:Name="Content"
+                Background="#2E2E2E"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Padding="0">
+
+				<Grid x:Name="LoadingOverlay" IsVisible="True" Grid.RowSpan="4" Background="#80000000">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+						<gif:GifImage Width="150" Height="150" Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif" />
+					</StackPanel>
+				</Grid>
+
+        </Border>
+
+        <!-- BOTTOM BUTTON BAR -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8"
+                    Margin="0,6,6,6">
+
+            <Button x:Name="BtnPrevious"
+                    Width="88"
+                    Height="40"
+                    Content="Back"
+                    Background="#363636"
+                    Foreground="White"/>
+
+            <Button x:Name="BtnContinue"
+                    Width="88"
+                    Height="40"
+                    Content="Update"
+                    Background="#363636"
+                    Foreground="White"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

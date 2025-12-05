@@ -157,8 +157,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                 await NolvusMessageBox.Show(
                     owner,
                     "Maintenance",
-                    $"The nolvus instance {InstanceToInstall.Name} is under maintenance. Unable to install.",
-                    MessageBoxType.Error
+                    string.Format("The nolvus instance {0} is under maintenance for the following reason : \n\n{1}\n\n Unable to install.", InstanceToInstall.Name, InstanceToInstall.MaintenanceReason),                    MessageBoxType.Error
                 );
                 return;
             }

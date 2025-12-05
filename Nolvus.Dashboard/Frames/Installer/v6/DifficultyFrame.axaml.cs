@@ -37,9 +37,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             if (ServiceSingleton.Instances.WorkingInstance.Options.CombatScaling == "Hard" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.Exhaustion == "TRUE" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.NerfPA == "Player Only" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.EnemiesResistance == "TRUE" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.Boss == "TRUE" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.Poise == "TRUE")
+                ServiceSingleton.Instances.WorkingInstance.Options.Boss == "TRUE")
             {
 
                 return true;
@@ -53,9 +51,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             if (ServiceSingleton.Instances.WorkingInstance.Options.CombatScaling == "Easy" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.Exhaustion == "FALSE" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.NerfPA == "NPCs Only" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.EnemiesResistance == "FALSE" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.Boss == "FALSE" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.Poise == "FALSE")
+                ServiceSingleton.Instances.WorkingInstance.Options.Boss == "FALSE")
             {
 
                 return true;
@@ -69,9 +65,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             if (ServiceSingleton.Instances.WorkingInstance.Options.CombatScaling == "Very Easy" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.Exhaustion == "FALSE" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.NerfPA == "NPCs Only" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.EnemiesResistance == "FALSE" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.Boss == "FALSE" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.Poise == "FALSE")
+                ServiceSingleton.Instances.WorkingInstance.Options.Boss == "FALSE")
             {
 
                 return true;
@@ -86,9 +80,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             if (ServiceSingleton.Instances.WorkingInstance.Options.CombatScaling == "Medium" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.Exhaustion == "TRUE" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.NerfPA == "Both" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.EnemiesResistance == "TRUE" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.Boss == "TRUE" &&
-                ServiceSingleton.Instances.WorkingInstance.Options.Poise == "FALSE")                
+                ServiceSingleton.Instances.WorkingInstance.Options.Boss == "TRUE")                
             {
 
                 return true;
@@ -164,25 +156,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             DrpDwnLstNerfPA.SelectedIndex = NerfPAIndex(NerfPAs);
 
-            TglBtnResistance.IsChecked = false;
-
-            if (Instance.Options.EnemiesResistance == "TRUE")
-            {
-                TglBtnResistance.IsChecked = true;
-            }
-
             TglBtnBoss.IsChecked = false;
 
             if (Instance.Options.Boss == "TRUE")
             {
                 TglBtnBoss.IsChecked = true;
-            }
-
-            TglBtnPoise.IsChecked = false;
-
-            if (Instance.Options.Poise == "TRUE")
-            {
-                TglBtnPoise.IsChecked = true;
             }
 
             ServiceSingleton.Dashboard.Info("Difficulty options");
@@ -205,41 +183,36 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private void OnPresetChanged(object? sender, SelectionChangedEventArgs e)
         {
+            TglBtnBoss.IsEnabled = true;
+
             if (DrpDwnLstPreset.SelectedIndex == 3)
             {                
                 DrpDwnLstCombatScaling.SelectedIndex = 3;
                 TglBtnExhaustion.IsChecked = true;                
                 DrpDwnLstNerfPA.SelectedIndex = 1;
-                TglBtnResistance.IsChecked = true;
-                TglBtnBoss.IsChecked = true;;
-                TglBtnPoise.IsChecked = true;;                
+                TglBtnBoss.IsChecked = true;             
             }
             else if (DrpDwnLstPreset.SelectedIndex == 2)
             {
                 DrpDwnLstCombatScaling.SelectedIndex = 2;
                 TglBtnExhaustion.IsChecked = true;                
                 DrpDwnLstNerfPA.SelectedIndex = 3;
-                TglBtnResistance.IsChecked = true;
                 TglBtnBoss.IsChecked = true;
-                TglBtnPoise.IsChecked = false;
             }
             else if (DrpDwnLstPreset.SelectedIndex == 1)
             {
                 DrpDwnLstCombatScaling.SelectedIndex = 1;
                 TglBtnExhaustion.IsChecked = false;                
                 DrpDwnLstNerfPA.SelectedIndex = 2;
-                TglBtnResistance.IsChecked = false;
                 TglBtnBoss.IsChecked = false;
-                TglBtnPoise.IsChecked = false;
             }
             else
             {
                 DrpDwnLstCombatScaling.SelectedIndex = 0;
                 TglBtnExhaustion.IsChecked = false;
                 DrpDwnLstNerfPA.SelectedIndex = 2;
-                TglBtnResistance.IsChecked = false;
                 TglBtnBoss.IsChecked = false;
-                TglBtnPoise.IsChecked = false;
+                TglBtnBoss.IsEnabled = false;
             }
         }
 
@@ -255,11 +228,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             }
         }
 
-        private void OnResistanceChanged(object? sender, RoutedEventArgs e)
-        {
-            //Removed
-        }
-
         private void OnBossChanged(object? sender, RoutedEventArgs e)
         {
             if (TglBtnBoss.IsChecked == true)
@@ -270,11 +238,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             {
                 ServiceSingleton.Instances.WorkingInstance.Options.Boss = "FALSE";
             }
-        }
-
-        private void OnPoiseChanged(object? sender, RoutedEventArgs e)
-        {
-            //Removed
         }
 
         private void OnScalingChanged(object? sender, SelectionChangedEventArgs e)

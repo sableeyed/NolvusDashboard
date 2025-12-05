@@ -15,8 +15,7 @@ namespace Nolvus.Dashboard.Frames.Installer
     {
         string AEMSG1 = "You need to buy Skyrim Anniversary Edition or if you already have Skyrim Special Edition, buy the Anniversary Upgrade";
         string AEMSG2 = "If you already have the Anniversary Edition, be sure you ran the game once from steam and when prompted download all content then close Skyrim";
-        string AEMSG3 = "If it still does not work, do an integrity check in Steam";
-        string AEMSG4 = "More info here ==> https://www.nolvus.net/appendix/installer/skyrim_setup";  
+        string AEMSG3 = "More info here ==> https://www.nolvus.net/appendix/installer/skyrim_setup";  
         public StockGameFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
@@ -67,11 +66,11 @@ namespace Nolvus.Dashboard.Frames.Installer
                     
                 if (ex is GameFileMissingException)
                 {
-                    await ServiceSingleton.Dashboard.Error("Error during game file checking", "Skyrim Anniversary Edition is not installed", AEMSG1 + Environment.NewLine + AEMSG2 + Environment.NewLine + AEMSG3 + Environment.NewLine + AEMSG4 + Environment.NewLine + "Original error : " + ex.Message);
+                    await ServiceSingleton.Dashboard.Error("Error during game file checking", "Skyrim Anniversary Edition is not installed", AEMSG1 + Environment.NewLine + AEMSG2 + Environment.NewLine + AEMSG3 + Environment.NewLine + "Original error : " + ex.Message);
                 }
                 else if (ex is GameFileIntegrityException)
                 {
-                    await ServiceSingleton.Dashboard.Error("Error during game integrity checking", ex.Message, "Possible fix is to do an integrity check for Skyrim in Steam");
+                    await ServiceSingleton.Dashboard.Error("Error during game integrity checking", ex.Message);
                 }
                 else if (ex is GameFilePatchingException)
                 {

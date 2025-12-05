@@ -57,20 +57,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 TglLeveling.IsChecked = true;
             }
 
-            TglAltStart.IsChecked = false;
-
-            if (Instance.Options.AlternateStart == "TRUE")
-            {
-                TglAltStart.IsChecked = true;
-            }
-
-            TglStances.IsChecked = false;
-
-            if (Instance.Options.StancesPerksTree == "TRUE")
-            {
-                TglStances.IsChecked = true;
-            }
-
             TglGore.IsChecked = false;
 
             if (Instance.Options.Gore == "TRUE")
@@ -141,16 +127,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             {
                 ServiceSingleton.Instances.WorkingInstance.Options.AlternateLeveling = "FALSE";
             }
-        }
-
-        private void OnAlternateStartChanged(object? sender, RoutedEventArgs e)
-        {
-            //Removed in 3.7.11
-        }
-
-        private void OnStancesChanged(object? sender, RoutedEventArgs e)
-        {
-            //Removed in 3.7.11
         }
 
         private void OnGoreChanged(object? sender, RoutedEventArgs e)

@@ -26,13 +26,28 @@ namespace Nolvus.Package.Patchers
             }
         }
 
-        private string PatcherFileDir
+        public string PatcherFileDir
         {
             get
             {
                 return FileInfo.Name.Replace(FileInfo.Extension, string.Empty);                
             }
-        }        
+        }
+
+        public string BinPatchFolder
+        {
+            get
+            {
+                var Result = new DirectoryInfo(Path.Combine(ServiceSingleton.Folders.BinPatchDirectory, PatcherFileDir));
+
+                if (!Result.Exists)
+                {
+                    System.IO.Directory.CreateDirectory(Result.FullName);
+                }
+
+                return Result.FullName;
+            }
+        }
 
         public void Load(XmlNode Node)
         {
@@ -164,7 +179,7 @@ namespace Nolvus.Package.Patchers
 
                         foreach (var File in Files)
                         {
-                            await File.Patch(ModDir, GameDir, Path.Combine(ServiceSingleton.Folders.ExtractDirectory, PatcherFileDir));
+                            await File.Patch(ModDir, GameDir, Path.Combine(ServiceSingleton.Folders.ExtractDirectory, PatcherFileDir), BinPatchFolder);
                             PatchProgress(File.OriginFileName, ++Counter, Files.Count);
                         }
                     }
@@ -172,6 +187,7 @@ namespace Nolvus.Package.Patchers
                     {
                         File.Delete(Path.Combine(ServiceSingleton.Folders.DownloadDirectory, PatchArchive));
                         ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, PatcherFileDir), true);
+                        ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.BinPatchDirectory, PatcherFileDir), true);
                     }
                 }
                 catch (Exception ex)

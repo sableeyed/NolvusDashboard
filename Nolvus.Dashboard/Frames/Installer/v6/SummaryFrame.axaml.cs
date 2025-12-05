@@ -16,6 +16,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         public SummaryFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
+            BtnPrevious.Click += BtnPrevious_Click;
+            BtnStart.Click += BtnStart_Click;
         }
 
         protected override async Task OnLoadedAsync()

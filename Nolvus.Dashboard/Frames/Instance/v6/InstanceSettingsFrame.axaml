@@ -1,0 +1,338 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Instance.v6.InstanceSettingsFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#363636">
+
+    <Grid RowDefinitions="Auto,*" Margin="7">
+
+        <!-- =====================================================
+             HEADER
+        ===================================================== -->
+        <Border Height="45" Background="#363636">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <Image Source="avares://NolvusDashboard/Assets/nolvus-ico.jpg"
+                       Width="32" Height="32"
+                       Margin="6"/>
+
+                <TextBlock x:Name="LblHeader"
+                           Grid.Column="1"
+                           VerticalAlignment="Center"
+                           FontSize="18"
+                           Foreground="White"
+                           Text="Instance"/>
+            </Grid>
+        </Border>
+
+
+        <!-- =====================================================
+             MAIN
+        ===================================================== -->
+        <ScrollViewer Grid.Row="1">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto">
+
+                <!-- =====================================================
+                     SCREEN & RESOLUTION
+                ===================================================== -->
+                <Border Grid.Row="0" Grid.Column="0"
+                        Background="#2E2E2E"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Padding="12"
+                        Margin="0,0,10,10">
+                    <StackPanel Spacing="12">
+
+                        <TextBlock Text="Screen and Resolution"
+                                   Foreground="White"
+                                   FontSize="16"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Resolution"
+                                       Width="120"
+                                       Foreground="White"/>
+                            <ComboBox x:Name="DrpDwnLstScreenRes" Width="220"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Screen ratio"
+                                       Width="120"
+                                       Foreground="White"/>
+                            <ComboBox x:Name="DrpDwnLstRatios" Width="220"/>
+                        </StackPanel>
+
+                        <Button x:Name="BtnApplyRes"
+                                Content="Apply"
+                                HorizontalAlignment="Right"
+                                Width="100"
+                                Background="#363636"
+                                Foreground="#F28F1A"/>
+                    </StackPanel>
+                </Border>
+
+
+                <!-- =====================================================
+                     MISC SETTINGS
+                ===================================================== -->
+                <Border Grid.Row="0" Grid.Column="1"
+                        Background="#2E2E2E"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Padding="12"
+                        Margin="10,0,0,10">
+                    <StackPanel Spacing="12">
+
+                        <TextBlock Text="Misc Settings"
+                                   Foreground="White"
+                                   FontSize="16"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Download location"
+                                       Width="140"
+                                       Foreground="White"/>
+                            <ComboBox x:Name="DrpDwnLstDownLoc" Width="180"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Enable Archiving"
+                                       Width="140"
+                                       Foreground="White"/>
+                            <ToggleSwitch x:Name="TglBtnEnableArchive" Width="60"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+
+                <!-- =====================================================
+                     PATHS
+                ===================================================== -->
+                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                        Background="#2E2E2E"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Padding="12"
+                        Margin="0,0,0,10">
+                    <StackPanel Spacing="12">
+
+                        <TextBlock Text="Paths"
+                                   Foreground="White"
+                                   FontSize="16"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Instance Directory"
+                                       Width="150"
+                                       Foreground="White"/>
+                            <TextBox x:Name="TxtBxInstancePath"
+                                     Background="#2E2E2E"
+                                     Foreground="White"
+                                     IsReadOnly="True"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Archive Directory"
+                                       Width="150"
+                                       Foreground="White"/>
+                            <TextBox x:Name="TxtBxArchivePath"
+                                     Background="#2E2E2E"
+                                     Foreground="White"
+                                     IsReadOnly="True"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+
+                <!-- =====================================================
+                     RESOLUTION DOWNSCALING  (Border instead of GroupBox)
+                ===================================================== -->
+                <Border x:Name="GrpBxDownscaling"
+                        Grid.Row="2" Grid.Column="0"
+                        Background="#2E2E2E"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Padding="12"
+                        Margin="0,0,10,0">
+
+                    <StackPanel Spacing="10">
+
+                        <TextBlock Text="Resolution Downscaling"
+                                   Foreground="White"
+                                   FontSize="16"/>
+
+                        <TextBlock Text="Resolution downscaling allows you to play at a lower resolution to improve performances."
+                                   Foreground="White"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Text="With this enabled you can play at 1080p on a 1440p monitor."
+                                   Foreground="White"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Text="Recommended: 720p on 1080p, 1080p on 1440p."
+                                   Foreground="#F28F1A"
+                                   TextWrapping="Wrap"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <ToggleSwitch x:Name="TglBtnDownScale" Width="60"/>
+                            <TextBlock Text="Enable Downscaling" Foreground="White"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Downscaled resolution"
+                                       Width="160"
+                                       Foreground="White"/>
+                            <ComboBox x:Name="DrpDwnLstDownRes" Width="160"/>
+                        </StackPanel>
+
+                        <Button x:Name="BtnApplyDownScaling"
+                                Content="Apply"
+                                HorizontalAlignment="Right"
+                                Width="100"
+                                Background="#363636"
+                                Foreground="#F28F1A"/>
+                    </StackPanel>
+                </Border>
+
+
+                <!-- =====================================================
+                     OPTIONS
+                ===================================================== -->
+                <Border Grid.Row="2" Grid.Column="1"
+                        Background="#2E2E2E"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Padding="12">
+
+                    <ScrollViewer>
+                        <StackPanel Spacing="8">
+
+                            <TextBlock Text="Options (Cannot be changed after installation)"
+                                       Foreground="White"
+                                       FontSize="16"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Variant" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblVariant" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="SR Exterior Cities" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblSREX" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Combat Animations" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblCombatAnims" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Stances perks tree" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblStances" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Alternate levelling" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblLeveling" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Nude" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblNude" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Gore" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblGore" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Anti Aliasing" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblAntiAliasing" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="LODs" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblLODs" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Alternate Start" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblAltStart" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="ENB" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblENB" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Combat Scaling" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblCombatScaling" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Enemies Resistance" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblEnemiesResistance" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Poise System" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblPoise" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Boss Encounter" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblBoss" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Exhaustion System" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblExhaustion" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Nerf Power Attacks" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblNerfPA" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Controller" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblController" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="User Interface" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblUI" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                                <TextBlock Text="Skyrim Ini profile"
+                                           Width="140"
+                                           Foreground="White"/>
+                                <ComboBox x:Name="DrpDwnLstIni" Width="150"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+
+        <!-- =====================================================
+             BACK BUTTON
+        ===================================================== -->
+        <Button x:Name="BtnBack"
+                Content="Back"
+                Grid.Row="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Width="100"
+                Height="40"
+                Margin="0,0,20,20"
+                Background="#363636"
+                Foreground="White"/>
+    </Grid>
+</UserControl>

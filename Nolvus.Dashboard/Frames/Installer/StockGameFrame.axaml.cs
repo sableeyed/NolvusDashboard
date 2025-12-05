@@ -59,7 +59,6 @@ namespace Nolvus.Dashboard.Frames.Installer
                 ServiceSingleton.Dashboard.ProgressCompleted();
                 ServiceSingleton.Instances.PrepareInstanceForInstall();
 
-                Console.WriteLine("InstallFrame not implemented - but STOCK GAME should be finsihed");
                 await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>();
             }
             catch (Exception ex)

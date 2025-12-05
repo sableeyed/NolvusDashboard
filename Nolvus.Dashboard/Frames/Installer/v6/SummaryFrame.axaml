@@ -159,9 +159,9 @@
                     <!-- BUTTONS -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
                         <Button x:Name="BtnPrevious" Content="Previous" MinWidth="90" Background="#2E2E2E" Foreground="White"
-                                BorderBrush="White" BorderThickness="1"/>
+                                BorderBrush="White" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                         <Button x:Name="BtnStart" Content="Start" MinWidth="90" Background="#2E2E2E" Foreground="White"
-                                BorderBrush="#F28F1A" BorderThickness="1"/>
+                                BorderBrush="#F28F1A" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     </StackPanel>
 
                 </StackPanel>

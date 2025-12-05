@@ -1,0 +1,152 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Instance.v6.KeysBindingFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#363636">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="7">
+
+        <!-- ================= HEADER ================= -->
+        <TextBlock Text="Key Bindings"
+                   FontSize="18"
+                   Foreground="White"
+                   Margin="0,0,0,10"/>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="10">
+
+                <!-- Keyboard -->
+                <Border Background="#2E2E2E"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Padding="12">
+
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Keyboard"
+                                   Foreground="White"
+                                   FontSize="16"/>
+
+                        <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys_V61.png"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               MaxHeight="320"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Mouse -->
+                <Border Background="#2E2E2E"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Padding="12">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Mouse"
+                                   Foreground="White"
+                                   FontSize="16"/>
+
+                        <Image Source="avares://NolvusDashboard/Assets/DefaultMouseKey.png"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               MaxHeight="260"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Settings -->
+                <Border Background="#2E2E2E"
+                        BorderBrush="Gray"
+                        BorderThickness="1"
+                        Padding="12">
+                    <StackPanel Spacing="10">
+
+                        <TextBlock Text="Settings"
+                                   Foreground="White"
+                                   FontSize="16"/>
+
+                        <StackPanel>
+                            <TextBlock Text="Everything can be setup in the base game controls menu, except"
+                                       Foreground="White"/>
+                        </StackPanel>
+
+                        <!-- 1 -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Power Attack" Foreground="White" Width="120"/>
+                            <TextBlock Text="One Click Power Attack ini file (in MO2)"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                        <!-- 2 -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Dodge" Foreground="White" Width="120"/>
+                            <TextBlock Text="TK Dodge RE ini file (in MO2)"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                        <!-- 3 -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Block" Foreground="White" Width="120"/>
+                            <TextBlock Text="Valhalla Combat MCM menu + same key in Dual Wield Parrying"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                        <!-- 4 -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Wheeler" Foreground="White" Width="120"/>
+                            <TextBlock Text="Wheeler config file"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                        <!-- 5 -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Combat Stances" Foreground="White" Width="120"/>
+                            <TextBlock Text="Stances MCM menu"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                        <!-- 6 -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="UI" Foreground="White" Width="120"/>
+                            <TextBlock Text="Widget Mod MCM menu"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                        <!-- 7 -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Quick Light" Foreground="White" Width="120"/>
+                            <TextBlock Text="Quick Light MCM menu"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+
+        <!-- ================= BUTTONS ================= -->
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    Spacing="10">
+
+            <Button x:Name="BtnController"
+                    Content="Controller"
+                    Width="120"
+                    Height="40"
+                    Background="#363636"
+                    Foreground="White"/>
+
+            <Button x:Name="BtnBack"
+                    Content="Back"
+                    Width="120"
+                    Height="40"
+                    Background="#363636"
+                    Foreground="White"/>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

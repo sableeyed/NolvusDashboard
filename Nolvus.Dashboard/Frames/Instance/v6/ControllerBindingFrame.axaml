@@ -1,0 +1,61 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Instance.v6.ControllerBindingFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#363636">
+
+    <Grid RowDefinitions="*,Auto" Margin="8">
+
+        <!-- MAIN PANEL -->
+        <Border Grid.Row="0"
+                Background="#2E2E2E"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Padding="12"
+                Margin="0,0,0,10">
+
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="*">
+
+                <!-- IMAGE -->
+                <Image x:Name="ImgController"
+                       Grid.Column="0"
+                       Stretch="Uniform"
+                       Source="avares://NolvusDashboard/Assets/Nolvus-v6-controller-setup.png"/>
+
+                <!-- LABEL -->
+                <TextBlock x:Name="LblInstructions"
+                           Grid.Column="1"
+                           TextWrapping="Wrap"
+                           Foreground="White"
+                           FontSize="16"
+                           Margin="20,0,0,0"
+                           Width="320"
+                           Text="To change the layout, go into Mod Organizer 2, right click on the Mod Complete Controller Setup and select &quot;Reinstall&quot;"/>
+            </Grid>
+
+        </Border>
+
+        <!-- BUTTON BAR -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="10"
+                    Margin="0,0,6,6">
+
+            <Button x:Name="BtnKeyboard"
+                    Width="114"
+                    Height="40"
+                    Content="Keyboard"
+                    Background="#363636"
+                    Foreground="White"/>
+
+            <Button x:Name="BtnBack"
+                    Width="114"
+                    Height="40"
+                    Content="Back"
+                    Background="#363636"
+                    Foreground="White"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

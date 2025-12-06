@@ -142,7 +142,11 @@ namespace Nolvus.Package.Patchers
                     var DestinationFileToPatch =
                         new FileInfo(Path.Combine(ExtractDir, DestinationFileName));
 
+                    ServiceSingleton.Logger.Log(string.Format("Copying file to patch {0}", SourceFileToPatch.FullName));
+
                     var BinarySourceFileToPatch = CopyFileToPatch(SourceFileToPatch, BinPatchDir);
+
+                    ServiceSingleton.Logger.Log(string.Format("File to patch copied to {0}", BinarySourceFileToPatch.FullName));
 
                     await PatcherManager.PatchFile(
                         BinarySourceFileToPatch.FullName,

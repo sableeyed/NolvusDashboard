@@ -18,13 +18,14 @@ namespace Nolvus.Package.Utilities
 
             string current = root;
 
-            foreach (var segment in relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries))
+            foreach (var segment in relativePath.Split(new[] { '/', '\\' },
+                            StringSplitOptions.RemoveEmptyEntries))
             {
                 if (!Directory.Exists(current))
                     return null;
 
                 var match = FindCaseInsensitiveMatch(
-                    Directory.GetDirectories(current), 
+                    Directory.GetDirectories(current),
                     segment
                 );
 

@@ -7,19 +7,17 @@ Upates are being made daily. Please check back periodically.
 If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/RmTsQcU8WV)
 
 # Known Issues
-- v6 installation is not implemented
-- Instance management is not implemented
+- v6 support added, but not tested
 - This requires Nexus Premium. I do not plan to implement what's needed for free accounts at this time
 - ENB will fail to install the first time. Close the Dashboard and run through again.
 - DynDOLOD output will appear to be stuck at 47% hashing. Just let it finish.
 
 # TODO
-- v6
 - ChangeLogFrame
 - Dashboard.CheckForUpdates
 
 # Wine
-A wine prefix will be created for you in ~/.local/share/NolvusDashboard/prefix
+A wine prefix will be created for you in `~/.local/share/NolvusDashboard/prefix`
 Do not modify this unless you know what you are doing
 If you break the prefix you can delete the folder and relaunch the Dashboard to have it create a new one
 This prefix is required to run certain tools like BSArch

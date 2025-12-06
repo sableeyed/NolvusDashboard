@@ -176,7 +176,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
 
                 Ratios.Add("16:9");
                 Ratios.Add("21:9");
-                //Ratios.Add("32:9"); //TODO not present in 3.7.10
+                Ratios.Add("32:9");
 
                 DrpDwnLstRatios.ItemsSource = Ratios;
 

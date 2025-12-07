@@ -1,5 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
+using Avalonia.Platform;
+using Avalonia.Media.Imaging;
 using System;
 using Nolvus.Dashboard.Services;
 
@@ -18,26 +20,37 @@ public partial class SplashWindow : Window
 
     private async void SplashWindow_Opened(object? sender, EventArgs e)
     {
-            await Task.Yield();
+        SetWindowIcon();
+        await Task.Yield();
 
-            StatusText.Text = "Initializing wine prefix...";
-            await Task.Delay(150); // Allows UI to update visibly
+        StatusText.Text = "Initializing wine prefix...";
+        await Task.Delay(150); // Allows UI to update visibly
 
-            await WinePrefix.InitializeAsync((message, percent) =>
-            {
-                StatusText.Text = message;
-                LoadingBar.Width = (percent / 100.0) * 380; // or use ActualWidth
-            });
+        await WinePrefix.InitializeAsync((message, percent) =>
+        {
+            StatusText.Text = message;
+            LoadingBar.Width = (percent / 100.0) * 380; // or use ActualWidth
+        });
 
-            StatusText.Text = "Launching dashboard...";
-            LoadingBar.Value = 100;
+        StatusText.Text = "Launching dashboard...";
+        LoadingBar.Value = 100;
 
-            await Task.Delay(200);
+        await Task.Delay(200);
 
-            var dash = new DashboardWindow();
-            dash.Show();
+        var dash = new DashboardWindow();
+        dash.Show();
 
-            Close();
+        Close();
+    }
+
+    private void SetWindowIcon()
+    {
+        try
+        {
+            using var stream = AssetLoader.Open(new Uri("avares://NolvusDashboard/Assets/nolvus-ico.jpg"));
+            Icon = new WindowIcon(new Bitmap(stream));
+        }
+        catch { }
     }
 
 

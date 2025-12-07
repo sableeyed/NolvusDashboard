@@ -138,6 +138,16 @@ public partial class DashboardWindow : Window, IDashboard
         get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashboard"); }
     }
 
+    private void SetWindowIcon()
+    {
+        try
+        {
+            using var stream = AssetLoader.Open(new Uri("avares://NolvusDashboard/Assets/nolvus-ico.jpg"));
+            Icon = new WindowIcon(new Bitmap(stream));
+        }
+        catch { }
+    }
+
     #endregion
 
 
@@ -506,6 +516,8 @@ public partial class DashboardWindow : Window, IDashboard
                 ? WindowState.Normal
                 : WindowState.Maximized;
         };
+
+        SetWindowIcon();
 
 
         ServiceSingleton.RegisterService<IDashboard>(this);

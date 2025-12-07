@@ -22,12 +22,17 @@ namespace Nolvus.Package.Mods
                 return files.FirstOrDefault(x =>
                     x.Name.Equals(FileName, StringComparison.OrdinalIgnoreCase));
             }
-            else
+
+            var normalizedDir = DirectoryName.Replace('\\', '/');
+
+            return files.FirstOrDefault(f =>
             {
-                return files.FirstOrDefault(x =>
-                    x.Name.Equals(FileName, StringComparison.OrdinalIgnoreCase) &&
-                    x.Directory.FullName.Contains(DirectoryName, StringComparison.OrdinalIgnoreCase));
-            }
+                if (!f.Name.Equals(FileName, StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                var dir = f.Directory.FullName.Replace('\\', '/');
+                return dir.Contains(normalizedDir, StringComparison.OrdinalIgnoreCase);
+            });
         }
 
         public async Task UnPack(string extractDir)

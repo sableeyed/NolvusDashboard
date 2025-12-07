@@ -36,7 +36,7 @@ namespace Nolvus.Services.Globals
                 var val = ServiceSingleton.Settings.GetIniValue(MegaSection, MegaAnonymous);
                 return val == null ? true : Convert.ToBoolean(val);
             }
-            set => ServiceSingleton.Settings.StoreIniValue(MegaSection, MegaAnonymous, value.ToString().Trim()); //Adding .Trim stores the value as a bool and not a string which appeared to be a bug
+            set => ServiceSingleton.Settings.StoreIniValue(MegaSection, MegaAnonymous, value.ToString().Trim());
         }
 
         public string MegaEmail
@@ -73,7 +73,6 @@ namespace Nolvus.Services.Globals
             }
         }
 
-        // Linux replacement for Windows display mode enumeration
         public List<string> WindowsResolutions
         {
             get
@@ -82,12 +81,10 @@ namespace Nolvus.Services.Globals
 
                 try
                 {
-                    // Parse xrandr output if available
                     var psi = new ProcessStartInfo("xrandr", "")
                     {
                         RedirectStandardOutput = true,
                         UseShellExecute = false
-                        // no window spawn, works headless
                     };
 
                     using var proc = Process.Start(psi);
@@ -97,9 +94,8 @@ namespace Nolvus.Services.Globals
                     {
                         if (line.Contains(" connected"))
                         {
-                            // Skip
                         }
-                        else if (line.Contains("*")) // current mode marked with *
+                        else if (line.Contains("*"))
                         {
                             var parts = line.Trim().Split(' ')[0];
                             resolutions.Add(parts);
@@ -115,13 +111,15 @@ namespace Nolvus.Services.Globals
             }
         }
 
+        // UPDATED GPU DETECTION LOGIC
         public List<string> GetVideoAdapters()
         {
             var results = new List<string>();
 
             try
             {
-                var psi = new ProcessStartInfo("bash", "-c \"glxinfo | grep 'Device'\"")
+                // ---- First Attempt: glxinfo (Device) ----
+                var psi = new ProcessStartInfo("bash", "-c \"glxinfo | grep -i 'Device'\"")
                 {
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -131,20 +129,57 @@ namespace Nolvus.Services.Globals
                 using var proc = Process.Start(psi);
                 var output = proc.StandardOutput.ReadToEnd().Trim();
 
-                if (string.IsNullOrWhiteSpace(output))
+                string model = ExtractModelFromGlxinfo(output);
+
+                // If still not found, try OpenGL Renderer String:
+                if (string.IsNullOrWhiteSpace(model) || model == "Unknown GPU")
                 {
-                    results.Add("Unknown GPU");
-                    return results;
+                    var psi2 = new ProcessStartInfo("bash", "-c \"glxinfo | grep -i 'OpenGL renderer string'\"")
+                    {
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false
+                    };
+
+                    using var proc2 = Process.Start(psi2);
+                    var fallbackOut = proc2.StandardOutput.ReadToEnd().Trim();
+
+                    // Example:
+                    // OpenGL renderer string: AMD Radeon RX 9070 XT / radeonsi
+                    var idx = fallbackOut.IndexOf(':');
+                    if (idx != -1)
+                    {
+                        var tmp = fallbackOut.Substring(idx + 1).Trim();
+                        var slash = tmp.IndexOf('/');
+                        if (slash != -1)
+                            tmp = tmp.Substring(0, slash).Trim();
+
+                        model = tmp;
+                    }
                 }
 
-                // Example:
-                // Device: AMD Radeon RX 9070 XT (radeonsi, gfx1201...)
-                var line = output.Trim();
-                var model = ExtractModelFromGlxinfo(line);
-                //var vendor = DetectVendor(model);
+                // If still unknown, NVIDIA fallback only (as requested)
+                if (string.IsNullOrWhiteSpace(model) || model == "Unknown GPU")
+                {
+                    var psi3 = new ProcessStartInfo("bash", "-c \"lspci | grep -i nvidia\"")
+                    {
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false
+                    };
+
+                    using var proc3 = Process.Start(psi3);
+                    var out3 = proc3.StandardOutput.ReadToEnd().Trim();
+
+                    if (!string.IsNullOrWhiteSpace(out3))
+                    {
+                        var m = ExtractModelFromGlxinfo(out3);
+                        if (!string.IsNullOrWhiteSpace(m))
+                            model = m;
+                    }
+                }
 
                 if (!string.IsNullOrWhiteSpace(model))
-                    results.Add($"{model}".Trim());
+                    results.Add(model);
                 else
                     results.Add("Unknown GPU");
             }
@@ -156,39 +191,22 @@ namespace Nolvus.Services.Globals
             return results;
         }
 
-
-       private string ExtractModelFromGlxinfo(string line)
+        private string ExtractModelFromGlxinfo(string line)
         {
-            // Strip leading "Device: "
+            if (string.IsNullOrWhiteSpace(line))
+                return "Unknown GPU";
+
             var idx = line.IndexOf("Device:");
             if (idx != -1)
                 line = line.Substring(idx + "Device:".Length).Trim();
 
-            // Cut at first "(" so we don't capture Mesa, LLVM, DRM info
             var p = line.IndexOf("(");
             if (p != -1)
                 line = line.Substring(0, p).Trim();
 
-            // Cleanup formatting
             line = line.Replace("  ", " ").Trim();
 
             return line;
-        }
-
-        private string DetectVendor(string model)
-        {
-            model = model?.ToLower() ?? "";
-
-            if (model.Contains("nvidia") || model.Contains("geforce") || model.Contains("rtx") || model.Contains("gtx"))
-                return "NVIDIA";
-
-            if (model.Contains("amd") || model.Contains("radeon") || model.Contains("rx"))
-                return "AMD";
-
-            if (model.Contains("intel") || model.Contains("arc") || model.Contains("iris") || model.Contains("uhd"))
-                return "Intel";
-
-            return "Unknown";
         }
 
         public async Task<string> GetCPUInfo()
@@ -245,7 +263,6 @@ namespace Nolvus.Services.Globals
                     ?? asm.GetName().Version?.ToString()
                     ?? "0.0.0";
 
-            // Strip trailing build metadata like +commitHash if present
             var plusIndex = version.IndexOf('+');
             if (plusIndex > 0)
                 version = version[..plusIndex];

@@ -20,13 +20,9 @@ namespace Nolvus.Package.Rules
         public override void Load(XmlNode Node)
         {
             base.Load(Node);
-            //Source = Encoding.UTF8.GetString(Encoding.GetEncoding("Windows-1252").GetBytes(Node["Source"].InnerText));
-            Source = Node["Source"]?.InnerText ?? string.Empty;
-            //Destination = System.Convert.ToInt16(Node["Destination"].InnerText);
+            Source = FixMangledNames(Node["Source"]?.InnerText ?? string.Empty);
             Destination = Convert.ToInt16(Node["Destination"]?.InnerText ?? "0");
-            //DestinationDirectory = Node["DestinationDirectory"].InnerText;
-            //DestinationDirectory = Node["DestinationDirectory"]?.InnerText ?? string.Empty;
-            DestinationDirectory = NormalizeRulePath(Node["DestinationDirectory"]?.InnerText ?? string.Empty);
+            DestinationDirectory = NormalizeRulePath(FixMangledNames(Node["DestinationDirectory"]?.InnerText ?? string.Empty));
         }
 
         public override bool IsPriority
@@ -51,6 +47,18 @@ namespace Nolvus.Package.Rules
 
             return path;
         }
-     
+
+        private string FixMangledNames(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            // detect UTF-8→1252 mojibake sequences ("æ", "ç", "è", "é", "å")
+            if (!(input.Contains("æ") || input.Contains("ç") || input.Contains("è") || input.Contains("é") || input.Contains("å")))
+                return input; // do nothing for valid Unicode names
+
+            var bytes = Encoding.GetEncoding("Windows-1252").GetBytes(input);
+            return Encoding.UTF8.GetString(bytes);
+        }
     }
 }

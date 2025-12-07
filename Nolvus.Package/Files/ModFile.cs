@@ -251,6 +251,28 @@ namespace Nolvus.Package.Files
             {
                 try
                 {
+                    if (Link.Contains("distaranimation.com", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ServiceSingleton.Logger.Log($"[Direct wget] {FileName}");
+
+                        var psi = new ProcessStartInfo
+                        {
+                            FileName = "/usr/bin/wget",
+                            Arguments = $"-O \"{Path.Combine(ServiceSingleton.Folders.DownloadDirectory, FileName)}\" \"{Link}\"",
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        };
+
+                        var proc = Process.Start(psi);
+                        await proc.WaitForExitAsync();
+
+                        if (proc.ExitCode != 0)
+                            throw new Exception($"wget failed for {FileName}");
+
+                        await WaitForFileReady(LocationFileName);
+                    }
                     if (RequireManualDownload)
                     {
                         switch(site)

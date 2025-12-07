@@ -96,15 +96,27 @@ internal static class Program
     public static void Main(string[] args)
     {
 
-        if (!File.Exists("/usr/bin/7z") || (!File.Exists("/usr/bin/xdelta3")))
+        if (!File.Exists("/usr/bin/7z"))
         {
-            Console.WriteLine("7zip and xdelta3 are required to run this program. Please install the relevant packages");
+            Console.WriteLine("7zip is required and needs to be at /usr/bin/7z");
+            Environment.Exit(-1);
+        }
+
+        if (!File.Exists("/usr/bin/xdelta3"))
+        {
+            Console.WriteLine("xdelta3 is required and needs to be at /usr/bin/xdelta3");
             Environment.Exit(-1);
         }
 
         if (!File.Exists("/usr/bin/wine"))
         {
-            Console.WriteLine("Wine is required and expected to be accessible at /usr/bin/wine");
+            Console.WriteLine("Wine is required and needs to be at /usr/bin/wine");
+            Environment.Exit(-1);
+        }
+
+        if (!File.Exists("/usr/bin/ark"))
+        {
+            Console.WriteLine("Ark is required and needs to be at /usr/bin/ark");
             Environment.Exit(-1);
         }
 

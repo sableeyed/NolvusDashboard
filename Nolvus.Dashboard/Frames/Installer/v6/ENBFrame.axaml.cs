@@ -42,7 +42,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             if (DrpDwnLstENB.SelectedItem is null)
                 return;
 
-            ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB = DrpDwnLstENB.SelectedItem.ToString();
+            ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB = ENBs.GetENBCode(DrpDwnLstENB.SelectedItem.ToString());
 
             var ENB = ENBs.GetAvailableENBsForV6().Where(x => x.Name == DrpDwnLstENB.SelectedItem.ToString()).FirstOrDefault();
 

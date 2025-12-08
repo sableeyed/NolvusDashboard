@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
@@ -11,11 +12,9 @@ using Vcc.Nolvus.Api.Installer.Library;
 using Vcc.Nolvus.Api.Installer.Services;
 using Nolvus.Package.Conditions;
 using Nolvus.Dashboard.Controls;
-using Nolvus.Core.Enums;
 using Nolvus.Dashboard.Frames.Installer;
 using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Dashboard.Frames.Settings;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Nolvus.Dashboard.Frames
 {
@@ -126,28 +125,28 @@ namespace Nolvus.Dashboard.Frames
             ServiceSingleton.Logger.Log("Checking for updates...");
             ServiceSingleton.Logger.Log("StartFrame.CheckForUpdates: STUB");
 
-            // var latest = await ApiManager.Service.Installer.GetLatestInstaller();
-            // ServiceSingleton.Dashboard.Progress(50);
+            var latest = await ApiManager.Service.Installer.GetLatestInstaller();
+            ServiceSingleton.Dashboard.Progress(50);
 
-            // if (ServiceSingleton.Dashboard.IsOlder(latest.Version))
-            // {
-                
-            //     if (!ServiceSingleton.Updater.Installed ||
-            //         !await ServiceSingleton.Updater.IsValid(latest.UpdaterHash) ||
-            //         ServiceSingleton.Updater.IsOlder(latest.UpdaterVersion))
-            //     {
-            //         await ServiceSingleton.Files.DownloadFile(latest.UpdaterLink,
-            //             ServiceSingleton.Updater.UpdaterExe,
-            //             (s, e) =>
-            //             {
-            //                 ServiceSingleton.Dashboard.Status($"Downloading Updater ({e.ProgressPercentage}%)");
-            //                 ServiceSingleton.Dashboard.Progress(e.ProgressPercentage);
-            //             });
-            //     }
-
-            //     await ServiceSingleton.Updater.Launch();
-            //     ServiceSingleton.Dashboard.ShutDown();
-            // }
+            if (ServiceSingleton.Dashboard.IsOlder(latest.Version))
+            {
+                var owner = TopLevel.GetTopLevel(this) as Window;
+                bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Update Required", "You must update the dashboard manually, would you like to open the releases page?");
+                if (result == true)
+                {
+                    var url = "https://www.nolvus.net/appendix/installer/faq";
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = url,
+                            UseShellExecute = true
+                        });
+                    }
+                    catch { }
+                }
+                Environment.Exit(0);
+            }
         }
 
         private async Task CheckNexus()

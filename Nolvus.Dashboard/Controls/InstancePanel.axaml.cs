@@ -239,7 +239,7 @@ namespace Nolvus.Dashboard.Controls
                 dashboard.NoStatus();
                 dashboard.ProgressCompleted();
 
-                var outputPath = Path.Combine(ServiceSingleton.Folders.ReportDirectory, "report.pdf");
+                var outputPath = Path.Combine(ServiceSingleton.Folders.ReportDirectory, string.Format("{0}-v{1}.pdf", _instance.Name, _instance.Version));
                 if (!Directory.Exists(ServiceSingleton.Folders.ReportDirectory))
                 {
                     Directory.CreateDirectory(ServiceSingleton.Folders.ReportDirectory);

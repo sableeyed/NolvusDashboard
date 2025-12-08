@@ -22,8 +22,9 @@ This prefix is required to run certain tools like BSArch
 - Protontricks
 - Winetricks
 - Wine
-- 7zip
+- KDE Ark (for 1 edge case)
 - xdelta3
+- .NET Runtime 9.0
 
 # Fully Implemented
 - Nolvus.NexusApi

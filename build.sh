@@ -15,9 +15,12 @@ dotnet publish "$PROJECT_ROOT/Nolvus.Dashboard/Nolvus.Dashboard.csproj" \
     -r linux-x64 \
     -o "$OUT_DIR/Dashboard"
 
-echo "Compressing..."
+echo "Renaming Dashboard -> Nolvus..."
 cd "$OUT_DIR"
-tar -czf "$DESKTOP_RELEASE" Dashboard
+cp -r Dashboard Nolvus
+
+echo "Compressing..."
+tar -czf "$DESKTOP_RELEASE" Nolvus
 
 echo "Cleaning up build directory..."
 cd "$PROJECT_ROOT"

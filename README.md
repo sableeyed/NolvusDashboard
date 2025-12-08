@@ -1,20 +1,16 @@
 # Welcome
 
 This product is for Linux only. If you are looking for the Windows version it is [here.](https://github.com/vektor9999/NolvusDashboard)
-Upates are being made daily. Please check back periodically.
+Upates are being made daily. Please check back periodically. Please check the [wiki](https://github.com/sableeyed/NolvusDashboard/wiki) for more detailed information.
 
 # Contributing
 If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/RmTsQcU8WV)
 
 # Known Issues
-- v6 support added, but not tested
 - This requires Nexus Premium. I do not plan to implement what's needed for free accounts at this time
-- ENB will fail to install the first time. Close the Dashboard and run through again.
-- DynDOLOD output will appear to be stuck at 47% hashing. Just let it finish.
 
 # TODO
 - ChangeLogFrame
-- Dashboard.CheckForUpdates
 
 # Wine
 A wine prefix will be created for you in `~/.local/share/NolvusDashboard/prefix`
@@ -28,8 +24,6 @@ This prefix is required to run certain tools like BSArch
 - Wine
 - 7zip
 - xdelta3
-- .NET Runtime 9.x
-
 
 # Fully Implemented
 - Nolvus.NexusApi
@@ -45,15 +39,3 @@ This prefix is required to run certain tools like BSArch
 # Partially Implemented
 - Nolvus.Dashboard
 - Nolvus.Browser
-
-# Unimplemented
-- Nolvus.Downgrader
-- Nolvus.GrassCache
-
-# Refactor Needed
-- Nolvus.Updater
-
-
-# TODO
-- Unify the theme and layout of all UI components/frames
-- Create desktop entries to allow for icons

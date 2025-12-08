@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>Vcc.Nolvus.Api.Installer</AssemblyName>
     <RootNamespace>Vcc.Nolvus.Api.Installer</RootNamespace>
+    <DisableTransitiveFrameworkReferences>true</DisableTransitiveFrameworkReferences>
   </PropertyGroup>
 
   <ItemGroup>

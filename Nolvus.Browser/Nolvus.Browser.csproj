@@ -6,10 +6,10 @@
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
     <AssemblyName>Nolvus.Browser</AssemblyName>
-    <Rootnamespace>Nolvus.Browser</Rootnamespace>
+    <RootNamespace>Nolvus.Browser</RootNamespace>
     <IncludeAssets>runtime; build; contentfiles; analyzers; buildtransitive</IncludeAssets>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <DisableTransitiveFrameworkReferences>true</DisableTransitiveFrameworkReferences>
   </PropertyGroup>
 
   <ItemGroup>

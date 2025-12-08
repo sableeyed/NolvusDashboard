@@ -45,6 +45,7 @@ internal static class Program
         var settings = new CefSettings
         {
             RootCachePath = _cefCachePath,
+            CachePath = _cefCachePath,
             WindowlessRenderingEnabled = false,
             MultiThreadedMessageLoop = true,
             NoSandbox = true
@@ -95,13 +96,6 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-
-        if (!File.Exists("/usr/bin/7z"))
-        {
-            Console.WriteLine("7zip is required and needs to be at /usr/bin/7z");
-            Environment.Exit(-1);
-        }
-
         if (!File.Exists("/usr/bin/xdelta3"))
         {
             Console.WriteLine("xdelta3 is required and needs to be at /usr/bin/xdelta3");
@@ -131,18 +125,9 @@ internal static class Program
             Environment.Exit(0);
         }
 
-        var libDir = Path.Combine(AppContext.BaseDirectory, "lib");
-
-        if (!Directory.Exists(libDir))
-        {
-            Directory.CreateDirectory(libDir);
-        }
-
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-
+        
         ServiceSingleton.RegisterService<ILogService>(new LogService());
-        ServiceSingleton.Logger.LineBreak();
         ServiceSingleton.Logger.Log("***Nolvus Dashboard Initialization***");
         ServiceSingleton.Logger.Log("Starting new session : " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
         ServiceSingleton.Logger.Log("Architecture : " + (Environment.Is64BitProcess ? "x64" : "x86"));

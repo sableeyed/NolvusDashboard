@@ -50,7 +50,7 @@ namespace Nolvus.Services.Files.Extractor
 
                     var psi = new ProcessStartInfo
                     {
-                        FileName = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7zz"),
+                        FileName = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7zzs"),
                         Arguments = $"x -bsp1 -y \"{File}\" -o\"{Output}\" -mmt=off",
                         WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
                         UseShellExecute = false,

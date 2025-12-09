@@ -6,9 +6,6 @@ Upates are being made daily. Please check back periodically. Please check the [w
 # Contributing
 If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/RmTsQcU8WV)
 
-# Known Issues
-- This requires Nexus Premium. I do not plan to implement what's needed for free accounts at this time
-
 # OS Compatibility
 - Arch Base
 - NixOS - With workarounds
@@ -32,18 +29,3 @@ This prefix is required to run certain tools like BSArch
 - KDE Ark (for 1 edge case)
 - xdelta3
 - .NET Runtime 9.0
-
-# Fully Implemented
-- Nolvus.NexusApi
-- Nolvus.Package
-- Nolvus.StockGame
-- Nolvus.Core
-- Nolvus.Components
-- Nolvus.Service
-- Nolvus.Instance
-- Nolvus.Launcher
-- MO2
-
-# Partially Implemented
-- Nolvus.Dashboard
-- Nolvus.Browser

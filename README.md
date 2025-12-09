@@ -10,7 +10,7 @@ If you have found a bug or have a suggestion, open an issue or join the [discord
 - Arch Base
 - NixOS - With workarounds
 - Debian Base - In Testing
-- Ubuntu Base - In Testing
+- Ubuntu Base
 - Fedora Base - In Testing
 
 # TODO

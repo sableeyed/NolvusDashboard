@@ -9,6 +9,13 @@ If you have found a bug or have a suggestion, open an issue or join the [discord
 # Known Issues
 - This requires Nexus Premium. I do not plan to implement what's needed for free accounts at this time
 
+# OS Compatibility
+- Arch Base
+- NixOS - With workarounds
+- Debian Base - In Testing
+- Ubuntu Base - In Testing
+- Fedora Base - In Testing
+
 # TODO
 - ChangeLogFrame
 

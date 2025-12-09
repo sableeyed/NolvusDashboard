@@ -150,16 +150,21 @@
                     Spacing="8"
                     Margin="0,24,0,0">
 							<Button x:Name="BtnCancel"
-                    Content="Cancel"
-                    MinWidth="120"
-                    Background="#363636"
-                    Foreground="White"/>
+                    				Content="Cancel"
+									VerticalContentAlignment="Center"
+                    				HorizontalContentAlignment="Center"
+                    				MinWidth="90"
+                    				Background="#2E2E2E"
+        							BorderBrush="White"
+        							Foreground="White"/>
 							<Button x:Name="BtnContinue"
-                    Content="Continue"
-                    VerticalContentAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    MinWidth="120"
-                    Foreground="White"/>
+                    				Content="Continue"
+                    				VerticalContentAlignment="Center"
+                    				HorizontalContentAlignment="Center"
+                    				MinWidth="90"
+                    				Background="#2E2E2E"
+        							BorderBrush="#F28F1A"
+        							Foreground="#F28F1A"/>
 						</StackPanel>
 					</Grid>
 				</Border>

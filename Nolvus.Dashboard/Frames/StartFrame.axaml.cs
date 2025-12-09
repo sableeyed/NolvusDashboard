@@ -123,7 +123,6 @@ namespace Nolvus.Dashboard.Frames
         {
             ServiceSingleton.Dashboard.Status("Checking for updates...");
             ServiceSingleton.Logger.Log("Checking for updates...");
-            ServiceSingleton.Logger.Log("StartFrame.CheckForUpdates: STUB");
 
             var latest = await ApiManager.Service.Installer.GetLatestInstaller();
             ServiceSingleton.Dashboard.Progress(50);
@@ -134,7 +133,7 @@ namespace Nolvus.Dashboard.Frames
                 bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Update Required", "You must update the dashboard manually, would you like to open the releases page?");
                 if (result == true)
                 {
-                    var url = "https://www.nolvus.net/appendix/installer/faq";
+                    var url = "https://github.com/sableeyed/NolvusDashboard/releases";
                     try
                     {
                         Process.Start(new ProcessStartInfo

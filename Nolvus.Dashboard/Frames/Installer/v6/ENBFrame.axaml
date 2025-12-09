@@ -142,7 +142,7 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
-                                    Foreground="White"
+                                    Foreground="#F28F1A"
                                     BorderBrush="#F28F1A"
                                     BorderThickness="1"/>
                         </StackPanel>

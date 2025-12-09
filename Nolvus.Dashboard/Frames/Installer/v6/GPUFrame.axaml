@@ -116,7 +116,7 @@
                                     HorizontalAlignment="Right">
                             <Button x:Name="BtnBack"
                                     Content="Back"
-                                    MinWidth="88"
+                                    MinWidth="90"
                                     Padding="12,6"
                                     Background="#363636"
                                     Foreground="White"

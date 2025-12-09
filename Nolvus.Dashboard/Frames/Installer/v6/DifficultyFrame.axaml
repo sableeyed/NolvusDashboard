@@ -188,7 +188,7 @@
 
                             <Button x:Name="BtnPrevious"
                                     Content="Previous"
-                                    MinWidth="100"
+                                    MinWidth="90"
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#363636"
@@ -198,7 +198,7 @@
 
                             <Button x:Name="BtnContinue"
                                     Content="Continue"
-                                    MinWidth="100"
+                                    MinWidth="90"
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#363636"

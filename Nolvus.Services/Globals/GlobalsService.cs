@@ -239,9 +239,9 @@ namespace Nolvus.Services.Globals
                     {
                         if (line.StartsWith("MemTotal"))
                         {
-                            var kb = long.Parse(line.Split(':')[1].Replace("kB", "").Trim());
-                            var gb = kb / 1024 / 1024;
-                            return gb.ToString();
+                            var kib = long.Parse(line.Split(':')[1].Replace("kB", "").Trim());
+                            var gib = kib / 1024.0 / 1024.0;
+                            return ((int)Math.Floor(gib * 1.073741824)).ToString();
                         }
                     }
                     return "RAM count not found";

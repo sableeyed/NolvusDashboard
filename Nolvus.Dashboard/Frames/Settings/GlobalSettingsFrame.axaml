@@ -39,10 +39,11 @@
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4">
                                 <TextBlock Text="Click" Foreground="#CCCCCC"/>
 
-                                <HyperlinkButton x:Name="MegaButton"
-                                    Content="here"
-                                    Foreground="#F28F1A"
-                                    Click="OpenMega" />
+                                <TextBlock Text="here"
+                                           Foreground="#F28F1A"
+                                           Classes="link"
+                                           Cursor="Hand"
+                                           PointerPressed="OpenMega"/>
 
                                 <TextBlock Text="to create your free mega.nz account."
                                             Foreground="#CCCCCC"/>
@@ -63,7 +64,6 @@
                                             PropertyChanged="TglBtnAnonymous_PropertyChanged"
                                             VerticalAlignment="Center"/>
                             </StackPanel>
-
 
                             <!-- Info text -->
                             <TextBlock Grid.Row="2"

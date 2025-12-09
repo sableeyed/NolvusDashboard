@@ -361,9 +361,9 @@
                 VerticalContentAlignment="Center"
                 HorizontalContentAlignment="Center"
                 Margin="0,0,20,20"
-                Width="100"
-                Height="40"
-                Background="#363636"
+                MinWidth="90"
+                Background="#2E2E2E"
+                BorderBrush="White"
                 Foreground="White"/>
     </Grid>
 </UserControl>

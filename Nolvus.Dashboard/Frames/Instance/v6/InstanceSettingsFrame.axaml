@@ -314,10 +314,12 @@
                 Grid.Row="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Width="100"
-                Height="40"
+                MinWidth="90"
                 Margin="0,0,20,20"
-                Background="#363636"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Background="#2E2E2E"
+                BorderBrush="White"
                 Foreground="White"/>
     </Grid>
 </UserControl>

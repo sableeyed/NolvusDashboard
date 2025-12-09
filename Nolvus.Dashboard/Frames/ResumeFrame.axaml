@@ -104,17 +104,25 @@
                                 Spacing="10">
 
                         <Button x:Name="BtnCancel"
-                                             MinWidth="120"
+                                             MinWidth="90"
+                                             Padding="10,6"
                                              Content="Cancel"
                                              HorizontalContentAlignment="Center"
                                              VerticalContentAlignment="Center"
+                                             Background="#2E2E2E"
+                                             BorderBrush="White"
+                                             Foreground="White"
                                              Click="BtnCancel_Click"/>
 
                         <Button x:Name="BtnResume"
-                                             MinWidth="120"
+                                             MinWidth="90"
+                                             Padding="10,6"
                                              Content="Resume"
                                              HorizontalContentAlignment="Center"
                                              VerticalContentAlignment="Center"
+                                             Background="#2E2E2E"
+                                             BorderBrush="#F28F1A"
+                                             Foreground="#F28F1A"
                                              Click="BtnResume_Click"/>
 
                     </StackPanel>

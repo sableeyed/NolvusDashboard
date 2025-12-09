@@ -15,6 +15,7 @@ using Nolvus.NexusApi;
 using Nolvus.Core.Misc;
 using Nolvus.NexusApi.SSO.Responses;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using DynamicData;
 
 
@@ -226,5 +227,20 @@ namespace Nolvus.Dashboard.Frames.Settings
         {
             BtnNext.IsEnabled = !string.IsNullOrWhiteSpace(SettingsCache.NexusApiKey);
         }
+
+        private void OpenNexusInfo(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var url = "https://www.nolvus.net/appendix/installer/requirements";
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
+        }
+
     }
 }

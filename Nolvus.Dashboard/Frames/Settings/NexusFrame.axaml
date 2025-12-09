@@ -13,10 +13,26 @@
                  Foreground="#FFF"
                  FontWeight="SemiBold"/>
 
-      <TextBlock Text="Click the button below to authenticate using Nexus SSO. Visit https://www.nolvus.net/appendix/installer/requirements for more info."
-                 TextWrapping="Wrap"
-                 Foreground="#CCCCCC"
-                 FontSize="16"/>
+      <StackPanel Orientation="Horizontal" Spacing="4">
+        <TextBlock Text="Click the button below to authenticate using Nexus SSO."
+                   Foreground="#CCCCCC"
+                   FontSize="16"/>
+
+        <TextBlock Text="Click"
+                   Foreground="#CCCCCC"
+                   FontSize="16"/>
+
+        <TextBlock Text="here"
+                   Foreground="#F28F1A"
+                   Classes="link"
+                   Cursor="Hand"
+                   PointerPressed="OpenNexusInfo"
+                   FontSize="16"/>
+
+        <TextBlock Text="for more info."
+                   Foreground="#CCCCCC"
+                   FontSize="16"/>
+      </StackPanel>
     </StackPanel>
 
     <!-- MAIN AUTH BUTTON -->
@@ -63,13 +79,19 @@
               Content="Previous"
               HorizontalContentAlignment="Center"
               VerticalContentAlignment="Center"
-              MinWidth="120"/>
+              Background="#2E2E2E"
+              BorderBrush="White"
+              Foreground="White"
+              MinWidth="90"/>
 
       <Button x:Name="BtnNext"
               Content="Next"
               HorizontalContentAlignment="Center"
               VerticalContentAlignment="Center"
-              MinWidth="120"/>
+              Background="#2E2E2E"
+              BorderBrush="#F28F1A"
+              Foreground="#F28F1A"
+              MinWidth="90"/>
 
     </StackPanel>
 

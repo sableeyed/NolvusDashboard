@@ -67,8 +67,11 @@
             <!-- Help button (hidden by default) -->
             <Button x:Name="BtnHelp"
                     Content="Click here to fix"
-                    Width="120" Height="36"
+                    MinWidth="90"
+                    Padding="10,6"
                     Background="#2E2E2E"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
                     Foreground="White"
                     BorderBrush="White"
                     IsVisible="False"/>
@@ -76,10 +79,13 @@
             <!-- Retry button -->
             <Button x:Name="BtnRetry"
                     Content="Retry"
-                    Width="120" Height="36"
+                    MinWidth="90"
+                    Padding="10,6"
                     Background="#2E2E2E"
-                    Foreground="White"
-                    BorderBrush="White"/>
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="#F28F1A"
+                    Foreground="#F28F1A"/>
         </StackPanel>
 
     </Grid>

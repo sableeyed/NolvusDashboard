@@ -79,15 +79,19 @@
                                     Content="Previous"
                                     VerticalContentAlignment="Center"
                                     HorizontalContentAlignment="Center"
-                                    MinWidth="120"
+                                    MinWidth="90"
+                                    Background="#2E2E2E"
+                                    BorderBrush="White"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
                                     Content="Continue"
                                     VerticalContentAlignment="Center"
                                     HorizontalContentAlignment="Center"
-                                    MinWidth="120"
-                                    Foreground="White"/>
+                                    MinWidth="90"
+                                    Background="#2E2E2E"
+                                    BorderBrush="#F28F1A"
+                                    Foreground="#F28F1A"/>
 
                         </StackPanel>
 

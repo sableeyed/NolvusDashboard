@@ -29,8 +29,7 @@
                 <!-- Your existing ModsBox control -->
                 <controls:ModsBox x:Name="ModsBox"
                                   HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Top"
-                                  />
+                                  VerticalAlignment="Top"/>
 
             </ScrollViewer>
         </Border>

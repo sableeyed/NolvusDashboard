@@ -84,13 +84,21 @@
                         <Button x:Name="BtnBack"
                                 VerticalContentAlignment="Center"
                                 HorizontalContentAlignment="Center"
-                                Width="88" Height="40"
+                                MinWidth="90"
+                                Padding="10,6"
+                                Background="#2E2E2E"
+                                BorderBrush="White"
+                                Foreground="White"
                                 Content="Back"/>
 
                         <Button x:Name="BtnAction"
                                 VerticalContentAlignment="Center"
                                 HorizontalContentAlignment="Center"
-                                Width="88" Height="40"
+                                MinWidth="90"
+                                Padding="10,6"
+                                Background="#2E2E2E"
+                                BorderBrush="#F28F1A"
+                                Foreground="#F28F1A"
                                 Content="[Action]"/>
                     </StackPanel>
 

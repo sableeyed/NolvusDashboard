@@ -49,14 +49,26 @@
       <Button x:Name="BtnBrowse"
               Grid.Column="1"
               Content="Browse…"
-              MinWidth="96" />
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center"
+              MinWidth="90"
+              Padding="10,6" 
+              Background="#2E2E2E"
+              BorderBrush="White"
+              Foreground="White" />
     </Grid>
 
     <!-- Auto Detect + Warning -->
     <StackPanel Grid.Row="2" Margin="24,8,24,0" Spacing="8">
       <Button x:Name="BtnAutoDetect"
               Content="Auto Detect"
-              MinWidth="120"
+              MinWidth="90"
+              Padding="10,6"
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center"
+              Background="#2E2E2E"
+              BorderBrush="White"
+              Foreground="White"
               HorizontalAlignment="Left" />
 
       <Border Background="#332"
@@ -90,7 +102,8 @@
     <!-- Footer -->
     <StackPanel Grid.Row="4" Margin="24,12,24,24"
                 Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-      <Button x:Name="BtnNext" Content="Next" MinWidth="120" />
+      <Button x:Name="BtnNext" Content="Next" MinWidth="90" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+              Background="#2E2E2E" BorderBrush="#F28F1A" Foreground="#F28F1A"/>
     </StackPanel>
 
   </Grid>

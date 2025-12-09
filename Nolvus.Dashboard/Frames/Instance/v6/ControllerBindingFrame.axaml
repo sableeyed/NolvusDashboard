@@ -43,17 +43,21 @@
                     Margin="0,0,6,6">
 
             <Button x:Name="BtnKeyboard"
-                    Width="114"
-                    Height="40"
+                    MinWidth="90"
                     Content="Keyboard"
-                    Background="#363636"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Background="#2E2E2E"
+                    BorderBrush="White"
                     Foreground="White"/>
 
             <Button x:Name="BtnBack"
-                    Width="114"
-                    Height="40"
+                    MinWidth="90"
                     Content="Back"
-                    Background="#363636"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Background="#2E2E2E"
+                    BorderBrush="White"
                     Foreground="White"/>
         </StackPanel>
 

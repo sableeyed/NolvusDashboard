@@ -134,16 +134,20 @@
 
             <Button x:Name="BtnController"
                     Content="Controller"
-                    Width="120"
-                    Height="40"
-                    Background="#363636"
+                    MinWidth="90"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Background="#2E2E2E"
+                    BorderBrush="White"
                     Foreground="White"/>
 
             <Button x:Name="BtnBack"
                     Content="Back"
-                    Width="120"
-                    Height="40"
-                    Background="#363636"
+                    MinWidth="90"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Background="#2E2E2E"
+                    BorderBrush="White"
                     Foreground="White"/>
 
         </StackPanel>

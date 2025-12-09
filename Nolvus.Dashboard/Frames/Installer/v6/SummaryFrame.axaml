@@ -152,7 +152,7 @@
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                         BorderBrush="White" BorderThickness="1"/>
                 <Button x:Name="BtnStart" Content="Start" MinWidth="90"
-                        Background="#2E2E2E" Foreground="White"
+                        Background="#2E2E2E" Foreground="#F28F1A"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                         BorderBrush="#F28F1A" BorderThickness="1"/>
             </StackPanel>

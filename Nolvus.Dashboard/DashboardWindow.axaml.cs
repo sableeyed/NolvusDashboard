@@ -519,10 +519,7 @@ public partial class DashboardWindow : Window, IDashboard
 
         SetWindowIcon();
 
-
         ServiceSingleton.RegisterService<IDashboard>(this);
-        ServiceSingleton.Logger.Log("You are running a currently non-functional Linux build of the Nolvus Dashboard");
-
 
         StStripLblInfo.Text = string.Empty;
         StStripLblAdditionalInfo.Text = string.Empty;

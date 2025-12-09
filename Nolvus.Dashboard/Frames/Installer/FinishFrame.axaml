@@ -74,15 +74,14 @@
                 <Button x:Name="BtnContinue"
                         Grid.Row="3"
                         Content="Manage Instances"
-                        Width="150"
-                        Height="40"
+                        MinWidth="90"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
                         VerticalContentAlignment="Center"
                         HorizontalContentAlignment="Center"
-                        Background="#363636"
-                        Foreground="White"
-                        BorderBrush="White"
+                        Background="#2E2E2E"
+                        BorderBrush="#F28F1A"
+                        Foreground="#F28F1A"
                         Click="BtnContinue_Click"/>
 
             </Grid>

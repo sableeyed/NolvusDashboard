@@ -129,9 +129,9 @@
                 HorizontalAlignment="Right"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Width="120"
-                Height="40"
-                Background="#363636"
+                MinWidth="90"
+                Background="#2E2E2E"
+                BorderBrush="White"
                 Foreground="White"
                 Margin="0,10,0,0"/>
     </Grid>

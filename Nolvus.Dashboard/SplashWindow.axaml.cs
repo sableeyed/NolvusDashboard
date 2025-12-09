@@ -21,53 +21,53 @@ public partial class SplashWindow : Window
 
     private async void SplashWindow_Opened(object? sender, EventArgs e)
     {
-            SetWindowIcon();
-            await Task.Yield();
+        SetWindowIcon();
+        await Task.Yield();
 
-            if (!File.Exists("/usr/bin/wine"))
+        if (!File.Exists("/usr/bin/wine"))
+        {
+            StatusText.Text = "Select your wine binary";
+
+            var dialog = new OpenFileDialog
             {
-                StatusText.Text = "Select your wine binary";
+                Title = "Select Wine executable",
+                AllowMultiple = false
+            };
 
-                var dialog = new OpenFileDialog
-                {
-                    Title = "Select Wine executable",
-                    AllowMultiple = false
-                };
+            var result = await dialog.ShowAsync(this);
 
-                var result = await dialog.ShowAsync(this);
-
-                if (result == null || result.Length == 0)
-                {
-                    StatusText.Text = "Wine selection cancelled. Dashboard cannot continue.";
-                    await Task.Delay(1500);
-                    Close();
-                    return;
-                }
-
-                WineRunner.WinePath = result[0];
-            }
-            else
+            if (result == null || result.Length == 0)
             {
-                WineRunner.WinePath = "/usr/bin/wine";
+                StatusText.Text = "Wine selection cancelled. Dashboard cannot continue.";
+                await Task.Delay(1500);
+                Close();
+                return;
             }
 
-            StatusText.Text = "Initializing wine prefix...";
-            await Task.Delay(150);
+            WineRunner.WinePath = result[0];
+        }
+        else
+        {
+            WineRunner.WinePath = "/usr/bin/wine";
+        }
 
-            await WinePrefix.InitializeAsync((message, percent) =>
-            {
-                StatusText.Text = message;
-                LoadingBar.Width = (percent / 100.0) * 380;
-            });
+        StatusText.Text = "Initializing wine prefix...";
+        await Task.Delay(150);
 
-            StatusText.Text = "Launching dashboard...";
-            LoadingBar.Value = 100;
+        await WinePrefix.InitializeAsync((message, percent) =>
+        {
+            StatusText.Text = message;
+            LoadingBar.Width = (percent / 100.0) * 380;
+        });
 
-            await Task.Delay(200);
+        StatusText.Text = "Launching dashboard...";
+        LoadingBar.Value = 100;
 
-            var dash = new DashboardWindow();
-            dash.Show();
-            Close();
+        await Task.Delay(200);
+
+        var dash = new DashboardWindow();
+        dash.Show();
+        Close();
     }
 
     private void SetWindowIcon()
@@ -94,22 +94,23 @@ public partial class SplashWindow : Window
 
             if (_fadeOut)
             {
-                this.Opacity -= step;
+                Opacity -= step;
 
-                if (this.Opacity <= 0.85)
+                if (Opacity <= 0.85)
                     _fadeOut = false;
             }
             else
             {
-                this.Opacity += step;
+                Opacity += step;
 
-                if (this.Opacity >= 1.00)
+                if (Opacity >= 1.00)
                     _fadeOut = true;
             }
         };
 
         _pulseTimer.Start();
     }
+
     public void UpdateStatus(string text)
     {
         Dispatcher.UIThread.Post(() =>
@@ -143,5 +144,4 @@ public partial class SplashWindow : Window
             StatusText.Text = text;
         });
     }
-
 }

@@ -4,6 +4,7 @@ using Avalonia.Platform;
 using Avalonia.Media.Imaging;
 using System;
 using Nolvus.Dashboard.Services;
+using Nolvus.Dashboard.Services.Wine;
 
 namespace Nolvus.Dashboard;
 
@@ -20,27 +21,53 @@ public partial class SplashWindow : Window
 
     private async void SplashWindow_Opened(object? sender, EventArgs e)
     {
-        SetWindowIcon();
-        await Task.Yield();
+            SetWindowIcon();
+            await Task.Yield();
 
-        StatusText.Text = "Initializing wine prefix...";
-        await Task.Delay(150); // Allows UI to update visibly
+            if (!File.Exists("/usr/bin/wine"))
+            {
+                StatusText.Text = "Select your wine binary";
 
-        await WinePrefix.InitializeAsync((message, percent) =>
-        {
-            StatusText.Text = message;
-            LoadingBar.Width = (percent / 100.0) * 380; // or use ActualWidth
-        });
+                var dialog = new OpenFileDialog
+                {
+                    Title = "Select Wine executable",
+                    AllowMultiple = false
+                };
 
-        StatusText.Text = "Launching dashboard...";
-        LoadingBar.Value = 100;
+                var result = await dialog.ShowAsync(this);
 
-        await Task.Delay(200);
+                if (result == null || result.Length == 0)
+                {
+                    StatusText.Text = "Wine selection cancelled. Dashboard cannot continue.";
+                    await Task.Delay(1500);
+                    Close();
+                    return;
+                }
 
-        var dash = new DashboardWindow();
-        dash.Show();
+                WineRunner.WinePath = result[0];
+            }
+            else
+            {
+                WineRunner.WinePath = "/usr/bin/wine";
+            }
 
-        Close();
+            StatusText.Text = "Initializing wine prefix...";
+            await Task.Delay(150);
+
+            await WinePrefix.InitializeAsync((message, percent) =>
+            {
+                StatusText.Text = message;
+                LoadingBar.Width = (percent / 100.0) * 380;
+            });
+
+            StatusText.Text = "Launching dashboard...";
+            LoadingBar.Value = 100;
+
+            await Task.Delay(200);
+
+            var dash = new DashboardWindow();
+            dash.Show();
+            Close();
     }
 
     private void SetWindowIcon()

@@ -9,6 +9,7 @@ namespace Nolvus.Dashboard.Services.Wine
 {
     public class WineRunner : IWineRunner
     {
+        public static string WinePath { get; set; } = "/usr/bin/wine";
         public async Task<int> RunAsync(string workingDirectory, string exeName, params string[] args)
         {
             await WinePrefix.InitializeAsync();
@@ -21,7 +22,7 @@ namespace Nolvus.Dashboard.Services.Wine
 
             var psi = new ProcessStartInfo
             {
-                FileName = "wine",
+                FileName = WinePath,
                 WorkingDirectory = workingDirectory,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -82,7 +83,7 @@ namespace Nolvus.Dashboard.Services.Wine
 
             var psi = new ProcessStartInfo
             {
-                FileName = "wine",
+                FileName = WinePath,
                 UseShellExecute = false,
                 RedirectStandardOutput = false,
                 RedirectStandardError = false,

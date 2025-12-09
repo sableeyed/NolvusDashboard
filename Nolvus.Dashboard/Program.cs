@@ -102,12 +102,6 @@ internal static class Program
             Environment.Exit(-1);
         }
 
-        if (!File.Exists("/usr/bin/wine"))
-        {
-            Console.WriteLine("Wine is required and needs to be at /usr/bin/wine");
-            Environment.Exit(-1);
-        }
-
         if (!File.Exists("/usr/bin/ark"))
         {
             Console.WriteLine("Ark is required and needs to be at /usr/bin/ark");

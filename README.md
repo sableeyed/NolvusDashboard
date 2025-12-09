@@ -7,11 +7,11 @@ Upates are being made daily. Please check back periodically. Please check the [w
 If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/RmTsQcU8WV)
 
 # OS Compatibility
-- Arch Base
-- NixOS - With workarounds
-- Debian Base - In Testing
-- Ubuntu Base
-- Fedora Base - In Testing
+## Tested and working on the following systems
+- Arch based distros
+- Ubuntu/Debian based distros
+- Fedora based distros
+- Bazzite*
 
 # TODO
 - ChangeLogFrame

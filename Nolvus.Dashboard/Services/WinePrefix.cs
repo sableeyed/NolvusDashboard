@@ -57,10 +57,9 @@ namespace Nolvus.Dashboard.Services
             var steps = new[]
             {
                 ("Installing dotnet48", "dotnet48 -q"),
-                ("Installing vcrun2022", "vcrun2022 -q"),
+                ("Installing vcrun2022", "--force vcrun2022"),
                 ("Installing corefonts", "corefonts -q "),
                 ("Setting font smoothing", "fontsmooth=rgb -q"),
-                ("Installing d3dcompiler_47", "d3dcompiler_47 -q")
             };
 
             int index = 1;
@@ -106,7 +105,8 @@ namespace Nolvus.Dashboard.Services
             };
 
             foreach (var arg in args)
-                startInfo.ArgumentList.Add(arg);
+                foreach (var token in arg.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                    startInfo.ArgumentList.Add(token);
 
             var process = new Process
             {

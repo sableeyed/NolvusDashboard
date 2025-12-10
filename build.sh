@@ -15,6 +15,9 @@ dotnet publish "$PROJECT_ROOT/Nolvus.Dashboard/Nolvus.Dashboard.csproj" \
     -r linux-x64 \
     -o "$OUT_DIR/Dashboard"
 
+echo "Copying icon asset..."
+cp "$PROJECT_ROOT/Nolvus.Dashboard/Assets/nolvus-ico.jpg" "$OUT_DIR/Dashboard/"
+
 echo "Renaming Dashboard -> Nolvus..."
 cd "$OUT_DIR"
 cp -r Dashboard Nolvus

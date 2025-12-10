@@ -28,24 +28,24 @@
 
                             <!-- TOP ROW: DROPDOWNS + HARDWARE PANEL -->
                             <Grid ColumnDefinitions="Auto,Auto,*"
-                                RowDefinitions="Auto,Auto,Auto,Auto"
-                                ColumnSpacing="12"
-                                RowSpacing="10"
-                                HorizontalAlignment="Stretch">
+                                  RowDefinitions="Auto,Auto,Auto,Auto"
+                                  ColumnSpacing="12"
+                                  RowSpacing="10"
+                                  HorizontalAlignment="Stretch">
 
                                 <!-- ===== Row 0: VARIANT ===== -->
                                 <TextBlock Grid.Row="0" Grid.Column="0"
-                                        Text="Variant"
-                                        Foreground="White" />
+                                           Text="Variant"
+                                           Foreground="White" />
 
                                 <ComboBox Grid.Row="0" Grid.Column="1"
-                                        x:Name="DrpDwnLstVariant"
-                                        MinWidth="180"
-                                        SelectionChanged="OnVariantChanged"
-                                        Background="#2E2E2E"
-                                        Foreground="White" />
+                                          x:Name="DrpDwnLstVariant"
+                                          MinWidth="180"
+                                          SelectionChanged="OnVariantChanged"
+                                          Background="#2E2E2E"
+                                          Foreground="White" />
 
-                                <!-- Hardware panel (spans all rows) -->
+                                <!-- Hardware panel -->
                                 <Border Grid.Row="0" Grid.Column="2"
                                         Grid.RowSpan="4"
                                         Background="#2E2E2E"
@@ -59,78 +59,74 @@
 
                                     <StackPanel Spacing="6">
                                         <TextBlock Text="Hardware Requirement"
-                                                Foreground="White"
-                                                FontSize="14"
-                                                FontWeight="SemiBold"/>
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"/>
 
-                                        <!-- GPU -->
                                         <StackPanel Orientation="Horizontal" Spacing="6">
                                             <TextBlock Text="GPU"
-                                                    Foreground="White"
-                                                    FontWeight="SemiBold"/>
+                                                       Foreground="White"
+                                                       FontWeight="SemiBold"/>
                                             <TextBlock x:Name="LblReqGpu" Foreground="#F28F1A"/>
                                         </StackPanel>
 
-                                        <!-- VRAM -->
                                         <StackPanel Orientation="Horizontal" Spacing="6">
                                             <TextBlock Text="VRAM"
-                                                    Foreground="White"
-                                                    FontWeight="SemiBold"/>
+                                                       Foreground="White"
+                                                       FontWeight="SemiBold"/>
                                             <TextBlock x:Name="LblReqVram" Foreground="#F28F1A"/>
                                         </StackPanel>
 
-                                        <!-- Storage -->
                                         <StackPanel Orientation="Horizontal" Spacing="6">
                                             <TextBlock Text="Storage"
-                                                    Foreground="White"
-                                                    FontWeight="SemiBold"/>
+                                                       Foreground="White"
+                                                       FontWeight="SemiBold"/>
                                             <TextBlock x:Name="LblReqStorageTotal" Foreground="#F28F1A"/>
                                         </StackPanel>
 
                                         <TextBlock x:Name="LblReqDisclaimer"
-                                                Text="These recommendations are an estimation only. It will always vary depending on your computer. You can always tweak a bit more by selecting a lower Skyrim ini profile or disable other effects like Advanced Physics or Fake Ray tracing."
-                                                Foreground="#CCCCCC"
-                                                TextWrapping="Wrap"/>
+                                                   Text="These recommendations are an estimation only. It will always vary depending on your computer. You can always tweak a bit more by selecting a lower Skyrim ini profile or disable other effects like Advanced Physics or Fake Ray tracing."
+                                                   Foreground="#CCCCCC"
+                                                   TextWrapping="Wrap"/>
                                     </StackPanel>
 
                                 </Border>
 
                                 <!-- ===== Row 1: ANTI-ALIASING ===== -->
                                 <TextBlock Grid.Row="1" Grid.Column="0"
-                                        Text="Anti-Aliasing"
-                                        Foreground="White" />
+                                           Text="Anti-Aliasing"
+                                           Foreground="White" />
 
                                 <ComboBox Grid.Row="1" Grid.Column="1"
-                                        x:Name="DrpDwnLstAntiAliasing"
-                                        SelectionChanged="OnAntiAliasingChanged"
-                                        MinWidth="180"
-                                        Background="#2E2E2E"
-                                        Foreground="White" />
+                                          x:Name="DrpDwnLstAntiAliasing"
+                                          SelectionChanged="OnAntiAliasingChanged"
+                                          MinWidth="180"
+                                          Background="#2E2E2E"
+                                          Foreground="White" />
 
                                 <!-- ===== Row 2: INI PROFILE ===== -->
                                 <TextBlock Grid.Row="2" Grid.Column="0"
-                                        Text="Skyrim INI Profile"
-                                        Foreground="White"/>
+                                           Text="Skyrim INI Profile"
+                                           Foreground="White"/>
 
                                 <ComboBox Grid.Row="2" Grid.Column="1"
-                                        x:Name="DrpDwnLstIni"
-                                        MinWidth="180"
-                                        SelectionChanged="OnIniChanged"
-                                        Background="#2E2E2E"
-                                        Foreground="White"/>
+                                          x:Name="DrpDwnLstIni"
+                                          MinWidth="180"
+                                          SelectionChanged="OnIniChanged"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
 
                                 <!-- ===== Row 3: LODs ===== -->
                                 <TextBlock Grid.Row="3" Grid.Column="0"
-                                        Text="LODs"
-                                        Foreground="White"/>
+                                           Text="LODs"
+                                           Foreground="White"/>
 
                                 <ComboBox Grid.Row="3" Grid.Column="1"
-                                        x:Name="DrpDwnLstLODs"
-                                        SelectionChanged="OnLodsChanged"
-                                        MinWidth="180"
-                                        Background="#2E2E2E"
-                                        Foreground="White"/>
-
+                                          x:Name="DrpDwnLstLODs"
+                                          SelectionChanged="OnLodsChanged"
+                                          MinWidth="180"
+                                          Background="#2E2E2E"
+                                          Foreground="White"/>
                             </Grid>
                             <!-- Physics -->
                             <StackPanel Spacing="8">
@@ -233,94 +229,96 @@
                 </Border>
 
                 <!-- RIGHT PANEL -->
-                <Border Grid.Column="1"
-                        Background="#363636"
-                        BorderBrush="#444"
-                        CornerRadius="4"
-                        Padding="16">
+                <ScrollViewer Grid.Column="1"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
 
-                    <Grid RowDefinitions="*,Auto">
+                    <Border Background="#363636"
+                            BorderBrush="#444"
+                            CornerRadius="4"
+                            Padding="16">
 
-                        <!-- INFO TEXT -->
-                        <StackPanel Grid.Row="0" Spacing="12">
+                        <Grid RowDefinitions="*,Auto">
 
-                            <TextBlock Text="This new Nolvus version has some performance options"
-                                       Foreground="#CCCCCC"
-                                       TextWrapping="Wrap"/>
+                            <!-- INFO TEXT -->
+                            <StackPanel Grid.Row="0" Spacing="12">
 
-                            <TextBlock Text="The Ultra variant is the graphically maxed out version of the list, the Redux is the same version gameplay wise but less heavy on vegetation and cities overhaul"
-                                       Foreground="#CCCCCC"
-                                       TextWrapping="Wrap"/>
+                                <TextBlock Text="This new Nolvus version has some performance options"
+                                           Foreground="#CCCCCC"
+                                           TextWrapping="Wrap"/>
 
-                            <TextBlock Text="DLAA anti aliasing is only available for Nvidia RTX cards. The option will be greyed out and set to TAA if you don't have an Nvidia RTX card."
-                                       Foreground="#CCCCCC"
-                                       TextWrapping="Wrap"/>
+                                <TextBlock Text="The Ultra variant is the graphically maxed out version of the list, the Redux is the same version gameplay wise but less heavy on vegetation and cities overhaul"
+                                           Foreground="#CCCCCC"
+                                           TextWrapping="Wrap"/>
 
-                            <TextBlock Text="Advanced physics provides physics on hair and armors. This configuration is recommended for high end computers."
-                                       Foreground="#CCCCCC"
-                                       TextWrapping="Wrap"/>
+                                <TextBlock Text="DLAA anti aliasing is only available for Nvidia RTX cards. The option will be greyed out and set to TAA if you don't have an Nvidia RTX card."
+                                           Foreground="#CCCCCC"
+                                           TextWrapping="Wrap"/>
 
-                            <TextBlock Text="Select your ini profile (based on Bethini recommended settings)"
-                                       Foreground="#CCCCCC"
-                                       TextWrapping="Wrap"/>
+                                <TextBlock Text="Advanced physics provides physics on hair and armors. This configuration is recommended for high end computers."
+                                           Foreground="#CCCCCC"
+                                           TextWrapping="Wrap"/>
 
-                            <TextBlock Text="If you selected the Ultra variant and want to spare some fps and vram consumption, you can also choose the LODs (Terrain, objects and trees in the distance) quality option"
-                                       Foreground="#CCCCCC"
-                                       TextWrapping="Wrap"/>
+                                <TextBlock Text="Select your ini profile (based on Bethini recommended settings)"
+                                           Foreground="#CCCCCC"
+                                           TextWrapping="Wrap"/>
 
-                            <TextBlock Text="FPS Stabilizer is used to reduce draw distance on the fly to keep most fps possible. WARNING using this feature, you may gain 5-10 fps but some actors could pop really close to you. You may also experience objects and trees popins. Use this feature wisely."
-                                       Foreground="#CCCCCC"
-                                       TextWrapping="Wrap"/>
+                                <TextBlock Text="If you selected the Ultra variant and want to spare some fps and vram consumption, you can also choose the LODs (Terrain, objects and trees in the distance) quality option"
+                                           Foreground="#CCCCCC"
+                                           TextWrapping="Wrap"/>
 
-                            <TextBlock x:Name="LblHardwareWarning"
-                                       Text="Current hardware configuration:"
-                                       Foreground="White"
-                                       Margin="0,16,0,4"/>
+                                <TextBlock Text="FPS Stabilizer is used to reduce draw distance on the fly to keep most fps possible. WARNING using this feature, you may gain 5-10 fps but some actors could pop really close to you. You may also experience objects and trees popins. Use this feature wisely."
+                                           Foreground="#CCCCCC"
+                                           TextWrapping="Wrap"/>
 
-                            <!-- HARDWARE INFO -->
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="GPU:" Foreground="White"/>
-                                <TextBlock x:Name="LblGPU" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblHardwareWarning"
+                                           Text="Current hardware configuration:"
+                                           Foreground="White"
+                                           Margin="0,16,0,4"/>
 
-                                <TextBlock Text="CPU:" Foreground="White"/>
-                                <TextBlock x:Name="LblCPU" Foreground="#F28F1A"/>
+                                <!-- HARDWARE INFO -->
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="GPU:" Foreground="White"/>
+                                    <TextBlock x:Name="LblGPU" Foreground="#F28F1A"/>
+                                    <TextBlock Text="CPU:" Foreground="White"/>
+                                    <TextBlock x:Name="LblCPU" Foreground="#F28F1A"/>
+                                    <TextBlock Text="RAM:" Foreground="White"/>
+                                    <TextBlock x:Name="LblRAM" Foreground="#F28F1A"/>
+                                </StackPanel>
 
-                                <TextBlock Text="RAM:" Foreground="White"/>
-                                <TextBlock x:Name="LblRAM" Foreground="#F28F1A"/>
                             </StackPanel>
 
-                        </StackPanel>
+                            <!-- BUTTONS -->
+                            <StackPanel Grid.Row="1"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        Spacing="8"
+                                        Margin="0,24,0,0">
 
-                        <!-- BUTTONS -->
-                        <StackPanel Grid.Row="1"
-                                    Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    Spacing="8"
-                                    Margin="0,24,0,0">
+                                <Button x:Name="BtnPrevious"
+                                        Content="Previous"
+                                        MinWidth="90"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Background="#2E2E2E"
+                                        BorderBrush="White"
+                                        Foreground="White"/>
 
-                            <Button x:Name="BtnPrevious"
-                                    Content="Previous"
-                                    MinWidth="90"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    Background="#2E2E2E"
-                                    BorderBrush="White"
-                                    Foreground="White"/>
+                                <Button x:Name="BtnContinue"
+                                        Content="Continue"
+                                        MinWidth="90"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Background="#2E2E2E"
+                                        BorderBrush="#F28F1A"
+                                        Foreground="#F28F1A"/>
 
-                            <Button x:Name="BtnContinue"
-                                    Content="Continue"
-                                    MinWidth="90"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    Background="#2E2E2E"
-                                    BorderBrush="#F28F1A"
-                                    Foreground="#F28F1A"/>
+                            </StackPanel>
 
-                        </StackPanel>
+                        </Grid>
 
-                    </Grid>
-
-                </Border>
+                    </Border>
+                </ScrollViewer>
 
             </Grid>
 

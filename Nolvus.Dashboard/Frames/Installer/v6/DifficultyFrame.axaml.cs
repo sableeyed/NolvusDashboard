@@ -12,8 +12,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         public DifficultyFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
-            TglBtnBoss.Click += OnBossChanged;
-            TglBtnExhaustion.Click += OnExhaustionChanged;
+            TglBtnBoss.IsCheckedChanged += OnBossChanged;
+            TglBtnExhaustion.IsCheckedChanged += OnExhaustionChanged;
             BtnContinue.Click += BtnContinue_Click;
             BtnPrevious.Click += BtnPrevious_Click;
         }
@@ -60,7 +60,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             return false;
         }
 
-        private bool CheckIfHMilkDrinker()
+        private bool CheckIfMilkDrinker()
         {
             if (ServiceSingleton.Instances.WorkingInstance.Options.CombatScaling == "Very Easy" &&
                 ServiceSingleton.Instances.WorkingInstance.Options.Exhaustion == "FALSE" &&
@@ -100,24 +100,22 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             Presets.Add("True Nord");
             Presets.Add("Prepare to Die");
 
+            DrpDwnLstPreset.ItemsSource = Presets;
+
             if (CheckIfPrepareToDie())
             {
-                DrpDwnLstPreset.ItemsSource = Presets;
                 DrpDwnLstPreset.SelectedIndex = 3;                
             }
             else if (CheckIfTrueNord())
             {
-                DrpDwnLstPreset.ItemsSource = Presets;
                 DrpDwnLstPreset.SelectedIndex = 2;                
             }
             else if (CheckIfHackAndSash())
             {
-                DrpDwnLstPreset.ItemsSource = Presets;
                 DrpDwnLstPreset.SelectedIndex = 1;                
             }
-            else if (CheckIfHMilkDrinker())
+            else if (CheckIfMilkDrinker())
             {
-                DrpDwnLstPreset.ItemsSource = Presets;
                 DrpDwnLstPreset.SelectedIndex = 0;
             }
             else
@@ -138,7 +136,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             DrpDwnLstCombatScaling.SelectedIndex = ScalingsIndex(CombatScalings);
 
-            TglBtnExhaustion.IsChecked = false;
+            //TglBtnExhaustion.IsChecked = false;
 
             if (Instance.Options.Exhaustion == "TRUE")
             {
@@ -156,7 +154,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             DrpDwnLstNerfPA.SelectedIndex = NerfPAIndex(NerfPAs);
 
-            TglBtnBoss.IsChecked = false;
+            //TglBtnBoss.IsChecked = false;
 
             if (Instance.Options.Boss == "TRUE")
             {

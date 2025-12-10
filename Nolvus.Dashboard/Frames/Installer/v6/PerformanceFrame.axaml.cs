@@ -202,9 +202,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 ServiceSingleton.Dashboard.Info("Graphics and Performance Settings");
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
         }
 

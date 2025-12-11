@@ -90,14 +90,14 @@ namespace Nolvus.Services.Files.Extractor
                     // -----------------------------------------
                     if (ContainsCorruptedNames(Output))
                     {
-                        ServiceSingleton.Logger.Log("[EXTRACT] Detected corrupted filenames (�) → switching to Ark fallback");
+                        ServiceSingleton.Logger.Log("[EXTRACT] Detected corrupted filenames (�) → switching to unzip fallback");
 
                         TryDeleteExtractDir(Output);
                         
                         var ark = new ProcessStartInfo
                         {
-                            FileName = "/usr/bin/ark",
-                            Arguments = $"-b \"{File}\" -o \"{Output}\"",
+                            FileName = "/usr/bin/unzip",
+                            Arguments = $"\"{File}\" -d \"{Output}\"",
                             WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
                             UseShellExecute = false,
                             CreateNoWindow = true,
@@ -119,9 +119,9 @@ namespace Nolvus.Services.Files.Extractor
                         arkProc.WaitForExit();
 
                         if (arkProc.ExitCode != 0)
-                            throw new Exception($"Ark extraction failed {FileName}: {string.Join(" ", arkErr)}");
+                            throw new Exception($"unzip extraction failed {FileName}: {string.Join(" ", arkErr)}");
 
-                        ServiceSingleton.Logger.Log("[EXTRACT] Ark fallback completed successfully");
+                        ServiceSingleton.Logger.Log("[EXTRACT] unzip fallback completed successfully");
                     }
                     TriggerProgressEvent(100, FileName);
                 }

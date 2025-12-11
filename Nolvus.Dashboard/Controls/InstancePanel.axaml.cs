@@ -135,7 +135,7 @@ namespace Nolvus.Dashboard.Controls
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
             if (!ModOrganizer.IsRunning)
             {
-                //ServiceSingleton.Dashboard.LoadFrame<ChangeLogFrame>(new FrameParameters(new FrameParameter { Key = "Instance", Value = _instance }));
+                ServiceSingleton.Dashboard.LoadFrame<ChangeLogFrame>(new FrameParameters(new FrameParameter { Key = "Instance", Value = _instance }));
             }
             else
             {

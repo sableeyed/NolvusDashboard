@@ -10,8 +10,7 @@
     SystemDecorations="None"
     ExtendClientAreaToDecorationsHint="True"
     ExtendClientAreaTitleBarHeightHint="50"
-    Background="#363636"
-    PointerPressed="Window_PointerPressed">
+    Background="#363636">
 	<Window.Resources>
 		<SolidColorBrush x:Key="AccentBrush" Color="#F28F1A"/>
 	</Window.Resources>
@@ -71,7 +70,7 @@
 		<Border Background="#363636">
 			<Grid RowDefinitions="Auto,*,Auto,Auto">
 				<!-- TITLE BAR -->
-				<Grid Grid.Row="0" Background="#363636" Height="50">
+				<Grid Grid.Row="0" Background="#363636" Height="50" PointerPressed="TitleBar_PointerPressed">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="Auto"/>

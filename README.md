@@ -11,10 +11,11 @@ If you have found a bug or have a suggestion, open an issue or join the [discord
 - Arch based distros
 - Ubuntu/Debian based distros
 - Fedora based distros
-- Bazzite*
+- [Bazzite*](https://github.com/sableeyed/NolvusDashboard/wiki/Bazzite-Instructions)
+- [Gentoo*](https://github.com/sableeyed/NolvusDashboard/issues/2#issuecomment-3642563508)
 
 # TODO
-- ChangeLogFrame
+- ChangeLogFrame / Ability to update instances
 
 # Wine
 A wine prefix will be created for you in `~/.local/share/NolvusDashboard/prefix`

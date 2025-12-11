@@ -201,7 +201,7 @@ namespace Nolvus.Dashboard.Frames.Instance
                     break;
 
                 case Strings.NolvusAwakening:
-                    // await ServiceSingleton.Dashboard.LoadFrameAsync<v6.InstanceSettingsFrame>();
+                    await ServiceSingleton.Dashboard.LoadFrameAsync<v6.InstanceSettingsFrame>();
                     break;
             }
         }

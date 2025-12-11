@@ -102,12 +102,6 @@ internal static class Program
             Environment.Exit(-1);
         }
 
-        if (!File.Exists("/usr/bin/ark"))
-        {
-            Console.WriteLine("Ark is required and needs to be at /usr/bin/ark");
-            Environment.Exit(-1);
-        }
-
         DebugMode = args.Contains("--debugging");
 
         var current = Process.GetCurrentProcess();

@@ -19,6 +19,8 @@ namespace Nolvus.Dashboard.Frames.Installer
         public ChangeLogFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
+            BtnContinue.Click += BtnContinue_Click;
+            BtnPrevious.Click += BtnPrevious_Click;
         }
 
         protected override async Task OnLoadedAsync()

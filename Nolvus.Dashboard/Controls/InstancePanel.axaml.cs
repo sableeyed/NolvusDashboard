@@ -39,6 +39,7 @@ namespace Nolvus.Dashboard.Controls
             SetupContextMenu();
 
             BtnView.Click += BtnView_Click;
+            BtnUpdate.Click += BtnUpdate_Click;
         }
 
         private void LockButtons()

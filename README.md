@@ -14,9 +14,6 @@ If you have found a bug or have a suggestion, open an issue or join the [discord
 - [Bazzite*](https://github.com/sableeyed/NolvusDashboard/wiki/Bazzite-Instructions)
 - [Gentoo*](https://github.com/sableeyed/NolvusDashboard/issues/2#issuecomment-3642563508)
 
-# TODO
-- ChangeLogFrame / Ability to update instances
-
 # Wine
 A wine prefix will be created for you in `~/.local/share/NolvusDashboard/prefix`
 Do not modify this unless you know what you are doing
@@ -27,6 +24,5 @@ This prefix is required to run certain tools like BSArch
 - Protontricks
 - Winetricks
 - Wine
-- KDE Ark (for 1 edge case)
 - xdelta3
 - .NET Runtime 9.0

@@ -295,11 +295,12 @@ namespace Nolvus.Dashboard.Controls
                 string winePrefix = WinePrefix.PrefixPath;
                 string mo2Path = Path.Combine(_instance.InstallDir, "MO2", "ModOrganizer.exe");
                 string exec = $"env WINEPREFIX=\"{winePrefix}\" wine \"{mo2Path}\"";
+                string path = Path.Combine(_instance.InstallDir, "MO2");
                 var name = _instance.Name;
                 var comment = $"Desktop shortcut for your {_instance.Name} instance.";
                 var icon = Path.Combine(AppContext.BaseDirectory, "nolvus-ico.jpg");
 
-                CreateDesktopShortcut(name, exec, comment, icon);
+                CreateDesktopShortcut(name, exec, comment, icon, path);
 
                 NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop.", MessageBoxType.Info);
             }
@@ -481,7 +482,7 @@ namespace Nolvus.Dashboard.Controls
             return SixLabors.ImageSharp.Image.Load(stream);
         }
 
-        private void CreateDesktopShortcut(string name, string execPath, string comment, string iconPath = "")
+        private void CreateDesktopShortcut(string name, string execPath, string comment, string path, string iconPath = "")
         {
             string desktopFile = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
@@ -494,6 +495,7 @@ Name={name}
 Comment={comment}
 Exec={execPath}
 Icon={iconPath}
+Path={path}
 Terminal=false
 Categories=Game;Utility;
 ";

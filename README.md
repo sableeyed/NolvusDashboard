@@ -6,19 +6,14 @@ Upates are being made daily. Please check back periodically. Please check the [w
 # Contributing
 If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/RmTsQcU8WV)
 
-# OS Compatibility
-## Tested and working on the following systems
-- Arch based distros
-- Ubuntu/Debian based distros
-- Fedora based distros
-- [Bazzite*](https://github.com/sableeyed/NolvusDashboard/wiki/Bazzite-Instructions)
-- [Gentoo*](https://github.com/sableeyed/NolvusDashboard/issues/2#issuecomment-3642563508)
-
 # Wine
-A wine prefix will be created for you in `~/.local/share/NolvusDashboard/prefix`
-Do not modify this unless you know what you are doing
-If you break the prefix you can delete the folder and relaunch the Dashboard to have it create a new one
-This prefix is required to run certain tools like BSArch
+A wine prefix will be created for you in `~/.local/share/NolvusDashboard/prefix`.
+
+Do not modify this unless you know what you are doing.
+
+If you break the prefix you can delete the folder and relaunch the Dashboard to have it create a new one.
+
+This prefix is required to run certain tools like BSArch, or manage MO2 without the use of Steam.
 
 # Required Software
 - Protontricks

@@ -56,10 +56,10 @@ namespace Nolvus.Dashboard.Services
 
             var steps = new[]
             {
-                //("Installing dotnet48", "dotnet48 -q"),
+                ("Installing .NET Framework", "dotnet48 -q"),
                 ("Installing C++ Runtime", "--force vcrun2022"),
-                //("Installing corefonts", "corefonts -q "),
-                //("Setting font smoothing", "fontsmooth=rgb -q"),
+                ("Installing Fonts", "corefonts -q "),
+                ("Setting Font Smoothing", "fontsmooth=rgb -q"),
             };
 
             int index = 1;

@@ -175,7 +175,6 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        //ContentPanel.Controls.Add(Frame);
         ContentHost.Content = Frame;
         LoadedFrame = Frame;
     }
@@ -518,14 +517,6 @@ public partial class DashboardWindow : Window, IDashboard
         StStripLblAdditionalInfo3.Text = string.Empty;
         StripLblAccountType.Text = string.Empty;
         StripLblNexus.Text = string.Empty;
-
-        //Padding = new Padding(0, 50, 0, 0);
-
-
-        // TitleBarControl = new TitleBarControl();
-        //TitleBarControl.Width = 3000;
-        // TitleBarControl.MouseDown += TitleBarControl_MouseDown;
-        // TitleBarTextControl = TitleBarControl;
         
         TitleBarControl.OnSettingsClicked += TitleBarControl_OnSettingsClicked;
         TitleBarControl.Title = "Nolvus Dashboard";
@@ -564,7 +555,6 @@ public partial class DashboardWindow : Window, IDashboard
         if (sender is Slider s)
             ApplyScaling(s.Value);
     }
-
 
     private void TitleBar_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {

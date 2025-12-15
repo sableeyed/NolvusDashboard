@@ -20,6 +20,8 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp;
 using Avalonia.Threading;
 using Nolvus.Dashboard.Controls;
+using Nolvus.Dashboard.Frames.Instance;
+using Avalonia.Interactivity;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -30,10 +32,8 @@ namespace Nolvus.Dashboard.Frames.Installer
         {
             InitializeComponent();
 
-
-            //UI Components
             BtnContinue.Click += BtnContinue_Click;
-            //BtnCancel.Click += BtnCancel_Click;
+            BtnCancel.Click += BtnCancel_Click;
             NolvusListBox.SelectionChanged += NolvusListBox_SelectionChanged;
         }
 
@@ -143,8 +143,7 @@ namespace Nolvus.Dashboard.Frames.Installer
             }
         }
 
-        //TODO - Test and resume installations.
-        private async void BtnContinue_Click(object? sender, EventArgs e)
+        private async void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
             var owner = TopLevel.GetTopLevel(this) as Window;
 
@@ -205,10 +204,10 @@ namespace Nolvus.Dashboard.Frames.Installer
             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
         } 
 
-        // private void BtnCancel_Click(object sender, EventArgs e)
-        // {
-        //     ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
-        // }
+        private void BtnCancel_Click(object? sender, RoutedEventArgs e)
+        {
+            ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
+        }
 
         private void NolvusListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {

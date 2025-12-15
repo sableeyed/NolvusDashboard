@@ -104,8 +104,14 @@ namespace Nolvus.Dashboard.Controls
         private void SetInstanceImage(string Path)
         {
             var uri = new Uri(Path);
-            var asset = AssetLoader.Open(uri);
-            PicInstanceImage.Source = new Bitmap(asset);
+
+            using var asset = AssetLoader.Open(uri);
+            using var ms = new MemoryStream();
+
+            asset.CopyTo(ms);
+            ms.Position = 0;
+
+            PicInstanceImage.Source = new Bitmap(ms);
         }
 
         private void BtnPlay_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -198,9 +204,6 @@ namespace Nolvus.Dashboard.Controls
             BtnView.ContextMenu = menu;
         }
 
-
-
-
         private async void BrItmMods_Click()
         {
             ServiceSingleton.Instances.WorkingInstance = _instance;
@@ -256,7 +259,7 @@ namespace Nolvus.Dashboard.Controls
                 dashboard.NoStatus();
                 dashboard.ProgressCompleted();
                 ServiceSingleton.Logger.Log(ex.ToString());
-                //NolvusMessageBox.Show(window, "Error during report generation", ex.Message, MessageBoxType.Error);
+                NolvusMessageBox.Show(window, "Error during report generation", ex.Message, MessageBoxType.Error);
             }
             finally
             {

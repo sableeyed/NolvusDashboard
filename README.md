@@ -1,7 +1,8 @@
 # Welcome
 
-This product is for Linux only. If you are looking for the Windows version it is [here.](https://github.com/vektor9999/NolvusDashboard)
-Upates are being made daily. Please check back periodically. Please check the [wiki](https://github.com/sableeyed/NolvusDashboard/wiki) for more detailed information.
+This product is for Linux only. If you are looking for the Windows version it is [here](https://github.com/vektor9999/NolvusDashboard)
+
+Please check the [wiki](https://github.com/sableeyed/NolvusDashboard/wiki) for more detailed information
 
 # Contributing
 If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/RmTsQcU8WV)

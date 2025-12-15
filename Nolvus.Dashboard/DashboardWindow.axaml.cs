@@ -31,10 +31,6 @@ namespace Nolvus.Dashboard;
 public partial class DashboardWindow : Window, IDashboard
 {
     private DashboardFrame LoadedFrame;
-    public const int WM_NCLBUTTONDOWN = 0xA1; //?
-    public const int HT_CAPTION = 0x2; //?
-    private Image PicBox; //replace PictureBox since it's windoze only
-    private ScaleTransform? _scale;
 
     #region Events
 
@@ -102,10 +98,8 @@ public partial class DashboardWindow : Window, IDashboard
 
     #region Properties
 
-    //CreateGraphics is the original system call so that won't work on linux
     public double ScalingFactor
     {
-        //get { return 0.0; }
         get
         {
             double systemScale = 1.0;
@@ -131,8 +125,6 @@ public partial class DashboardWindow : Window, IDashboard
             ScalingSlider.Value = scale;
     }
 
-
-    //Not giving it an exe for linux lol
     private string DashboardExe
     {
         get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashboard"); }
@@ -213,7 +205,7 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        //DashboardProgressBar.Maximum = Value;
+        DashboardProgressBar.Maximum = Value;
     }
 
     public void Title(string Value)
@@ -321,13 +313,14 @@ public partial class DashboardWindow : Window, IDashboard
             return;
         }
 
-        //DashboardProgressBar.IsVisible = true;
-        //DashboardProgressBar.Value = Value;
+        DashboardProgressBar.IsVisible = true;
+        DashboardProgressBar.Value = Value;
     }
 
     public void ProgressCompleted()
     {
-        Progress(0);
+        DashboardProgressBar.IsVisible = false;
+        DashboardProgressBar.Value = 0;
     }
 
     public void Info(string Value)
@@ -432,8 +425,6 @@ public partial class DashboardWindow : Window, IDashboard
         RemoveLoadedFrame();
 
         ShowLoadingIndicator();
-
-        //await Task.Delay(5000);
 
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Render);
 
@@ -549,17 +540,16 @@ public partial class DashboardWindow : Window, IDashboard
         LoadAccountImage("https://www.nolvus.net/assets/images/account/user-profile.png");
         TitleBarControl.EnableAccountImage(false);
 
-        //DashboardProgressBar.Value = 0;
-        //DashboardProgressBar.Maximum = 100;
+        DashboardProgressBar.Value = 0;
+        DashboardProgressBar.Maximum = 100;
 
         StripLblScaling.Text = "[DPI:" + this.ScalingFactor * 100 + "%" + "]";
-        //DashboardProgressBar.IsVisible = false;
+        DashboardProgressBar.IsVisible = false;
         LblStatus.IsVisible = false;
     }
 
     private void ScalingSlider_ValueChanged(object? sender, RangeBaseValueChangedEventArgs e)
     {
-        //ApplyScaling(e.NewValue);
         StripLblScaling.Text = $"[DPI: {(int)(e.NewValue * 100)}%]";
     }
     
@@ -606,7 +596,6 @@ public partial class DashboardWindow : Window, IDashboard
     {
         if (ServiceSingleton.Packages.Processing)
         {
-            // For now: block close (we’ll replace with Avalonia dialog later)
             e.Cancel = true;
         }
 

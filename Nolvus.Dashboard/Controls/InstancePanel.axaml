@@ -27,8 +27,7 @@
                     x:Name="PicInstanceImage"
                     Stretch="Uniform"
                     VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Source="avares://NolvusDashboard/Assets/Nolvus_V5.png"/>
+                    HorizontalAlignment="Center"/>
             </Border>
 
             <!-- Loading label overlay -->

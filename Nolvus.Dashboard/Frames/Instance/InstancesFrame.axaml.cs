@@ -6,6 +6,7 @@ using Vcc.Nolvus.Api.Installer.Library;
 using Nolvus.Core.Enums;
 using Nolvus.Dashboard.Frames.Installer;
 using Avalonia.Interactivity;
+using System.Diagnostics;
 
 namespace Nolvus.Dashboard.Frames.Instance
 {
@@ -15,6 +16,9 @@ namespace Nolvus.Dashboard.Frames.Instance
         {
             InitializeComponent();
             BtnNewInstance.Click += BtnNewInstance_Click;
+            BtnDiscord.Click += BtnDiscord_Click;
+            BtnPatreon.Click += BtnPatreon_Click;
+            BtnDonate.Click += BtnDonate_Click;
         }
 
         public void LockButtons()
@@ -42,24 +46,51 @@ namespace Nolvus.Dashboard.Frames.Instance
             InstancesPanel.LoadInstances(ServiceSingleton.Instances.InstanceList);
         }
 
-        private async void BtnNewInstance_Click(object sender, RoutedEventArgs e)
+        private async void BtnNewInstance_Click(object? sender, RoutedEventArgs e)
         {
             await ServiceSingleton.Dashboard.LoadFrameAsync<SelectInstanceFrame>(new FrameParameters(new FrameParameter() { Key = "Cancel", Value = true }));
         }
 
-        private void BtnDiscord_Click(object sender, EventArgs e)
+        private void BtnDiscord_Click(object? sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://discord.gg/Zkh5PwD");
+            var url = "https://discord.gg/Zkh5PwD";
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }
 
-        private void BtnDonate_Click(object sender, EventArgs e)
+        private void BtnDonate_Click(object? sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.paypal.com/paypalme/nolvus");
+            var url = "https://www.paypal.com/paypalme/nolvus";
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }
 
-        private void BtnPatreon_Click(object sender, EventArgs e)
+        private void BtnPatreon_Click(object? sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.patreon.com/nolvus");
+            var url = "https://www.patreon.com/nolvus";
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }   
     }
 }

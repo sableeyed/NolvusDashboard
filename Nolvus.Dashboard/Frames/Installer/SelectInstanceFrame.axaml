@@ -14,13 +14,13 @@
 				<Grid ColumnDefinitions="220,16,*">
 					<!-- Thumbnail -->
 					<Border Grid.Column="0"
-                            Width="220" 
-                            Height="180"
+                            Width="220"
                             CornerRadius="4"
                             ClipToBounds="True"
                             Background="#222">
 						<Image Source="{Binding AvaloniaImage}"
                                Stretch="UniformToFill"
+							   ClipToBounds="True"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"/>
 					</Border>

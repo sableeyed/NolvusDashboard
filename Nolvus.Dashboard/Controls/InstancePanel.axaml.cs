@@ -103,15 +103,15 @@ namespace Nolvus.Dashboard.Controls
 
         private void SetInstanceImage(string Path)
         {
-            // var uri = new Uri(Path);
+            var uri = new Uri(Path);
 
-            // using var asset = AssetLoader.Open(uri);
-            // using var ms = new MemoryStream();
+            using var asset = AssetLoader.Open(uri);
+            using var ms = new MemoryStream();
 
-            // asset.CopyTo(ms);
-            // ms.Position = 0;
+            asset.CopyTo(ms);
+            ms.Position = 0;
 
-            // PicInstanceImage.Source = new Bitmap(ms);
+            PicInstanceImage.Source = new Bitmap(ms);
         }
 
         private void BtnPlay_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

@@ -124,31 +124,31 @@
 				</Border>
 				<!-- RIGHT SIDE — PANEL WITH BOTTOM-RIGHT BUTTONS -->
 				<Border Grid.Row="2" Grid.Column="1"
-        Background="#363636"
-        BorderBrush="#444"
-        CornerRadius="4"
-        Padding="16">
+						Background="#363636"
+						BorderBrush="#444"
+						CornerRadius="4"
+						Padding="16">
 					<!-- TWO-ROW GRID -->
 					<Grid RowDefinitions="*,Auto">
 						<!-- TOP TEXT BLOCKS -->
 						<StackPanel Grid.Row="0" Spacing="16" VerticalAlignment="Top">
 							<TextBlock Text="Welcome to Nolvus mod list installation."
-                       Foreground="#CCCCCC"
-                       TextWrapping="Wrap"/>
+										Foreground="#CCCCCC"
+										TextWrapping="Wrap"/>
 							<TextBlock Text="Please select your Nolvus instance."
-                       Foreground="#CCCCCC"
-                       TextWrapping="Wrap"/>
+										Foreground="#CCCCCC"
+										TextWrapping="Wrap"/>
 							<TextBlock Text="Language only affects the base game, not the mods. Ensure Skyrim SE uses the same language in Steam."
-                       Foreground="#CCCCCC"
-                       TextWrapping="Wrap"/>
+										Foreground="#CCCCCC"
+										TextWrapping="Wrap"/>
 						</StackPanel>
 						<!-- BUTTONS AT BOTTOM RIGHT -->
 						<StackPanel Grid.Row="1"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Spacing="8"
-                    Margin="0,24,0,0">
+									Orientation="Horizontal"
+									HorizontalAlignment="Right"
+									VerticalAlignment="Bottom"
+									Spacing="8"
+									Margin="0,24,0,0">
 							<Button x:Name="BtnCancel"
                     				Content="Cancel"
 									VerticalContentAlignment="Center"

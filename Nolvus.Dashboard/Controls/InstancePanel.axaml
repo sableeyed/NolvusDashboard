@@ -16,13 +16,20 @@
                    Width="654" Height="171"/>
 
             <!-- Instance image -->
-            <Image x:Name="PicInstanceImage"
-                   Canvas.Left="46"
-                   Canvas.Top="20"
-                   Width="206"
-                   Height="128"
-                   Stretch="UniformToFill"
-                   />
+            <Border
+                Canvas.Left="46"
+                Canvas.Top="20"
+                Width="206"
+                Height="128"
+                ZIndex="999">
+
+                <Image
+                    x:Name="PicInstanceImage"
+                    Stretch="Uniform"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Source="avares://NolvusDashboard/Assets/Nolvus_V5.png"/>
+            </Border>
 
             <!-- Loading label overlay -->
             <Border Canvas.Left="43"
@@ -84,7 +91,7 @@
                                  Height="35"
                                  Content="Update"
                                  Background="Black"
-                                HorizontalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
                                  BorderBrush="White"
                                  Foreground="White"

@@ -103,15 +103,15 @@ namespace Nolvus.Dashboard.Controls
 
         private void SetInstanceImage(string Path)
         {
-            var uri = new Uri(Path);
+            // var uri = new Uri(Path);
 
-            using var asset = AssetLoader.Open(uri);
-            using var ms = new MemoryStream();
+            // using var asset = AssetLoader.Open(uri);
+            // using var ms = new MemoryStream();
 
-            asset.CopyTo(ms);
-            ms.Position = 0;
+            // asset.CopyTo(ms);
+            // ms.Position = 0;
 
-            PicInstanceImage.Source = new Bitmap(ms);
+            // PicInstanceImage.Source = new Bitmap(ms);
         }
 
         private void BtnPlay_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -303,7 +303,7 @@ namespace Nolvus.Dashboard.Controls
                 var comment = $"Desktop shortcut for your {_instance.Name} instance.";
                 var icon = Path.Combine(AppContext.BaseDirectory, "nolvus-ico.jpg");
 
-                CreateDesktopShortcut(name, exec, comment, icon, path);
+                CreateDesktopShortcut(name, exec, comment, path, icon);
 
                 NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop.", MessageBoxType.Info);
             }
@@ -497,8 +497,8 @@ Type=Application
 Name={name}
 Comment={comment}
 Exec={execPath}
-Icon={iconPath}
 Path={path}
+Icon={iconPath}
 Terminal=false
 Categories=Game;Utility;
 ";

@@ -65,14 +65,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
 
                 if (!ApiManager.AccountInfo.IsPremium)
                 {
-                    NotificationBanner.Background = new SolidColorBrush(Colors.Red);
-                    //LblNotification.Text = "You are not a Nexus Premium user. Download will not be automatic (you will have to click the download button for each mod) and bandwidth will be limited to 2 MB/s";
-                    LblNotification.Text = "You are not a Nexus Premium user. Functionality for free users is not implemented at this time.";
-                    PremiumImg.IsVisible = false;
-                    NonPremiumImg.IsVisible = true;
-                    BtnStart.IsEnabled = false;
+                    NotificationBanner.Background = new SolidColorBrush(Colors.Orange);
+                    LblNotification.Text = "You are not a Nexus Premium user. Download will not be automatic (you will have to click the download button for each mod) and bandwidth will be limited to 2 MB/s";
                 }
-                //no need for an else because the default state of the UI components are for premium members
 
                 if (ServiceSingleton.Settings.ErrorsThreshold == 1 || !NexusApi.ApiManager.AccountInfo.IsPremium)
                 {

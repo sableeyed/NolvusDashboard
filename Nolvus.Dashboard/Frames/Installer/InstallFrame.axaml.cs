@@ -9,6 +9,7 @@ using Nolvus.Instance.Core;
 using Nolvus.Dashboard.Core;
 using Nolvus.Dashboard.Controls;
 using Nolvus.Browser;
+using Nolvus.Browser.Core;
 using Nolvus.Components.Controls;
 using System;
 using System.Linq;
@@ -86,12 +87,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                             ServiceSingleton.Packages.ErrorHandler.ErrorsCount,
                             "(Maximum errors threshold reached, waiting for current queue to finish...)"));
                     },
-                    Browser = () =>
-                    {
-                        var win = new BrowserWindow("about:blank");
-                        win.Show();
-                        return win.Engine;
-                    }
+                    Browser = () => new BrowserSession()
                 });
 
                 _refreshCts?.Cancel();

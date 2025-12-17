@@ -8,6 +8,7 @@ using Nolvus.Core.Interfaces;
 using Nolvus.Dashboard.Controls;
 using Nolvus.Dashboard.Core;
 using Nolvus.Browser;
+using Nolvus.Browser.Core;
 using Nolvus.NexusApi.SSO;
 using Avalonia.Threading;
 using Nolvus.NexusApi.SSO.Events;
@@ -25,7 +26,7 @@ namespace Nolvus.Dashboard.Frames.Settings
     {
 
         private NexusSSOManager NexusSSOManager;
-        private BrowserWindow? nexusBrowser;
+        private BrowserSession? _ssoSession;
 
         public NexusFrame(IDashboard dashboard, FrameParameters parameters)
             : base(dashboard, parameters)
@@ -101,7 +102,7 @@ namespace Nolvus.Dashboard.Frames.Settings
             });
         }
 
-        private async void NexusSSOManager_OnBrowserClosed(object? sender, EventArgs eventArgs)
+        private async void OnSSOSessionEnded(object? sender, EventArgs e)
         {
             await ChangeButtonText("Nexus SSO Authentication");
             await ToggleAuthenticateButton(true);
@@ -110,14 +111,8 @@ namespace Nolvus.Dashboard.Frames.Settings
         private async void NexusSSOManager_OnAuthenticating(object? sender, AuthenticatingEventArgs eventArgs)
         {
             string url = $"https://www.nexusmods.com/sso?id={eventArgs.Id}&application={Strings.NolvusSlug}";
-            if (nexusBrowser == null)
-            {
-                nexusBrowser = new BrowserWindow("about:blank");
-                nexusBrowser.Closed += NexusSSOManager_OnBrowserClosed;
-                nexusBrowser.Show();
-            }
-            nexusBrowser.Engine.Navigate(url);
             await ChangeButtonText("Authenticating...");
+            _ = RunNexusSSOSession(url);
         }
 
         private async void NexusSSOManager_OnRequestError(object? sender, RequestErrorEventArgs eventArgs)
@@ -133,8 +128,27 @@ namespace Nolvus.Dashboard.Frames.Settings
             await SetReturnMessage("Authentication successful! Click on the \"Next\" button", false);
             await ToggleAuthenticateButton(false);
             UpdateNextButtonState();
-            nexusBrowser?.Close();
+            
+            _ssoSession?.Complete();
+            _ssoSession = null;
         }
+
+        private Task RunNexusSSOSession(string url)
+        {
+            _ssoSession?.Complete();
+
+            _ssoSession = new BrowserSession();
+            _ssoSession.SessionEnded += OnSSOSessionEnded;
+
+            return Task.Run(async () =>
+            {
+                await using (_ssoSession)
+                {
+                    await _ssoSession.RunAsync(url);
+                }
+            });
+        }
+
 
         public void ShowLoading()
         {
@@ -195,7 +209,6 @@ namespace Nolvus.Dashboard.Frames.Settings
                 return;
             }
 
-            //WE FINALLY FINISHED NEXUS FRAME AFTER LITERAL DAYS (BLAME CEF)
             ServiceSingleton.Dashboard.LoadFrame<NolvusFrame>();
         }
 
@@ -209,12 +222,12 @@ namespace Nolvus.Dashboard.Frames.Settings
                 try
                 {
                     await NexusSSOManager.Connect();
-                    nexusBrowser = new BrowserWindow("about:blank");
-                    nexusBrowser.Closed += NexusSSOManager_OnBrowserClosed;
-                    nexusBrowser.Show();
                     await NexusSSOManager.Authenticate();
                 }
-                catch { }
+                catch
+                {
+                    throw;
+                }
             }
             else
             {
@@ -228,7 +241,7 @@ namespace Nolvus.Dashboard.Frames.Settings
             BtnNext.IsEnabled = !string.IsNullOrWhiteSpace(SettingsCache.NexusApiKey);
         }
 
-        private void OpenNexusInfo(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void OpenNexusInfo(object? sender, RoutedEventArgs e)
         {
             var url = "https://www.nolvus.net/appendix/installer/requirements";
             try

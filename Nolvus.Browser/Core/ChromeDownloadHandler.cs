@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Diagnostics;
 using Nolvus.Core.Events;
@@ -6,91 +7,99 @@ using Xilium.CefGlue;
 using Xilium.CefGlue.Common;
 using Xilium.CefGlue.Common.Handlers;
 
-namespace Nolvus.Browser.Core {
-    //or CefDownloadHandler?
-	public class ChromeDownloaderHandler : DownloadHandler {
+namespace Nolvus.Browser.Core
+{
+    public sealed class ChromeDownloaderHandler : DownloadHandler
+    {
+        private bool _isDownloadComplete;
+        private bool _linkOnly;
+        public bool IsDownloadComplete => _isDownloadComplete;
+        private readonly Stopwatch _stopwatch = new Stopwatch();
+        private readonly DownloadProgress _downloadProgress = new DownloadProgress();
+        public event DownloadProgressChangedHandler? DownloadProgressChanged;
+        public event OnFileDownloadRequestedHandler? OnFileDownloadRequest;
+        public event OnFileDownloadRequestedHandler? OnFileDownloadCompleted;
+        public event EventHandler<CefDownloadItem>? OnBeforeDownloadFired;
+        public event EventHandler<CefDownloadItem>? OnDownloadUpdatedFired;
 
-		private bool _IsDownloadComplete = false;
-		private bool LinkOnly;
-
-		public bool IsDownloadComplete {
-			get {
-				return _IsDownloadComplete;
-			}
-		}
-
-        public void SetLinkyOnly(bool value)
+        public ChromeDownloaderHandler(bool downloadLinkOnly, DownloadProgressChangedHandler? onProgress = null)
         {
-            LinkOnly = value;
+            _linkOnly = downloadLinkOnly;
+
+            if (onProgress != null)
+                DownloadProgressChanged += onProgress;
         }
 
-		private Stopwatch SW = new Stopwatch();
+        public void SetLinkOnly(bool value)
+        {
+            _linkOnly = value;
+        }
 
-		private readonly DownloadProgress DownloadProgress;
-		public event DownloadProgressChangedHandler? DownloadProgressChanged;
-
-		public event OnFileDownloadRequestedHandler? OnFileDownloadRequest;
-		public event OnFileDownloadRequestedHandler? OnFileDownloadCompleted;
-
-		public event EventHandler<CefDownloadItem>? OnBeforeDownloadFired;
-		public event EventHandler<CefDownloadItem>? OnDownloadUpdatedFired;
-
-
-		public ChromeDownloaderHandler(bool DownloadLinkOnly, DownloadProgressChangedHandler OnProgress = null) {
-			if(OnProgress != null) DownloadProgressChanged += OnProgress;
-			LinkOnly = DownloadLinkOnly;
-			DownloadProgress = new DownloadProgress();
-		}
-
-		protected override void OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string name, CefBeforeDownloadCallback callback) {
+        protected override void OnBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, string suggestedName, CefBeforeDownloadCallback callback)
+        {
             OnBeforeDownloadFired?.Invoke(this, downloadItem);
 
-            string downloads = ServiceSingleton.Folders.DownloadDirectory;
-            string suggested = downloadItem.SuggestedFileName;
-
-            // ENB returns no filename → user clicked HTML page not an archive
-            if (string.IsNullOrWhiteSpace(suggested))
+            if (_linkOnly)
             {
-                // Fallback to the URL's last segment OR a generic filename
-                suggested = Path.GetFileName(new Uri(downloadItem.Url).LocalPath);
-
-                if (string.IsNullOrWhiteSpace(suggested))
-                    suggested = "download.bin"; // last fallback
+                OnFileDownloadRequest?.Invoke(this, new FileDownloadRequestEvent(downloadItem.Url));
+                return;
             }
 
-            string fullPath = Path.Combine(downloads, suggested);
+            string downloadsDir = ServiceSingleton.Folders.DownloadDirectory;
+            string fileName = downloadItem.SuggestedFileName;
+
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                fileName = Path.GetFileName(new Uri(downloadItem.Url).LocalPath);
+
+                if (string.IsNullOrWhiteSpace(fileName))
+                    fileName = "download.bin";
+            }
+
+            string fullPath = Path.Combine(downloadsDir, fileName);
+
+            _stopwatch.Restart();
 
             callback.Continue(fullPath, showDialog: false);
-		}
 
-		protected override void OnDownloadUpdated(CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {
+            OnFileDownloadRequest?.Invoke(this, new FileDownloadRequestEvent(downloadItem.Url));
+        }
+
+        protected override void OnDownloadUpdated(CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback)
+        {
             OnDownloadUpdatedFired?.Invoke(this, downloadItem);
 
-            if(downloadItem.IsValid) {
-                DownloadProgress.BytesReceived = downloadItem.ReceivedBytes;
+            if (!downloadItem.IsValid)
+                return;
 
-                if (downloadItem.TotalBytes > 0L)
-                    DownloadProgress.TotalBytesToReceive = downloadItem.TotalBytes;
+            _downloadProgress.BytesReceived = downloadItem.ReceivedBytes;
 
-                DownloadProgress.ProgressPercentage = downloadItem.PercentComplete;
+            if (downloadItem.TotalBytes > 0)
+                _downloadProgress.TotalBytesToReceive = downloadItem.TotalBytes;
 
-                DownloadProgress.Speed = downloadItem.ReceivedBytes / 1024d / 1024d / SW.Elapsed.TotalSeconds;
+            _downloadProgress.ProgressPercentage = downloadItem.PercentComplete;
+            _downloadProgress.FileName = downloadItem.SuggestedFileName;
 
-                DownloadProgress.BytesReceivedAsString = (downloadItem.ReceivedBytes / 1024d / 1024d).ToString("0.00");
-                DownloadProgress.TotalBytesToReceiveAsString = (downloadItem.TotalBytes / 1024d / 1024d).ToString("0.00");
-
-                DownloadProgress.FileName = downloadItem.SuggestedFileName;
-
-                if (downloadItem.IsInProgress && (downloadItem.PercentComplete != 0))
-                    DownloadProgressChanged?.Invoke(this, DownloadProgress);
-                
-                if(downloadItem.IsComplete)
-                {
-                    SW.Stop();
-                    _IsDownloadComplete = true;
-                    OnFileDownloadCompleted?.Invoke(this, new FileDownloadRequestEvent(downloadItem.Url));
-                }
+            if (_stopwatch.IsRunning && _stopwatch.Elapsed.TotalSeconds > 0)
+            {
+                _downloadProgress.Speed = downloadItem.ReceivedBytes / 1024d / 1024d / _stopwatch.Elapsed.TotalSeconds;
             }
-		}
-	}
+
+            _downloadProgress.BytesReceivedAsString = (downloadItem.ReceivedBytes / 1024d / 1024d).ToString("0.00");
+            _downloadProgress.TotalBytesToReceiveAsString = (downloadItem.TotalBytes / 1024d / 1024d).ToString("0.00");
+
+            if (downloadItem.IsInProgress && downloadItem.PercentComplete > 0)
+            {
+                DownloadProgressChanged?.Invoke(this, _downloadProgress);
+            }
+
+            if (downloadItem.IsComplete)
+            {
+                _stopwatch.Stop();
+                _isDownloadComplete = true;
+
+                OnFileDownloadCompleted?.Invoke(this, new FileDownloadRequestEvent(downloadItem.Url));
+            }
+        }
+    }
 }

@@ -278,7 +278,7 @@ namespace Nolvus.Package.Files
                         switch(site)
                         {
                             case WebSite.EnbDev:
-                                await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                                //await Browser().AwaitUserDownload(Link, FileName, OnProgress);
                                 await WaitForFileReady(LocationFileName);
                                 break;
                             default:

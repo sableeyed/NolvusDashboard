@@ -1,94 +1,35 @@
-using System;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Threading;
 using Xilium.CefGlue.Avalonia;
-using Nolvus.Browser.Core;
-using Nolvus.Core.Services;
 
 namespace Nolvus.Browser
 {
     public partial class BrowserWindow : Window
     {
-        private readonly AvaloniaCefBrowser ChromeBrowser;
-        private readonly Nolvus.Browser.Core.Browser BrowserEngine;
+        public AvaloniaCefBrowser Browser { get; }
 
-        public Nolvus.Browser.Core.Browser Engine => BrowserEngine;
-
-        private string _initialUrl;
-
-        public BrowserWindow(string initialUrl)
+        public BrowserWindow()
         {
             InitializeComponent();
 
-            _initialUrl = initialUrl;
-
+            Browser = new AvaloniaCefBrowser();
+            BrowserHost.Children.Add(Browser);
             TitleBar.Title = "Nolvus Browser";
             TitleBar.CloseRequested += (_, __) => Close();
-            TitleBar.PointerPressed += OnTitleBarPointerPressed;
-
-            ChromeBrowser = new AvaloniaCefBrowser();
-
-            BrowserEngine = new Nolvus.Browser.Core.Browser(ChromeBrowser);
-
-            BrowserHost.Children.Add(ChromeBrowser);
-
-            this.Opened += OnOpened;
-
-            this.Closed += (_, __) =>
-            {
-                try
-                {
-                    ChromeBrowser.Dispose();
-                }
-                catch { }
-            };
-
-            /* SUBSCRIBE TO UPDATES FROM THE BACKEND SO WE CAN UPDATE UI COMPONENTS */
-            ChromeBrowser.TitleChanged += (_, Title) =>
-            {
-                Dispatcher.UIThread.Post(() => { TitleBar.Title = Title; });
-            };
-
-            BrowserEngine.OnBrowserClosed +=(_, __) =>
-            {
-                Dispatcher.UIThread.Post(Close);
-            };
-
-            // BrowserEngine.HideLoadingRequested += () =>
-            // {
-            //     Dispatcher.UIThread.Post(HideLoading);
-            // };
+            TitleBar.PointerPressed += TitleBar_PointerPressed;
         }
-        
-        private void OnOpened(object? sender, EventArgs e)
+
+        public void Navigate(string url)
         {
-            if (!string.IsNullOrEmpty(_initialUrl))
-            {
-                Engine.Navigate(_initialUrl);
-            }
+            Browser.Address = url;
         }
 
-        private void OnTitleBarPointerPressed(object? sender, PointerPressedEventArgs e)
+        private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
                 BeginMoveDrag(e);
             }
-        }
-
-        //UNUSED
-        private void ShowLoading()
-        {
-            LoadingOverlay.IsVisible = true;
-            BrowserHost.IsVisible = false;
-        }
-
-        private void HideLoading()
-        {
-            LoadingOverlay.IsVisible = false;
-            BrowserHost.IsVisible = true;
         }
     }
 }

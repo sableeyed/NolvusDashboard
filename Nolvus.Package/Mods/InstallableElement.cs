@@ -292,7 +292,10 @@ namespace Nolvus.Package.Mods
                     if (!File.Exist() || !await File.CRCCheck())
                     {
                         ServiceSingleton.Logger.Log(string.Format("Awaiting manual user download for file {0}", File.FileName));
-                        File.DownloadLink = await Browser().GetNexusManualDownloadLink(Name, File.DownloadLink, (File as NexusModFile).NexusId);
+                        var url = $"https://www.nexusmods.com/skyrimspecialedition/mods/{File.DownloadLink}?tab=files";
+                        await using var browser = Browser();
+                        await browser.RunAsync(url);
+                        //File.DownloadLink = await Browser().GetNexusManualDownloadLink(Name, File.DownloadLink, (File as NexusModFile).NexusId);
                     }
                 }));
             }

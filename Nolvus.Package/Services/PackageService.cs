@@ -382,10 +382,22 @@ namespace Nolvus.Package.Services
         public async Task InstallModList(ModInstallSettings Settings)
         {
             try
-            {                
+            {               
+                /* 
+                    ENB and other browser-based downloads are not safe under parallel execution.
+                    Free users are forced to use a single thread to prevent issues.
+                    Premium users retain parallelism, but ENB might require them to close restart after downloading.
+                    12/17/2025
+                */
                 _Processing = true;
-
-                SemaphoreSlim = new SemaphoreSlim(ServiceSingleton.Settings.ProcessCount);
+                if (!NexusApi.ApiManager.AccountInfo.IsPremium)
+                {
+                    SemaphoreSlim = new SemaphoreSlim(1);
+                }
+                else
+                {
+                    SemaphoreSlim = new SemaphoreSlim(ServiceSingleton.Settings.ProcessCount);
+                }
                 SemaphoreSlimBeforeDownload = new SemaphoreSlim(1);
 
                 _ErrorHandler = new ErrorHandler(ServiceSingleton.Settings.ErrorsThreshold) {

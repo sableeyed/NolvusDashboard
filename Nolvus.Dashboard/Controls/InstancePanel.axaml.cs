@@ -334,6 +334,7 @@ namespace Nolvus.Dashboard.Controls
             string vdfPath = Path.Combine(home, ".steam", "steam", "config", "libraryfolders.vdf"); //get path to vdf
             string? libraryPath = GetSteamLibraryForApp(vdfPath); //get path to the steam library from vdf
             string? skyrimPath = Path.Combine(libraryPath, "steamapps", "common", "Skyrim Special Edition"); //combine paths to get skyrim path
+            string mo2Path = Path.Combine(_instance.InstallDir, "MO2", "ModOrganizer.exe");
 
             if (skyrimPath == null)
             {
@@ -365,6 +366,9 @@ namespace Nolvus.Dashboard.Controls
 
                 File.Move(launcherPath, launcherPath + ".bak");
                 File.Move(temp, launcherPath);
+                var instancePath = Path.Combine(skyrimPath, "instancepath.txt");
+                File.WriteAllText(instancePath, mo2Path);
+
                 NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
             }
         }

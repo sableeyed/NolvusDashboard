@@ -22,6 +22,9 @@ namespace Nolvus.Components.Controls
 
         private readonly Dictionary<SixLabors.ImageSharp.Image, Bitmap> _bitmapCache = new();
 
+        // Accent color (#F28F1A)
+        private static readonly Color AccentColor = Color.FromRgb(242, 143, 26);
+
         public ModsBox()
         {
             ClipToBounds = true;
@@ -55,7 +58,10 @@ namespace Nolvus.Components.Controls
             base.Render(context);
 
             // Background
-            context.FillRectangle(new SolidColorBrush(Color.FromRgb(54, 54, 54)), Bounds);
+            context.FillRectangle(
+                new SolidColorBrush(Color.FromRgb(54, 54, 54)),
+                Bounds
+            );
 
             if (Items.Count == 0)
                 return;
@@ -71,7 +77,7 @@ namespace Nolvus.Components.Controls
                 var item = Items[index];
                 var top = ItemHeight * index;
 
-                // Determine image width
+                // ---- IMAGE ----
                 double imgWidth = 0;
                 if (item.Image is SixLabors.ImageSharp.Image img)
                 {
@@ -87,38 +93,56 @@ namespace Nolvus.Components.Controls
                     }
                 }
 
-                // Left margin after image
+                // Text starts immediately after the image
                 double textLeft = 6 + imgWidth + 10;
 
-                // Progress bar background highlight
-                Color barColor = item.HasError
+                // ---- PROGRESS BAR GEOMETRY ----
+                var barRect = new Rect(
+                    textLeft,
+                    top + 6,
+                    Bounds.Width - textLeft - 10,
+                    36
+                );
+
+                // Track / background
+                var trackColor = item.HasError
                     ? Color.FromArgb(40, 255, 0, 0)
-                    : Color.FromArgb(40, 255, 165, 0);
+                    : Color.FromArgb(30, 255, 255, 255);
 
                 context.FillRectangle(
-                    new SolidColorBrush(barColor),
-                    new Rect(textLeft, top + 6, Bounds.Width - textLeft - 10, 36)
+                    new SolidColorBrush(trackColor),
+                    barRect
                 );
 
-                // Thin top accent line
-                context.DrawRectangle(
-                    new Pen(Brushes.Orange, 1),
-                    new Rect(5, top + 6, Bounds.Width - 10, 1)
-                );
+                // Progress fill (growing)
+                if (!item.HasError && item.PercentDone > 0)
+                {
+                    double progressWidth = barRect.Width * (item.PercentDone / 100.0);
 
-                //
-                // TEXT LAYOUT
-                //
+                    context.FillRectangle(
+                        new SolidColorBrush(AccentColor),
+                        new Rect(barRect.X, barRect.Y, progressWidth, barRect.Height)
+                    );
 
-                // Mod Name
+                    // Top accent line tied to progress
+                    context.DrawLine(
+                        new Pen(new SolidColorBrush(AccentColor), 1),
+                        new Point(barRect.X, barRect.Y),
+                        new Point(barRect.X + progressWidth, barRect.Y)
+                    );
+                }
+
+                // ---- TEXT ----
+
+                // Mod name
                 new TextLayout(
-                    item.Name ?? "",
+                    item.Name ?? string.Empty,
                     titleTypeface,
                     titleFont,
                     Brushes.White)
                 .Draw(context, new Point(textLeft, top + 6));
 
-                // Percent OR Error (left aligned)
+                // Percent or error
                 string percentText = item.HasError ? "Error" : $"{item.PercentDone}%";
                 var percentBrush = item.HasError ? Brushes.Red : Brushes.White;
 
@@ -129,7 +153,7 @@ namespace Nolvus.Components.Controls
                     percentBrush)
                 .Draw(context, new Point(textLeft, top + 28));
 
-                // Speed (after percent)
+                // Speed
                 if (item.Mbs > 0)
                 {
                     new TextLayout(
@@ -140,11 +164,11 @@ namespace Nolvus.Components.Controls
                     .Draw(context, new Point(textLeft + 55, top + 28));
                 }
 
-                // Status text (after speed)
-                var statusBrush = item.HasError ? Brushes.Red : Brushes.Orange;
+                // Status
+                var statusBrush = item.HasError ? Brushes.Red : Brushes.White;
 
                 new TextLayout(
-                    item.Status ?? "",
+                    item.Status ?? string.Empty,
                     infoTypeface,
                     infoFont,
                     statusBrush)
@@ -156,11 +180,7 @@ namespace Nolvus.Components.Controls
         {
             return new Size(availableSize.Width, Items.Count * ItemHeight);
         }
-
-        //
-        // Helpers for frame
-        //
-
+        
         public void AddItem(string name)
         {
             Items.Add(new ModProgress

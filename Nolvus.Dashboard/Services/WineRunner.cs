@@ -9,7 +9,7 @@ namespace Nolvus.Dashboard.Services.Wine
 {
     public class WineRunner : IWineRunner
     {
-        public static string WinePath { get; set; } = "/usr/bin/wine";
+        public static string WinePath { get; set; } = "wine";
         public async Task<int> RunAsync(string workingDirectory, string exeName, params string[] args)
         {
             await WinePrefix.InitializeAsync();

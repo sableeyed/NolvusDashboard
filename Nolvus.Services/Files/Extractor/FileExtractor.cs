@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
+using Nolvus.Core.Utils;
 
 namespace Nolvus.Services.Files.Extractor
 {
@@ -96,7 +97,7 @@ namespace Nolvus.Services.Files.Extractor
                         
                         var ark = new ProcessStartInfo
                         {
-                            FileName = "/usr/bin/unzip",
+                            FileName = PathResolver.RequireExecutable("unzip"),
                             Arguments = $"\"{File}\" -d \"{Output}\"",
                             WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
                             UseShellExecute = false,
@@ -155,7 +156,7 @@ namespace Nolvus.Services.Files.Extractor
 
                 var psi = new ProcessStartInfo
                 {
-                    FileName = "/usr/bin/bash",
+                    FileName = PathResolver.RequireExecutable("bash"),
                     Arguments = $"-c \"rm -rf '{path}'/*\"",
                     UseShellExecute = false,
                     CreateNoWindow = true

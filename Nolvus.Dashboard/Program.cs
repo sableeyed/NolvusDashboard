@@ -18,6 +18,7 @@ using Xilium.CefGlue;
 using Xilium.CefGlue.Common;
 using System.Text;
 using Nolvus.Dashboard.Services.Wine;
+using Nolvus.Core.Utils;
 
 namespace Nolvus.Dashboard;
 
@@ -96,9 +97,9 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        if (!File.Exists("/usr/bin/xdelta3"))
+        if (PathResolver.FindExecutable("xdelta3") == null)
         {
-            Console.WriteLine("xdelta3 is required and needs to be at /usr/bin/xdelta3");
+            Console.WriteLine("xdelta3 is required and must be available in PATH");
             Environment.Exit(-1);
         }
 
@@ -138,7 +139,9 @@ internal static class Program
 
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
         QuestPDF.Settings.FontDiscoveryPaths.Clear();
-        QuestPDF.Settings.FontDiscoveryPaths.Add(Path.Combine("/usr/share/fonts"));
+        var fontDir = "/usr/share/fonts";
+        if (Directory.Exists(fontDir))
+            QuestPDF.Settings.FontDiscoveryPaths.Add(fontDir);
 
         AppDomain.CurrentDomain.AssemblyResolve += Resolver;
         AppDomain.CurrentDomain.AssemblyLoad += Loader;

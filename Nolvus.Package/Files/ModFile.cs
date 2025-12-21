@@ -10,6 +10,7 @@ using Nolvus.Core.Services;
 using Nolvus.Package.Mods;
 using Nolvus.Core.Enums;
 using Avalonia.Controls;
+using Nolvus.Core.Utils;
 
 namespace Nolvus.Package.Files
 {
@@ -257,7 +258,7 @@ namespace Nolvus.Package.Files
 
                         var psi = new ProcessStartInfo
                         {
-                            FileName = "/usr/bin/wget",
+                            FileName = PathResolver.RequireExecutable("wget"),
                             Arguments = $"-O \"{Path.Combine(ServiceSingleton.Folders.DownloadDirectory, FileName)}\" \"{Link}\"",
                             RedirectStandardOutput = true,
                             RedirectStandardError = true,

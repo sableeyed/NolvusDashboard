@@ -8,6 +8,7 @@ using System.Diagnostics;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
 using Nolvus.Core.Utils;
+using Nolvus.Core.Utils;
 
 namespace Nolvus.Services.Files.Extractor
 {
@@ -49,9 +50,14 @@ namespace Nolvus.Services.Files.Extractor
                     if (!Directory.Exists(Output))
                         Directory.CreateDirectory(Output);
 
+                    var sevenZipPath = ExecutableResolver.FindExecutable("7zzs") 
+                                       ?? ExecutableResolver.FindExecutable("7z")
+                                       ?? ExecutableResolver.FindExecutable("7zz")
+                                       ?? throw new FileNotFoundException("7zip (7zzs/7z/7zz) not found in PATH");
+
                     var psi = new ProcessStartInfo
                     {
-                        FileName = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7zzs"),
+                        FileName = sevenZipPath,
                         Arguments = $"x -bsp1 -y \"{File}\" -o\"{Output}\" -mmt=off",
                         WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
                         UseShellExecute = false,
@@ -97,7 +103,7 @@ namespace Nolvus.Services.Files.Extractor
                         
                         var ark = new ProcessStartInfo
                         {
-                            FileName = PathResolver.RequireExecutable("unzip"),
+                            FileName = ExecutableResolver.RequireExecutable("unzip"),
                             Arguments = $"\"{File}\" -d \"{Output}\"",
                             WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
                             UseShellExecute = false,
@@ -156,7 +162,7 @@ namespace Nolvus.Services.Files.Extractor
 
                 var psi = new ProcessStartInfo
                 {
-                    FileName = PathResolver.RequireExecutable("bash"),
+                    FileName = ExecutableResolver.RequireExecutable("bash"),
                     Arguments = $"-c \"rm -rf '{path}'/*\"",
                     UseShellExecute = false,
                     CreateNoWindow = true

@@ -97,7 +97,7 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        if (PathResolver.FindExecutable("xdelta3") == null)
+        if (ExecutableResolver.FindExecutable("xdelta3") == null)
         {
             Console.WriteLine("xdelta3 is required and must be available in PATH");
             Environment.Exit(-1);

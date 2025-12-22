@@ -83,7 +83,7 @@ namespace Nolvus.Dashboard.Services
             if (string.IsNullOrWhiteSpace(PrefixPath))
                 throw new InvalidOperationException("Wine Prefix was not initialized");
             
-            string winetricks = PathResolver.FindExecutable("winetricks")
+            string winetricks = ExecutableResolver.FindExecutable("winetricks")
                 ?? throw new Exception("winetricks not found in PATH");
 
             var startInfo = new ProcessStartInfo
@@ -97,8 +97,8 @@ namespace Nolvus.Dashboard.Services
                 Environment =
                 {
                     ["WINEPREFIX"] = PrefixPath,
-                    ["WINE"] = PathResolver.FindExecutable("wine") ?? "wine",
-                    ["WINECFG"] = PathResolver.FindExecutable("winecfg") ?? "winecfg",
+                    ["WINE"] = ExecutableResolver.FindExecutable("wine") ?? "wine",
+                    ["WINECFG"] = ExecutableResolver.FindExecutable("winecfg") ?? "winecfg",
                 }
             };
 

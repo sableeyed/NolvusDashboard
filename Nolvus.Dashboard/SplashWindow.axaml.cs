@@ -25,7 +25,7 @@ public partial class SplashWindow : Window
         SetWindowIcon();
         await Task.Yield();
 
-        var winePath = PathResolver.FindExecutable("wine");
+        var winePath = ExecutableResolver.FindExecutable("wine");
         if (winePath == null)
         {
             StatusText.Text = "Select your wine binary";

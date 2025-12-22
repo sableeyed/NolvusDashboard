@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Nolvus.Core.Utils
 {
-    public static class PathResolver
+    public static class ExecutableResolver
     {
         public static string? FindExecutable(string name)
         {

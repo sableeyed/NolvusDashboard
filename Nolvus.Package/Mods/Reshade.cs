@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Nolvus.Core.Services;
 using Nolvus.Core.Interfaces;
-using Nolvus.Core.Utils;
-
 
 
 namespace Nolvus.Package.Mods
@@ -152,10 +150,7 @@ WindowRounding=0.000000";
                         Path.Combine(ServiceSingleton.Folders.ExtractDirectory, Name),
                         true);
 
-                    string sevenZip = ExecutableResolver.FindExecutable("7zzs")
-                                      ?? ExecutableResolver.FindExecutable("7z")
-                                      ?? ExecutableResolver.FindExecutable("7zz")
-                                      ?? throw new FileNotFoundException("7zip (7zzs/7z/7zz) not found in PATH");
+                    string sevenZip = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7zzs");
 
                     string zipFile = this.Files.First().LocationFileName;
                     string outDir = Path.Combine(ServiceSingleton.Folders.ExtractDirectory, Name);

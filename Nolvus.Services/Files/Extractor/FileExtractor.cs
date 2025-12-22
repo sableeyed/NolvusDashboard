@@ -8,7 +8,6 @@ using System.Diagnostics;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
 using Nolvus.Core.Utils;
-using Nolvus.Core.Utils;
 
 namespace Nolvus.Services.Files.Extractor
 {
@@ -50,10 +49,7 @@ namespace Nolvus.Services.Files.Extractor
                     if (!Directory.Exists(Output))
                         Directory.CreateDirectory(Output);
 
-                    var sevenZipPath = ExecutableResolver.FindExecutable("7zzs") 
-                                       ?? ExecutableResolver.FindExecutable("7z")
-                                       ?? ExecutableResolver.FindExecutable("7zz")
-                                       ?? throw new FileNotFoundException("7zip (7zzs/7z/7zz) not found in PATH");
+                    var sevenZipPath = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7zzs");
 
                     var psi = new ProcessStartInfo
                     {

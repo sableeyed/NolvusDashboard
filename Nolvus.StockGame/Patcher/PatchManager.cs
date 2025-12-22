@@ -1,5 +1,3 @@
-//TODO
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +7,11 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
+using Nolvus.Core.Utils;
 using Nolvus.Core.Enums;
 using Nolvus.StockGame.Core;
 using Nolvus.StockGame.Meta;
+using Nolvus.Core.Utils;
 
 namespace Nolvus.StockGame.Patcher
 {
@@ -228,7 +228,7 @@ namespace Nolvus.StockGame.Patcher
                 var psi = new ProcessStartInfo
                 {
                     WorkingDirectory = DestDir,
-                    FileName = "/usr/bin/xdelta3",
+                    FileName = ExecutableResolver.RequireExecutable("xdelta3"),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
@@ -402,7 +402,7 @@ namespace Nolvus.StockGame.Patcher
 
                     var psi = new ProcessStartInfo
                     {
-                        FileName = "/usr/bin/xdelta3",
+                        FileName = ExecutableResolver.RequireExecutable("xdelta3"),
                         Arguments = $"-d -f -s \"{sourceFile}\" \"{patchFile}\" \"{destinationFile}\"",
                         WorkingDirectory = workingDirectory,
                         RedirectStandardOutput = true,

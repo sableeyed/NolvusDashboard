@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Nolvus.Core.Services;
+using Nolvus.Core.Utils;
 
 namespace Nolvus.Dashboard.Services
 {
@@ -82,11 +83,8 @@ namespace Nolvus.Dashboard.Services
             if (string.IsNullOrWhiteSpace(PrefixPath))
                 throw new InvalidOperationException("Wine Prefix was not initialized");
             
-            string winetricks = "/usr/bin/winetricks";
-            if (!File.Exists(winetricks))
-            {
-                throw new Exception("winetricks not found at /usr/bin/winetricks");
-            }
+            string winetricks = ExecutableResolver.FindExecutable("winetricks")
+                ?? throw new Exception("winetricks not found in PATH");
 
             var startInfo = new ProcessStartInfo
             {
@@ -99,8 +97,8 @@ namespace Nolvus.Dashboard.Services
                 Environment =
                 {
                     ["WINEPREFIX"] = PrefixPath,
-                    ["WINE"] = "/usr/bin/wine",
-                    ["WINECFG"] = "/usr/bin/winecfg",
+                    ["WINE"] = ExecutableResolver.FindExecutable("wine") ?? "wine",
+                    ["WINECFG"] = ExecutableResolver.FindExecutable("winecfg") ?? "winecfg",
                 }
             };
 

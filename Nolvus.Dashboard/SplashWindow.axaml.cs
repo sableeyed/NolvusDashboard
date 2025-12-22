@@ -5,6 +5,7 @@ using Avalonia.Media.Imaging;
 using System;
 using Nolvus.Dashboard.Services;
 using Nolvus.Dashboard.Services.Wine;
+using Nolvus.Core.Utils;
 
 namespace Nolvus.Dashboard;
 
@@ -24,7 +25,8 @@ public partial class SplashWindow : Window
         SetWindowIcon();
         await Task.Yield();
 
-        if (!File.Exists("/usr/bin/wine"))
+        var winePath = ExecutableResolver.FindExecutable("wine");
+        if (winePath == null)
         {
             StatusText.Text = "Select your wine binary";
 
@@ -44,12 +46,10 @@ public partial class SplashWindow : Window
                 return;
             }
 
-            WineRunner.WinePath = result[0];
+            winePath = result[0];
         }
-        else
-        {
-            WineRunner.WinePath = "/usr/bin/wine";
-        }
+
+        WineRunner.WinePath = winePath;
 
         StatusText.Text = "Initializing wine prefix...";
         await Task.Delay(150);

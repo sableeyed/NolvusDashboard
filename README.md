@@ -5,7 +5,7 @@ This product is for Linux only. If you are looking for the Windows version it is
 Please check the [wiki](https://github.com/sableeyed/NolvusDashboard/wiki) for more detailed information
 
 # Contributing
-If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/RmTsQcU8WV)
+If you have found a bug or have a suggestion, open an issue or join the [discord](https://discord.gg/Tazgf4Tr4u)
 
 # Wine
 A wine prefix will be created for you in `~/.local/share/NolvusDashboard/prefix`.

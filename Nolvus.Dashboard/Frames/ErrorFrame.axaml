@@ -16,18 +16,18 @@
                 Padding="12"
                 Margin="3,3,3,0">
 
-            <Grid ColumnDefinitions="Auto, *"
+            <Grid ColumnDefinitions="40, *"
                   VerticalAlignment="Center"
                   ColumnSpacing="12">
 
                 <!-- Error Icon -->
-                <Image x:Name="ImgWarning"
+                <Image Grid.Column="0" x:Name="ImgWarning"
                        Width="32"
                        Height="32"
                        Source="avares://NolvusDashboard/Assets/Warning-Message.png"/>
 
                 <!-- Title -->
-                <TextBlock x:Name="LblTitle"
+                <TextBlock Grid.Column="1" x:Name="LblTitle"
                            Text="[Title]"
                            Foreground="White"
                            FontSize="18"

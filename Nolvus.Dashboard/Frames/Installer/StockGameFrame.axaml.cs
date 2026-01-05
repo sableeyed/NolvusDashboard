@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using Nolvus.Core.Events;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
@@ -8,17 +10,21 @@ using Vcc.Nolvus.Api.Installer.Library;
 using Vcc.Nolvus.Api.Installer.Services;
 using Avalonia.Threading;
 
-
 namespace Nolvus.Dashboard.Frames.Installer
 {
     public partial class StockGameFrame : DashboardFrame
     {
         string AEMSG1 = "You need to buy Skyrim Anniversary Edition or if you already have Skyrim Special Edition, buy the Anniversary Upgrade";
         string AEMSG2 = "If you already have the Anniversary Edition, be sure you ran the game once from steam and when prompted download all content then close Skyrim";
-        string AEMSG3 = "More info here ==> https://www.nolvus.net/appendix/installer/skyrim_setup";  
-        public StockGameFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
+        string AEMSG3 = "More info here ==> https://www.nolvus.net/appendix/installer/skyrim_setup";
+
+        // Recommended: bind the ListBox to a collection instead of mutating LstBxOutput.Items directly
+        private readonly ObservableCollection<string> _output = new();
+
+        public StockGameFrame(IDashboard Dashboard, FrameParameters Params) : base(Dashboard, Params)
         {
             InitializeComponent();
+            LstBxOutput.ItemsSource = _output;
         }
 
         protected override async Task OnLoadedAsync()
@@ -29,20 +35,19 @@ namespace Nolvus.Dashboard.Frames.Installer
             IFolderService Folders = ServiceSingleton.Folders;
             INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
 
-            //LstBxOutput.Height = (int)Math.Round(Last)
             var StockGameManager = new StockGameManager(
-                Folders.DownloadDirectory, 
-                Folders.LibDirectory, 
-                Folders.PatchDirectory, 
-                Folders.GameDirectory, 
-                Instance, 
-                await ApiManager.Service.Installer.GetGamePackage(Instance.Version), 
+                Folders.DownloadDirectory,
+                Folders.LibDirectory,
+                Folders.PatchDirectory,
+                Folders.GameDirectory,
+                Instance,
+                await ApiManager.Service.Installer.GetGamePackage(Instance.Version),
                 true);
 
             StockGameManager.OnDownload += StockGameManager_OnDownload;
             StockGameManager.OnExtract += StockGameManager_OnExtract;
             StockGameManager.OnItemProcessed += StockGameManager_OnItemProcessed;
-            StockGameManager.OnStepProcessed += StockGameManager_OnStepProcessed;   
+            StockGameManager.OnStepProcessed += StockGameManager_OnStepProcessed;
 
             try
             {
@@ -62,11 +67,14 @@ namespace Nolvus.Dashboard.Frames.Installer
             }
             catch (Exception ex)
             {
-                RollBack();
-                    
+                await RollBack();
+
                 if (ex is GameFileMissingException)
                 {
-                    await ServiceSingleton.Dashboard.Error("Error during game file checking", "Skyrim Anniversary Edition is not installed", AEMSG1 + Environment.NewLine + AEMSG2 + Environment.NewLine + AEMSG3 + Environment.NewLine + "Original error : " + ex.Message);
+                    await ServiceSingleton.Dashboard.Error(
+                        "Error during game file checking",
+                        "Skyrim Anniversary Edition is not installed",
+                        AEMSG1 + Environment.NewLine + AEMSG2 + Environment.NewLine + AEMSG3 + Environment.NewLine + "Original error : " + ex.Message);
                 }
                 else if (ex is GameFileIntegrityException)
                 {
@@ -83,18 +91,17 @@ namespace Nolvus.Dashboard.Frames.Installer
             }
         }
 
-        public async void AddItemToList(string Item)
+        public Task AddItemToList(string Item)
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                LstBxOutput.Items.Add(Item);
+            ServiceSingleton.Logger.Log(Item);
 
-                if (LstBxOutput.ItemCount > 0)
-                {
-                    LstBxOutput.ScrollIntoView(LstBxOutput.ItemCount - 1);
-                }
-                ServiceSingleton.Logger.Log(Item);
-            });
+            return Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _output.Add(Item);
+
+                if (_output.Count > 0)
+                    LstBxOutput.ScrollIntoView(_output.Count - 1);
+            }).GetTask();
         }
 
         private void StockGameManager_OnDownload(object? sender, DownloadProgress e)
@@ -113,7 +120,7 @@ namespace Nolvus.Dashboard.Frames.Installer
         {
             double Percent = ((double)e.Value / (double)e.Total) * 100;
 
-            Percent = Math.Round(Percent, 0);            
+            Percent = Math.Round(Percent, 0);
 
             switch (e.Step)
             {
@@ -154,14 +161,40 @@ namespace Nolvus.Dashboard.Frames.Installer
 
         private void StockGameManager_OnStepProcessed(object? sender, StepProcessedEventArgs e)
         {
-            AddItemToList(e.Step);
+            _ = AddItemToList(e.Step);
         }
 
-        private void RollBack()
+        private async Task RollBack()
         {
-            AddItemToList("Error detected, rollbacking changes...");
-            ServiceSingleton.Dashboard.Status("Error detected, rollbacking changes, please wait...");
-            ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Instances.WorkingInstance.InstallDir, true);
+            await AddItemToList("Error detected, rolling back changes...");
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ServiceSingleton.Dashboard.Status("Error detected, rolling back changes, please wait...");
+            });
+
+            try
+            {
+                await Task.Run(() =>
+                {
+                    ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Instances.WorkingInstance.InstallDir, true);
+                });
+
+                await AddItemToList("Rollback complete.");
+            }
+            catch (Exception ex)
+            {
+                await AddItemToList("Rollback failed: " + ex.Message);
+                ServiceSingleton.Logger.Log(ex.ToString());
+            }
+            finally
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    ServiceSingleton.Dashboard.NoStatus();
+                    ServiceSingleton.Dashboard.AdditionalInfo(string.Empty);
+                    ServiceSingleton.Dashboard.ProgressCompleted();
+                });
+            }
         }
     }
 }

@@ -468,7 +468,7 @@ public partial class DashboardWindow : Window, IDashboard
         ServiceSingleton.Logger.Log("Error Form => " + Message);
 
         await LoadFrameAsync<ErrorFrame>(new FrameParameters(FrameParameter.Create("Title", Title), FrameParameter.Create("Message", Message),
-            FrameParameter.Create("Trace", Trace), FrameParameter.Create("Restry", Retry)));
+            FrameParameter.Create("Trace", Trace), FrameParameter.Create("Retry", Retry)));
 
     }
 

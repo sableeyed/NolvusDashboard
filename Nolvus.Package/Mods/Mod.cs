@@ -47,7 +47,7 @@ namespace Nolvus.Package.Mods
             }
         }
 
-        public string Tag { get; set; }
+        public string Tag { get; set; } = string.Empty;
 
         public List<IEnvironmentCondition> Conditions
         {
@@ -81,7 +81,10 @@ namespace Nolvus.Package.Mods
             
             Action = ElementAction;
 
-            Tag = Node["Tag"].InnerText;
+            if (Node["Tag"] != null)
+            {
+                Tag = Node["Tag"].InnerText;
+            }
 
             #region Rules
 
@@ -188,7 +191,7 @@ namespace Nolvus.Package.Mods
 
             #region Custom Fields
 
-            Esps.Clear();
+            Fields.Clear();
 
             XmlNode FieldsNode = Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "CustomFields").FirstOrDefault();
 

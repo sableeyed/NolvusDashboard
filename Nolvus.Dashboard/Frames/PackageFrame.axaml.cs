@@ -67,7 +67,7 @@ namespace Nolvus.Dashboard.Frames
                 }
                 catch (Exception ex)
                 {
-                    await ServiceSingleton.Dashboard.Error("Error during package loading", ex.Message);
+                    await ServiceSingleton.Dashboard.Error("Error during package loading", ex.Message, ex.StackTrace);
                 }
             }
             finally

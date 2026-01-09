@@ -18,5 +18,6 @@ namespace Nolvus.Core.Interfaces
         int RefreshInterval { get; }
         int ErrorsThreshold { get; }
         string BrowserLogSeverity { get; }
+        bool DevDebug { get; }
     }
 }

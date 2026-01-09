@@ -1,0 +1,116 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Manager.ENB.v6.ENBManagerFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
+    xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif">
+
+    <Grid Background="#363636"
+          RowDefinitions="Auto,*"
+          ColumnDefinitions="*,310"
+          ColumnSpacing="6">
+
+        <!-- Title -->
+        <Border Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Background="#363636"
+                Padding="6,2">
+            <TextBlock x:Name="LblStepText"
+                       Text="Available ENBs"
+                       Foreground="White"
+                       FontSize="12"
+                       VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis"/>
+        </Border>
+
+        <!-- Left: ENBListBox + Loading -->
+        <Border Grid.Row="1"
+                Grid.Column="0"
+                Margin="4,6,0,4"
+                Background="#363636"
+                BorderBrush="#808080"
+                BorderThickness="1">
+
+            <Grid RowDefinitions="*">
+
+                <!-- Custom self-rendered ENBListBox (scrollable) -->
+                <ScrollViewer Grid.Row="0"
+                              Background="#363636"
+                              HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Auto">
+
+                    <controls:ENBListBox x:Name="ENBListBox"
+                                         IsVisible="False"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Stretch"/>
+                </ScrollViewer>
+
+                <!-- Loading overlay -->
+                <Border x:Name="LoadingOverlay"
+                        Grid.Row="0"
+                        Background="#363636"
+                        IsVisible="True"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                    <gif:GifImage x:Name="PicLoading"
+                                  Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif"
+                                  Stretch="None"
+                                  Width="150"
+                                  Height="150"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                </Border>
+
+            </Grid>
+        </Border>
+
+        <!-- Right: instructions + buttons -->
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,6,4,4"
+                Background="#363636"
+                BorderBrush="#808080"
+                BorderThickness="1"
+                Padding="8">
+
+            <Grid RowDefinitions="Auto,*,Auto">
+
+                <TextBlock x:Name="LblInstructions"
+                           Grid.Row="0"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           Text="Select the ENB you want to install and click on Install. To cancel, click on Cancel"/>
+
+                <Border Grid.Row="1"/>
+
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Spacing="8">
+                    <Button x:Name="BtnCancel"
+                            MinWidth="90"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Background="#2E2E2E"
+                            Foreground="White"
+                            BorderBrush="White"
+                            Content="Cancel"
+                            Click="BtnCancel_Click"/>
+
+                    <Button x:Name="BtnInstall"
+                            MinWidth="90"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Background="#2E2E2E"
+                            BorderBrush="#F28F1A"
+                            Foreground="#F28F1A"
+                            Content="Install"
+                            Click="BtnInstall_Click"/>
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>

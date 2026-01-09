@@ -136,6 +136,14 @@ namespace Nolvus.Core.Services
             }
         }
 
+        public static IENBService EnbManager
+        {
+            get
+            {
+                return ServiceSingleton.GetService<IENBService>();
+            }
+        }
+
         public static IWineRunner Wine
         {
             get { return ServiceSingleton.GetService<IWineRunner>(); }

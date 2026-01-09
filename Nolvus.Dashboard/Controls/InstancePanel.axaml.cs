@@ -22,6 +22,7 @@ using ValveKeyValue;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using Avalonia.Interactivity;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -196,6 +197,13 @@ namespace Nolvus.Dashboard.Controls
 
             menu.Items.Add(new Separator());
 
+            // ENB Manager
+            var miEnbManager = new MenuItem { Header = "Enb Manager" };
+            miEnbManager.Click += (_, __) => BrItmENBManager_Click();
+            menu.Items.Add(miEnbManager);
+
+            menu.Items.Add(new Separator());
+
             // Delete Instance
             var miDelete = new MenuItem { Header = "Delete Instance" };
             miDelete.Click += (_, __) => BrItmDelete_Click();
@@ -207,7 +215,7 @@ namespace Nolvus.Dashboard.Controls
         private async void BrItmMods_Click()
         {
             ServiceSingleton.Instances.WorkingInstance = _instance;
-            await ServiceSingleton.Dashboard.LoadFrameAsync<PackageFrame>();
+            await ServiceSingleton.Dashboard.LoadFrameAsync<PackageFrame>(new FrameParameters(new FrameParameter() { Key = "Mode", Value = InstanceMode.View }));
         }
 
         private async void BrItmReport_Click()
@@ -324,6 +332,28 @@ namespace Nolvus.Dashboard.Controls
                 case Strings.NolvusAwakening:
                     Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/playerguide") { UseShellExecute = true });
                     break;
+            }
+        }
+
+        private async void BrItmENBManager_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            if (!ModOrganizer.IsRunning)
+            {
+                switch (_instance.Name)
+                {
+                    case Strings.NolvusAscension:
+                        NolvusMessageBox.Show(window, "ENB Manager", string.Format("This feature is not available for {0}.", _instance.Name), MessageBoxType.Info);
+                        break;
+                    case Strings.NolvusAwakening:
+                        ServiceSingleton.Instances.WorkingInstance = _instance;
+                        await ServiceSingleton.Dashboard.LoadFrameAsync<PackageFrame>(new FrameParameters(new FrameParameter() { Key = "Mode", Value = InstanceMode.ENB }));
+                        break;
+                }
+            }
+            else
+            {
+                NolvusMessageBox.Show(window, "Mod Organizer 2", "An instance of Mod Organizer 2 is running! Close it first.", MessageBoxType.Error);
             }
         }
 

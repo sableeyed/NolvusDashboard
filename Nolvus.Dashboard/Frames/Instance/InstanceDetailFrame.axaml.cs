@@ -156,7 +156,7 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         private void BtnBack_Click(object? sender, RoutedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance = null;
+            ServiceSingleton.Instances.UnloadWorkingIntance();
             ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
         }
 

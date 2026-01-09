@@ -10,6 +10,7 @@ using Nolvus.Services.Lib;
 using Nolvus.Services.Game;
 using Nolvus.Services.Files;
 using Nolvus.Services.Checker;
+using Nolvus.Services.ENB;
 using Nolvus.Package.Services;
 using Nolvus.Instance.Services;
 using System.Diagnostics;
@@ -135,6 +136,7 @@ internal static class Program
         ServiceSingleton.RegisterService<ISoftwareProvider>(PackageService);
         ServiceSingleton.RegisterService<IReportService>(new ReportService());
         ServiceSingleton.RegisterService<ICheckerService>(new CheckerService());
+        ServiceSingleton.RegisterService<IENBService>(new ENBService());
         ServiceSingleton.RegisterService<IWineRunner>(new WineRunner());
 
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;

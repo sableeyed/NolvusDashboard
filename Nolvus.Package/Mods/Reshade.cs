@@ -12,7 +12,7 @@ using Nolvus.Core.Interfaces;
 
 namespace Nolvus.Package.Mods
 {
-    public class Reshade : Mod
+    public class Reshade : Mod, IReshade
     {
         private const string StandardEffect = "https://github.com/crosire/reshade-shaders/archive/refs/heads/slim.zip";
         private const string LegacyEffect = "https://github.com/crosire/reshade-shaders/archive/master.zip";
@@ -201,6 +201,33 @@ WindowRounding=0.000000";
             });
         }
 
+        protected override async Task PrepareDirectory()
+        {
+            var Tsk = Task.Run(() =>
+            {
+                string ReshadeFolder = Path.Combine(ServiceSingleton.Instances.WorkingInstance.StockGame, "reshade-shaders");
+                string ReshadeBinaryFile = Path.Combine(ServiceSingleton.Instances.WorkingInstance.StockGame, "dxgi.dll");
+                string ReshadeIniFile = Path.Combine(ServiceSingleton.Instances.WorkingInstance.StockGame, "ReShade.ini");
+
+                if (Directory.Exists(ReshadeFolder))
+                {
+                    ServiceSingleton.Files.RemoveDirectory(ReshadeFolder, true);
+                }
+
+                if (File.Exists(ReshadeBinaryFile))
+                {
+                    File.Delete(ReshadeBinaryFile);
+                }
+
+                if (File.Exists(ReshadeIniFile))
+                {
+                    File.Delete(ReshadeIniFile);
+                }
+            });
+
+            await Tsk;
+        }
+
 
         protected override async Task DoCopy()
         {
@@ -211,6 +238,8 @@ WindowRounding=0.000000";
                     try
                     {
                         INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
+
+                        await PrepareDirectory();
 
                         var ShadersDir = Path.Combine(Instance.StockGame, "reshade-shaders");
 

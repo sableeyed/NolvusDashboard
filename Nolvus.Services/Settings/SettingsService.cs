@@ -22,6 +22,8 @@ namespace Nolvus.Services.Settings
         public const string Interval = "RefreshInterval";
         public const string Browser = "Browser";
         public const string LogSeverity = "LogSeverity";
+        public const string DevSection = "Dev";
+        public const string DebugEnabled = "Debug";
 
         public void StoreIniValue(string Section, string Parameter, string Value)
         {
@@ -174,6 +176,21 @@ namespace Nolvus.Services.Settings
                 catch
                 {
                     return "Error";
+                }
+            }
+        }
+
+        public bool DevDebug
+        {
+            get
+            {
+                try
+                {
+                    return System.Convert.ToBoolean(GetIniValue(DevSection, DebugEnabled));
+                }
+                catch
+                {
+                    return false;
                 }
             }
         }

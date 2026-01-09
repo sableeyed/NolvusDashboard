@@ -6,11 +6,12 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Nolvus.Package.Files;
+using Nolvus.Core.Interfaces;
 using System.Xml;
 
 namespace Nolvus.Package.Mods
 {
-    public class NexusMod : Mod
+    public class NexusMod : Mod, INexusMod
     {
         public string NexusId { get; set; }
         public string Domain { get; set; }

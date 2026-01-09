@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
@@ -237,6 +238,20 @@ namespace Nolvus.Core.Services
                                 col.Item().AlignCenter().Height(250).Width(450).Image(coverBytes).FitWidth();
                                 col.Item().PaddingTop(8);
                             }
+
+                            col.Item().PaddingTop(4);
+
+                            AddRow(
+                                col,
+                                "Report Date : ",
+                                string.Format(
+                                    "{0} at {1}",
+                                    DateTime.Now.ToString("MMMM dd, yyyy", new CultureInfo("en-US")),
+                                    DateTime.Now.ToShortTimeString()
+                                )
+                            );
+
+                            col.Item().PaddingTop(8);
 
                             // Sections: use small helpers for consistency
                             Progress?.Invoke("Hardware", 25);

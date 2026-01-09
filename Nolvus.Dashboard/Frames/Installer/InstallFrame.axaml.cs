@@ -29,81 +29,98 @@ namespace Nolvus.Dashboard.Frames.Installer
             ModsBox.ScalingFactor = ServiceSingleton.Dashboard.ScalingFactor;
         }
 
+        public List<IInstallableElement> ModsToInstall
+        {
+            get
+            {
+                if (!Parameters.IsEmpty && Parameters["ModsToInstall"] != null)
+                {
+                    return (List<IInstallableElement>)Parameters["ModsToInstall"];
+                }
+
+                return null;
+            }
+        }
+
         protected override async Task OnLoadedAsync()
         {
             try
             {
-                var Instance = ServiceSingleton.Instances.WorkingInstance;
-
-                ServiceSingleton.Dashboard.Title("Nolvus Dashboard - [Instance Auto Installer]");
-                ServiceSingleton.Dashboard.Status(string.Format(
-                    "Installing {0} - {1} (v{2})",
-                    Instance.Name,
-                    Instance.Performance.Variant,
-                    ServiceSingleton.Packages.LoadedVersion));
-
-                ServiceSingleton.Dashboard.AdditionalSecondaryInfo("Error(s) : 0");
-
-                GlobalProgress();
-
-                ServiceSingleton.Files.RemoveDirectory(
-                    ServiceSingleton.Folders.NexusCacheDirectory, false);
-
-                await ServiceSingleton.Packages.InstallModList(new ModInstallSettings()
+                try
                 {
-                    OnStartInstalling = () =>
+                    var Instance = ServiceSingleton.Instances.WorkingInstance;
+
+                    ServiceSingleton.Dashboard.Title("Nolvus Dashboard - [Instance Auto Installer]");
+                    ServiceSingleton.Dashboard.Status(string.Format(
+                        "{0} {1} - {2} (v{3})", 
+                        Instance.Status.InstallStatus == InstanceInstallStatus.Installing ? "Installing" : "Updating", 
+                        Instance.Name, 
+                        Instance.Performance.Variant, 
+                        ServiceSingleton.Packages.LoadedVersion));
+
+                    ServiceSingleton.Dashboard.AdditionalSecondaryInfo("Error(s) : 0");
+
+                    GlobalProgress();
+
+                    ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Folders.NexusCacheDirectory, false);
+
+                    await ServiceSingleton.Packages.InstallModList(ModsToInstall, new ModInstallSettings()
                     {
-                        Refresh(ServiceSingleton.Settings.RefreshInterval);
-                    },
-                    OnModInstalled = (Mod) =>
-                    {
-                        GlobalProgress();
-                        ServiceSingleton.Logger.Log(
-                            string.Format("Mod : {0} installed.", Mod.Name));
-                    },
-                    OnModError = (ErrorCount) =>
-                    {
-                        if (ServiceSingleton.Packages.ErrorHandler.ThresholdEnabled)
+                        OnStartInstalling = () =>
                         {
-                            ServiceSingleton.Dashboard.AdditionalSecondaryInfo(
-                                string.Format("Error(s) : {0} Threshold : {1} {2}",
-                                ServiceSingleton.Packages.ErrorHandler.ErrorsCount,
-                                ServiceSingleton.Settings.ErrorsThreshold,
-                                "(Errors will be displayed at the end of the installation)"));
-                        }
-                        else
+                            Refresh(ServiceSingleton.Settings.RefreshInterval);
+                        },
+                        OnModInstalled = (Mod) =>
+                        {
+                            GlobalProgress();
+                            ServiceSingleton.Logger.Log(string.Format("Mod : {0} installed.", Mod.Name));
+                        },
+                        OnModError = (ErrorCount) =>
+                        {
+                            if (ServiceSingleton.Packages.ErrorHandler.ThresholdEnabled)
+                            {
+                                ServiceSingleton.Dashboard.AdditionalSecondaryInfo(
+                                    string.Format("Error(s) : {0} Threshold : {1} {2}",
+                                    ServiceSingleton.Packages.ErrorHandler.ErrorsCount,
+                                    ServiceSingleton.Settings.ErrorsThreshold,
+                                    "(Errors will be displayed at the end of the installation)"));
+                            }
+                            else
+                            {
+                                ServiceSingleton.Dashboard.AdditionalSecondaryInfo(
+                                    string.Format("Error(s) : {0} {1}",
+                                    ServiceSingleton.Packages.ErrorHandler.ErrorsCount,
+                                    "(Errors will be displayed at the end of the installation)"));
+                            }
+                        },
+                        OnMaxErrors = () =>
                         {
                             ServiceSingleton.Dashboard.AdditionalSecondaryInfo(
                                 string.Format("Error(s) : {0} {1}",
                                 ServiceSingleton.Packages.ErrorHandler.ErrorsCount,
-                                "(Errors will be displayed at the end of the installation)"));
+                                "(Maximum errors threshold reached, waiting for current queue to finish...)"));
+                        },
+                        Browser = () =>
+                        {
+                            var win = new BrowserWindow("about:blank");
+                            win.Show();
+                            return win.Engine;
                         }
-                    },
-                    OnMaxErrors = () =>
-                    {
-                        ServiceSingleton.Dashboard.AdditionalSecondaryInfo(
-                            string.Format("Error(s) : {0} {1}",
-                            ServiceSingleton.Packages.ErrorHandler.ErrorsCount,
-                            "(Maximum errors threshold reached, waiting for current queue to finish...)"));
-                    },
-                    Browser = () =>
-                    {
-                        var win = new BrowserWindow("about:blank");
-                        win.Show();
-                        return win.Engine;
-                    }
-                });
-
-                _refreshCts?.Cancel();
-
-                await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>(new FrameParameters(new FrameParameter(){Key = "Mode", Value = "Install"}));
+                    });
+                    _refreshCts?.Cancel();
+                    await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>(new FrameParameters(new FrameParameter(){Key = "Mode", Value = "Install"}));
+                }
+                catch
+                {
+                    _refreshCts?.Cancel();
+                    ServiceSingleton.Dashboard.ClearInfo();
+                    ServiceSingleton.Dashboard.LoadFrame<ErrorSummaryFrame>();
+                }
             }
-            catch
+            finally
             {
-                _refreshCts?.Cancel();
-
-                ServiceSingleton.Dashboard.ClearInfo();
-                ServiceSingleton.Dashboard.LoadFrame<ErrorSummaryFrame>();
+                ServiceSingleton.Dashboard.NoStatus();
+                ServiceSingleton.Dashboard.ProgressCompleted();  
             }
         }
 
@@ -115,7 +132,7 @@ namespace Nolvus.Dashboard.Frames.Installer
             ServiceSingleton.Dashboard.AdditionalInfo(
                 string.Format("Mods {0}/{1}",
                 ServiceSingleton.Instances.WorkingInstance.Status.InstalledMods.Count,
-                ServiceSingleton.Packages.ModsCount));
+                ModsToInstall == null ? ServiceSingleton.Packages.ModsCount : ModsToInstall.Count));
         }
 
         private void RefreshBox()

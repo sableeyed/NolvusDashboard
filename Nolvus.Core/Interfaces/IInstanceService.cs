@@ -22,9 +22,12 @@ namespace Nolvus.Core.Interfaces
         List<INolvusInstance> InstanceList { get; }
         void PrepareInstanceForInstall();
         void PrepareInstanceForUpdate();
+        void PrepareInstanceForEnb();
         void FinalizeInstance();
         string GetValueFromKey(string Key);
         bool WorkingOnInstance { get; }
         void UnloadWorkingIntance();
+        //void SetCurrentTask(string Key, string Value);
+        //void ClearCurrentTask();
     }
 }

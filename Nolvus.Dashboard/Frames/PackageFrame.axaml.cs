@@ -147,6 +147,8 @@ namespace Nolvus.Dashboard.Frames
                 ServiceSingleton.Dashboard.Progress(p);
             });
 
+            ServiceSingleton.Logger.Log(string.Format("Loading ENB Manager for {0} - v {1}...", Instance.Name, Instance.Version));
+
             await ServiceSingleton.Dashboard.LoadFrameAsync<ENBManagerFrame>();
         }
 

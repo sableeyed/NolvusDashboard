@@ -188,6 +188,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 var Variants = await ApiManager.Service.Installer.GetNolvusVariants();
 
+                Variants = Variants.Except(Variants.Where(x => !x.Display)).ToList();
+
                 DrpDwnLstVariant.ItemsSource = Variants;
                 DrpDwnLstVariant.SelectedIndex = VariantIndex(Variants);
 

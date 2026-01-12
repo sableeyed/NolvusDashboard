@@ -216,7 +216,7 @@
                                                VerticalAlignment="Center"/>
                                     <ComboBox Grid.Column="1"
                                               x:Name="DrpDwnLstVariant"
-                                              DisplayMemberBinding="{Binding Name}"
+                                              DisplayMemberBinding="{Binding FullName}"
                                               MinWidth="180"
                                               Background="#2E2E2E"
                                               Foreground="White"/>

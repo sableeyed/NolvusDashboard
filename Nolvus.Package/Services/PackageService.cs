@@ -215,7 +215,7 @@ namespace Nolvus.Package.Services
                 }
                 finally
                 {
-                    //File.Delete(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, "InstallPackage.xml"));
+                    File.Delete(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, "InstallPackage.xml"));
                 }
             });
 
@@ -424,7 +424,7 @@ namespace Nolvus.Package.Services
                     ModsToProcess = Mods.Cast<InstallableElement>().ToList();
                 }
 
-                var Tasks = ModsToInstall.Where(x => !ServiceSingleton.Instances.WorkingInstance.Status.InstalledMods.Any(y => y == x.Name)).OrderBy(i => i.Index).ToList().Select(async Mod =>
+                var Tasks = ModsToProcess.Where(x => !ServiceSingleton.Instances.WorkingInstance.Status.InstalledMods.Any(y => y == x.Name)).OrderBy(i => i.Index).ToList().Select(async Mod =>
                 {
                     await SemaphoreSlim.WaitAsync();
 

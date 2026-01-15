@@ -61,8 +61,18 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
 
                 DrpDwnLstRatios.SelectedIndex = RatioIndex(Ratios);
 
-                Instance.Settings.Width = top.Screens.Primary.WorkingArea.Width.ToString();
-                Instance.Settings.Height = top.Screens.Primary.WorkingArea.Height.ToString();
+                var primary = top?.Screens?.Primary;
+                if (primary == null)
+                {
+                    ServiceSingleton.Logger.Log("No primary screen detected... Falling back to 1920x1080");
+                    Instance.Settings.Height = "1080";
+                    Instance.Settings.Width = "1920";
+                }
+                else
+                {
+                    Instance.Settings.Height = primary.WorkingArea.Height.ToString();
+                    Instance.Settings.Width = primary.WorkingArea.Width.ToString();
+                }
 
                 DrpDwnLstResolution.ItemsSource = ServiceSingleton.Globals.WindowsResolutions;
 

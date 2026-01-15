@@ -65,16 +65,8 @@ namespace Nolvus.Dashboard.Frames
             get { return (InstanceAction)Parameters["Action"]; }
         }
 
-        public async void UpdateProgress(int Value)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() => {
-                LblDeleteInfo.Text = "Deleting Instance ( " + Value.ToString() + "%)";
-            });
-        }
-
         private async Task DeleteInstance(List<FileInfo> Files)
         {
-            LblDeleteInfo.IsVisible = true;
             BtnAction.IsEnabled = false;
             BtnBack.IsEnabled = false;
 
@@ -100,8 +92,9 @@ namespace Nolvus.Dashboard.Frames
 
                     Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     {
-                        UpdateProgress(percent);
                         ServiceSingleton.Dashboard.Progress(percent);
+                        ServiceSingleton.Dashboard.Status(string.Format("Deleting {0}...", f.Name));
+                        ServiceSingleton.Dashboard.AdditionalInfo(string.Format("Deleting instance ({0}%)", percent));
                     });
                 }
 
@@ -147,6 +140,7 @@ namespace Nolvus.Dashboard.Frames
                     {
                         ServiceSingleton.Dashboard.NoStatus();
                         ServiceSingleton.Dashboard.ProgressCompleted();
+                        ServiceSingleton.Dashboard.ClearInfo();
                     }
                 }
                 catch(Exception ex)

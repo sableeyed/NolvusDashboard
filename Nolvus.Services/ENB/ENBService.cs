@@ -70,7 +70,9 @@ namespace Nolvus.Services.ENB
         {
             return await Task.Run(() => {
                 try
-                {                    
+                {                
+                    ServiceSingleton.Logger.Log("ENB Manager is preparing mods to update...");
+
                     var ModsToUpdate = GetEnbMods(true, NewENB).Select(x =>
                     {
                         x.Action = ElementAction.Add;
@@ -82,6 +84,13 @@ namespace Nolvus.Services.ENB
                     })
                     ).Concat(Reshade).Except(CurrentEnbPreset(CurrentENB)).ToList();
 
+                    ServiceSingleton.Logger.Log(string.Format("Mods to update : {0}", ModsToUpdate.Count));
+                    ServiceSingleton.Logger.Log("About to list mods to update related to ENB...");
+
+                    foreach (var Mod in ModsToUpdate)
+                    {
+                        ServiceSingleton.Logger.Log(string.Format("Mod : {0}", Mod.Name));
+                    }
 
                     return ModsToUpdate;
                 }
@@ -98,6 +107,8 @@ namespace Nolvus.Services.ENB
             {
                 try
                 {
+                    ServiceSingleton.Logger.Log("Deleting current ENB preset...");
+
                     string EnbCacheFolder = Path.Combine(ServiceSingleton.Instances.WorkingInstance.StockGame, "enbcache");
                     string EnbSeriesFolder = Path.Combine(ServiceSingleton.Instances.WorkingInstance.StockGame, "enbseries");
                     string EnbLocalIni = Path.Combine(ServiceSingleton.Instances.WorkingInstance.StockGame, "enblocal.ini");

@@ -1,6 +1,7 @@
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Enums;
+using Nolvus.Core.Misc;
 using Nolvus.Core.Services;
 using Nolvus.Instance.Core;
 using Nolvus.Dashboard.Core;
@@ -43,6 +44,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             var Instance = ServiceSingleton.Instances.WorkingInstance;
 
+            LblGOWarning.IsVisible = Instance.Performance.Variant == Strings.GO;
+
             TglNudity.IsChecked = false;
 
             if (Instance.Options.Nudity == "TRUE")
@@ -57,6 +60,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 TglLeveling.IsChecked = true;
             }
 
+            TglLeveling.IsEnabled = Instance.Performance.Variant != Strings.GO;
+
             TglGore.IsChecked = false;
 
             if (Instance.Options.Gore == "TRUE")
@@ -64,10 +69,14 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 TglGore.IsChecked = true;
             }
 
+            TglGore.IsEnabled = Instance.Performance.Variant != Strings.GO;
+
             if (Instance.Options.Controller == "TRUE")
             {
                 TglController.IsChecked = true;
             }
+
+            TglController.IsEnabled = Instance.Performance.Variant != Strings.GO;
 
             List<string> CombatAnims = new List<string>();
 
@@ -78,6 +87,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             DrpCombat.SelectedIndex = AnimsIndex(CombatAnims);
 
+            DrpCombat.IsEnabled = Instance.Performance.Variant != Strings.GO;
+
             List<string> UIs = new List<string>();
 
             UIs.Add("Untarnished UI");
@@ -86,6 +97,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             DrpUI.ItemsSource = UIs;
 
             DrpUI.SelectedIndex = UIsIndex(UIs);
+
+            LblALNotUsed.IsVisible = Instance.Performance.Variant == Strings.GO;
+            LblCANotUsed.IsVisible = Instance.Performance.Variant == Strings.GO;
+            LblGoreNotUsed.IsVisible = Instance.Performance.Variant == Strings.GO;
+            LblCSNotUsed.IsVisible = Instance.Performance.Variant == Strings.GO;
 
             ServiceSingleton.Dashboard.Info("Options");
         }

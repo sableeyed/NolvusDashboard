@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Nolvus.Core.Misc;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
@@ -93,6 +94,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             var Instance = ServiceSingleton.Instances.WorkingInstance;
 
+            LblGOWarning.IsVisible = Instance.Performance.Variant == Strings.GO;
+
             List<string> Presets = new List<string>();
 
             Presets.Add("Milk Drinker");
@@ -125,6 +128,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 DrpDwnLstPreset.SelectedIndex = 4;
             }
 
+            DrpDwnLstPreset.IsEnabled = Instance.Performance.Variant != Strings.GO;
+
             List<string> CombatScalings = new List<string>();
 
             CombatScalings.Add("Very Easy");
@@ -136,12 +141,16 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             DrpDwnLstCombatScaling.SelectedIndex = ScalingsIndex(CombatScalings);
 
+            DrpDwnLstCombatScaling.IsEnabled = Instance.Performance.Variant != Strings.GO;
+
             //TglBtnExhaustion.IsChecked = false;
 
             if (Instance.Options.Exhaustion == "TRUE")
             {
                 TglBtnExhaustion.IsChecked = true;
-            }      
+            }    
+
+            TglBtnExhaustion.IsEnabled = Instance.Performance.Variant != Strings.GO;  
 
             List<string> NerfPAs = new List<string>();
 
@@ -154,12 +163,16 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             DrpDwnLstNerfPA.SelectedIndex = NerfPAIndex(NerfPAs);
 
+            DrpDwnLstNerfPA.IsEnabled = Instance.Performance.Variant != Strings.GO;
+
             //TglBtnBoss.IsChecked = false;
 
             if (Instance.Options.Boss == "TRUE")
             {
                 TglBtnBoss.IsChecked = true;
             }
+
+            TglBtnBoss.IsEnabled = Instance.Performance.Variant != Strings.GO;
 
             ServiceSingleton.Dashboard.Info("Difficulty options");
         }

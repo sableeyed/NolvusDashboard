@@ -46,13 +46,7 @@
                                    Foreground="#F28F1A"
                                    FontSize="13"/>
                     </StackPanel>
-
-                    <TextBlock x:Name="LblDeleteInfo"
-                               Text="Deleting instance..."
-                               Foreground="White"
-                               FontSize="13"
-                               IsVisible="False"/>
-
+                    
                 </StackPanel>
             </Border>
 

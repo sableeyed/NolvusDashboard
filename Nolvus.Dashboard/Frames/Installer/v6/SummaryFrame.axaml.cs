@@ -56,17 +56,26 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 
 
                 LblNudity.Text = Instance.Options.Nudity == "TRUE" ? "Yes" : "No";
-                LblCombatAnims.Text = Instance.Options.CombatAnimation;
-                LblLeveling.Text = Instance.Options.AlternateLeveling == "TRUE" ? "Yes" : "No";
-                LblGore.Text = Instance.Options.Gore == "TRUE" ? "Yes" : "No";
+                LblCombatAnims.Text = string.Format("{0} {1}", Instance.Options.CombatAnimation, Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
+                LblLeveling.Text = string.Format("{0} {1}", Instance.Options.AlternateLeveling == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
+                LblGore.Text = string.Format("{0} {1}", Instance.Options.Gore == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
                 LblENB.Text = ENBs.GetENBByCode(Instance.Options.AlternateENB);
 
-                LblCombatScaling.Text = Instance.Options.CombatScaling;
-                LblExhaustion.Text = Instance.Options.Exhaustion == "TRUE" ? "Yes" : "No";
-                LblNerfPA.Text = Instance.Options.NerfPA;
-                LblBoss.Text = Instance.Options.Boss == "TRUE" ? "Yes" : "No";
-                LblController.Text = Instance.Options.Controller == "TRUE" ? "Yes" : "No";
+                LblCombatScaling.Text = string.Format("{0} {1}", Instance.Options.CombatScaling, Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
+                LblExhaustion.Text = string.Format("{0} {1}", Instance.Options.Exhaustion == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
+                LblNerfPA.Text = string.Format("{0} {1}", Instance.Options.NerfPA, Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
+                LblBoss.Text = string.Format("{0} {1}", Instance.Options.Boss == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
+                LblController.Text = string.Format("{0} {1}", Instance.Options.Controller == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
                 LblUI.Text = Instance.Options.UI;
+
+                LblCombatAnims.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
+                LblLeveling.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
+                LblGore.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
+                LblCombatScaling.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
+                LblExhaustion.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
+                LblNerfPA.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
+                LblBoss.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
+                LblController.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
 
                 if (!ApiManager.AccountInfo.IsPremium)
                 {

@@ -22,3 +22,5 @@ This prefix is required to run certain tools like BSArch, or manage MO2 without 
 - Wine
 - xdelta3
 - .NET Runtime 9.0
+- xrandr
+- xorg-xwayland (if using a wayland compositor)

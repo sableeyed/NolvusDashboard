@@ -32,15 +32,34 @@
                         <StackPanel Spacing="18">
 
                             <!-- Preset -->
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Preset"
+                            <Grid RowDefinitions="Auto,Auto"
+                                  ColumnDefinitions="Auto,*"
+                                  RowSpacing="6"
+                                  ColumnSpacing="12">
+
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="0"
+                                           Text="Preset"
                                            Foreground="White"/>
+
                                 <ComboBox x:Name="DrpDwnLstPreset"
+                                          Grid.Row="1"
+                                          Grid.Column="0"
                                           SelectionChanged="OnPresetChanged"
                                           MinWidth="200"
                                           Background="#2E2E2E"
                                           Foreground="White"/>
-                            </StackPanel>
+
+                                <TextBlock x:Name="LblGOWarning"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           Text="Disabled and not used when selecting the Graphics Only variant"
+                                           Foreground="#F28F1A"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"
+                                           IsVisible="False"
+                                           TextWrapping="NoWrap"/>
+                            </Grid>
 
                             <!-- OPTIONS GROUP -->
                             <StackPanel Spacing="18">

@@ -44,7 +44,15 @@
 
                             <!-- Alternate Leveling -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="Alternate Leveling" Foreground="White"/>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <TextBlock Text="Alternate Leveling" Foreground="White"/>
+                                    <TextBlock x:Name="LblALNotUsed"
+                                               Grid.Column="1"
+                                               Text="(Not used with the Graphics Only Variant)"
+                                               Foreground="Silver"
+                                               IsVisible="False"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
                                 <ToggleSwitch x:Name="TglLeveling"/>
                                 <TextBlock Text="When alternate leveling is disabled, the game uses vanilla skills based leveling. When this option is enabled the player gains xp when killing enemies, exploring the world and completing quests. Skill points are distributed manually by the player in every perk tree when leveling."
                                            Foreground="#F28F1A"
@@ -68,7 +76,15 @@
 
                             <!-- Combat Animations -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="Combat Animations" Foreground="White"/>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <TextBlock Text="Combat Animations" Foreground="White"/>
+                                    <TextBlock x:Name="LblCANotUsed"
+                                               Grid.Column="1"
+                                               Text="(Not used with the Graphics Only Variant)"
+                                               Foreground="Silver"
+                                               IsVisible="False"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
                                 <ComboBox x:Name="DrpCombat"
                                           SelectionChanged="OnAnimationsChanged"
                                           MinWidth="180"
@@ -91,7 +107,15 @@
 
                             <!-- Gore -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="Gore" Foreground="White"/>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <TextBlock Text="Gore" Foreground="White"/>
+                                    <TextBlock x:Name="LblGoreNotUsed"
+                                               Grid.Column="1"
+                                               Text="(Not used with the Graphics Only Variant)"
+                                               Foreground="Silver"
+                                               IsVisible="False"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
                                 <ToggleSwitch x:Name="TglGore"/>
                                 <TextBlock Text="Dismember your enemies."
                                            Foreground="#F28F1A"
@@ -100,7 +124,15 @@
 
                             <!-- Controller Support -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="Controller Support" Foreground="White"/>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <TextBlock Text="Controller Support" Foreground="White"/>
+                                    <TextBlock x:Name="LblCSNotUsed"
+                                               Grid.Column="1"
+                                               Text="(Not used with the Graphics Only Variant)"
+                                               Foreground="Silver"
+                                               IsVisible="False"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
                                 <ToggleSwitch x:Name="TglController"/>
                                 <TextBlock Text="Enable controller support. You can view the controller layout in the MCM menu when the list is installed. It is not recommended to play with mouse and keyboard when the controller mods are installed."
                                            Foreground="#F28F1A"
@@ -137,7 +169,7 @@
                         CornerRadius="4"
                         Padding="12">
 
-                    <Grid RowDefinitions="Auto,*,Auto"
+                    <Grid RowDefinitions="Auto,Auto,*,Auto"
                           RowSpacing="18">
 
                         <TextBlock Grid.Row="0"
@@ -150,8 +182,15 @@
                                    Foreground="#F28F1A"
                                    TextWrapping="Wrap"/>
 
+                        <TextBlock x:Name="LblGOWarning"
+                                   Grid.Row="2"
+                                   Text="WARNING!!! Some options are disabled if you selected the Graphics Only variant."
+                                   Foreground="#F28F1A"
+                                   TextWrapping="Wrap"
+                                   IsVisible="False"/>
+
                         <!-- BUTTONS moved to bottom-right -->
-                        <StackPanel Grid.Row="2"
+                        <StackPanel Grid.Row="3"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     Spacing="10">

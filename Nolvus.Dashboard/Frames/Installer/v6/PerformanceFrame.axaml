@@ -93,8 +93,9 @@
 
                                     <!-- Downscaled Res -->
                                     <Grid Grid.Row="2"
-                                          ColumnDefinitions="150,*"
+                                          ColumnDefinitions="180,*"
                                           RowDefinitions="Auto"
+                                          Margin="0,8,0,0"
                                           IsEnabled="{Binding IsChecked, ElementName=TglBtnDownScale}">
                                         <TextBlock Text="Downscaled Resolution"
                                                    Foreground="White"
@@ -285,9 +286,15 @@
 
 
                                 <!-- Note -->
-                                <TextBlock Text="A dedicated Skyrim INI profile exists for SR Exterior Cities to maintain acceptable performance."
-                                           Foreground="#CCCCCC"
-                                           TextWrapping="Wrap"/>
+                                <Grid ColumnDefinitions="150,*" RowDefinitions="Auto">
+                                    <TextBlock Text="Note"
+                                               Foreground="White"
+                                               VerticalAlignment="Top"/>
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="LblNote"
+                                               Foreground="#F28F1A"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
 
                             </StackPanel>
                         </Border>

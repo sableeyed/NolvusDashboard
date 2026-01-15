@@ -188,14 +188,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 var Variants = await ApiManager.Service.Installer.GetNolvusVariants();
 
-                Variants = Variants.Except(Variants.Where(x => !x.Display)).ToList();
-
                 DrpDwnLstVariant.ItemsSource = Variants;
                 DrpDwnLstVariant.SelectedIndex = VariantIndex(Variants);
-
-                //TglBtnSREX.ToggleStateChanging -= TglBtnSREX_ToggleStateChanging;
-
-                //TglBtnSREX.ToggleState = ToggleButtonState.Inactive;
 
                 if (Instance.Performance.SREX == "TRUE")
                 {
@@ -336,6 +330,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             MinRequirements = await ApiManager.Service.Installer.GetNolvusVariantMinimumRequirements(Variant.Id.ToString()!);
             RecRequirements = await ApiManager.Service.Installer.GetNolvusVariantRecommendedRequirements(Variant.Id.ToString()!);
+
+            LblNote.Text = Variant.Note;
 
             UpdateHardwareConfiguration();
         }

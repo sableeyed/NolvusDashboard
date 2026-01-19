@@ -87,8 +87,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
 
                 #endregion
 
-                DrpDwnLstScreenRes.ItemsSource = ServiceSingleton.Globals.WindowsResolutions;
-                DrpDwnLstScreenRes.SelectedIndex = DownResolutionIndex(ServiceSingleton.Globals.WindowsResolutions);
+                DrpDwnLstScreenRes.ItemsSource = ServiceSingleton.Globals.GetDownscaleResolutions();
+                DrpDwnLstScreenRes.SelectedIndex = DownResolutionIndex(ServiceSingleton.Globals.GetDownscaleResolutions());
                 DrpDwnLstScreenRes.IsEnabled = false;
 
                 TglBtnPhysics.IsChecked = false;

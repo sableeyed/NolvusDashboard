@@ -124,9 +124,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 DrpDwnLstDownscalingScreenRes.IsEnabled = false;
 
-                DrpDwnLstDownscalingScreenRes.ItemsSource = ServiceSingleton.Globals.WindowsResolutions;
+                DrpDwnLstDownscalingScreenRes.ItemsSource = ServiceSingleton.Globals.GetDownscaleResolutions();
 
-                DrpDwnLstDownscalingScreenRes.SelectedIndex = DownscalingResolutionIndex(ServiceSingleton.Globals.WindowsResolutions);
+                DrpDwnLstDownscalingScreenRes.SelectedIndex = DownscalingResolutionIndex(ServiceSingleton.Globals.GetDownscaleResolutions());
 
                 TglBtnDownScale.IsChecked = false;
 
@@ -246,7 +246,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 {
                     DrpDwnLstDownscalingScreenRes.IsEnabled = TglBtnDownScale.IsChecked == true;
                     ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling = "TRUE";
-                    DrpDwnLstDownscalingScreenRes.SelectedIndex = DownscalingResolutionIndex(ServiceSingleton.Globals.WindowsResolutions);
+                    DrpDwnLstDownscalingScreenRes.SelectedIndex = DownscalingResolutionIndex(ServiceSingleton.Globals.GetDownscaleResolutions());
                 }
                 else
                 {
@@ -264,7 +264,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 TglBtnFrameGen.IsEnabled = false;
                 DrpDwnLstDownscalingScreenRes.IsEnabled = true;
                 ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling = "TRUE";
-                DrpDwnLstDownscalingScreenRes.SelectedIndex = DownscalingResolutionIndex(ServiceSingleton.Globals.WindowsResolutions);
+                DrpDwnLstDownscalingScreenRes.SelectedIndex = DownscalingResolutionIndex(ServiceSingleton.Globals.GetDownscaleResolutions());
             }
 
             UpdateHardwareConfiguration();

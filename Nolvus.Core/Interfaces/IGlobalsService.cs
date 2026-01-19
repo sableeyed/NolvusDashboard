@@ -16,6 +16,7 @@ namespace Nolvus.Core.Interfaces
         string NexusUserAgent { get; }
         string NolvusUserAgent { get; }
         List<string> WindowsResolutions { get; }
+        List<string> GetDownscaleResolutions();
         List<string> GetVideoAdapters();
         Task<string> GetCPUInfo();
         Task<string> GetRamCount();

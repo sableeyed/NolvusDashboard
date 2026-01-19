@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Diagnostics;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
+using System.Text.RegularExpressions;
 
 namespace Nolvus.Services.Globals
 {
@@ -77,37 +78,72 @@ namespace Nolvus.Services.Globals
         {
             get
             {
-                var resolutions = new HashSet<string>();
+                var results = new HashSet<string>(StringComparer.Ordinal);
 
                 try
                 {
-                    var psi = new ProcessStartInfo("xrandr", "")
+                    var psi = new ProcessStartInfo("xrandr", "--current")
                     {
                         RedirectStandardOutput = true,
+                        RedirectStandardError = true,
                         UseShellExecute = false
                     };
 
                     using var proc = Process.Start(psi);
                     string output = proc?.StandardOutput.ReadToEnd() ?? "";
+                    proc?.WaitForExit(2000);
 
-                    foreach (var line in output.Split('\n'))
+                    var headerRegex = new Regex(@"^(?<name>\S+)\s+connected\b", RegexOptions.Compiled);
+
+                    string? currentOutput = null;
+
+                    foreach (var raw in output.Split('\n'))
                     {
-                        if (line.Contains(" connected"))
+                        var line = raw.TrimEnd();
+
+                        var hm = headerRegex.Match(line);
+                        if (hm.Success)
                         {
+                            currentOutput = hm.Groups["name"].Value;
+                            continue;
                         }
-                        else if (line.Contains("*"))
+
+                        if (currentOutput == null)
+                            continue;
+
+                        if (line.Contains("*"))
                         {
-                            var parts = line.Trim().Split(' ')[0];
-                            resolutions.Add(parts);
+                            var res = line.Trim().Split(' ')[0];
+                            results.Add(res);
+                            currentOutput = null;
                         }
                     }
                 }
                 catch
                 {
-                    resolutions.Add("Resolution info not available");
+                    results.Clear();
                 }
 
-                return new List<string>(resolutions);
+                results.Add("1920x1080");
+
+                if (results.Count == 0)
+                    results.Add("Resolution info not available");
+
+                return results
+                    .Select(r =>
+                    {
+                        var p = r.Split('x');
+                        return new
+                        {
+                            Text = r,
+                            W = int.TryParse(p[0], out var w) ? w : 0,
+                            H = int.TryParse(p[1], out var h) ? h : 0
+                        };
+                    })
+                    .OrderByDescending(x => x.W * x.H)
+                    .ThenByDescending(x => x.W)
+                    .Select(x => x.Text)
+                    .ToList();
             }
         }
 
@@ -268,6 +304,55 @@ namespace Nolvus.Services.Globals
                 version = version[..plusIndex];
 
             return version;
+        }
+
+        public List<string> GetDownscaleResolutions()
+        {
+            var inst = ServiceSingleton.Instances.WorkingInstance;
+
+            if (!int.TryParse(inst.Settings.Width, out var w) || !int.TryParse(inst.Settings.Height, out var h) || w <= 0 || h <= 0)
+                return new List<string> { "2560x1440", "1920x1080" };
+
+            const int floorW = 1920;
+            const int floorH = 1080;
+
+            var results = new HashSet<string>(StringComparer.Ordinal);
+
+            for (int div = 2; ; div *= 2)
+            {
+                int dw = w / div;
+                int dh = h / div;
+
+                if (dw < floorW || dh < floorH)
+                    break;
+
+                results.Add($"{dw}x{dh}");
+
+                if (div > 1024)
+                    break;
+            }
+
+            if (w >= 2560 && h >= 1440)
+                results.Add("2560x1440");
+
+            if (w >= floorW && h >= floorH)
+                results.Add("1920x1080");
+
+            if (w < floorW || h < floorH)
+                return new List<string> { $"{w}x{h}" };
+                
+            return results
+                .Select(r =>
+                {
+                    var p = r.Split('x');
+                    int rw = int.Parse(p[0]);
+                    int rh = int.Parse(p[1]);
+                    return new { Text = r, W = rw, H = rh, Pixels = rw * rh };
+                })
+                .OrderByDescending(x => x.Pixels)
+                .ThenByDescending(x => x.W)
+                .Select(x => x.Text)
+                .ToList();
         }
     }
 }

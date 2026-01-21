@@ -335,6 +335,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
         private void OnListRatiosChanged(object? sender, SelectionChangedEventArgs e)
         {
             ServiceSingleton.Instances.WorkingInstance.Settings.Ratio = DrpDwnLstRatios.SelectedItem.ToString();
+            //DrpDwnLstScreenRes.ItemsSource = ServiceSingleton.Globals.GetDownscaleResolutions();
+            //DrpDwnLstScreenRes.SelectedIndex = DownResolutionIndex(ServiceSingleton.Globals.GetDownscaleResolutions());
         }
 
         private void OnResolutionChanged(object? sender, SelectionChangedEventArgs e)

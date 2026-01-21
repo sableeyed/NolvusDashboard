@@ -311,36 +311,79 @@ namespace Nolvus.Services.Globals
             var inst = ServiceSingleton.Instances.WorkingInstance;
 
             if (!int.TryParse(inst.Settings.Width, out var w) || !int.TryParse(inst.Settings.Height, out var h) || w <= 0 || h <= 0)
-                return new List<string> { "2560x1440", "1920x1080" };
+                return new List<string> { "1920x1080" };
 
             const int floorW = 1920;
             const int floorH = 1080;
 
             var results = new HashSet<string>(StringComparer.Ordinal);
 
-            for (int div = 2; ; div *= 2)
+            try
             {
-                int dw = w / div;
-                int dh = h / div;
+                var psi = new ProcessStartInfo("xrandr", "--current")
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false
+                };
 
-                if (dw < floorW || dh < floorH)
-                    break;
+                using var proc = Process.Start(psi);
+                string output = proc?.StandardOutput.ReadToEnd() ?? "";
+                proc?.WaitForExit(2000);
 
-                results.Add($"{dw}x{dh}");
+                var headerRegex = new Regex(@"^(?<name>\S+)\s+connected\b", RegexOptions.Compiled);
+                var modeRegex = new Regex(@"^\s*(\d{3,5}x\d{3,5})\s", RegexOptions.Compiled);
 
-                if (div > 1024)
-                    break;
+                bool inConnectedBlock = false;
+
+                foreach (var raw in output.Split('\n'))
+                {
+                    var line = raw.TrimEnd();
+
+                    if (headerRegex.IsMatch(line))
+                    {
+                        inConnectedBlock = true;
+                        continue;
+                    }
+
+                    if (line.Contains(" disconnected"))
+                    {
+                        inConnectedBlock = false;
+                        continue;
+                    }
+
+                    if (!inConnectedBlock)
+                        continue;
+
+                    var mm = modeRegex.Match(line);
+                    if (!mm.Success)
+                        continue;
+
+                    var res = mm.Groups[1].Value;
+
+                    // Exclude the primary/current selected monitor resolution (no-op downscale)
+                    if (res == $"{w}x{h}")
+                        continue;
+
+                    var parts = res.Split('x');
+                    if (parts.Length != 2)
+                        continue;
+
+                    if (!int.TryParse(parts[0], out var rw) || !int.TryParse(parts[1], out var rh))
+                        continue;
+
+                    // Enforce floor
+                    if (rw < floorW || rh < floorH)
+                        continue;
+
+                    results.Add(res);
+                }
             }
+            catch {}
 
-            if (w >= 2560 && h >= 1440)
-                results.Add("2560x1440");
+            // Always include the floor option
+            results.Add("1920x1080");
 
-            if (w >= floorW && h >= floorH)
-                results.Add("1920x1080");
-
-            if (w < floorW || h < floorH)
-                return new List<string> { $"{w}x{h}" };
-                
             return results
                 .Select(r =>
                 {

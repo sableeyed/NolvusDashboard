@@ -14,11 +14,14 @@
 
         <!-- LOGO -->
         <Image Grid.Row="0"
-               Height="140"
+               Height="180"
                Stretch="Uniform"
                HorizontalAlignment="Center"
-               Margin="0,10,0,10"
-               Source="avares://NolvusDashboard/Assets/background-nolvus.jpg"/>
+               Margin="0,10,0,10">
+              <Image.Source>
+                <SvgImage Source="avares://NolvusDashboard/Assets/background-nolvus.svg" />
+              </Image.Source>
+        </Image>
 
         <!-- Status Text -->
         <TextBlock x:Name="StatusText"

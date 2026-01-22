@@ -34,6 +34,7 @@
     <PackageReference Include="ReactiveUI" Version="20.1.1" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
     <PackageReference Include="ValveKeyValue" Version="0.20.0.417" />
+    <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="11.3.6.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -96,10 +96,12 @@ namespace Nolvus.Services.Files.Extractor
                         ServiceSingleton.Logger.Log("[EXTRACT] Detected corrupted filenames (�) → switching to unzip fallback");
 
                         TryDeleteExtractDir(Output);
+
+                        var unzipPath = Path.Combine(ServiceSingleton.Folders.LibDirectory, "unzip");
                         
-                        var ark = new ProcessStartInfo
+                        var unzipPsi = new ProcessStartInfo
                         {
-                            FileName = ExecutableResolver.RequireExecutable("unzip"),
+                            FileName = unzipPath,
                             Arguments = $"\"{File}\" -d \"{Output}\"",
                             WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
                             UseShellExecute = false,
@@ -108,21 +110,21 @@ namespace Nolvus.Services.Files.Extractor
                             RedirectStandardError = true
                         };
 
-                        var arkProc = new Process { StartInfo = ark };
-                        List<string> arkErr = new();
+                        var unzip = new Process { StartInfo = unzipPsi };
+                        List<string> unzipErr = new();
 
-                        arkProc.ErrorDataReceived += (s, e) =>
+                        unzip.ErrorDataReceived += (s, e) =>
                         {
                             if (e.Data != null)
-                                arkErr.Add(e.Data);
+                                unzipErr.Add(e.Data);
                         };
 
-                        arkProc.Start();
-                        arkProc.BeginErrorReadLine();
-                        arkProc.WaitForExit();
+                        unzip.Start();
+                        unzip.BeginErrorReadLine();
+                        unzip.WaitForExit();
 
-                        if (arkProc.ExitCode != 0)
-                            throw new Exception($"unzip extraction failed {FileName}: {string.Join(" ", arkErr)}");
+                        if (unzip.ExitCode != 0)
+                            throw new Exception($"unzip extraction failed {FileName}: {string.Join(" ", unzipErr)}");
 
                         ServiceSingleton.Logger.Log("[EXTRACT] unzip fallback completed successfully");
                     }

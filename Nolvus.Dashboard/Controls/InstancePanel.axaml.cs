@@ -23,6 +23,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using Avalonia.Interactivity;
+using Nolvus.Core.Utils;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -41,6 +42,7 @@ namespace Nolvus.Dashboard.Controls
 
             BtnView.Click += BtnView_Click;
             BtnUpdate.Click += BtnUpdate_Click;
+            BtnPlay.Click += BtnPlay_Click;
         }
 
         private void LockButtons()
@@ -115,30 +117,46 @@ namespace Nolvus.Dashboard.Controls
             PicInstanceImage.Source = new Bitmap(ms);
         }
 
-        private void BtnPlay_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void BtnPlay_Click(object? sender, RoutedEventArgs e)
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
-            if (!ModOrganizer.IsRunning)
-            {
-                Process mo2 = ModOrganizer.Start(_instance.InstallDir);
 
-                BtnPlay.Content = "Running...";
-                BtnPlay.IsEnabled = false;
-
-                Task.Run(() =>
-                {
-                    mo2.WaitForExit();
-                    if (mo2.ExitCode == 0)
-                        SetPlayText("Play");
-                });
-            }
-            else
+            if (ModOrganizer.IsRunning)
             {
                 NolvusMessageBox.Show(window, "Mod Organizer 2", "An instance of Mod Organizer 2 is already running!", MessageBoxType.Error);
+                return;
+            }
+
+            SetPlayText("Running...");
+            BtnPlay.IsEnabled = false;
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = ExecutableResolver.RequireExecutable("steam"),
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = false,
+                RedirectStandardError = false
+            };
+
+            psi.ArgumentList.Add("steam://rungameid/489830");
+
+            try
+            {
+                using var proc = Process.Start(psi);
+                await Task.Delay(1500);
+                SetPlayText("Play");
+                BtnPlay.IsEnabled = true;
+            }
+            catch
+            {
+                SetPlayText("Play");
+                BtnPlay.IsEnabled = true;
+                throw;
             }
         }
 
-        private void BtnUpdate_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void BtnUpdate_Click(object? sender, RoutedEventArgs e)
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
             if (!ModOrganizer.IsRunning)
@@ -151,7 +169,7 @@ namespace Nolvus.Dashboard.Controls
             }
         }
 
-        private void BtnView_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void BtnView_Click(object? sender, RoutedEventArgs e)
         {
             BtnView.ContextMenu.Open();
         }
@@ -173,6 +191,10 @@ namespace Nolvus.Dashboard.Controls
             var miRedirector = new MenuItem { Header = "Setup Steam Redirector" };
             miRedirector.Click += (_, __) => BrItmRedirector_Click();
             menu.Items.Add(miRedirector);
+
+            var miPostInstall = new MenuItem { Header = "Perform Post Installation Tasks" };
+            miPostInstall.Click += (_, __) => BrItemPostInstall_Click();
+            menu.Items.Add(miPostInstall);
 
             menu.Items.Add(new Separator());
 
@@ -313,7 +335,8 @@ namespace Nolvus.Dashboard.Controls
 
                 CreateDesktopShortcut(name, exec, comment, path, icon);
 
-                NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop.", MessageBoxType.Info);
+                NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop." +
+                                "This is only for using MO2 without Steam. You will not be able to launch the game this way", MessageBoxType.Info);
             }
             catch (Exception ex)
             {
@@ -401,6 +424,12 @@ namespace Nolvus.Dashboard.Controls
 
                 NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
             }
+        }
+
+        private void BrItemPostInstall_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            NolvusMessageBox.Show(window, "Error", "Not yet implemented", MessageBoxType.Error);
         }
 
         private static void ExtractLauncher(string output)

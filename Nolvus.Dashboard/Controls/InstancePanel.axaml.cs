@@ -390,7 +390,7 @@ namespace Nolvus.Dashboard.Controls
             }
         }
 
-        private void BrItmRedirector_Click()
+        private async Task BrItmRedirector_Click()
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
             string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); //get hpme folder
@@ -432,7 +432,7 @@ namespace Nolvus.Dashboard.Controls
                 var instancePath = Path.Combine(skyrimPath, "instancepath.txt");
                 File.WriteAllText(instancePath, mo2Path);
 
-                NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
+                await NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
             }
         }
 
@@ -451,7 +451,7 @@ namespace Nolvus.Dashboard.Controls
             await proton.ConfigureAsync("489830", _instance.InstallDir, null);
             UnlockButtons();
             ServiceSingleton.Dashboard.ProgressCompleted();
-            NolvusMessageBox.Show(window, "Success", "Prefix setup has completed", MessageBoxType.Info);
+            await NolvusMessageBox.Show(window, "Success", "Prefix setup has completed", MessageBoxType.Info);
         }
 
 
@@ -465,8 +465,11 @@ namespace Nolvus.Dashboard.Controls
                 if (winePath == null)
                 {
                     var topLevel = TopLevel.GetTopLevel(this);
-                    if (topLevel == null)
-                        ServiceSingleton.Dashboard.Error("MO2", "An error ocurred when trying to open system file dialog.");
+                    if (topLevel == null) 
+                    {
+                        await ServiceSingleton.Dashboard.Error("MO2", "An error ocurred when trying to open system file dialog.");
+                        return;
+                    }
 
                     var binary = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                     {
@@ -476,7 +479,8 @@ namespace Nolvus.Dashboard.Controls
 
                     if (binary == null || binary.Count == 0)
                     {
-                        ServiceSingleton.Dashboard.Error("MO2", "Wine binary was not selected. Please provide a valid wine binary.");
+                        await ServiceSingleton.Dashboard.Error("MO2", "Wine binary was not selected. Please provide a valid wine binary.");
+                        return;
                     }
 
                     winePath = binary[0].Path.LocalPath;

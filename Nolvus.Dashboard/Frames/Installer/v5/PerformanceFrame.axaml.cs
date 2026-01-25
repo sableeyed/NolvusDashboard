@@ -417,6 +417,5 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
                 ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling = "FALSE";                
             }    
         }
-
     }
 }

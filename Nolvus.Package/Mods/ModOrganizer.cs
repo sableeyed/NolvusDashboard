@@ -2394,7 +2394,30 @@ ccafdsse001-dwesanctuary.esm";
         {
             get
             {
-                return Process.GetProcessesByName("ModOrganizer").Length != 0;
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "pgrep",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+
+                psi.ArgumentList.Add("-f");
+                psi.ArgumentList.Add("ModOrganizer.exe");
+
+                try
+                {
+                    using var p = Process.Start(psi);
+                    if (p == null)
+                        return false;
+
+                    p.WaitForExit();
+                    return p.ExitCode == 0;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 

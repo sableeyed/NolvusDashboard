@@ -485,7 +485,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                 string settingsFile = Path.Combine(
                     instance.InstallDir,
                     "MODS",
-                    "Mods",
+                    "mods", //Case sensitivity strikes again
                     "SSE Display Tweaks",
                     "SKSE",
                     "Plugins",

@@ -5,9 +5,15 @@
     Background="Transparent">
 
     <Border Background="Transparent">
-        <Image Source="avares://NolvusDashboard/Assets/background-nolvus.jpg"
-               Stretch="None"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"/>
+        <Image
+            Width="520"
+            Height="180"
+            Stretch="Uniform"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <Image.Source>
+                <SvgImage Source="avares://NolvusDashboard/Assets/background-nolvus.svg" />
+            </Image.Source>
+        </Image>
     </Border>
 </UserControl>

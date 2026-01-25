@@ -36,7 +36,7 @@
                 <!-- Donation/patreon help text -->
                 <TextBlock x:Name="label2"
                            Grid.Row="1"
-                           Text="If you enjoyed this software, please consider donate or become a patreon to help maintaining and improving it ;)"
+                           Text="Please perform the post installation steps through the &quot;Manage&quot; button on the Instance panel, or follow the instructions on the wiki to do so manually."
                            Foreground="White"
                            TextWrapping="Wrap"
                            Margin="0,0,0,16" />

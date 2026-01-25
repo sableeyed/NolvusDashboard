@@ -55,50 +55,6 @@ namespace Nolvus.Services.Game
             return null; // If not found → caller handles prompting user
         }
 
-        // private static RegistryKey GetInstalledApplication(string AppName)
-        // {
-        //     string displayName;
-        //     RegistryKey key;
-
-        //     key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-        //     string[] Arr1 = key.GetSubKeyNames();
-        //     foreach (String keyName in key.GetSubKeyNames())
-        //     {
-        //         RegistryKey subkey = key.OpenSubKey(keyName);
-        //         displayName = subkey.GetValue("DisplayName") as string;
-        //         if (AppName.Equals(displayName, StringComparison.OrdinalIgnoreCase) == true)
-        //         {
-        //             return subkey;
-        //         }
-        //     }
-
-        //     key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
-        //     string[] Arr2 = key.GetSubKeyNames();
-        //     foreach (String keyName in key.GetSubKeyNames())
-        //     {
-        //         RegistryKey subkey = key.OpenSubKey(keyName);
-        //         displayName = subkey.GetValue("DisplayName") as string;
-        //         if (AppName.Equals(displayName, StringComparison.OrdinalIgnoreCase) == true)
-        //         {
-        //             return subkey;
-        //         }
-        //     }
-
-        //     key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
-        //     string[] Arr3 = key.GetSubKeyNames();
-        //     foreach (String keyName in key.GetSubKeyNames())
-        //     {
-        //         RegistryKey subkey = key.OpenSubKey(keyName);
-        //         displayName = subkey.GetValue("DisplayName") as string;
-        //         if (AppName.Equals(displayName, StringComparison.OrdinalIgnoreCase) == true)
-        //         {
-        //             return subkey;
-        //         }
-        //     }
-
-        //     return null;
-        // }
-
         public bool IsGameInstalled()
         {
             return FindSkyrimInstallPath() != null;

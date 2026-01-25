@@ -23,6 +23,10 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using Avalonia.Interactivity;
+using Nolvus.Core.Utils;
+using Avalonia.Platform.Storage;
+using Nolvus.Dashboard.Services.Wine;
+using Nolvus.Dashboard.Services.Proton;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -41,6 +45,7 @@ namespace Nolvus.Dashboard.Controls
 
             BtnView.Click += BtnView_Click;
             BtnUpdate.Click += BtnUpdate_Click;
+            BtnPlay.Click += BtnPlay_Click;
         }
 
         private void LockButtons()
@@ -115,30 +120,46 @@ namespace Nolvus.Dashboard.Controls
             PicInstanceImage.Source = new Bitmap(ms);
         }
 
-        private void BtnPlay_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void BtnPlay_Click(object? sender, RoutedEventArgs e)
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
-            if (!ModOrganizer.IsRunning)
-            {
-                Process mo2 = ModOrganizer.Start(_instance.InstallDir);
 
-                BtnPlay.Content = "Running...";
-                BtnPlay.IsEnabled = false;
-
-                Task.Run(() =>
-                {
-                    mo2.WaitForExit();
-                    if (mo2.ExitCode == 0)
-                        SetPlayText("Play");
-                });
-            }
-            else
+            if (ModOrganizer.IsRunning)
             {
                 NolvusMessageBox.Show(window, "Mod Organizer 2", "An instance of Mod Organizer 2 is already running!", MessageBoxType.Error);
+                return;
+            }
+
+            SetPlayText("Running...");
+            BtnPlay.IsEnabled = false;
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = ExecutableResolver.RequireExecutable("steam"),
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = false,
+                RedirectStandardError = false
+            };
+
+            psi.ArgumentList.Add("steam://rungameid/489830");
+
+            try
+            {
+                using var proc = Process.Start(psi);
+                await Task.Delay(1500);
+                SetPlayText("Play");
+                BtnPlay.IsEnabled = true;
+            }
+            catch
+            {
+                SetPlayText("Play");
+                BtnPlay.IsEnabled = true;
+                throw;
             }
         }
 
-        private void BtnUpdate_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void BtnUpdate_Click(object? sender, RoutedEventArgs e)
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
             if (!ModOrganizer.IsRunning)
@@ -151,7 +172,7 @@ namespace Nolvus.Dashboard.Controls
             }
         }
 
-        private void BtnView_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void BtnView_Click(object? sender, RoutedEventArgs e)
         {
             BtnView.ContextMenu.Open();
         }
@@ -170,9 +191,20 @@ namespace Nolvus.Dashboard.Controls
             miShortcut.Click += (_, __) => BrItmShortCut_Click();
             menu.Items.Add(miShortcut);
 
+            //Nolvus Launcher
             var miRedirector = new MenuItem { Header = "Setup Steam Redirector" };
             miRedirector.Click += (_, __) => BrItmRedirector_Click();
             menu.Items.Add(miRedirector);
+
+            //MO2 Prefix (optional)
+            var miMO2Prefix = new MenuItem { Header = "Create MO2 Prefix" };
+            miMO2Prefix.Click += async (_, __) => await BrMO2Prefix_Click();
+            menu.Items.Add(miMO2Prefix);
+
+            //Skyrim Proton Prefix
+            var miPostInstall = new MenuItem { Header = "Perform Post Installation Tasks" };
+            miPostInstall.Click += async (_, __) => await BrItemPostInstall_Click();
+            menu.Items.Add(miPostInstall);
 
             menu.Items.Add(new Separator());
 
@@ -260,7 +292,7 @@ namespace Nolvus.Dashboard.Controls
 
                 NolvusMessageBox.Show(window, "Information", $"PDF report has been generated in {ServiceSingleton.Folders.ReportDirectory}", MessageBoxType.Info);
 
-                //Process.Start(ServiceSingleton.Folders.ReportDirectory);
+                Process.Start(ServiceSingleton.Folders.ReportDirectory);
             }
             catch (Exception ex)
             {
@@ -285,7 +317,7 @@ namespace Nolvus.Dashboard.Controls
                     break;
 
                 case Strings.NolvusAwakening:
-                    //ServiceSingleton.Dashboard.LoadFrame<Nolvus.Dashboard.Frames.Instance.v6.KeysBindingFrame>();
+                    ServiceSingleton.Dashboard.LoadFrame<Nolvus.Dashboard.Frames.Instance.v6.KeysBindingFrame>();
                     break;
             }
         }
@@ -313,7 +345,8 @@ namespace Nolvus.Dashboard.Controls
 
                 CreateDesktopShortcut(name, exec, comment, path, icon);
 
-                NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop.", MessageBoxType.Info);
+                NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop. " +
+                                "This is only for using MO2 without Steam. You will not be able to launch the game this way", MessageBoxType.Info);
             }
             catch (Exception ex)
             {
@@ -357,7 +390,7 @@ namespace Nolvus.Dashboard.Controls
             }
         }
 
-        private void BrItmRedirector_Click()
+        private async Task BrItmRedirector_Click()
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
             string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); //get hpme folder
@@ -399,7 +432,63 @@ namespace Nolvus.Dashboard.Controls
                 var instancePath = Path.Combine(skyrimPath, "instancepath.txt");
                 File.WriteAllText(instancePath, mo2Path);
 
-                NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
+                await NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
+            }
+        }
+
+        private async Task BrItemPostInstall_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+
+            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. Please set your Skyrim Proton version to GE-Proton 10.25 before clicking yes. If you encounter issues, please refer to the wiki on how to do this manually.");
+
+            if (result != true)
+                return;
+
+            var proton = new Protontricks();
+            LockButtons();
+            ServiceSingleton.Dashboard.Status("Configuring Proton Prefix... This may take a while");
+            await proton.ConfigureAsync("489830", _instance.InstallDir, null);
+            UnlockButtons();
+            ServiceSingleton.Dashboard.ProgressCompleted();
+            await NolvusMessageBox.Show(window, "Success", "Prefix setup has completed", MessageBoxType.Info);
+        }
+
+
+        private async Task BrMO2Prefix_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            bool? result = await NolvusMessageBox.ShowConfirmation(window, "ModOrganizer", "This is only useful if you want to use MO2 without needing to launch steam. You CANNOT play the game through MO2 with this method. Do you want to continue?");
+            if (result == true)
+            {
+                var winePath = ExecutableResolver.FindExecutable("wine");
+                if (winePath == null)
+                {
+                    var topLevel = TopLevel.GetTopLevel(this);
+                    if (topLevel == null) 
+                    {
+                        await ServiceSingleton.Dashboard.Error("MO2", "An error ocurred when trying to open system file dialog.");
+                        return;
+                    }
+
+                    var binary = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                    {
+                        Title = "Select Wine executable",
+                        AllowMultiple = false
+                    });
+
+                    if (binary == null || binary.Count == 0)
+                    {
+                        await ServiceSingleton.Dashboard.Error("MO2", "Wine binary was not selected. Please provide a valid wine binary.");
+                        return;
+                    }
+
+                    winePath = binary[0].Path.LocalPath;
+                }
+
+                WineRunner.WinePath = winePath;
+
+                await WinePrefix.InitializeAsync((_, __) => { });
             }
         }
 

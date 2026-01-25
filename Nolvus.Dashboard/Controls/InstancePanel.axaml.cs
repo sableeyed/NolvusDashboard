@@ -345,7 +345,7 @@ namespace Nolvus.Dashboard.Controls
 
                 CreateDesktopShortcut(name, exec, comment, path, icon);
 
-                NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop." +
+                NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop. " +
                                 "This is only for using MO2 without Steam. You will not be able to launch the game this way", MessageBoxType.Info);
             }
             catch (Exception ex)

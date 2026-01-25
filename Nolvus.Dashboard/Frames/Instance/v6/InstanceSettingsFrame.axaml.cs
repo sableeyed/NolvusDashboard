@@ -403,7 +403,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
 
                 #region Apply Settings
 
-                string SettingsFile = Path.Combine(Instance.InstallDir, "MODS", "Mods", "SSE Display Tweaks", "SKSE", "Plugins", "SSEDisplayTweaks.ini");
+                string SettingsFile = Path.Combine(Instance.InstallDir, "MODS", "mods", "SSE Display Tweaks", "SKSE", "Plugins", "SSEDisplayTweaks.ini"); //Case sensitivity strikes again
 
                 if (File.Exists(SettingsFile))
                 {

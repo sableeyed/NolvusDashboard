@@ -13,7 +13,8 @@ namespace Nolvus.Dashboard.Services.Proton
         public Task<string?> GetPrefixPathAsync(string appId)
         {
             if (string.IsNullOrWhiteSpace(appId))
-                throw new ArgumentNullException(nameof(appId));
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "appId was NULL, please report this as a bug");
+                //throw new ArgumentNullException(nameof(appId));
 
             string? vdf = FindLibraryFoldersVdf();
             if (vdf == null)
@@ -45,10 +46,12 @@ namespace Nolvus.Dashboard.Services.Proton
         public Task<int> RunAsync(string appId, params string[] args)
         {
             if (string.IsNullOrWhiteSpace(appId))
-                throw new ArgumentNullException(nameof(appId));
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "appId was NULL, please report this as a bug");
 
-            string protontricks = ExecutableResolver.FindExecutable("protontricks")
-                ?? throw new Exception("protontricks not found in PATH");
+            string protontricks = ExecutableResolver.FindExecutable("protontricks");
+            
+            if (string.IsNullOrWhiteSpace(protontricks))
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Protontricks was not found in $PATH");
 
             var startInfo = new ProcessStartInfo
             {
@@ -105,22 +108,24 @@ namespace Nolvus.Dashboard.Services.Proton
         public async Task ConfigureAsync(string appId, string instanceInstallDir, Action<string, double>? progress = null)
         {
             if (string.IsNullOrWhiteSpace(appId))
-                throw new ArgumentNullException(nameof(appId));
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "appId was NULL, please report this as a bug");
 
             if (string.IsNullOrWhiteSpace(instanceInstallDir))
-                throw new ArgumentNullException(nameof(instanceInstallDir));
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Could not find Nolvus install path");
 
             if (!Directory.Exists(instanceInstallDir))
-                throw new DirectoryNotFoundException($"Instance install dir not found: {instanceInstallDir}");
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Could not find Nolvus install path");
 
-            progress?.Invoke("Locating Proton prefix…", 5);
+            //progress?.Invoke("Locating Proton prefix…", 5);
+            ServiceSingleton.Dashboard.Progress(5);
 
             string? prefix = await GetPrefixPathAsync(appId);
             if (prefix == null)
-                throw new Exception($"Proton prefix not found for appId {appId}. Launch the game once in Steam to generate compatdata.");
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Could not find Skyrim data paths, have you ran it once?");
 
             // 2) install required verbs
-            progress?.Invoke("Installing prerequisites…", 20);
+            //progress?.Invoke("Installing prerequisites…", 20);
+            ServiceSingleton.Dashboard.Progress(20);
 
             int installExit = await RunAsync(appId,
                 "-q",
@@ -134,17 +139,19 @@ namespace Nolvus.Dashboard.Services.Proton
                 "d3dcompiler_47");
 
             if (installExit != 0)
-                throw new Exception($"protontricks install failed with exit code {installExit}");
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", $"Protontricks returned error code {installExit}");
 
             // 3) reset windows version
-            progress?.Invoke("Setting Windows version…", 65);
+            //progress?.Invoke("Setting Windows version…", 65);
+            ServiceSingleton.Dashboard.Progress(65);
 
             int winverExit = await RunAsync(appId, "-q", "win10");
             if (winverExit != 0)
-                throw new Exception($"protontricks winver failed with exit code {winverExit}");
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", $"Protontricks failed to change windows version {winverExit}");
 
             // 5) symlink X: -> instanceInstallDir
-            progress?.Invoke("Mapping X: drive…", 75);
+            //progress?.Invoke("Mapping X: drive…", 75);
+            ServiceSingleton.Dashboard.Progress(75);
 
             string dosdevices = Path.Combine(prefix, "dosdevices");
             Directory.CreateDirectory(dosdevices);
@@ -155,7 +162,8 @@ namespace Nolvus.Dashboard.Services.Proton
             File.CreateSymbolicLink(xDrive, instanceInstallDir);
 
             // 4) copy d3dcompiler_47.dll to STOCK GAME
-            progress?.Invoke("Copying d3dcompiler_47.dll…", 85);
+            //progress?.Invoke("Copying d3dcompiler_47.dll…", 85);
+            ServiceSingleton.Dashboard.Progress(85);
 
             string stockGame = Path.Combine(instanceInstallDir, "STOCK GAME");
             Directory.CreateDirectory(stockGame);
@@ -180,9 +188,11 @@ namespace Nolvus.Dashboard.Services.Proton
             }
 
             if (!copied)
-                throw new Exception("d3dcompiler_47.dll not found in prefix after install (expected in system32 or syswow64)");
+                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", $"Unable to find d3dcompiler_47.dll, please place a copy manually in STOCK GAME. Otherwise everything else succeeded");
 
-            progress?.Invoke("Ready!", 100);
+
+            //progress?.Invoke("Ready!", 100);
+            ServiceSingleton.Dashboard.Progress(100);
         }
 
         public static List<string> GetSteamLibraries(string vdfPath)

@@ -440,13 +440,18 @@ namespace Nolvus.Dashboard.Controls
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
 
-            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. If you encounter issues, please refer to the wiki on how to do this manually.");
+            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. Please set your Skyrim Proton version to GE-Proton 10.25 before clicking yes. If you encounter issues, please refer to the wiki on how to do this manually.");
 
             if (result != true)
                 return;
 
             var proton = new Protontricks();
+            LockButtons();
+            ServiceSingleton.Dashboard.Status("Configuring Proton Prefix... This may take a while");
             await proton.ConfigureAsync("489830", _instance.InstallDir, null);
+            UnlockButtons();
+            ServiceSingleton.Dashboard.ProgressCompleted();
+            NolvusMessageBox.Show(window, "Success", "Prefix setup has completed", MessageBoxType.Info);
         }
 
 

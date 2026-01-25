@@ -1,4 +1,6 @@
+<div align="center">
 ![Nolvus Banner](https://github.com/sableeyed/NolvusDashboard/blob/main/Nolvus.Dashboard/Assets/background-nolvus.jpg)
+</div>
 
 <div align="center">
 

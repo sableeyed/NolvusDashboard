@@ -466,7 +466,7 @@ namespace Nolvus.Dashboard.Controls
                 {
                     var topLevel = TopLevel.GetTopLevel(this);
                     if (topLevel == null)
-                        throw new Exception("An error ocurred when trying to access system file dialog");
+                        ServiceSingleton.Dashboard.Error("MO2", "An error ocurred when trying to open system file dialog.");
 
                     var binary = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                     {
@@ -476,7 +476,7 @@ namespace Nolvus.Dashboard.Controls
 
                     if (binary == null || binary.Count == 0)
                     {
-                        throw new Exception("No binary specified, please try again");
+                        ServiceSingleton.Dashboard.Error("MO2", "Wine binary was not selected. Please provide a valid wine binary.");
                     }
 
                     winePath = binary[0].Path.LocalPath;

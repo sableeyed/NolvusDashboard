@@ -1,8 +1,4 @@
 <div align="center">
-![Nolvus Banner](https://github.com/sableeyed/NolvusDashboard/blob/main/Nolvus.Dashboard/Assets/background-nolvus.jpg)
-</div>
-
-<div align="center">
 
 [Wiki](https://github.com/sableeyed/NolvusDashboard/wiki) | [Download](https://github.com/sableeyed/NolvusDashboard/releases) | [Nolvus Linux Discord](https://discord.gg/Tazgf4Tr4u) | [Nolvus Linux Issues](https://github.com/sableeyed/NolvusDashboard/issues) | [Original Project](https://github.com/vektor9999/NolvusDashboard)
 

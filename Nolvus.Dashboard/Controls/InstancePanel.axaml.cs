@@ -24,6 +24,8 @@ using System.Security.Cryptography;
 using System.Text;
 using Avalonia.Interactivity;
 using Nolvus.Core.Utils;
+using Avalonia.Platform.Storage;
+using Nolvus.Dashboard.Services.Wine;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -188,10 +190,15 @@ namespace Nolvus.Dashboard.Controls
             miShortcut.Click += (_, __) => BrItmShortCut_Click();
             menu.Items.Add(miShortcut);
 
+            //Nolvus Launcher
             var miRedirector = new MenuItem { Header = "Setup Steam Redirector" };
             miRedirector.Click += (_, __) => BrItmRedirector_Click();
             menu.Items.Add(miRedirector);
 
+            var miMO2Prefix = new MenuItem { Header = "Create MO2 Prefix" };
+            miMO2Prefix.Click += (_, __) => BrMO2Prefix_Click();
+
+            //Skyrim Proton Prefix
             var miPostInstall = new MenuItem { Header = "Perform Post Installation Tasks" };
             miPostInstall.Click += (_, __) => BrItemPostInstall_Click();
             menu.Items.Add(miPostInstall);
@@ -282,7 +289,7 @@ namespace Nolvus.Dashboard.Controls
 
                 NolvusMessageBox.Show(window, "Information", $"PDF report has been generated in {ServiceSingleton.Folders.ReportDirectory}", MessageBoxType.Info);
 
-                //Process.Start(ServiceSingleton.Folders.ReportDirectory);
+                Process.Start(ServiceSingleton.Folders.ReportDirectory);
             }
             catch (Exception ex)
             {
@@ -307,7 +314,7 @@ namespace Nolvus.Dashboard.Controls
                     break;
 
                 case Strings.NolvusAwakening:
-                    //ServiceSingleton.Dashboard.LoadFrame<Nolvus.Dashboard.Frames.Instance.v6.KeysBindingFrame>();
+                    ServiceSingleton.Dashboard.LoadFrame<Nolvus.Dashboard.Frames.Instance.v6.KeysBindingFrame>();
                     break;
             }
         }
@@ -430,6 +437,43 @@ namespace Nolvus.Dashboard.Controls
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
             NolvusMessageBox.Show(window, "Error", "Not yet implemented", MessageBoxType.Error);
+
+            /*
+             
+            */
+        }
+
+        private async Task BrMO2Prefix_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            bool? result = await NolvusMessageBox.ShowConfirmation(window, "ModOrganizer", "This is only useful if you want to use MO2 without needing to launch steam. You CANNOT play the game through MO2 with this method. Do you want to continue?");
+            if (result == true)
+            {
+                var winePath = ExecutableResolver.FindExecutable("wine");
+                if (winePath == null)
+                {
+                    var topLevel = TopLevel.GetTopLevel(this);
+                    if (topLevel == null)
+                        throw new Exception("An error ocurred when trying to access system file dialog");
+
+                    var binary = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                    {
+                        Title = "Select Wine executable",
+                        AllowMultiple = false
+                    });
+
+                    if (binary == null || binary.Count == 0)
+                    {
+                        throw new Exception("No binary specified, please try again");
+                    }
+
+                    winePath = binary[0].Path.LocalPath;
+                }
+
+                WineRunner.WinePath = winePath;
+
+                await WinePrefix.InitializeAsync((_, __) => { });
+            }
         }
 
         private static void ExtractLauncher(string output)

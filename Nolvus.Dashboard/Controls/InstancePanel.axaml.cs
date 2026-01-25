@@ -26,6 +26,7 @@ using Avalonia.Interactivity;
 using Nolvus.Core.Utils;
 using Avalonia.Platform.Storage;
 using Nolvus.Dashboard.Services.Wine;
+using Nolvus.Dashboard.Services.Proton;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -195,12 +196,14 @@ namespace Nolvus.Dashboard.Controls
             miRedirector.Click += (_, __) => BrItmRedirector_Click();
             menu.Items.Add(miRedirector);
 
+            //MO2 Prefix (optional)
             var miMO2Prefix = new MenuItem { Header = "Create MO2 Prefix" };
-            miMO2Prefix.Click += (_, __) => BrMO2Prefix_Click();
+            miMO2Prefix.Click += async (_, __) => await BrMO2Prefix_Click();
+            menu.Items.Add(miMO2Prefix);
 
             //Skyrim Proton Prefix
             var miPostInstall = new MenuItem { Header = "Perform Post Installation Tasks" };
-            miPostInstall.Click += (_, __) => BrItemPostInstall_Click();
+            miPostInstall.Click += async (_, __) => await BrItemPostInstall_Click();
             menu.Items.Add(miPostInstall);
 
             menu.Items.Add(new Separator());
@@ -433,15 +436,19 @@ namespace Nolvus.Dashboard.Controls
             }
         }
 
-        private void BrItemPostInstall_Click()
+        private async Task BrItemPostInstall_Click()
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
-            NolvusMessageBox.Show(window, "Error", "Not yet implemented", MessageBoxType.Error);
 
-            /*
-             
-            */
+            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. If you encounter issues, please refer to the wiki on how to do this manually.");
+
+            if (result != true)
+                return;
+
+            var proton = new Protontricks();
+            await proton.ConfigureAsync("489830", _instance.InstallDir, null);
         }
+
 
         private async Task BrMO2Prefix_Click()
         {

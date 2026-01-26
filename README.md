@@ -26,8 +26,6 @@ The official Windows dashboard does not function natively on Linux and required 
 - Currently, Nexus Premium is required, but support for free accounts are planned
 - Please report any issues you encounter to help improve the application
 
----
-
 ## Features
 
 - Linux First: Designed specifically for Linux with minimal external dependencies
@@ -52,6 +50,8 @@ The official Windows dashboard does not function natively on Linux and required 
   - winetricks
   - xrandr (for resolution detection)
   - xwayland (if using a wayland compositor)
+- Ensure winetricks is up to date (necessary for automated prefix setup)
+  - `sudo winetricks --self-update`
 
 ## Installation
 

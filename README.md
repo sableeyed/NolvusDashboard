@@ -1,6 +1,8 @@
+![Nolvus Banner](Nolvus.Dashboard/Assets/background-nolvus-banner.svg)
+
 <div align="center">
 
-[Wiki](https://github.com/sableeyed/NolvusDashboard/wiki) | [Download](https://github.com/sableeyed/NolvusDashboard/releases) | [Nolvus Linux Discord](https://discord.gg/Tazgf4Tr4u) | [Nolvus Linux Issues](https://github.com/sableeyed/NolvusDashboard/issues) | [Original Project](https://github.com/vektor9999/NolvusDashboard)
+[Wiki](https://github.com/sableeyed/NolvusDashboard/wiki) | [Download](https://github.com/sableeyed/NolvusDashboard/releases) | [Nolvus Linux Discord](https://discord.gg/Tazgf4Tr4u) | [Official Nolvus Discord](https://discord.gg/Zkh5PwD) | [Nolvus Linux Issues](https://github.com/sableeyed/NolvusDashboard/issues) | [Original Project](https://github.com/vektor9999/NolvusDashboard)
 
 </div>
 
@@ -8,81 +10,54 @@
 
 
 # Nolvus Dashboard for Linux
-A native Linux dashboard for installing and managing the Nolvus mod list
+A Linux native application for installing and managing the Nolvus modlist.
 
----
+Nolvus Linux automatically downloads and install all requirements for Nolvus and attempts to automate steam shortcut creation and Proton prefix configuration.
 
-## Overview
 
-Nolvus Dashboard for Linux is a Linux only reimplementation of the official Nolvus Dashboard, designed to make installing and running the Nolvus modlist possible without requiring Windows.
+## Introduction
 
-The official Windows dashboard does not function natively on Linux and required a Windows system in some form (VM or dual-boot) to complete installation. This project exists to remove that requirement entirely.
+Nolvus Dashboard for Linux is a Linux native application written in .NET 9 and uses the same codebase as the Windows version, only changing what is necessary for functionality.
 
-The goal is simple:
+The official Windows dashboard does not function natively on Linux and required a Windows system in some form (VM or dual boot) to complete installation. This project exists to remove that requirement entirely.
 
-> **Give Linux users a modern and familiar Nolvus installation experience**
-
----
-
-## Project Status
-
-⚠️ **Beta**  
-The application is usable and actively developed, but bugs are expected. Please report issues on GitHub or in Discord.
+**Important Notes**
+- This project is in Beta - There will be bugs
+- Currently, Nexus Premium is required, but support for free accounts are planned
+- Please report any issues you encounter to help improve the application
 
 ---
 
 ## Features
 
-- **Linux Only, Linux First**
-  - No Windows builds
-  - Designed specifically for Linux users
+- Linux First: Designed specifically for Linux with minimal external dependencies
+- Upstream Parity: Aims to be bug-for-bug compatible with the official Windows Dashboard
+- Automated Nolvus Installation: Install just like you would on Windows
+- Proton Prefix Configuration: Attempts to manually configure Proton for you, but can also be done manually
+- Launcher Setup: Automatically installs and configures the [Nolvus Launcher](https://github.com/sableeyed/NolvusDashboard/tree/main/Nolvus.Launcher)
+- Improved User Experience: Full GUI application with terminal support
 
-- **Upstream Parity**
-  - Aims to be **bug-for-bug compatible** with the official Windows Nolvus Dashboard
-  - Stays aligned with upstream behavior and workflow
 
-- **Automated Nolvus Installation**
-  - Install the Nolvus modlist just like on Windows
-  - Minimal manual intervention required
+## Quick Start
 
-- **Proton Prefix Configuration**
-  - Attempts to automatically configure the required Proton prefix
-  - Can fall back to manual configuration when needed
-
-- **Launcher Setup**
-  - Automatically installs and configures the Nolvus launcher
-  - Designed to “just work” with Steam + Proton
-
-- **Improved User Experience**
-  - More user-friendly than previous Linux solutions
-  - Full GUI application with optional terminal launch
-
----
-
-## Requirements
-
-### Runtime
-- **Linux**
-- **.NET 9 Runtime**
-
-### Required tools (must be in `PATH`)
-- `protontricks`
-- `winetricks`
-- `xrandr` (used for resolution detection)
-
-### Additional Notes
-- **Wayland users**: `xwayland` is required
-- **Wine**:
-  - Optional
-  - Can be specified manually if not found automatically
-
----
+### Requirements
+- Linux
+- .NET 9 Runtime installed with your package manager
+- Steam installed and configured
+- Vanilla Skyrim with AE content downloaded
+- Nexus Premium
+  - Free support planned in the future
+- External Tools (must be accessible in PATH)
+  - protontricks
+  - winetricks
+  - xrandr (for resolution detection)
+  - xwayland (if using a wayland compositor)
 
 ## Installation
 
 ### Prebuilt Binaries (Recommended)
 
-Prebuilt binaries are provided. Download the latest release and run it like a standard Linux application.
+Prebuilt binaries are provided. Download the [latest release](https://github.com/sableeyed/NolvusDashboard/releases) and run it like a standard Linux application.
 
 ```bash
 chmod +x NolvusDashboard
@@ -91,20 +66,6 @@ chmod +x NolvusDashboard
 
 Or double click `NolvusDashboard`
 
-### Building from source
-
-You can build from source and/or modify the program freely, but no support will be provided if you choose to do so.
-
-## Design Goals
-
-- Linux users should never need Windows to install or configure Nolvus
-- Maintain parity with the upstream Windows version
-- Automate setup wherever possible
-
-## Non Goals
-- Supporting Windows
-- Replacing or competing with the upstream Nolvus project
-- Introducing architecture differences unless strictly necessary
 
 ## License
 
@@ -113,16 +74,8 @@ This project is licensed under the **GNU General Public License v3 (GPL-3.0).**
 ## Credits & Acknowledgements
 
 - Vektor for creating Nolvus and open sourcing the dashboard
+- Furglitch/Rockerbacon for their work on MO2 Linux
 - The Nolvus Community
 - Linux gaming and modding community
-- Valve for proton
+- Valve for Proton
 - Everyone who has contributed to this project with code or testing
-
-## Disclaimer
-
-**This project is provided "as is" without any warranty of any kind**
-- Bugs are expected
-- Support is best effort
-- Use at your own risk
-
-

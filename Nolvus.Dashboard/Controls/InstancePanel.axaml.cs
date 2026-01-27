@@ -440,7 +440,7 @@ namespace Nolvus.Dashboard.Controls
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
 
-            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. Please set your Skyrim Proton version to GE-Proton 10.25 before clicking yes. If you encounter issues, please refer to the wiki on how to do this manually.");
+            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. Please ensure winetricks/protontricks is up to date otherwise this may fail silently. Winetricks should be self updated with \"sudo winetricks --self-update\". If you encounter issues, please refer to the wiki on how to do this manually.");
 
             if (result != true)
                 return;

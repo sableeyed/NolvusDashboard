@@ -34,12 +34,26 @@
                            Foreground="White"
                            Text="Instance" />
 
-                <!-- Profiles dropdown -->
-                <ComboBox x:Name="DrpDwnLstProfiles"
-                          Grid.Column="2"
-                          Width="190"
-                          Margin="0,8,0,8"
-                          HorizontalAlignment="Right" />
+                <!-- Right side: MO2 Profile label + dropdown -->
+                <Grid Grid.Column="2"
+                      ColumnDefinitions="Auto,Auto"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Right"
+                      Margin="0,0,8,0">
+
+                    <TextBlock x:Name="LblMO2Profile"
+                               Grid.Column="0"
+                               Text="MO2 Profile"
+                               Foreground="White"
+                               IsVisible="False"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"/>
+
+                    <ComboBox x:Name="DrpDwnLstProfiles"
+                              Grid.Column="1"
+                              Width="190"
+                              Margin="0,8,0,8"/>
+                </Grid>
             </Grid>
         </Border>
 
@@ -115,7 +129,8 @@
                         Background="#363636"
                         Foreground="#F28F1A" />
 
-                <!-- <Button x:Name="BtnExpand"
+                <!--
+                <Button x:Name="BtnExpand"
                         Content="Expand"
                         Height="40"
                         Background="#363636"
@@ -125,7 +140,8 @@
                         Content="Collapse"
                         Height="40"
                         Background="#363636"
-                        Foreground="#F28F1A" /> -->
+                        Foreground="#F28F1A" />
+                -->
 
                 <Button x:Name="BtnSettings"
                         Content="Settings"

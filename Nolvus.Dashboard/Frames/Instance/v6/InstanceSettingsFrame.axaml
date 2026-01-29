@@ -60,8 +60,16 @@
                             <TextBlock Text="Screen ratio"
                                        Width="120"
                                        Foreground="White"/>
-                            <ComboBox x:Name="DrpDwnLstRatios" Width="220" SelectionChanged="OnRatioChanged"/>
+                            <TextBlock x:Name="LblRatio"
+                                       Foreground="#F28F1A"/>
                         </StackPanel>
+
+                        <!-- <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Screen ratio"
+                                       Width="120"
+                                       Foreground="White"/>
+                            <ComboBox x:Name="DrpDwnLstRatios" Width="220" SelectionChanged="OnRatioChanged"/>
+                        </StackPanel> -->
 
                         <Button x:Name="BtnApplyRes"
                                 Content="Apply"

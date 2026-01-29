@@ -79,7 +79,7 @@ namespace Nolvus.Dashboard.Controls
         {
             _instance = instance;
 
-            LblInstanceName.Text = _instance.Name;
+            LblInstanceName.Text = _instance.Tag == string.Empty ? _instance.Name : string.Format("{0} - {1}", _instance.Name, _instance.Tag);
             LblVersion.Text = $"{_instance.Performance.Variant} v{_instance.Version}";
             LblDesc.Text = _instance.Description;
 
@@ -440,7 +440,7 @@ namespace Nolvus.Dashboard.Controls
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
 
-            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. Please set your Skyrim Proton version to GE-Proton 10.25 before clicking yes. If you encounter issues, please refer to the wiki on how to do this manually.");
+            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. Please ensure winetricks/protontricks is up to date otherwise this may fail silently. Winetricks should be self updated with \"sudo winetricks --self-update\". If you encounter issues, please refer to the wiki on how to do this manually.");
 
             if (result != true)
                 return;

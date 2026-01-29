@@ -30,7 +30,7 @@
                                    Foreground="White"
                                    FontSize="16"/>
 
-                        <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys_V61.png"
+                        <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys_V6.jpg"
                                Stretch="Uniform"
                                HorizontalAlignment="Center"
                                MaxHeight="320"/>
@@ -73,49 +73,56 @@
                         <!-- 1 -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <TextBlock Text="Power Attack" Foreground="White" Width="120"/>
-                            <TextBlock Text="One Click Power Attack ini file (in MO2)"
+                            <TextBlock Text="One Click Power Attack NG MCM Menu or its ini file (in MO2)"
                                        Foreground="#F28F1A"/>
                         </StackPanel>
 
                         <!-- 2 -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <TextBlock Text="Dodge" Foreground="White" Width="120"/>
-                            <TextBlock Text="TK Dodge RE ini file (in MO2)"
+                            <TextBlock Text="TK Dodge RE - Nolvus Settings ini file (in MO2)"
                                        Foreground="#F28F1A"/>
                         </StackPanel>
 
                         <!-- 3 -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <TextBlock Text="Block" Foreground="White" Width="120"/>
-                            <TextBlock Text="Valhalla Combat MCM menu + same key in Dual Wield Parrying"
+                            <TextBlock Text="Valhalla Combat MCM menu + the same key in Dual Wield Parrying config file (In MO2)"
                                        Foreground="#F28F1A"/>
                         </StackPanel>
 
                         <!-- 4 -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <TextBlock Text="Wheeler" Foreground="White" Width="120"/>
-                            <TextBlock Text="Wheeler config file"
+                            <TextBlock Text="Wheeler - Nolvus Settings ini file (In MO2)"
                                        Foreground="#F28F1A"/>
                         </StackPanel>
 
                         <!-- 5 -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <TextBlock Text="Combat Stances" Foreground="White" Width="120"/>
-                            <TextBlock Text="Stances MCM menu"
+                            <TextBlock Text="Stances - Dynamic Animation Sets - Nolvus Settings ini file (in MO2)"
                                        Foreground="#F28F1A"/>
                         </StackPanel>
 
                         <!-- 6 -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <TextBlock Text="UI" Foreground="White" Width="120"/>
-                            <TextBlock Text="Widget Mod MCM menu"
+                            <TextBlock Text="UI (Toggle Compass)" Foreground="White" Width="120"/>
+                            <TextBlock Text="Toggle Compass - Nolvus Settings ini file  (In MO2)"
                                        Foreground="#F28F1A"/>
                         </StackPanel>
 
                         <!-- 7 -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <TextBlock Text="Quick Light" Foreground="White" Width="120"/>
-                            <TextBlock Text="Quick Light MCM menu"
+                            <TextBlock Text="Quick light" Foreground="White" Width="120"/>
+                            <TextBlock Text="Quick light MCM menu"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                        <!-- 8 -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="Ashes of War Attack" Foreground="White" Width="120"/>
+                            <TextBlock Text="Ashes of War MCM Menu"
                                        Foreground="#F28F1A"/>
                         </StackPanel>
 

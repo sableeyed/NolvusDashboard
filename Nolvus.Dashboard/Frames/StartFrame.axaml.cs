@@ -130,7 +130,7 @@ namespace Nolvus.Dashboard.Frames
             if (ServiceSingleton.Dashboard.IsOlder(latest.Version))
             {
                 var owner = TopLevel.GetTopLevel(this) as Window;
-                bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Update Required", "You must update the dashboard manually, would you like to open the releases page?");
+                bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Update Required", "You must update the dashboard manually, would you like to open the releases page?\n\nIf you are already using the latest version, this is not a bug! Please wait for the maintainer to merge the latest updates from the Windows Version!");
                 if (result == true)
                 {
                     var url = "https://github.com/sableeyed/NolvusDashboard/releases";

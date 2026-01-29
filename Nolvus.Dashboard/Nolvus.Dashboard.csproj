@@ -5,10 +5,10 @@
     <OutputType>WinExe</OutputType>
     <ImplicitUsings>true</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>3.8.4</AssemblyVersion>
-    <FileVersion>3.8.4.2</FileVersion>
-    <Version>3.8.4.2</Version>
-    <InformationalVersion>3.8.4.2</InformationalVersion>
+    <AssemblyVersion>3.8.5</AssemblyVersion>
+    <FileVersion>3.8.5</FileVersion>
+    <Version>3.8.5</Version>
+    <InformationalVersion>3.8.5</InformationalVersion>
     <AssemblyName>NolvusDashboard</AssemblyName>
     <InvariantGlobalization>false</InvariantGlobalization>
 

@@ -52,7 +52,7 @@ namespace Nolvus.Dashboard.Frames
                 Version = Instance.Version;
             }
 
-            LblInstance.Text = this.Instance.Name + " v" + Version;
+            LblInstance.Text = string.Format("{0} - {1} v{2}{3}", Instance.Name, Instance.Performance.Variant, Version, Instance.Tag != string.Empty ? string.Format(" - ({0})", Instance.Tag) : string.Empty);
         }
 
         public INolvusInstance Instance
@@ -90,7 +90,7 @@ namespace Nolvus.Dashboard.Frames
 
                     int percent = (int)(((double)++counter / total) * 100);
 
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    Dispatcher.UIThread.Post(() =>
                     {
                         ServiceSingleton.Dashboard.Progress(percent);
                         ServiceSingleton.Dashboard.Status(string.Format("Deleting {0}...", f.Name));
@@ -100,7 +100,7 @@ namespace Nolvus.Dashboard.Frames
 
                 try
                 {
-                    ServiceSingleton.Files.RemoveDirectory(Instance.InstallDir, false);
+                    ServiceSingleton.Files.RemoveDirectory(Instance.InstallDir, true);
                 }
                 catch (Exception ex)
                 {

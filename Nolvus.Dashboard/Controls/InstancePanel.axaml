@@ -13,7 +13,7 @@
             <!-- Background image -->
             <Image Source="avares://NolvusDashboard/Assets/InstanceBoard.png"
                    Stretch="Fill"
-                   Width="654" Height="171"/>
+                   Width="659" Height="171"/>
 
             <!-- Instance image -->
             <Border
@@ -48,7 +48,7 @@
             <TextBlock x:Name="LblInstanceName"
                        Canvas.Left="258"
                        Canvas.Top="20"
-                       Width="333"
+                       Width="353"
                        Height="32"
                        Text="Nolvus Regular"
                        Foreground="White"
@@ -76,7 +76,7 @@
             <TextBlock x:Name="LblStatus"
                        Canvas.Left="260"
                        Canvas.Top="94"
-                       Width="252"
+                       Width="257"
                        Height="18"
                        Text="Loading status..."
                        Foreground="White"/>
@@ -84,7 +84,7 @@
 
             <!-- Update button -->
             <Button x:Name="BtnUpdate"
-                                 Canvas.Left="314"
+                                 Canvas.Left="319"
                                  Canvas.Top="115"
                                  Width="92"
                                  Height="35"
@@ -98,7 +98,7 @@
 
             <!-- Manage button -->
             <Button x:Name="BtnView"
-                                 Canvas.Left="412"
+                                 Canvas.Left="417"
                                  Canvas.Top="115"
                                  Width="92"
                                  Height="35"
@@ -111,7 +111,7 @@
 
             <!-- Play button -->
             <Button x:Name="BtnPlay"
-                                 Canvas.Left="510"
+                                 Canvas.Left="515"
                                  Canvas.Top="115"
                                  Width="92"
                                  Height="35"

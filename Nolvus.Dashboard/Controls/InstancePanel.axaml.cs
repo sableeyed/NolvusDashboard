@@ -79,7 +79,7 @@ namespace Nolvus.Dashboard.Controls
         {
             _instance = instance;
 
-            LblInstanceName.Text = _instance.Name;
+            LblInstanceName.Text = _instance.Tag == string.Empty ? _instance.Name : string.Format("{0} - {1}", _instance.Name, _instance.Tag);
             LblVersion.Text = $"{_instance.Performance.Variant} v{_instance.Version}";
             LblDesc.Text = _instance.Description;
 

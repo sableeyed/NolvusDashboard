@@ -1,0 +1,81 @@
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
+    x:Class="Nolvus.Dashboard.Forms.NolvusInstanceTag"
+    mc:Ignorable="d"
+    Width="453"
+    Height="230"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner"
+    ShowInTaskbar="False"
+    Background="#363636"
+    Title="Instance Tag">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*"
+          Margin="12"
+          RowSpacing="10">
+
+        <!-- Instruction -->
+        <TextBlock Grid.Row="0"
+                   Foreground="White"
+                   TextWrapping="Wrap"
+                   FontSize="12">
+            Enter a tag to differentiate your new instance (max 15 characters, no special character allowed)
+        </TextBlock>
+
+        <!-- TextBox -->
+        <TextBox x:Name="TxtBxTag"
+                 Grid.Row="1"
+                 MaxLength="15"
+                 Background="#363636"
+                 Foreground="White"
+                 BorderBrush="#888"
+                 BorderThickness="1"
+                 Padding="6"
+                 Watermark="Tag"
+                 KeyDown="TxtBxTag_KeyDown"
+                 TextChanging="TxtBxTag_TextChanging"/>
+
+        <!-- Error -->
+        <TextBlock x:Name="LblError"
+                   Grid.Row="2"
+                   Foreground="Red"
+                   IsVisible="False"
+                   Text="[Error]"
+                   TextWrapping="Wrap"/>
+
+        <!-- Buttons -->
+        <Grid Grid.Row="3"
+            ColumnDefinitions="*,Auto,Auto"
+            VerticalAlignment="Bottom">
+
+            <Button x:Name="BtnCancel"
+                    Grid.Column="1"
+                    Margin="0,0,10,0"
+                    MinWidth="90"
+                    Padding="10,6"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Background="#2E2E2E"
+                    BorderBrush="White"
+                    Foreground="White"
+                    Content="Cancel"
+                    Click="BtnCancel_Click"/>
+
+            <Button x:Name="BtnOK"
+                    Grid.Column="2"
+                    MinWidth="90"
+                    Padding="10,6"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Background="#2E2E2E"
+                    BorderBrush="#F28F1A"
+                    Foreground="#F28F1A"
+                    Content="OK"
+                    Click="BtnOK_Click"/>
+        </Grid>
+    </Grid>
+</Window>

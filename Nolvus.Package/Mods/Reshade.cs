@@ -292,10 +292,6 @@ WindowRounding=0.000000";
                         {
                             ReshadePreset = "Bjorn Dark Ages.ini";
                         }
-                        if (ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB == "CABBAVAL")
-                        {
-                            ReshadePreset = "Cabbaval.ini";
-                        }
                         if (ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB == "KAUZ")
                         {
                             ReshadePreset = string.Empty;

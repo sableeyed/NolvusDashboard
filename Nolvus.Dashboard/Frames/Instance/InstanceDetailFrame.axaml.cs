@@ -46,7 +46,7 @@ namespace Nolvus.Dashboard.Frames.Instance
         {
             var instance = ServiceSingleton.Instances.WorkingInstance;
 
-            LblHeader.Text = $"{instance.Name} v{instance.Version}";
+            LblHeader.Text = string.Format("{0} - {1} v{2}{3}", instance.Name, instance.Performance.Variant, instance.Version, instance.Tag != string.Empty ? string.Format(" - ({0})", instance.Tag) : string.Empty);
             ServiceSingleton.Dashboard.Info($"Instance mods for {instance.Name} v{instance.Version}");
 
             // Load profiles
@@ -125,6 +125,7 @@ namespace Nolvus.Dashboard.Frames.Instance
                 LoadGrid(loaded);
 
                 UpdateHeaderColor(loaded);
+                LblMO2Profile.IsVisible = true;
             }
             catch (Exception ex)
             {
@@ -213,7 +214,6 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         private void BtnReport_Click(object? sender, RoutedEventArgs e)
         {
-            // For now simple message box until menu is re-implemented
             var win = TopLevel.GetTopLevel(this) as Window;
             NolvusMessageBox.Show(win, "Report", "Report generation menu not yet implemented", MessageBoxType.Info);
         }

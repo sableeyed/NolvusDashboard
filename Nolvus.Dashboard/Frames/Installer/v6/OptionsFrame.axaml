@@ -37,7 +37,7 @@
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Enable nudity" Foreground="White"/>
                                 <ToggleSwitch x:Name="TglNudity"/>
-                                <TextBlock Text="When nudity is enabled all NPCs will be nude when undressed."
+                                <TextBlock Text="When nudity is enabled all npc's will be nude when undressed."
                                            Foreground="#F28F1A"
                                            FontSize="12"/>
                             </StackPanel>
@@ -77,7 +77,7 @@
                             <!-- Combat Animations -->
                             <StackPanel Spacing="4">
                                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                                    <TextBlock Text="Combat Animations" Foreground="White"/>
+                                    <TextBlock Text="Combat animations" Foreground="White"/>
                                     <TextBlock x:Name="LblCANotUsed"
                                                Grid.Column="1"
                                                Text="(Not used with the Graphics Only Variant)"
@@ -117,7 +117,7 @@
                                                VerticalAlignment="Center"/>
                                 </Grid>
                                 <ToggleSwitch x:Name="TglGore"/>
-                                <TextBlock Text="Dismember your enemies."
+                                <TextBlock Text="Dismember your enemies"
                                            Foreground="#F28F1A"
                                            FontSize="12"/>
                             </StackPanel>
@@ -152,7 +152,7 @@
                                           MinWidth="180"
                                           Background="#2E2E2E"
                                           Foreground="White"/>
-                                <TextBlock Text="Select between Untarnished UI or Edge UI."
+                                <TextBlock Text="Select between Untarnished UI, Edge UI or Oathvein UI"
                                            Foreground="#F28F1A"
                                            FontSize="12"/>
                             </StackPanel>
@@ -173,13 +173,13 @@
                           RowSpacing="18">
 
                         <TextBlock Grid.Row="0"
-                                   Text="Setup additional game and visual options."
+                                   Text="Setup some additional options."
                                    Foreground="White"
                                    FontSize="14"/>
 
                         <TextBlock Grid.Row="1"
-                                   Text="⚠ These options cannot be changed after installation!"
-                                   Foreground="#F28F1A"
+                                   Text="Warning these options can't be changed after installation!!!"
+                                   Foreground="White"
                                    TextWrapping="Wrap"/>
 
                         <TextBlock x:Name="LblGOWarning"

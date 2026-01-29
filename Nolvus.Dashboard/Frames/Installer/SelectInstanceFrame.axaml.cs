@@ -3,6 +3,7 @@ using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 using Nolvus.Instance.Core;
+using Nolvus.Dashboard.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -153,46 +154,40 @@ namespace Nolvus.Dashboard.Frames.Installer
 
             if (InstanceToInstall.Maintenance)
             {
-                await NolvusMessageBox.Show(
-                    owner,
-                    "Maintenance",
-                    string.Format("The nolvus instance {0} is under maintenance for the following reason : \n\n{1}\n\n Unable to install.", InstanceToInstall.Name, InstanceToInstall.MaintenanceReason),                    MessageBoxType.Error
-                );
+                await NolvusMessageBox.Show(owner, "Maintenance", string.Format("The nolvus instance {0} is under maintenance for the following reason : \n\n{1}\n\n Unable to install.", InstanceToInstall.Name, InstanceToInstall.MaintenanceReason), MessageBoxType.Error);
                 return;
+            }
+
+            if (InstanceToInstall.IsBeta)
+            {
+                bool? beta = await NolvusMessageBox.ShowConfirmation(owner, "Disclaimer", string.Format("{0} is in BETA state.\n\n\nDon't Install it if :\n\n- You are expecting the full polished version.\n\n- You want to do a full playthrough.\n\n\nInstall it only if :\n\n- You want to help us reporting bugs.\n\n- You want to give us some feedbacks.\n\n\nDo you want to continue?", InstanceToInstall.Name), 390, 470);
+                if (beta != true)
+                    return;
             }
 
             if (ServiceSingleton.Instances.InstanceExists(InstanceToInstall.Name))
             {
-                await NolvusMessageBox.Show(
-                    owner,
-                    "Invalid Instance",
-                    $"The nolvus instance {InstanceToInstall.Name} is already installed!",
-                    MessageBoxType.Error
-                );
-                return;
+                bool? proceed = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", string.Format("The nolvus instance {0} already exists, Do you wan to proceed anyway?", InstanceToInstall.Name));
+                if (proceed != true)
+                    return;
+                
+                var TagSelection = NolvusInstanceTag.EnterTag("Instance Tag");
+
+                bool? ok = await TagSelection.ShowDialog<bool?>(owner);
+                if (ok == true)
+                {
+                    ServiceSingleton.Instances.WorkingInstance.Tag = TagSelection.InstanceTag;
+                    Continue();
+                    return;
+                }
             }
 
-            bool continueInstall = true;
+            Continue();
+        }
 
-            if (InstanceToInstall.IsBeta)
-            {
-                var result = await NolvusMessageBox.ShowConfirmation(
-                    owner,
-                    "Disclaimer",
-                    string.Format(
-                        "{0} is in BETA state.\n\n\nDon't Install it if :\n\n- You are expecting the full polished version.\n\n- You want to do a full playthrough.\n\n\nInstall it only if :\n\n- You want to help us reporting bugs.\n\n- You want to give us some feedbacks.\n\n\nDo you want to continue?",
-                        InstanceToInstall.Name),
-                    390,
-                    470
-                );
-
-                continueInstall = (result == true);
-            }
-
-            if (!continueInstall)
-                return;
-
-            var WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
+        private void Continue()
+        {
+            INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
             if (WorkingInstance != null)
             {
                 if (DrpDwnLg.SelectedItem is LgCode selectedLg)
@@ -202,7 +197,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                 }
             }
             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
-        } 
+        }
 
         private void BtnCancel_Click(object? sender, RoutedEventArgs e)
         {

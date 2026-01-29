@@ -93,6 +93,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             UIs.Add("Untarnished UI");
             UIs.Add("Edge UI");
+            UIs.Add("Oathvein UI");
 
             DrpUI.ItemsSource = UIs;
 

@@ -59,9 +59,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 case "CABBAGE":
                     PicBoxENB.Source = LoadImage("avares://NolvusDashboard/Assets/Cabbage_ENB_01.jpg");
                     break;
-                case "CABBAVAL":
-                    PicBoxENB.Source = LoadImage("avares://NolvusDashboard/Assets/Cabbaval-ENB.jpg");
-                    break;
                 case "KAUZ":
                     PicBoxENB.Source = LoadImage("avares://NolvusDashboard/Assets/Kauz-ENB.jpg");
                     break;

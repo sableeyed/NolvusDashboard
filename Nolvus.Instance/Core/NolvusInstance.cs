@@ -16,9 +16,23 @@ namespace Nolvus.Instance.Core
     {
         #region Properties
 
+        private string _Tag = string.Empty;
         public string Id { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public string Tag
+        {
+            get
+            {
+                return _Tag;
+            }
+            set
+            {
+                _Tag = value;
+                InstallDir = Path.Combine(ServiceSingleton.Instances.InstancesDirectory, string.Format("{0} - {1}", Name, _Tag));
+                StockGame = Path.Combine(ServiceSingleton.Instances.InstancesDirectory, string.Format("{0} - {1}", Name, _Tag), "STOCK GAME");
+            }
+        }
         public string Description { get; set; }        
         public string Version { get; set; } = string.Empty;        
         public string InstallDir { get; set; } = string.Empty;
@@ -158,6 +172,7 @@ namespace Nolvus.Instance.Core
         {
             Id = Node["Id"].InnerText.Trim();            
             Name = Node["Name"].InnerText.Trim();
+            Tag = Node["Tag"] != null ? Node["Tag"].InnerText.Trim() : string.Empty;
             Description = Node["Description"].InnerText.Trim();
             Version = Node["Version"].InnerText.Trim();            
             InstallDir = Node["InstallPath"].InnerText.Trim();
@@ -186,6 +201,10 @@ namespace Nolvus.Instance.Core
 
             XMLWriter.WriteStartElement("Name");
             XMLWriter.WriteString(Name.Trim());
+            XMLWriter.WriteEndElement();
+
+            XMLWriter.WriteStartElement("Tag");
+            XMLWriter.WriteString(Tag.Trim());
             XMLWriter.WriteEndElement();
 
             XMLWriter.WriteStartElement("Description");

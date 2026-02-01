@@ -150,7 +150,7 @@ WindowRounding=0.000000";
                         Path.Combine(ServiceSingleton.Folders.ExtractDirectory, Name),
                         true);
 
-                    string sevenZip = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7zzs");
+                    string sevenZip = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7z");
 
                     string zipFile = this.Files.First().LocationFileName;
                     string outDir = Path.Combine(ServiceSingleton.Folders.ExtractDirectory, Name);

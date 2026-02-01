@@ -49,7 +49,7 @@ namespace Nolvus.Services.Files.Extractor
                     if (!Directory.Exists(Output))
                         Directory.CreateDirectory(Output);
 
-                    var sevenZipPath = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7zzs");
+                    var sevenZipPath = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7z");
 
                     var psi = new ProcessStartInfo
                     {
@@ -88,46 +88,6 @@ namespace Nolvus.Services.Files.Extractor
                     if (proc.ExitCode != 0)
                         throw new Exception($"Error during file extraction {FileName}: {string.Join(" ", errorOutput)}");
 
-                    // -----------------------------------------
-                    // Check for corrupted filenames (�)
-                    // -----------------------------------------
-                    if (ContainsCorruptedNames(Output))
-                    {
-                        ServiceSingleton.Logger.Log("[EXTRACT] Detected corrupted filenames (�) → switching to unzip fallback");
-
-                        TryDeleteExtractDir(Output);
-
-                        var unzipPath = Path.Combine(ServiceSingleton.Folders.LibDirectory, "unzip");
-                        
-                        var unzipPsi = new ProcessStartInfo
-                        {
-                            FileName = unzipPath,
-                            Arguments = $"\"{File}\" -d \"{Output}\"",
-                            WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
-                            UseShellExecute = false,
-                            CreateNoWindow = true,
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true
-                        };
-
-                        var unzip = new Process { StartInfo = unzipPsi };
-                        List<string> unzipErr = new();
-
-                        unzip.ErrorDataReceived += (s, e) =>
-                        {
-                            if (e.Data != null)
-                                unzipErr.Add(e.Data);
-                        };
-
-                        unzip.Start();
-                        unzip.BeginErrorReadLine();
-                        unzip.WaitForExit();
-
-                        if (unzip.ExitCode != 0)
-                            throw new Exception($"unzip extraction failed {FileName}: {string.Join(" ", unzipErr)}");
-
-                        ServiceSingleton.Logger.Log("[EXTRACT] unzip fallback completed successfully");
-                    }
                     TriggerProgressEvent(100, FileName);
                 }
                 catch (Exception ex)
@@ -136,56 +96,6 @@ namespace Nolvus.Services.Files.Extractor
                     throw;
                 }
             });
-        }
-
-        private bool ContainsCorruptedNames(string root)
-        {
-            try
-            {
-                return Directory
-                    .EnumerateFiles(root, "*", SearchOption.AllDirectories)
-                    .Any(f => Path.GetFileName(f).Contains('�'));
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private void TryDeleteExtractDir(string path)
-        {
-            try
-            {
-                ServiceSingleton.Logger.Log("[EXTRACT] Removing corrupted extraction directory via rm -rf");
-
-                var psi = new ProcessStartInfo
-                {
-                    FileName = ExecutableResolver.RequireExecutable("bash"),
-                    Arguments = $"-c \"rm -rf '{path}'/*\"",
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-                var proc = new Process { StartInfo = psi };
-                List<string> err = new();
-
-                proc.ErrorDataReceived += (s, e) =>
-                {
-                    if (e.Data != null)
-                        err.Add(e.Data);
-                };
-
-                proc.Start();
-                proc.BeginErrorReadLine();
-                proc.WaitForExit();
-
-                if (proc.ExitCode != 0)
-                    ServiceSingleton.Logger.Log($"[EXTRACT] rm -rf exited with code {proc.ExitCode}: {string.Join(" ", err)}");
-            }
-            catch (Exception ex)
-            {
-                ServiceSingleton.Logger.Log($"[EXTRACT] Failed to delete directory {path} with rm -rf: {ex.Message}");
-            }
         }
     }
 }

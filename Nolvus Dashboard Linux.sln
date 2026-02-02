@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nolvus.StockGame", "Nolvus.
 		{4362C36C-314C-46FB-96BC-77993820EE89} = {4362C36C-314C-46FB-96BC-77993820EE89}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nolvus.Updater", "Nolvus.Updater\Nolvus.Updater.csproj", "{ABD83E4A-5959-4944-978B-52D073C72873}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,18 @@ Global
 		{3BE27B72-FFBD-4381-A4D0-82F9665EEEDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BE27B72-FFBD-4381-A4D0-82F9665EEEDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BE27B72-FFBD-4381-A4D0-82F9665EEEDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Debug|x64.Build.0 = Debug|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Debug|x86.Build.0 = Debug|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Release|x64.ActiveCfg = Release|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Release|x64.Build.0 = Release|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Release|x86.ActiveCfg = Release|Any CPU
+		{ABD83E4A-5959-4944-978B-52D073C72873}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

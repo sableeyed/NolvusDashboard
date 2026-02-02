@@ -15,6 +15,10 @@ using Nolvus.Dashboard.Controls;
 using Nolvus.Dashboard.Frames.Installer;
 using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Dashboard.Frames.Settings;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace Nolvus.Dashboard.Frames
 {
@@ -121,30 +125,35 @@ namespace Nolvus.Dashboard.Frames
 
         private async Task CheckForUpdates()
         {
-            ServiceSingleton.Dashboard.Status("Checking for updates...");
-            ServiceSingleton.Logger.Log("Checking for updates...");
-
-            var latest = await ApiManager.Service.Installer.GetLatestInstaller();
-            ServiceSingleton.Dashboard.Progress(50);
-
-            if (ServiceSingleton.Dashboard.IsOlder(latest.Version))
+            try
             {
-                var owner = TopLevel.GetTopLevel(this) as Window;
-                bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Update Required", "You must update the dashboard manually, would you like to open the releases page?\n\nIf you are already using the latest version, this is not a bug! Please wait for the maintainer to merge the latest updates from the Windows Version!");
-                if (result == true)
+                ServiceSingleton.Dashboard.Status("Checking for updates...");
+                ServiceSingleton.Logger.Log("Checking for updates...");
+                //var latest = await ApiManager.Service.Installer.GetLatestInstaller(); //ignore upstream release info so we can check against our own
+                var latest = await GetLatestReleaseTag();
+                ServiceSingleton.Dashboard.Progress(50);
+
+                if (ServiceSingleton.Dashboard.IsOlder(latest))
                 {
-                    var url = "https://github.com/sableeyed/NolvusDashboard/releases";
-                    try
-                    {
-                        Process.Start(new ProcessStartInfo
-                        {
-                            FileName = url,
-                            UseShellExecute = true
-                        });
-                    }
-                    catch { }
+                    ServiceSingleton.Logger.Log(string.Format("New Dashboard version available : {0}", latest));
+                    ServiceSingleton.Logger.Log("Launching updater...");
+
+                    LaunchUpdater(
+                        installDir: AppContext.BaseDirectory,
+                        targetVersion: latest
+                    );
+
+                    ServiceSingleton.Logger.Log("Closing application...");
+                    ServiceSingleton.Dashboard.ShutDown();
                 }
-                Environment.Exit(0);
+                else
+                {
+                    ServiceSingleton.Logger.Log("Nolvus Dashboard installer is up to date");
+                }
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log("Update check failed: " + ex);
             }
         }
 
@@ -211,6 +220,48 @@ namespace Nolvus.Dashboard.Frames
                 Console.WriteLine(ex);
                 throw new Exception("Error during instance checking with error : " + ex.Message + ". Certainly due to a manual editing of the InstancesData.xml file!");
             }
+        }
+
+        private async Task<string> GetLatestReleaseTag()
+        {
+            using var handler = new HttpClientHandler
+            {
+                AllowAutoRedirect = true
+            };
+
+            using var client = new HttpClient(handler);
+            using var response = await client.GetAsync("https://github.com/sableeyed/NolvusDashboard/releases/latest", HttpCompletionOption.ResponseHeadersRead);
+
+            response.EnsureSuccessStatusCode();
+            var uri = response.RequestMessage!.RequestUri!;
+            var segments = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var version = segments[^1];
+            return version;
+        }
+
+        private static void LaunchUpdater(string installDir, string targetVersion)
+        {
+            installDir = Path.GetFullPath(installDir);
+
+            var updaterExe = Path.Combine(installDir, "NolvusUpdater");
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = updaterExe,
+                WorkingDirectory = installDir,
+                UseShellExecute = false
+            };
+
+            psi.ArgumentList.Add("--install-dir");
+            psi.ArgumentList.Add(installDir);
+
+            psi.ArgumentList.Add("--version");
+            psi.ArgumentList.Add(targetVersion);
+
+            psi.ArgumentList.Add("--pid");
+            psi.ArgumentList.Add(Environment.ProcessId.ToString());
+
+            Process.Start(psi);
         }
     }
 }

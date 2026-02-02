@@ -1,0 +1,67 @@
+<Window
+    x:Class="Nolvus.Updater.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Width="603"
+    Height="190"
+    MinWidth="603"
+    MinHeight="190"
+    MaxWidth="603"
+    MaxHeight="190"
+    CanResize="False"
+    WindowStartupLocation="CenterScreen"
+    Title="Nolvus Dashboard Updater"
+    Background="#363636">
+
+  <Grid Margin="0">
+    <TextBlock
+      x:Name="LblInfo"
+      Text="Initializing..."
+      Foreground="White"
+      FontSize="12"
+      HorizontalAlignment="Left"
+      VerticalAlignment="Top"
+      Margin="24,83,24,0"/>
+
+    <ProgressBar
+      x:Name="ProgressBar"
+      Minimum="0"
+      Maximum="100"
+      Value="100"
+      Height="6"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Top"
+      Margin="27,109,29,0"
+      Background="#363636"
+      Foreground="Orange"/>
+
+    <TextBlock
+      x:Name="LblError"
+      Text="Initializing..."
+      Foreground="Red"
+      IsVisible="False"
+      TextWrapping="Wrap"
+      Width="464"
+      Height="60"
+      HorizontalAlignment="Left"
+      VerticalAlignment="Top"
+      Margin="24,122,0,0"/>
+
+    <Button
+      x:Name="BtnClose"
+      Content="Close"
+      IsVisible="False"
+      Width="99"
+      Height="37"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Bottom"
+      HorizontalContentAlignment="Center"
+      VerticalContentAlignment="Center"
+      Margin="0,0,10,8"
+      Click="BtnClose_Click"
+      Background="#363636"
+      Foreground="White"
+      BorderBrush="White"
+      BorderThickness="1" />
+  </Grid>
+</Window>

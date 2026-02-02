@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,12 +6,12 @@
     <ImplicitUsings>true</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyVersion>3.8.6</AssemblyVersion>
-    <FileVersion>3.8.6.1</FileVersion>
-    <Version>3.8.6.1</Version>
-    <InformationalVersion>3.8.6.1</InformationalVersion>
-    <AssemblyName>NolvusDashboard</AssemblyName>
+    <FileVersion>3.8.6</FileVersion>
+    <Version>3.8.6</Version>
+    <InformationalVersion>3.8.6</InformationalVersion>
+    <AssemblyName>NolvusUpdater</AssemblyName>
+    <RootNamespace>Nolvus.Updater</RootNamespace>
     <InvariantGlobalization>false</InvariantGlobalization>
-
     <PublishSingleFile>false</PublishSingleFile>
     <SelfContained>false</SelfContained>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
@@ -19,6 +19,7 @@
     <IncludeNativeLibrariesForSelfExtract>false</IncludeNativeLibrariesForSelfExtract>
     <DisableTransitiveFrameworkReferences>true</DisableTransitiveFrameworkReferences>
     <UseAppHost>true</UseAppHost>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,35 +27,18 @@
     <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Labs.Gif" Version="11.3.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
-    <PackageReference Include="CefGlue.Common" Version="120.6099.211" />
-    <PackageReference Include="CefGlue.Avalonia" Version="120.6099.211" />
-    <PackageReference Include="ReactiveUI" Version="20.1.1" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
-    <PackageReference Include="ValveKeyValue" Version="0.20.0.417" />
-    <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="11.3.6.2" />
+    <PackageReference Include="ReactiveUI" Version="20.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets\**\*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources/NolvusLauncher.exe" />
+    <None Include="nolvus-ico.jpg" Condition="Exists('nolvus-ico.jpg')" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Nolvus.Core\Nolvus.Core.csproj" />
     <ProjectReference Include="..\Nolvus.Services\Nolvus.Services.csproj" />
-    <ProjectReference Include="..\Nolvus.Api.Library.Installer\Nolvus.Api.Installer.csproj" />
-    <ProjectReference Include="..\Nolvus.Package\Nolvus.Package.csproj" />
-    <ProjectReference Include="..\Nolvus.Browser\Nolvus.Browser.csproj" />
-    <ProjectReference Include="..\Nolvus.Instance\Nolvus.Instance.csproj" />
     <ProjectReference Include="..\Nolvus.Components\Nolvus.Components.csproj" />
-    <ProjectReference Include="..\Nolvus.NexusApi\Nolvus.NexusApi.csproj" />
-    <ProjectReference Include="..\Nolvus.StockGame\Nolvus.StockGame.csproj" />
   </ItemGroup>
-
 
 </Project>

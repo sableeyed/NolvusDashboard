@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[Wiki](https://github.com/sableeyed/NolvusDashboard/wiki) | [Download](https://github.com/sableeyed/NolvusDashboard/releases) | [Nolvus Linux Discord](https://discord.gg/Tazgf4Tr4u) | [Official Nolvus Discord](https://discord.gg/Zkh5PwD) | [Nolvus Linux Issues](https://github.com/sableeyed/NolvusDashboard/issues) | [Original Project](https://github.com/vektor9999/NolvusDashboard)
+[Wiki](https://github.com/sableeyed/NolvusDashboard/wiki) | [Download](https://github.com/sableeyed/NolvusDashboard/releases) | [Nolvus Linux Discord](https://discord.gg/Tazgf4Tr4u) | [Official Nolvus Discord](https://discord.gg/Zkh5PwD) | [Nolvus Linux Issues](https://github.com/sableeyed/NolvusDashboard/issues) | [Original Project](https://github.com/vektor9999/NolvusDashboard) | [Kofi](https://ko-fi.com/mel49542)
 
 </div>
 

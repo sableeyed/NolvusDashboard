@@ -272,21 +272,10 @@ namespace Nolvus.Package.Files
 
                         if (proc.ExitCode != 0)
                             throw new Exception($"wget failed for {FileName}");
-
-                        await WaitForFileReady(LocationFileName);
                     }
                     if (RequireManualDownload)
                     {
-                        switch(site)
-                        {
-                            case WebSite.EnbDev:
-                                await Browser().AwaitUserDownload(Link, FileName, OnProgress);
-                                await WaitForFileReady(LocationFileName);
-                                break;
-                            default:
-                                await DoDownload(Link, OnProgress);
-                                break;
-                        }
+                        await Browser().AwaitUserDownload(Link, FileName, OnProgress);
                     }
                     else
                     {
@@ -355,23 +344,6 @@ namespace Nolvus.Package.Files
 
             await Tsk;
         }
-
-        private static async Task WaitForFileReady(string path)
-        {
-            while (true)
-            {
-                try
-                {
-                    using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None);
-                    return;
-                }
-                catch
-                {
-                    await Task.Delay(100);
-                }
-            }
-        }
-
 
         #endregion        
     }

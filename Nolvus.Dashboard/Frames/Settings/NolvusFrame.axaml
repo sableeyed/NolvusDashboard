@@ -84,19 +84,23 @@
 
                     <Button x:Name="BtnPrevious"
                             Content="Previous"
-                            MinWidth="120"
+                            MinWidth="90"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
                             Background="#363636"
-                            Foreground="White"/>
+                            Foreground="White"
+                            BorderBrush="White"
+                            BorderThickness="1"/>
 
                     <Button x:Name="BtnContinue"
                             Content="Next"
-                            MinWidth="120"
+                            MinWidth="90"
                             HorizontalContentAlignment="Center"
                             VerticalContentAlignment="Center"
-                            Background="#F28F1A"
-                            Foreground="Black"/>
+                            Background="#363636"
+                            Foreground="#F28F1A"
+                            BorderBrush="#F28F1A"
+                            BorderThickness="1"/>
                 </StackPanel>
             </Grid>
 

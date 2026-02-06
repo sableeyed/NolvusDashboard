@@ -1,19 +1,14 @@
-using System;
-using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
-using Avalonia.Platform.Storage;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Avalonia.Interactivity;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using Nolvus.Core.Services;
-using Avalonia.Platform;
-using System.Runtime.CompilerServices;
 
 namespace Nolvus.Components.Controls
 {
@@ -159,11 +154,37 @@ namespace Nolvus.Components.Controls
                 }
             };
 
-            CloseButton.Click += (_, __) =>
+            CloseButton.Click += async (_, __) =>
             {
                 var wnd = GetWindow();
-                if (wnd != null)
-                    wnd.Close();
+                if (wnd == null)
+                    return;
+
+                try
+                {
+                    if (Dispatcher.UIThread.CheckAccess())
+                        wnd.Close();
+                    else
+                        Dispatcher.UIThread.Post(wnd.Close);
+                }
+                catch { }
+
+                await Task.Run(async () =>
+                {
+                    await Task.Delay(250).ConfigureAwait(false);
+
+                    try
+                    {
+                        if (wnd.IsVisible)
+                        {
+                            Environment.Exit(0);
+                        }
+                    }
+                    catch
+                    {
+                        Environment.Exit(0);
+                    }
+                });
             };
 
             SettingsButton.Click += SettingsBox_Click;

@@ -377,11 +377,11 @@ namespace Nolvus.Package.Services
 
         private async Task RequestManualDownloadLinkIfAny(InstallableElement Mod, ModInstallSettings Settings)
         {
-            await SemaphoreSlimBeforeDownload.WaitAsync();
+            await SemaphoreSlimBeforeDownload.WaitAsync().ConfigureAwait(false);
 
             if (!NexusApi.ApiManager.AccountInfo.IsPremium)
             {
-                await Mod.RequestManualNexusDownloadLink(Settings.Browser);
+                await Mod.RequestManualNexusDownloadLink(Settings.Browser).ConfigureAwait(false);
             }
             
             SemaphoreSlimBeforeDownload.Release();
@@ -398,8 +398,14 @@ namespace Nolvus.Package.Services
             try
             {
                 _Processing = true;
-
-                SemaphoreSlim = new SemaphoreSlim(ServiceSingleton.Settings.ProcessCount);
+                if (!NexusApi.ApiManager.AccountInfo.IsPremium)
+                {
+                    SemaphoreSlim = new SemaphoreSlim(1); //force free users to use a single thread
+                }
+                else
+                {
+                    SemaphoreSlim = new SemaphoreSlim(ServiceSingleton.Settings.ProcessCount);
+                }
                 SemaphoreSlimBeforeDownload = new SemaphoreSlim(1);
 
                 _ErrorHandler = new ErrorHandler(ServiceSingleton.Settings.ErrorsThreshold) 

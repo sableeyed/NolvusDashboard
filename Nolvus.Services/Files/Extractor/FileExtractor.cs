@@ -16,39 +16,39 @@ namespace Nolvus.Services.Files.Extractor
             ExtractProgress = new ExtractProgress();
         }
 
-        private void TriggerProgressEvent(int percent, string fileName)
+        private void TriggerProgressEvent(int Percent, string FileName)
         {
             if (ExtractProgressChanged != null)
             {
-                ExtractProgress.ProgressPercentage = percent;
-                ExtractProgress.FileName = fileName;
+                ExtractProgress.ProgressPercentage = Percent;
+                ExtractProgress.FileName = FileName;
                 ExtractProgressChanged(this, ExtractProgress);
             }
         }
 
-        public async Task ExtractFile(string file, string output, ExtractProgressChangedHandler onProgress)
+        public async Task ExtractFile(string File, string Output, ExtractProgressChangedHandler OnProgress)
         {
-            ServiceSingleton.Logger.Log("File to extract: " + file);
-            ServiceSingleton.Logger.Log("Outpath path: " + output);
+            ServiceSingleton.Logger.Log("File to extract: " + File);
+            ServiceSingleton.Logger.Log("Outpath path: " + Output);
 
             await Task.Run(() =>
             {
-                FileName = Path.GetFileName(file);
+                FileName = Path.GetFileName(File);
 
                 try
                 {
-                    if (onProgress != null)
-                        ExtractProgressChanged += onProgress;
+                    if (OnProgress != null)
+                        ExtractProgressChanged += OnProgress;
 
-                    if (!Directory.Exists(output))
-                        Directory.CreateDirectory(output);
+                    if (!Directory.Exists(Output))
+                        Directory.CreateDirectory(Output);
 
                     var sevenZipPath = Path.Combine(ServiceSingleton.Folders.LibDirectory, "7z");
 
                     var psi = new ProcessStartInfo
                     {
                         FileName = sevenZipPath,
-                        Arguments = $"x -bsp1 -y \"{file}\" -o\"{output}\" -mmt=off",
+                        Arguments = $"x -bsp1 -y \"{File}\" -o\"{Output}\" -mmt=off",
                         WorkingDirectory = ServiceSingleton.Folders.LibDirectory,
                         UseShellExecute = false,
                         CreateNoWindow = true,
@@ -87,7 +87,7 @@ namespace Nolvus.Services.Files.Extractor
                     catch { }
 
                     if (exitCode != 0)
-                        throw new Exception($"Error during file extraction {FileName} (exit code {exitCode}): {string.Join(" ", errorOutput)}");
+                        throw new Exception($"Error during File extraction {FileName} (exit code {exitCode}): {string.Join(" ", errorOutput)}");
 
                     TriggerProgressEvent(100, FileName);
                 }
@@ -98,11 +98,11 @@ namespace Nolvus.Services.Files.Extractor
                 }
                 finally
                 {
-                    if (onProgress != null)
+                    if (OnProgress != null)
                     {
                         try 
                         {
-                            ExtractProgressChanged -= onProgress;
+                            ExtractProgressChanged -= OnProgress;
                         } 
                         catch { }
                     }

@@ -35,6 +35,7 @@ namespace Nolvus.Package.Mods
         public int Index { get; set; }
         public Image Image { get; set; }
         public string Description { get; set; } = string.Empty;
+        private static readonly SemaphoreSlim ManualBrowserGate = new(1, 1); //Gating for RequestManualNexusDownloadLink
 
         public ModProgress Progress
         {
@@ -290,24 +291,52 @@ namespace Nolvus.Package.Mods
 
         public virtual async Task RequestManualNexusDownloadLink(Func<IBrowserInstance> Browser)
         {
-            if (Action != ElementAction.Remove)
+            if (Action == ElementAction.Remove)
+                return;
+
+            var targets = Files.OfType<NexusModFile>().ToList();
+            if (targets.Count == 0)
+                return;
+
+            foreach (var file in targets)
             {
-                await Task.WhenAll(Files.Where(x => x is NexusModFile).Select(async File => 
-                {                    
-                    if (!File.Exist() || !await File.CRCCheck())
-                    {
-                        ServiceSingleton.Logger.Log(string.Format("Awaiting manual user download for file {0}", File.FileName));
-                        File.DownloadLink = await Browser().GetNexusManualDownloadLink(Name, File.DownloadLink, (File as NexusModFile).NexusId);
-                    }
-                }));
+                if (file.Exist() && await file.CRCCheck().ConfigureAwait(false))
+                    continue;
+
+                await ManualBrowserGate.WaitAsync().ConfigureAwait(false);
+                try
+                {
+                    ServiceSingleton.Logger.Log($"Awaiting manual user download link for file {file.FileName}");
+                    var browser = Browser();
+                    file.DownloadLink = await browser.GetNexusManualDownloadLink(Name, file.DownloadLink, file.NexusId).ConfigureAwait(false);
+                }
+                finally
+                {
+                    ManualBrowserGate.Release();
+                }
             }
-        }   
+        }
+
+        // public virtual async Task RequestManualNexusDownloadLink(Func<IBrowserInstance> Browser)
+        // {
+        //     if (Action != ElementAction.Remove)
+        //     {
+        //         await Task.WhenAll(Files.Where(x => x is NexusModFile).Select(async File => 
+        //         {                    
+        //             if (!File.Exist() || !await File.CRCCheck())
+        //             {
+        //                 ServiceSingleton.Logger.Log(string.Format("Awaiting manual user download for file {0}", File.FileName));
+        //                 File.DownloadLink = await Browser().GetNexusManualDownloadLink(Name, File.DownloadLink, (File as NexusModFile).NexusId);
+        //             }
+        //         }));
+        //     }
+        // }   
             
         public virtual async Task Install(CancellationToken Token, ModInstallSettings Settings = null)
         {            
             try
             {
-                Token.ThrowIfCancellationRequested();                    
+                Token.ThrowIfCancellationRequested();
 
                 if (Settings != null && Settings.Browser == null) throw new Exception("Browser is not set!");
                     

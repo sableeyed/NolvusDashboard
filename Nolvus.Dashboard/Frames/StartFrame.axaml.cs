@@ -117,8 +117,7 @@ namespace Nolvus.Dashboard.Frames
                 {
                     CaughtExeption = ex.InnerException;
                 }
-
-                ServiceSingleton.Logger.Log("Error reading NolvusDashboard.ini - If you are using the terminal to run this program, make sure you are in the same directory instead of using the full path.");
+                
                 throw new Exception("Error during Nolvus connection. The Nolvus web site may have issues currently. Original message : " + CaughtExeption + ")");
             }
         }

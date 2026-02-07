@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
-using Nolvus.Core.Utils;
 
 namespace Nolvus.Services.Files.Extractor
 {
@@ -83,10 +77,17 @@ namespace Nolvus.Services.Files.Extractor
                     proc.Start();
                     proc.BeginOutputReadLine();
                     proc.BeginErrorReadLine();
-                    proc.WaitForExit();
 
-                    if (proc.ExitCode != 0)
-                        throw new Exception($"Error during file extraction {FileName}: {string.Join(" ", errorOutput)}");
+                    int exitCode = PosixWait.WaitForExitBlocking(proc.Id);
+                    
+                    try 
+                    {
+                        proc.Refresh();
+                    } 
+                    catch { }
+
+                    if (exitCode != 0)
+                        throw new Exception($"Error during File extraction {FileName} (exit code {exitCode}): {string.Join(" ", errorOutput)}");
 
                     TriggerProgressEvent(100, FileName);
                 }
@@ -95,7 +96,60 @@ namespace Nolvus.Services.Files.Extractor
                     ServiceSingleton.Logger.Log(ex.Message);
                     throw;
                 }
+                finally
+                {
+                    if (OnProgress != null)
+                    {
+                        try 
+                        {
+                            ExtractProgressChanged -= OnProgress;
+                        } 
+                        catch { }
+                    }
+                }
             });
+        }
+
+        private static class PosixWait
+        {
+            [DllImport("libc", SetLastError = true)]
+            private static extern int waitpid(int pid, out int status, int options);
+
+            // Wait until the given PID is reaped. No timeout.
+            public static int WaitForExitBlocking(int pid)
+            {
+                while (true)
+                {
+                    int rc = waitpid(pid, out int status, 0);
+
+                    if (rc == pid)
+                        return DecodeExitCode(status);
+
+                    if (rc == -1)
+                    {
+                        int err = Marshal.GetLastWin32Error();
+
+                        // If errno == ECHILD, someone else already reaped it.
+                        // Treat as success; extraction already finished.
+                        const int ECHILD = 10;
+                        if (err == ECHILD)
+                            return 0;
+
+                        throw new Exception($"waitpid({pid}) failed errno={err}");
+                    }
+                }
+            }
+
+            private static int DecodeExitCode(int status)
+            {
+                // Normal exit: low 7 bits are zero, exit code is high byte.
+                if ((status & 0x7F) == 0)
+                    return (status >> 8) & 0xFF;
+
+                // Signaled: return 128+signal (bash convention)
+                int sig = status & 0x7F;
+                return 128 + sig;
+            }
         }
     }
 }

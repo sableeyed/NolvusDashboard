@@ -43,6 +43,8 @@
               FontSize="20"
               MinWidth="260"
               Margin="20,0,0,0"
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center"
               Padding="12" />
 
       <!-- MESSAGE PANEL -->

@@ -113,10 +113,10 @@ namespace Nolvus.Dashboard.Frames.Settings
             if (nexusBrowser == null)
             {
                 nexusBrowser = new BrowserWindow("about:blank");
-                nexusBrowser.Closed += NexusSSOManager_OnBrowserClosed;
+                nexusBrowser.OnBrowserClosed += NexusSSOManager_OnBrowserClosed;
                 nexusBrowser.Show();
             }
-            nexusBrowser.Engine.Navigate(url);
+            nexusBrowser.Navigate(url, "Nexus SSO Authentication");
             await ChangeButtonText("Authenticating...");
         }
 
@@ -133,7 +133,8 @@ namespace Nolvus.Dashboard.Frames.Settings
             await SetReturnMessage("Authentication successful! Click on the \"Next\" button", false);
             await ToggleAuthenticateButton(false);
             UpdateNextButtonState();
-            nexusBrowser?.Close();
+            nexusBrowser?.CloseBrowser();
+            nexusBrowser = null;
         }
 
         public void ShowLoading()
@@ -209,9 +210,6 @@ namespace Nolvus.Dashboard.Frames.Settings
                 try
                 {
                     await NexusSSOManager.Connect();
-                    nexusBrowser = new BrowserWindow("about:blank");
-                    nexusBrowser.Closed += NexusSSOManager_OnBrowserClosed;
-                    nexusBrowser.Show();
                     await NexusSSOManager.Authenticate();
                 }
                 catch { }

@@ -102,9 +102,12 @@ namespace Nolvus.Dashboard.Frames.Installer
                         },
                         Browser = () =>
                         {
-                            var win = new BrowserWindow("about:blank");
-                            win.Show();
-                            return win.Engine;
+                            return Dispatcher.UIThread.Invoke(() =>
+                            {
+                                var win = new BrowserWindow("about:blank");
+                                win.Show();
+                                return (IBrowserInstance)win;
+                            });
                         }
                     });
                     _refreshCts?.Cancel();

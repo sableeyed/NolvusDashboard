@@ -19,6 +19,9 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Avalonia.Controls.ApplicationLifetimes;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Nolvus.Dashboard.Frames
 {
@@ -36,14 +39,111 @@ namespace Nolvus.Dashboard.Frames
         {
             try
             {
-                //no ini file, proceed to Game setup + Nexus SSO + Nolvus auth
+                //Debugging
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    var args = desktop.Args ?? Array.Empty<string>();
+
+                    var index = Array.FindIndex(args, arg => string.Equals(arg, "--debugging", StringComparison.OrdinalIgnoreCase));
+
+                    if (index >= 0 && args.Length > index + 1)
+                    {
+                        var frame = args[index + 1];
+                        ServiceSingleton.Logger.Log($"[DEBUG] skipping normal startup -> {frame}");
+
+                        var frameType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(arg =>
+                            {
+                                try 
+                                {
+                                    return arg.GetTypes();
+                                }
+                                catch 
+                                {
+                                    return Array.Empty<Type>();
+                                }
+                            }).FirstOrDefault(type =>
+                                string.Equals(type.Name, frame, StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(type.FullName, frame, StringComparison.OrdinalIgnoreCase));
+
+                        if (frameType == null)
+                        {
+                            await ServiceSingleton.Dashboard.Error("Error", $"[DEBUG] invalid frame specified: {frame}");
+                            return;
+                        }
+
+                        var dash = ServiceSingleton.Dashboard;
+                        var dashType = dash.GetType();
+
+                        MethodInfo? methodDef =
+                            dashType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                                .Where(m => m.Name == "LoadFrameAsync" && m.IsGenericMethodDefinition)
+                                .OrderBy(m => m.GetParameters().Length)
+                                .FirstOrDefault();
+
+                        object?[]? invokeArgs = null;
+
+                        if (methodDef == null)
+                        {
+                            methodDef = AppDomain.CurrentDomain.GetAssemblies()
+                                .SelectMany(arg =>
+                                {
+                                    try { return arg.GetTypes(); }
+                                    catch { return Array.Empty<Type>(); }
+                                })
+                                .Where(type => type.IsSealed && type.IsAbstract)
+                                .SelectMany(type => type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+                                .Where(method =>
+                                    method.Name == "LoadFrameAsync" &&
+                                    method.IsGenericMethodDefinition &&
+                                    method.IsDefined(typeof(ExtensionAttribute), inherit: false)).Where(method =>
+                                {
+                                    var param = method.GetParameters();
+                                    return param.Length >= 1 && param[0].ParameterType.IsAssignableFrom(dashType);
+                                }).OrderBy(method => method.GetParameters().Length).FirstOrDefault();
+
+                            if (methodDef == null)
+                            {
+                                await ServiceSingleton.Dashboard.Error("Error", "[DEBUG] Could not find LoadFrameAsync<T> method (instance or extension).");
+                                return;
+                            }
+                        }
+
+                        var parameters = methodDef.GetParameters();
+                        if (methodDef.IsDefined(typeof(ExtensionAttribute), false))
+                        {
+                            invokeArgs = new object?[parameters.Length];
+                            invokeArgs[0] = dash;
+
+                            for (int i = 1; i < parameters.Length; i++)
+                                invokeArgs[i] = parameters[i].ParameterType.IsValueType ? Activator.CreateInstance(parameters[i].ParameterType) : null;
+                        }
+                        else
+                        {
+                            invokeArgs = new object?[parameters.Length];
+                            for (int i = 0; i < parameters.Length; i++)
+                                invokeArgs[i] = parameters[i].ParameterType.IsValueType ? Activator.CreateInstance(parameters[i].ParameterType) : null;
+                        }
+
+                        var constructed = methodDef.MakeGenericMethod(frameType);
+
+                        var result = constructed.Invoke(
+                            methodDef.IsDefined(typeof(ExtensionAttribute), false) ? null : dash,
+                            invokeArgs);
+
+                        await (Task)result!;
+
+                        ServiceSingleton.Dashboard.NoStatus();
+                        ServiceSingleton.Dashboard.ProgressCompleted();
+                        return;
+                    }
+                }
+
                 if (!File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashboard.ini")))
                 {
                     ServiceSingleton.Dashboard.LoadFrame<GameFrame>();
                 }
-                else //valid ini file - proceed to install
+                else
                 {   
-                    //make titlebar picture visible
                     var window = TopLevel.GetTopLevel(this) as DashboardWindow;
                     window?.SetAccountImageVisible(true);
                     await CheckNolvus();

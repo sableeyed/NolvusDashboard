@@ -132,7 +132,7 @@ internal static class Program
         ServiceSingleton.RegisterService<ICheckerService>(new CheckerService());
         ServiceSingleton.RegisterService<IENBService>(new ENBService());
         ServiceSingleton.RegisterService<IWineRunner>(new WineRunner());
-        ServiceSingleton.RegisterService<IProtontricks>(new Protontricks());
+        //ServiceSingleton.RegisterService<IProtontricks>(new Protontricks());
 
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
         QuestPDF.Settings.FontDiscoveryPaths.Clear();

@@ -27,6 +27,7 @@ using Nolvus.Core.Utils;
 using Avalonia.Platform.Storage;
 using Nolvus.Dashboard.Services.Wine;
 using Nolvus.Dashboard.Services.Proton;
+using Nolvus.Dashboard.Frames.Manager.Proton;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -202,7 +203,7 @@ namespace Nolvus.Dashboard.Controls
             menu.Items.Add(miMO2Prefix);
 
             //Skyrim Proton Prefix
-            var miPostInstall = new MenuItem { Header = "Perform Post Installation Tasks" };
+            var miPostInstall = new MenuItem { Header = "Proton Manager" };
             miPostInstall.Click += async (_, __) => await BrItemPostInstall_Click();
             menu.Items.Add(miPostInstall);
 
@@ -444,14 +445,8 @@ namespace Nolvus.Dashboard.Controls
 
             if (result != true)
                 return;
-
-            var proton = new Protontricks();
-            LockButtons();
-            ServiceSingleton.Dashboard.Status("Configuring Proton Prefix... This may take a while");
-            await proton.ConfigureAsync("489830", _instance.InstallDir, null);
-            UnlockButtons();
-            ServiceSingleton.Dashboard.ProgressCompleted();
-            await NolvusMessageBox.Show(window, "Success", "Prefix setup has completed", MessageBoxType.Info);
+            
+            await ServiceSingleton.Dashboard.LoadFrameAsync<ProtonManagerFrame>();
         }
 
 

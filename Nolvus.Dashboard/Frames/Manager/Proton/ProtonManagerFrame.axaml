@@ -1,0 +1,198 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Manager.Proton.ProtonManagerFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="960"
+    d:DesignHeight="520">
+
+    <Border Background="#2E2E2E" Padding="12">
+        <Grid RowDefinitions="Auto,*" RowSpacing="12">
+
+            <TextBlock x:Name="LblStepText"
+                       Grid.Row="0"
+                       Text="Proton Management Settings"
+                       FontSize="20"
+                       Foreground="White"
+                       FontWeight="SemiBold"/>
+
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,320"
+                  ColumnSpacing="12">
+
+                <Border Grid.Column="0"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="10">
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="18">
+
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="Proton Runner"
+                                           Foreground="White"/>
+
+                                <ComboBox MinWidth="260"
+                                          MaxWidth="520"
+                                          HorizontalAlignment="Left"
+                                          Background="#2E2E2E"
+                                          Foreground="White"
+                                          SelectedIndex="0"
+                                          PlaceholderText="Select a detected Proton version">
+                                </ComboBox>
+
+                                <TextBlock Text="Choose an automatically detected Proton build, or set a manual path below."
+                                           HorizontalAlignment="Left"
+                                           TextWrapping="Wrap"
+                                           MaxWidth="520"
+                                           Foreground="#F28F1A"
+                                           FontSize="13"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="Manual Proton Path"
+                                           Foreground="White"/>
+
+                                <Grid ColumnDefinitions="Auto,Auto,*"
+                                      ColumnSpacing="12">
+                                    <TextBox Grid.Column="0"
+                                             Width="520"
+                                             HorizontalAlignment="Left"
+                                             IsReadOnly="true"
+                                             IsEnabled="false"
+                                             Background="#2E2E2E"
+                                             Foreground="White"/>
+
+                                    <Button Grid.Column="1"
+                                            Content="Browse"
+                                            MinWidth="110"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Background="#363636"
+                                            Foreground="White"
+                                            BorderBrush="White"
+                                            IsEnabled="false"
+                                            BorderThickness="1"/>
+                                </Grid>
+
+                                <TextBlock Text="Use this if the detected list is missing your Proton runner."
+                                           HorizontalAlignment="Left"
+                                           TextWrapping="Wrap"
+                                           MaxWidth="520"
+                                           IsEnabled="false"
+                                           Foreground="#F28F1A"
+                                           FontSize="13"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="Prefix Directory"
+                                           Foreground="White"/>
+
+                                <Grid ColumnDefinitions="Auto,Auto,*"
+                                      ColumnSpacing="12">
+                                    <TextBox Grid.Column="0"
+                                             Width="520"
+                                             HorizontalAlignment="Left"
+                                             IsReadOnly="true"
+                                             IsEnabled="false"
+                                             Background="#2E2E2E"
+                                             Foreground="White"/>
+
+                                    <Button Grid.Column="1"
+                                            Content="Browse"
+                                            MinWidth="110"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Background="#363636"
+                                            Foreground="White"
+                                            BorderBrush="White"
+                                            IsEnabled="false"
+                                            BorderThickness="1"/>
+                                </Grid>
+
+                                <TextBlock Text="Select the Proton prefix folder to use for installation and launch."
+                                           HorizontalAlignment="Left"
+                                           TextWrapping="Wrap"
+                                           MaxWidth="520"
+                                           Foreground="#F28F1A"
+                                           FontSize="13"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <Border Grid.Column="1"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12">
+
+                    <Grid RowDefinitions="Auto,*,Auto"
+                          RowSpacing="16">
+
+                        <TextBlock Grid.Row="0"
+                                   Text="Configure which Proton runner and prefix will be used."
+                                   TextWrapping="Wrap"
+                                   Foreground="White"/>
+
+                        <StackPanel Grid.Row="1" Spacing="10">
+                            <TextBlock Text="Tips"
+                                       Foreground="White"
+                                       FontWeight="SemiBold"/>
+
+                            <TextBlock Text="• If you use Steam Proton, the runner is usually under steamapps/common/Proton*."
+                                       TextWrapping="Wrap"
+                                       Foreground="#F28F1A"/>
+
+                            <TextBlock Text="• Prefix folders are usually under steamapps/compatdata/&lt;appid&gt;/pfx."
+                                       TextWrapping="Wrap"
+                                       Foreground="#F28F1A"/>
+
+                            <TextBlock Text="• Manual Proton Path and Prefix Directory will only be enabled if automatic detection failed. Do not report this as a bug!"
+                                       TextWrapping="Wrap"
+                                       Foreground="#F28F1A"/>
+
+                            <TextBlock Text="⚠ Incorrect paths may prevent launching or installation."
+                                       TextWrapping="Wrap"
+                                       Foreground="#F28F1A"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="16">
+
+                            <Button x:Name="BtnBack"
+                                    Content="Back"
+                                    MinWidth="90"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#363636"
+                                    Foreground="White"
+                                    BorderBrush="White"
+                                    BorderThickness="1"/>
+
+                            <Button x:Name="BtnInstall"
+                                    Content="Install"
+                                    MinWidth="90"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#363636"
+                                    Foreground="#F28F1A"
+                                    BorderBrush="#F28F1A"
+                                    BorderThickness="1"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

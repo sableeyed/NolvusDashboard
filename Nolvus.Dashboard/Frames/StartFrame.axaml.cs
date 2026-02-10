@@ -146,7 +146,7 @@ namespace Nolvus.Dashboard.Frames
                 {   
                     var window = TopLevel.GetTopLevel(this) as DashboardWindow;
                     window?.SetAccountImageVisible(true);
-                    await CheckNolvus();
+                    //await CheckNolvus();
                     await CheckForUpdates();
                     await CheckNexus();
 

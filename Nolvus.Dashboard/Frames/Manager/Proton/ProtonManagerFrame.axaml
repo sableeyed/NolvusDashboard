@@ -135,38 +135,6 @@
 
                             </StackPanel>
                         </ScrollViewer>
-
-                        <!-- Bottom banner + override checkbox -->
-                        <StackPanel Grid.Row="1" Spacing="8">
-
-                            <Border x:Name="ManualOverrideBanner"
-                                    Background="#FF0000"
-                                    CornerRadius="3"
-                                    Padding="8">
-
-                                <StackPanel Orientation="Horizontal"
-                                            VerticalAlignment="Center"
-                                            Spacing="8">
-
-                                    <Image Source="avares://NolvusDashboard/Assets/Info.png"
-                                           x:Name="ManualOverrideImg"
-                                           Width="24"
-                                           Height="24"
-                                           Margin="4,0,0,0"/>
-
-                                    <TextBlock x:Name="LblManualOverride"
-                                               Text="If auto detection fails you can enable and select your own paths manually by agreeing to this warning."
-                                               Foreground="White"
-                                               VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Override checkbox below banner -->
-                            <CheckBox x:Name="ChkEnableManualOverride"
-                                      Content="I understand and want to manually select Proton and prefix paths."
-                                      Foreground="White"/>
-                        </StackPanel>
-
                     </Grid>
                 </Border>
 

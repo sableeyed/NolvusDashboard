@@ -17,13 +17,17 @@ namespace Nolvus.Dashboard.Frames.Manager.Proton
 {
     public partial class ProtonManagerFrame : DashboardFrame
     {
+        private INolvusInstance Instance;
         public ProtonManagerFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
+            ServiceSingleton.Dashboard.Info("Proton Prefix Configuration");
+            ServiceSingleton.Dashboard.Title("Nolvus Dashboard - Post Installation");
         }
 
         protected override async Task OnLoadedAsync()
         {
+            Instance = ServiceSingleton.Instances.WorkingInstance;
             await DetectProtonRunners();
             await DetectPrefix();
         }
@@ -58,25 +62,24 @@ namespace Nolvus.Dashboard.Frames.Manager.Proton
             if (FlatpakRunners.Contains("LegacyRuntime"))
                 FlatpakRunners.Remove("LegacyRuntime");
 
-            if (Runners.Count > 0)
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                DrpDwnLstProtonRunner.ItemsSource = Runners;
-                DrpDwnLstProtonRunner.SelectedIndex = 0;
-            }
-            else if (FlatpakRunners.Count > 0)
-            {                
-                DrpDwnLstProtonRunner.ItemsSource = FlatpakRunners;
-                DrpDwnLstProtonRunner.SelectedIndex = 0;
-            }
-            else
-            {
-                await Dispatcher.UIThread.InvokeAsync(async () =>
+                if (Runners.Count > 0)
+                {
+                    DrpDwnLstProtonRunner.ItemsSource = Runners;
+                    DrpDwnLstProtonRunner.SelectedIndex = 0;
+                }
+                else if (FlatpakRunners.Count > 0)
+                {                
+                    DrpDwnLstProtonRunner.ItemsSource = FlatpakRunners;
+                    DrpDwnLstProtonRunner.SelectedIndex = 0;
+                }
+                else
                 {
                     ProtonPathBox.IsEnabled = true;
                     ProtonPathButton.IsEnabled = true;
-                    DrpDwnLstProtonRunner.PlaceholderText = "No Protons Found!";
-                });
-            }
+                }
+            });
         }
 
         private async Task DetectPrefix()
@@ -106,13 +109,52 @@ namespace Nolvus.Dashboard.Frames.Manager.Proton
 
         private void BtnBack_Click(object? sender, RoutedEventArgs e)
         {
+            ServiceSingleton.Instances.UnloadWorkingIntance();
             ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
         }
 
         private async void BtnInstall_Click(object? sender, RoutedEventArgs e)
         {
             const string appId = "489830";
-            return;
+            
+            //Unable to detect Protons
+            if (ProtonPathBox.IsEnabled)
+            {
+                var ProtonPath = ProtonPathBox.Text?.Trim();
+
+                if (string.IsNullOrWhiteSpace(ProtonPath))
+                {
+                    await ServiceSingleton.Dashboard.Error("Error", "Please browse for a Proton folder, as Auto Detection failed.");
+                    return;
+                }
+
+                if (!Directory.Exists(ProtonPath))
+                {
+                    await ServiceSingleton.Dashboard.Error("Error", "Selected Proton folder does not exist. Please try manually through terminal");
+                    return;
+                }
+
+                //Ensure it's a real Proton install
+                var ProtonScript = Path.Combine(ProtonPath, "proton");
+                if (!File.Exists(ProtonScript))
+                {
+                    await ServiceSingleton.Dashboard.Error("Error", "The selected folder does not contain a proton binary!");
+                    return;
+                }
+
+                await Protontricks.ConfigureAsync(appId, instanceInstallDir: Instance.InstallDir, protonVersion: null, protonPath: ProtonPath);
+                return;
+            }
+            
+            var Runner = DrpDwnLstProtonRunner.SelectedItem as string;
+
+            if (string.IsNullOrWhiteSpace(Runner))
+            {
+                await ServiceSingleton.Dashboard.Error("Error", "Error getting Proton Runner");
+                return;
+            }
+
+            await Protontricks.ConfigureAsync(appId, instanceInstallDir: Instance.InstallDir, protonVersion: Runner, protonPath: null);
         }
 
         private async void PrefixPath_Click(object? sender, RoutedEventArgs e)

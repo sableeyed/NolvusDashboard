@@ -446,6 +446,7 @@ namespace Nolvus.Dashboard.Controls
             if (result != true)
                 return;
             
+            ServiceSingleton.Instances.WorkingInstance = _instance;
             await ServiceSingleton.Dashboard.LoadFrameAsync<ProtonManagerFrame>();
         }
 

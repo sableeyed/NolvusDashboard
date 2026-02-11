@@ -218,7 +218,8 @@ namespace Nolvus.Dashboard.Frames
                     CaughtExeption = ex.InnerException;
                 }
                 
-                throw new Exception("Error during Nolvus connection. The Nolvus web site may have issues currently. Original message : " + CaughtExeption + ")");
+                await ServiceSingleton.Dashboard.Error("Error", "Error during Nolvus connection. The Nolvus web site may be experiencing issues" + "\n" + CaughtExeption);
+                //throw new Exception("Error during Nolvus connection. The Nolvus web site may have issues currently. Original message : " + CaughtExeption + ")");
             }
         }
 

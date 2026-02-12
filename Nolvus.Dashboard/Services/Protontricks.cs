@@ -1,23 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Nolvus.Core.Services;
 using Nolvus.Core.Utils;
-using Nolvus.Core.Interfaces;
 
 namespace Nolvus.Dashboard.Services.Proton
 {
-    public class Protontricks : IProtontricks
+    public static class Protontricks
     {
-        public Task<string?> GetPrefixPathAsync(string appId)
+        public static Task<string?> GetPrefixPathAsync(string appId)
         {
-            if (string.IsNullOrWhiteSpace(appId)) 
+            if (string.IsNullOrWhiteSpace(appId))
             {
                 ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "appId was NULL, please report this as a bug");
                 return Task.FromResult<string?>(null);
             }
-                //throw new ArgumentNullException(nameof(appId));
 
             string? vdf = FindLibraryFoldersVdf();
             if (vdf == null)
@@ -25,13 +25,11 @@ namespace Nolvus.Dashboard.Services.Proton
 
             var libraries = GetSteamLibraries(vdf);
 
-            // Also include the primary Steam root itself (vdf lives under <steamroot>/steamapps/)
-            // This covers setups where compatdata lands in the primary root even if libraries are funky.
             var steamRoot = Directory.GetParent(Path.GetDirectoryName(vdf)!)?.FullName;
             if (!string.IsNullOrWhiteSpace(steamRoot))
                 libraries.Insert(0, steamRoot);
 
-            foreach (var lib in libraries.Distinct(StringComparer.OrdinalIgnoreCase))
+            foreach (var lib in libraries.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase))
             {
                 var pfx = Path.Combine(lib, "steamapps", "compatdata", appId, "pfx");
 
@@ -44,9 +42,7 @@ namespace Nolvus.Dashboard.Services.Proton
             return Task.FromResult<string?>(null);
         }
 
-
-
-        public Task<int> RunAsync(string appId, params string[] args)
+        public static Task<int> RunAsync(string appId, string? protonVersion, string? protonPath, params string[] args)
         {
             if (string.IsNullOrWhiteSpace(appId))
             {
@@ -54,13 +50,7 @@ namespace Nolvus.Dashboard.Services.Proton
                 return Task.FromResult(-1);
             }
 
-            string protontricks = ExecutableResolver.FindExecutable("protontricks");
-            
-            if (string.IsNullOrWhiteSpace(protontricks)) 
-            {
-                ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Protontricks was not found in $PATH");
-                return Task.FromResult(-1);
-            }
+            string protontricks = ExecutableResolver.RequireExecutable("protontricks");
 
             var startInfo = new ProcessStartInfo
             {
@@ -72,6 +62,12 @@ namespace Nolvus.Dashboard.Services.Proton
             };
 
             startInfo.Environment["PROTONTRICKS_NO_GUI"] = "1";
+
+            if (!string.IsNullOrWhiteSpace(protonVersion))
+                startInfo.Environment["PROTON_VERSION"] = protonVersion;
+
+            if (!string.IsNullOrWhiteSpace(protonPath))
+                startInfo.Environment["PROTON_PATH"] = protonPath;
 
             startInfo.ArgumentList.Add(appId);
 
@@ -114,9 +110,9 @@ namespace Nolvus.Dashboard.Services.Proton
             return tcs.Task;
         }
 
-        public async Task ConfigureAsync(string appId, string instanceInstallDir, Action<string, double>? progress = null)
+        public static async Task ConfigureAsync(string appId, string instanceInstallDir, string? protonVersion, string? protonPath, Action<string, double>? progress = null)
         {
-            if (string.IsNullOrWhiteSpace(appId)) 
+            if (string.IsNullOrWhiteSpace(appId))
             {
                 await ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "appId was NULL, please report this as a bug");
                 return;
@@ -128,27 +124,35 @@ namespace Nolvus.Dashboard.Services.Proton
                 return;
             }
 
-            if (!Directory.Exists(instanceInstallDir)) 
+            if (!Directory.Exists(instanceInstallDir))
             {
                 await ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Could not find Nolvus install path");
                 return;
             }
 
-            //progress?.Invoke("Locating Proton prefix…", 5);
+            bool hasVersion = !string.IsNullOrWhiteSpace(protonVersion);
+            bool hasPath = !string.IsNullOrWhiteSpace(protonPath);
+
+            // Exactly one must be specified
+            if (hasVersion == hasPath)
+            {
+                await ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Select a Proton runner OR provide a manual Proton path (exactly one).");
+                return;
+            }
+
             ServiceSingleton.Dashboard.Progress(5);
 
             string? prefix = await GetPrefixPathAsync(appId);
-            if (prefix == null) 
+            if (prefix == null)
             {
                 await ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Could not find Skyrim data paths, have you ran it once?");
                 return;
             }
 
-            // 2) install required verbs
-            //progress?.Invoke("Installing prerequisites…", 20);
+            // 1) install required verbs
             ServiceSingleton.Dashboard.Progress(20);
 
-            int installExit = await RunAsync(appId,
+            int installExit = await RunAsync(appId, protonVersion, protonPath,
                 "-q",
                 "vcrun2022",
                 "dotnet48",
@@ -159,41 +163,40 @@ namespace Nolvus.Dashboard.Services.Proton
                 "d3dcompiler_46",
                 "d3dcompiler_47");
 
-            if (installExit != 0) 
+            if (installExit != 0)
             {
                 await ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", $"Protontricks returned error code {installExit}");
                 return;
             }
 
-            // 3) reset windows version
-            //progress?.Invoke("Setting Windows version…", 65);
+            // 2) reset windows version
             ServiceSingleton.Dashboard.Progress(65);
 
-            int winverExit = await RunAsync(appId, "-q", "win10");
-            if (winverExit != 0) 
+            int winverExit = await RunAsync(appId, protonVersion, protonPath, "-q", "win10");
+            if (winverExit != 0)
             {
                 await ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", $"Protontricks failed to change windows version {winverExit}");
                 return;
             }
 
-            // 5) symlink X: -> instanceInstallDir
-            //progress?.Invoke("Mapping X: drive…", 75);
+            // 3) symlink X: -> instanceInstallDir
             ServiceSingleton.Dashboard.Progress(75);
 
             string dosdevices = Path.Combine(prefix, "dosdevices");
-            Directory.CreateDirectory(dosdevices);
 
             string xDrive = Path.Combine(dosdevices, "x:");
             TryDeleteFileOrDir(xDrive);
 
             File.CreateSymbolicLink(xDrive, instanceInstallDir);
 
-            // 4) copy d3dcompiler_47.dll to STOCK GAME
-            //progress?.Invoke("Copying d3dcompiler_47.dll…", 85);
+            // 4) create dxvk.conf to bypass pipeline errors
+            ServiceSingleton.Dashboard.Progress(80);
+            File.WriteAllText(Path.Combine(instanceInstallDir, "STOCK GAME", "dxvk.conf"), "dxvk.enableGraphicsPipelineLibrary = False");
+            
+            // 5) copy d3dcompiler_47.dll to STOCK GAME
             ServiceSingleton.Dashboard.Progress(85);
 
             string stockGame = Path.Combine(instanceInstallDir, "STOCK GAME");
-            Directory.CreateDirectory(stockGame);
 
             string driveC = Path.Combine(prefix, "drive_c");
             string[] candidates =
@@ -211,16 +214,15 @@ namespace Nolvus.Dashboard.Services.Proton
                 string dst = Path.Combine(stockGame, "d3dcompiler_47.dll");
                 File.Copy(src, dst, overwrite: true);
                 copied = true;
-                break; // one is enough
+                break;
             }
 
-            if (!copied) 
+            if (!copied)
             {
-                await ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", $"Unable to find d3dcompiler_47.dll, please place a copy manually in STOCK GAME. Otherwise everything else succeeded");
+                await ServiceSingleton.Dashboard.Error("Prefix Configuration Failed", "Unable to find d3dcompiler_47.dll, please place a copy manually in STOCK GAME. Otherwise everything else succeeded");
                 return;
             }
 
-            //progress?.Invoke("Ready!", 100);
             ServiceSingleton.Dashboard.Progress(100);
         }
 
@@ -239,7 +241,6 @@ namespace Nolvus.Dashboard.Services.Proton
             {
                 string line = raw.Trim();
 
-                // Start of a library entry: "0", "1", "2", ...
                 if (line.StartsWith("\"") && line.EndsWith("\"") && line.Length <= 4)
                 {
                     insideLibrary = true;
@@ -267,7 +268,6 @@ namespace Nolvus.Dashboard.Services.Proton
 
                 if (line == "}")
                 {
-                    // Leaving a library block
                     insideLibrary = false;
                 }
             }
@@ -275,19 +275,21 @@ namespace Nolvus.Dashboard.Services.Proton
             return libs;
         }
 
-
         private static string? FindLibraryFoldersVdf()
         {
             string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-            // Most common locations for libraryfolders.vdf
             string[] candidates =
             {
-                Path.Combine(home, ".steam", "steam", "steamapps", "libraryfolders.vdf"),
+                // Native Steam variants
                 Path.Combine(home, ".local", "share", "Steam", "steamapps", "libraryfolders.vdf"),
+                Path.Combine(home, ".steam", "steam", "steamapps", "libraryfolders.vdf"),
+                Path.Combine(home, ".steam", "root", "steamapps", "libraryfolders.vdf"),
+                Path.Combine(home, ".local", "share", "steam", "steamapps", "libraryfolders.vdf"),
 
-                // Flatpak Steam
+                // Flatpak Steam variants
                 Path.Combine(home, ".var", "app", "com.valvesoftware.Steam", "data", "Steam", "steamapps", "libraryfolders.vdf"),
+                Path.Combine(home, ".var", "app", "com.valvesoftware.Steam", "data", "steam", "steamapps", "libraryfolders.vdf"),
             };
 
             foreach (var c in candidates)
@@ -298,7 +300,6 @@ namespace Nolvus.Dashboard.Services.Proton
 
             return null;
         }
-
 
         private static void TryDeleteFileOrDir(string path)
         {
@@ -313,7 +314,7 @@ namespace Nolvus.Dashboard.Services.Proton
                 if (Directory.Exists(path))
                     Directory.Delete(path, recursive: true);
             }
-            catch {}
+            catch { }
         }
     }
 }

@@ -67,7 +67,7 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         private void BtnDonate_Click(object? sender, RoutedEventArgs e)
         {
-            var url = "https://www.paypal.com/paypalme/nolvus";
+            var url = "https://ko-fi.com/mel49542";
             try
             {
                 Process.Start(new ProcessStartInfo

@@ -3,6 +3,7 @@ using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 using Nolvus.Dashboard.Frames.Instance;
+using System.Diagnostics;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -29,12 +30,30 @@ namespace Nolvus.Dashboard.Frames.Installer
 
         private void BtnPatreon_Click(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Patreon: Unimplemented");
+            try
+            {
+                var url = "https://www.patreon.com/nolvus";
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }
 
         private void BtnDonate_Click(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Donate: Unimplemented");
+            try
+            {
+                var url = "https://ko-fi.com/mel49542";
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }
 
     }

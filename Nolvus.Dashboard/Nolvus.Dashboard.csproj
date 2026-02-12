@@ -6,9 +6,9 @@
     <ImplicitUsings>true</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyVersion>3.8.6</AssemblyVersion>
-    <FileVersion>3.8.6.2</FileVersion>
-    <Version>3.8.6.2</Version>
-    <InformationalVersion>3.8.6.2</InformationalVersion>
+    <FileVersion>3.8.6.3</FileVersion>
+    <Version>3.8.6.3</Version>
+    <InformationalVersion>3.8.6.3</InformationalVersion>
     <AssemblyName>NolvusDashboard</AssemblyName>
     <InvariantGlobalization>false</InvariantGlobalization>
 

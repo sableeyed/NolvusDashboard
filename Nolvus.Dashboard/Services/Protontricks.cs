@@ -149,7 +149,7 @@ namespace Nolvus.Dashboard.Services.Proton
                 return;
             }
 
-            // 2) install required verbs
+            // 1) install required verbs
             ServiceSingleton.Dashboard.Progress(20);
 
             int installExit = await RunAsync(appId, protonVersion, protonPath,
@@ -169,7 +169,7 @@ namespace Nolvus.Dashboard.Services.Proton
                 return;
             }
 
-            // 3) reset windows version
+            // 2) reset windows version
             ServiceSingleton.Dashboard.Progress(65);
 
             int winverExit = await RunAsync(appId, protonVersion, protonPath, "-q", "win10");
@@ -179,22 +179,24 @@ namespace Nolvus.Dashboard.Services.Proton
                 return;
             }
 
-            // 5) symlink X: -> instanceInstallDir
+            // 3) symlink X: -> instanceInstallDir
             ServiceSingleton.Dashboard.Progress(75);
 
             string dosdevices = Path.Combine(prefix, "dosdevices");
-            Directory.CreateDirectory(dosdevices);
 
             string xDrive = Path.Combine(dosdevices, "x:");
             TryDeleteFileOrDir(xDrive);
 
             File.CreateSymbolicLink(xDrive, instanceInstallDir);
 
-            // 4) copy d3dcompiler_47.dll to STOCK GAME
+            // 4) create dxvk.conf to bypass pipeline errors
+            ServiceSingleton.Dashboard.Progress(80);
+            File.WriteAllText(Path.Combine(instanceInstallDir, "STOCK GAME", "dxvk.conf"), "dxvk.enableGraphicsPipelineLibrary = False");
+            
+            // 5) copy d3dcompiler_47.dll to STOCK GAME
             ServiceSingleton.Dashboard.Progress(85);
 
             string stockGame = Path.Combine(instanceInstallDir, "STOCK GAME");
-            Directory.CreateDirectory(stockGame);
 
             string driveC = Path.Combine(prefix, "drive_c");
             string[] candidates =

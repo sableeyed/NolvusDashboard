@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Nolvus.Browser.Core;
+using Nolvus.Core.Enums;
 using Nolvus.Core.Events;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
@@ -160,6 +161,8 @@ namespace Nolvus.Browser
         {
             _canClose = true;
 
+            var site = DetectSiteFromUrl(link);
+
             var handler = new ChromeDownloaderHandler(downloadLinkOnly: false);
             if (progress != null)
                 handler.DownloadProgressChanged += progress;
@@ -167,36 +170,71 @@ namespace Nolvus.Browser
             var downloadTcs = new TaskCompletionSource<object?>(
                 TaskCreationOptions.RunContinuationsAsynchronously);
 
-            void Completed(object? s, FileDownloadRequestEvent e) => downloadTcs.TrySetResult(null);
+            var mainLoadTcs = new TaskCompletionSource<object?>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+
+            void Completed(object? s, FileDownloadRequestEvent e)
+                => downloadTcs.TrySetResult(null);
+
+            void LoadEnd(object? s, LoadEndEventArgs e)
+            {
+                if (!e.Frame.IsMain)
+                    return;
+
+                _cef.LoadEnd -= LoadEnd;
+                mainLoadTcs.TrySetResult(null);
+            }
 
             handler.OnFileDownloadCompleted += Completed;
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _cef.DownloadHandler = handler;
+                _cef.LoadEnd += LoadEnd;
                 NavigateInternal(link);
             });
 
             try
             {
-                await downloadTcs.Task.ConfigureAwait(false);
+                await mainLoadTcs.Task.ConfigureAwait(false);
 
-                var downloadedPath = handler.LastDownloadedFilePath;
-                if (string.IsNullOrWhiteSpace(downloadedPath))
+                if (site == WebSite.EnbDev)
                 {
-                    downloadedPath = Path.Combine(ServiceSingleton.Folders.DownloadDirectory, fileName);
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        var script = ScriptManager.GetHandleENBDev(fileName);
+                        _cef.ExecuteJavaScript(script);
+                    });
                 }
+
+                await downloadTcs.Task.ConfigureAwait(false);
 
                 await Dispatcher.UIThread.InvokeAsync(CloseBrowser);
                 await WaitForClosedAsync().ConfigureAwait(false);
             }
             finally
             {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    try { _cef.LoadEnd -= LoadEnd; } catch { }
+                });
+
                 handler.OnFileDownloadCompleted -= Completed;
 
                 if (progress != null)
                     handler.DownloadProgressChanged -= progress;
             }
+        }
+
+        private static WebSite DetectSiteFromUrl(string url)
+        {
+            if (url.Contains("enbdev.com", StringComparison.OrdinalIgnoreCase))
+                return WebSite.EnbDev;
+
+            if (url.Contains("nexusmods.com", StringComparison.OrdinalIgnoreCase))
+                return WebSite.Nexus;
+
+            return WebSite.Other;
         }
 
         public async Task<string> GetNexusManualDownloadLink(string modName, string link, string nexusModId)

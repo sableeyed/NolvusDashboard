@@ -12,6 +12,9 @@ using Nolvus.Dashboard.Services.Proton;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls.Chrome;
+using SixLabors.Fonts.Unicode;
+using Nolvus.Dashboard.Controls;
+using Nolvus.Core.Enums;
 
 namespace Nolvus.Dashboard.Frames.Manager.Proton
 {
@@ -143,6 +146,15 @@ namespace Nolvus.Dashboard.Frames.Manager.Proton
                 }
 
                 await Protontricks.ConfigureAsync(appId, instanceInstallDir: Instance.InstallDir, protonVersion: null, protonPath: ProtonPath);
+                ServiceSingleton.Dashboard.ProgressCompleted();
+                ServiceSingleton.Dashboard.NoStatus();
+                
+                var top = TopLevel.GetTopLevel(this) as Window;
+                if (top != null)
+                {
+                    await NolvusMessageBox.Show(top, "Proton Configuration", "Proton has been successfully configured.", MessageBoxType.Info);
+                }
+
                 return;
             }
             

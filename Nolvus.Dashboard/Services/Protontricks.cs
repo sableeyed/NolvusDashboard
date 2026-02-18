@@ -187,7 +187,9 @@ namespace Nolvus.Dashboard.Services.Proton
             string xDrive = Path.Combine(dosdevices, "x:");
             TryDeleteFileOrDir(xDrive);
 
-            File.CreateSymbolicLink(xDrive, instanceInstallDir);
+            int index = instanceInstallDir.IndexOf("/Instances", StringComparison.OrdinalIgnoreCase);
+
+            File.CreateSymbolicLink(xDrive, instanceInstallDir.Substring(0, index));
 
             // 4) create dxvk.conf to bypass pipeline errors
             ServiceSingleton.Dashboard.Progress(80);

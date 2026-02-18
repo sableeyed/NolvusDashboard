@@ -2552,10 +2552,10 @@ ccafdsse001-dwesanctuary.esm";
             File.CreateSymbolicLink(linkName, linkLoc);
 
             // xEdit
-            string dataPath = "-D:" + "\"" + ToWinePath(Path.Combine(Instance.InstallDir, "STOCK GAME", "Data") + "\\\"");
-            string iniPath = "-I:" + "\"" + ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "Skyrim.ini")) + "\\\"";
-            string pluginPath = "-P:" + "\"" + ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "plugins.txt") + "\\\"");
-            string Args = TrimTrailingBackslash(dataPath) + " " + TrimTrailingBackslash(iniPath) + " " + TrimTrailingBackslash(pluginPath);
+            string dataPath = ToWinePath(Path.Combine(Instance.InstallDir, "STOCK GAME", "Data"));
+            string iniPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "Skyrim.ini"));
+            string pluginPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "plugins.txt"));
+            string Args = "-D:" + MO2String(dataPath) + " " + "-I:" + MO2String(iniPath) + " " + "-P:" + MO2String(pluginPath);
             AddExecutable(Path.Combine(Instance.InstallDir, "MO2"), Args,
                 Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit", "SSEEdit.exe").Replace(@"\", @"/"),
                 false, true, "xEdit", true,
@@ -2786,12 +2786,10 @@ ccafdsse001-dwesanctuary.esm";
             return text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
         }
 
-        private static string TrimTrailingBackslash(string s)
+        private static string MO2String(string path)
         {
-            if (s.EndsWith("\"", StringComparison.Ordinal))
-                return s[..^1].TrimEnd('\\') + "\"";
-
-            return s.TrimEnd('\\');
+            var escaped = path.Replace("\\", "\\\\");
+            return "\\\"" + path.TrimEnd('\\') + "\\\"";
         }
 
         #endregion                       

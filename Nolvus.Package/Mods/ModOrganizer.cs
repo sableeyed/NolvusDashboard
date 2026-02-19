@@ -2788,8 +2788,9 @@ ccafdsse001-dwesanctuary.esm";
 
         private static string MO2String(string path)
         {
+            path = path.TrimEnd('\\');
             var escaped = path.Replace("\\", "\\\\");
-            return "\\\"" + path.TrimEnd('\\') + "\\\"";
+            return "\\\"" + escaped + "\\\"";
         }
 
         #endregion                       

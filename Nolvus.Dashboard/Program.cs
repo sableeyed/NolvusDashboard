@@ -64,18 +64,18 @@ internal static class Program
         }
         catch { }
 
-        if (string.IsNullOrEmpty(_cefCachePath))
-            return;
+        // if (string.IsNullOrEmpty(_cefCachePath))
+        //     return;
 
-        try
-        {
-            var dirInfo = new DirectoryInfo(_cefCachePath);
-            if (dirInfo.Exists)
-            {
-                dirInfo.Delete(true);
-            }
-        }
-        catch { }
+        // try
+        // {
+        //     var dirInfo = new DirectoryInfo(_cefCachePath);
+        //     if (dirInfo.Exists)
+        //     {
+        //         dirInfo.Delete(true);
+        //     }
+        // }
+        // catch { }
     }
 
 

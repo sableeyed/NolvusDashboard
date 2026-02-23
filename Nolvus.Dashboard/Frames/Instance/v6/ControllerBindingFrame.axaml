@@ -42,6 +42,15 @@
                     Spacing="10"
                     Margin="0,0,6,6">
 
+            <Button x:Name="BtnFullGuide"
+                    Content="Full Guide"
+                    MinWidth="90"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Background="#2E2E2E"
+                    BorderBrush="White"
+                    Foreground="White"/>
+
             <Button x:Name="BtnKeyboard"
                     MinWidth="90"
                     Content="Keyboard"

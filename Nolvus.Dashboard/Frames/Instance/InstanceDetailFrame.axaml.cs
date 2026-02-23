@@ -50,7 +50,7 @@ namespace Nolvus.Dashboard.Frames.Instance
             ServiceSingleton.Dashboard.Info($"Instance mods for {instance.Name} v{instance.Version}");
 
             // Load profiles
-            var profiles = ServiceSingleton.Packages.ModOrganizer2.GetProfiles();
+            var profiles = await ServiceSingleton.Packages.ModOrganizer2.GetProfilesAsync();
             DrpDwnLstProfiles.ItemsSource = profiles;
             DrpDwnLstProfiles.SelectedIndex = 0;
         }
@@ -118,6 +118,8 @@ namespace Nolvus.Dashboard.Frames.Instance
                 var selected = DrpDwnLstProfiles.SelectedItem?.ToString();
                 if (string.IsNullOrEmpty(selected) || selected == _CurrentProfile)
                     return;
+                
+                ServiceSingleton.Dashboard.DisableSettings();
 
                 _CurrentProfile = selected;
 
@@ -126,6 +128,7 @@ namespace Nolvus.Dashboard.Frames.Instance
 
                 UpdateHeaderColor(loaded);
                 LblMO2Profile.IsVisible = true;
+                ServiceSingleton.Dashboard.EnableSettings();
             }
             catch (Exception ex)
             {

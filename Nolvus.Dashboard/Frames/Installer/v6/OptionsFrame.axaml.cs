@@ -9,6 +9,7 @@ using Nolvus.Dashboard.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Controls;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Nolvus.Dashboard.Frames.Installer.v6
 {
@@ -180,6 +181,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             {
                 ServiceSingleton.Instances.WorkingInstance.Options.Controller = "FALSE";
             }
+        }
+
+        private void BtnShowUI_Click(object? sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/ui/choices") { UseShellExecute = true });
         }
 
     }

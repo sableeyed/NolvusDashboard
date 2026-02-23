@@ -102,6 +102,20 @@ namespace Nolvus.Services.Files
             }
         }
 
+        public void MoveFile(string SourceFilePath, string TargetFilePath)
+        {
+            FileInfo SourceFile = new FileInfo(SourceFilePath);
+
+            FileInfo TargetFile = new FileInfo(TargetFilePath);
+
+            if (!TargetFile.Directory.Exists)
+            {
+                Directory.CreateDirectory(TargetFile.Directory.FullName);
+            }
+
+            SourceFile.MoveTo(TargetFilePath);
+        }
+
         private void SetAttributesNormal(DirectoryInfo Directory)
         {
             foreach(var SubDir in Directory.GetDirectories())

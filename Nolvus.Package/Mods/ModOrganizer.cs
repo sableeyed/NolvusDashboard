@@ -14,6 +14,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats.Png;
 using System.Text.RegularExpressions;
+using Avalonia.Input;
 
 namespace Nolvus.Package.Mods
 {
@@ -2461,6 +2462,35 @@ ccafdsse001-dwesanctuary.esm";
             AppendToIni(IniDir, "customExecutables", Size + "\\workingDirectory", WineWorkingDir);
         }
 
+        //TODO testing required
+        public static void ModifyExecutable(string ExecutableName, string IniDir, string Binary, string Args, string WorkingDirectory)
+        {
+            var Parser = ServiceSingleton.Settings.GetIniParser();
+
+            var IniData = Parser.ReadFile(Path.Combine(IniDir, "MO2", "ModOrganizer.ini"));
+
+            var Section = IniData.Sections.Where(x => x.SectionName == "customExecutables").FirstOrDefault();
+
+            var KeyIndex = Section.Keys.Where(x => x.KeyName.Contains("title") && x.Value.Contains(ExecutableName)).FirstOrDefault().KeyName.Substring(0, 1);
+
+            IniData["customExecutables"][KeyIndex + "\\" + "binary"] = Binary;
+            IniData["customExecutables"][KeyIndex + "\\" + "arguments"] = Args;
+            IniData["customExecutables"][KeyIndex + "\\" + "workingDirectory"] = WorkingDirectory;
+
+            Parser.WriteFile(Path.Combine(IniDir, "MO2", "ModOrganizer.ini"), IniData);
+        }
+
+        public static bool CheckIfExecutableExists(string ExecutableName, string IniDir)
+        {
+            var Parser = ServiceSingleton.Settings.GetIniParser();
+
+            var IniData = Parser.ReadFile(Path.Combine(IniDir, "MO2", "ModOrganizer.ini"));
+
+            var Section = IniData.Sections.Where(x => x.SectionName == "customExecutables").FirstOrDefault();
+
+            return Section.Keys.Where(x => x.KeyName.Contains("title") && x.Value.Contains(ExecutableName)).FirstOrDefault() != null;
+        }
+
         private void CreateBaseDirectories()
         {
             INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
@@ -2603,7 +2633,7 @@ ccafdsse001-dwesanctuary.esm";
 
                     CreateBaseDirectories();
                     CreateProfileBaseFiles();
-                    CreateLauncher();
+                    //CreateLauncher();
                     AddExecutables();
 
                     var extractDir = Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir);
@@ -2726,6 +2756,17 @@ ccafdsse001-dwesanctuary.esm";
             return new DirectoryInfo(Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MODS", "profiles")).GetDirectories().Where(x => x.GetFiles().Any(y => y.Name == "modlist.txt")).Select(d => {
                 return d.Name;
             }).ToList();                                        
+        }
+
+        public async Task<List<string>> GetProfilesAsync()
+        {
+            return await Task.Run(() =>
+            {
+                return new DirectoryInfo(Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MODS", "profiles")).GetDirectories().Where(x => x.GetFiles().Any(y => y.Name == "modlist.txt")).Select(d =>
+                {
+                    return d.Name;
+                }).ToList();
+            });
         }
 
         public async Task<List<ModObject>> GetModsMetaData(Action<string, int> Progress = null)

@@ -5,6 +5,7 @@ using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 using Nolvus.Dashboard.Controls;
+using System.Diagnostics;
 
 namespace Nolvus.Dashboard.Frames.Installer.v6
 {
@@ -17,6 +18,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             TglBtnExhaustion.IsCheckedChanged += OnExhaustionChanged;
             BtnContinue.Click += BtnContinue_Click;
             BtnPrevious.Click += BtnPrevious_Click;
+            BtnPresetsExplained.Click += BtnPresetsExplained_Click;
+            BtnScalingExplained.Click += BtnScalingExplained_Click;
         }
 
         private int ScalingsIndex(List<string> Scalings)
@@ -261,6 +264,16 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             if (DrpDwnLstNerfPA.SelectedItem is string value)
                 ServiceSingleton.Instances.WorkingInstance.Options.NerfPA = value;
+        }
+
+        private void BtnPresetsExplained_Click(object? sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/combat/presets") { UseShellExecute = true });
+        }
+
+        private void BtnScalingExplained_Click(object? sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/combat/scaling") { UseShellExecute = true });
         }
     }
 }

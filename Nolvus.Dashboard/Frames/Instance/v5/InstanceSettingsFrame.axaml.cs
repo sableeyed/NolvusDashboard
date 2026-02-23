@@ -20,7 +20,6 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
     public partial class InstanceSettingsFrame : DashboardFrame
     {
         private bool _initializing = true;
-
         public InstanceSettingsFrame(IDashboard dashboard, FrameParameters parameters)
             : base(dashboard, parameters)
         {
@@ -38,7 +37,6 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
             // ComboBoxes
             DrpDwnLstScreenRes.SelectionChanged += DrpDwnLstScreenRes_SelectionChanged;
             DrpDwnLstDownRes.SelectionChanged += DrpDwnLstDownRes_SelectionChanged;
-            DrpDwnLstRatios.SelectionChanged += DrpDwnLstRatios_SelectionChanged;
             DrpDwnLstDownLoc.SelectionChanged += DrpDwnLstDownLoc_SelectionChanged;
             DrpDwnLstIni.SelectionChanged += DrpDwnLstIni_SelectionChanged;
 
@@ -52,26 +50,6 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
         }
 
         #region Index helpers
-
-        private int RatioIndex(List<string> ratios)
-        {
-            int index = 0;
-
-            if (!string.IsNullOrEmpty(ServiceSingleton.Instances.WorkingInstance.Settings.Ratio))
-            {
-                foreach (var ratio in ratios)
-                {
-                    if (ratio == ServiceSingleton.Instances.WorkingInstance.Settings.Ratio)
-                    {
-                        break;
-                    }
-
-                    index++;
-                }
-            }
-
-            return index;
-        }
 
         private int ResolutionIndex(List<string> resolutions, out bool error)
         {
@@ -171,12 +149,6 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
 
         #endregion
 
-        private void EnableFlatButton(Button button, bool enabled)
-        {
-            if (button == null) return;
-            button.IsEnabled = enabled;
-        }
-
         protected override async Task OnLoadedAsync()
         {
             try
@@ -195,14 +167,8 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                 if (resError)
                     ApplyResolution();
 
-                // Ratios
-                List<string> ratios = new()
-                {
-                    "16:9",
-                    "21:9"
-                };
-                DrpDwnLstRatios.ItemsSource = ratios;
-                DrpDwnLstRatios.SelectedIndex = RatioIndex(ratios);
+
+                LblRatio.Text = ServiceSingleton.Instances.WorkingInstance.Settings.Ratio;
 
                 // Downscale resolutions
                 DrpDwnLstDownRes.ItemsSource = resolutions;
@@ -227,8 +193,8 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                 DrpDwnLstDownLoc.ItemsSource = cdnList;
                 DrpDwnLstDownLoc.SelectedIndex = DownloadLocationIndex(cdnList);
 
-                EnableFlatButton(BtnApplyRes, false);
-                EnableFlatButton(BtnApplyDownScaling, false);
+                BtnApplyRes.IsEnabled = false;
+                BtnApplyDownScaling.IsEnabled = false;
 
                 // Labels
                 LblVariant.Text = instance.Performance.Variant;
@@ -320,7 +286,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
             if (!_initializing)
             {
                 DrpDwnLstDownRes.IsEnabled = isOn;
-                EnableFlatButton(BtnApplyDownScaling, true);
+                BtnApplyDownScaling.IsEnabled = true;
             }
         }
 
@@ -332,7 +298,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
         {
             if (!_initializing)
             {
-                EnableFlatButton(BtnApplyRes, true);
+                BtnApplyRes.IsEnabled = true;
             }
         }
 
@@ -340,21 +306,8 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
         {
             if (!_initializing)
             {
-                EnableFlatButton(BtnApplyDownScaling, true);
+                BtnApplyDownScaling.IsEnabled = true;
             }
-        }
-
-        private void DrpDwnLstRatios_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            if (_initializing) return;
-
-            EnableFlatButton(BtnApplyRes, true);
-
-            var instance = ServiceSingleton.Instances.WorkingInstance;
-            var value = DrpDwnLstRatios.SelectedItem as string ?? string.Empty;
-
-            instance.Settings.Ratio = value;
-            ServiceSingleton.Instances.Save();
         }
 
         private void DrpDwnLstDownLoc_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -450,7 +403,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                 ServiceSingleton.Settings.StoreIniValue(fileName, "Display", "iSize W", instance.Settings.Width);
                 ServiceSingleton.Settings.StoreIniValue(fileName, "Display", "iSize H", instance.Settings.Height);
 
-                EnableFlatButton(BtnApplyRes, false);
+                BtnApplyRes.IsEnabled = false;
             }
             catch (Exception ex)
             {
@@ -539,7 +492,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                         MessageBoxType.Error);
                 }
 
-                EnableFlatButton(BtnApplyDownScaling, false);
+                BtnApplyDownScaling.IsEnabled = false;
             }
             catch (Exception ex)
             {

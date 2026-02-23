@@ -42,13 +42,33 @@
                                            Text="Preset"
                                            Foreground="White"/>
 
-                                <ComboBox x:Name="DrpDwnLstPreset"
-                                          Grid.Row="1"
-                                          Grid.Column="0"
-                                          SelectionChanged="OnPresetChanged"
-                                          MinWidth="200"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
+                                <Grid Grid.Row="1"
+                                      Grid.Column="0"
+                                      ColumnDefinitions="Auto,Auto"
+                                      ColumnSpacing="6">
+
+                                    <ComboBox x:Name="DrpDwnLstPreset"
+                                              Grid.Column="0"
+                                              SelectionChanged="OnPresetChanged"
+                                              MinWidth="200"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+
+                                    <Button x:Name="BtnPresetsExplained"
+                                            Grid.Column="1"
+                                            Content="?"
+                                            Width="28"
+                                            Height="28"
+                                            Padding="0"
+                                            VerticalContentAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            Background="#363636"
+                                            BorderBrush="White"
+                                            BorderThickness="1"
+                                            Foreground="White"
+                                            FontWeight="SemiBold"
+                                            Cursor="Hand"/>
+                                </Grid>
 
                                 <TextBlock x:Name="LblGOWarning"
                                            Grid.Row="1"
@@ -69,11 +89,34 @@
                                     <TextBlock x:Name="LblScaling"
                                                Text="Combat Scaling"
                                                Foreground="White"/>
-                                    <ComboBox x:Name="DrpDwnLstCombatScaling"
-                                              MinWidth="200"
-                                              SelectionChanged="OnScalingChanged"
-                                              Background="#2E2E2E"
-                                              Foreground="White"/>
+
+                                    <!-- Combo + ? (placed next to ComboBox like WinForms) -->
+                                    <Grid ColumnDefinitions="Auto,Auto"
+                                          ColumnSpacing="6">
+
+                                        <ComboBox x:Name="DrpDwnLstCombatScaling"
+                                                  Grid.Column="0"
+                                                  MinWidth="200"
+                                                  SelectionChanged="OnScalingChanged"
+                                                  Background="#2E2E2E"
+                                                  Foreground="White"/>
+
+                                        <Button x:Name="BtnScalingExplained"
+                                                Grid.Column="1"
+                                                Content="?"
+                                                Width="28"
+                                                Height="28"
+                                                Padding="0"
+                                                VerticalContentAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                Background="#363636"
+                                                BorderBrush="White"
+                                                BorderThickness="1"
+                                                Foreground="White"
+                                                FontWeight="SemiBold"
+                                                Cursor="Hand"/>
+                                    </Grid>
+
                                     <TextBlock x:Name="ScalingDesc"
                                                TextWrapping="Wrap"
                                                TextTrimming="None"

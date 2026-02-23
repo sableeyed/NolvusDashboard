@@ -65,16 +65,13 @@ namespace Nolvus.Dashboard.Frames
             get { return (InstanceAction)Parameters["Action"]; }
         }
 
-        private async Task DeleteInstance(List<FileInfo> Files)
+        private async Task DeleteInstance()
         {
-            BtnAction.IsEnabled = false;
-            BtnBack.IsEnabled = false;
-
-            int total = Files.Count;
-
             await Task.Run(() =>
             {
                 int counter = 0;
+
+                var Files = ServiceSingleton.Files.GetFiles(Instance.InstallDir);
 
                 foreach (var f in Files)
                 {
@@ -88,7 +85,7 @@ namespace Nolvus.Dashboard.Frames
                         ServiceSingleton.Logger.Log($"Delete failed for {f.FullName}: {ex.Message}");
                     }
 
-                    int percent = (int)(((double)++counter / total) * 100);
+                    int percent = (int)(((double)++counter / Files.Count) * 100);
 
                     Dispatcher.UIThread.Post(() =>
                     {
@@ -130,7 +127,10 @@ namespace Nolvus.Dashboard.Frames
                 {
                     try
                     {                        
-                        await DeleteInstance(ServiceSingleton.Files.GetFiles(Instance.InstallDir));
+                        DisableButtons();
+                        ServiceSingleton.Dashboard.DisableSettings();
+
+                        await DeleteInstance();
 
                         ServiceSingleton.Instances.RemoveInstance(Instance);
 
@@ -138,6 +138,7 @@ namespace Nolvus.Dashboard.Frames
                     }
                     finally
                     {
+                        ServiceSingleton.Dashboard.EnableSettings();
                         ServiceSingleton.Dashboard.NoStatus();
                         ServiceSingleton.Dashboard.ProgressCompleted();
                         ServiceSingleton.Dashboard.ClearInfo();

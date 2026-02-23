@@ -163,7 +163,6 @@ namespace Nolvus.Package.Patchers
                 }
                 catch (Exception ex)
                 {
-                    // Re-throw preserving stack trace
                     throw;
                 }
             });

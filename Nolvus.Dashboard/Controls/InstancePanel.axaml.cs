@@ -242,6 +242,12 @@ namespace Nolvus.Dashboard.Controls
             miDelete.Click += (_, __) => BrItmDelete_Click();
             menu.Items.Add(miDelete);
 
+            menu.Items.Add(new Separator());
+
+            var miRemap = new MenuItem { Header = "Remap Instance" };
+            miRemap.Click += (_, __) => BrItmRemap_Click();
+            menu.Items.Add(miRemap);
+
             BtnView.ContextMenu = menu;
         }
 
@@ -258,6 +264,8 @@ namespace Nolvus.Dashboard.Controls
             IDashboard dashboard = ServiceSingleton.Dashboard;
 
             LockButtons();
+
+            ServiceSingleton.Dashboard.DisableSettings();
 
             try
             {
@@ -305,6 +313,7 @@ namespace Nolvus.Dashboard.Controls
             finally
             {
                 UnlockButtons();
+                ServiceSingleton.Dashboard.EnableSettings();
                 ServiceSingleton.Instances.UnloadWorkingIntance();
             }
         }
@@ -360,11 +369,11 @@ namespace Nolvus.Dashboard.Controls
             switch (_instance.Name)
             {
                 case Strings.NolvusAscension:
-                    Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/asc/appendix/playerguide") { UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/asc/appendix/player-guide") { UseShellExecute = true });
                     break;
 
                 case Strings.NolvusAwakening:
-                    Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/playerguide") { UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide") { UseShellExecute = true });
                     break;
             }
         }
@@ -625,6 +634,29 @@ Categories=Game;Utility;
             File.WriteAllText(desktopFile, contents);
 
             Process.Start("chmod", $"+x \"{desktopFile}\"");
+        }
+
+        private async void BrItmRemap_Click()
+        {
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            if (!ModOrganizer.IsRunning)
+            {
+                switch (_instance.Name)
+                {
+                    case Strings.NolvusAscension:
+                        await NolvusMessageBox.Show(owner, "Remap Instance", string.Format("This feature is not available for {0}.", _instance.Name), MessageBoxType.Info);
+                        break;
+                    
+                    case Strings.NolvusAwakening:
+                        ServiceSingleton.Instances.WorkingInstance = _instance;
+                        await ServiceSingleton.Dashboard.LoadFrameAsync<RemapInstanceFrame>();
+                        break;
+                }
+            }
+            else
+            {
+                await NolvusMessageBox.Show(owner, "Mod Organizer 2", "An instance of Mod Organizer 2 is running! Close it first.", MessageBoxType.Error);
+            }
         }
 
     }

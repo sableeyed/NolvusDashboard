@@ -67,8 +67,8 @@ namespace Nolvus.Dashboard.Frames.Manager.ENB.v6
                     {
                         try
                         {
-                            BtnCancel.IsEnabled = false;
-                            BtnInstall.IsEnabled = false;
+                            DisableButtons();
+                            ServiceSingleton.Dashboard.DisableSettings();
 
                             var ModsToUpdate = await ServiceSingleton.EnbManager.PrepareModsToUpdate(ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB, Preset.GetFieldValueByKey("EnbCode"));
 
@@ -95,6 +95,7 @@ namespace Nolvus.Dashboard.Frames.Manager.ENB.v6
                     }
                     finally
                     {
+                        ServiceSingleton.Dashboard.EnableSettings();
                         ServiceSingleton.Dashboard.NoStatus();
                         ServiceSingleton.Dashboard.ProgressCompleted();
                     }

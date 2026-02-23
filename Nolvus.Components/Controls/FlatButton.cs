@@ -1,3 +1,9 @@
+/*
+ * TODO
+ * Apply theme from regular buttons to this class
+ * Replace all buttons with this class
+*/
+
 using System;
 using Avalonia;
 using Avalonia.Controls;

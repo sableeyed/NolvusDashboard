@@ -32,6 +32,8 @@ namespace Nolvus.Dashboard.Frames.Installer
             ServiceSingleton.Dashboard.Title("Nolvus Dashboard - [Stock Game Installation]");
             ServiceSingleton.Dashboard.Info("Stock Game Installation");
 
+            ServiceSingleton.Dashboard.DisableSettings();
+
             IFolderService Folders = ServiceSingleton.Folders;
             INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
 
@@ -62,6 +64,8 @@ namespace Nolvus.Dashboard.Frames.Installer
 
                 ServiceSingleton.Dashboard.ProgressCompleted();
                 ServiceSingleton.Instances.PrepareInstanceForInstall();
+
+                ServiceSingleton.Dashboard.EnableSettings();
 
                 await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>();
             }

@@ -1,12 +1,3 @@
-/*
- * Honestly by I can see I am going to have a horrible time. The worst part...?
- * Matching the old code style...
- * if(condition) {
- *  //do something
- * }
- * is superior. Having the first curly bracket on a new line is awful!
- */
-
 using Avalonia.Media;
 using Avalonia.Input;
 using Avalonia.Controls;
@@ -564,6 +555,7 @@ public partial class DashboardWindow : Window, IDashboard
 
     private void TitleBarControl_OnSettingsClicked(object? sender, EventArgs e)
     {   
+        var owner = TopLevel.GetTopLevel(this) as Window;
         if (!ServiceSingleton.Packages.Processing) 
         {
             if (TitleBarControl.SettingsEnabled) 
@@ -572,13 +564,12 @@ public partial class DashboardWindow : Window, IDashboard
             }
             else
             {   
-                var owner = TopLevel.GetTopLevel(this) as Window;
-                NolvusMessageBox.Show(owner, "Error", "This action can not be done now, please finish the Dashboard pre setup (Game path, nexus and Nolvus Connection)", MessageBoxType.Error);
+                NolvusMessageBox.Show(owner, "Settings", "This action is not available currently!", MessageBoxType.Error);
             }
         }
         else
         {
-            Console.WriteLine("Settings not allowed during modlist installation!");
+            NolvusMessageBox.Show(owner, "Settings", "This action is not allowed during mod list installation!", MessageBoxType.Error);
         }
     }
 

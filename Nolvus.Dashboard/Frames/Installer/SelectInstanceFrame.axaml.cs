@@ -167,7 +167,7 @@ namespace Nolvus.Dashboard.Frames.Installer
 
             if (ServiceSingleton.Instances.InstanceExists(InstanceToInstall.Name))
             {
-                bool? proceed = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", string.Format("The nolvus instance {0} already exists, Do you wan to proceed anyway?", InstanceToInstall.Name));
+                bool? proceed = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", string.Format("The nolvus instance {0} already exists, Do you want to proceed anyway?", InstanceToInstall.Name));
                 if (proceed != true)
                     return;
                 

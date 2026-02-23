@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.LogicalTree;
 using Nolvus.Core.Interfaces;
 
 namespace Nolvus.Core.Frames
@@ -22,6 +23,14 @@ namespace Nolvus.Core.Frames
             }
         }
 
+        private void SetButtonsEnabled(bool enabled)
+        {
+            foreach (var btn in this.GetLogicalDescendants().OfType<Button>())
+                btn.IsEnabled = enabled;
+        }
+
+        public void EnableButtons()  => SetButtonsEnabled(true);
+        public void DisableButtons() => SetButtonsEnabled(false);
 
         protected virtual void OnLoad() { }
         protected virtual Task OnLoadAsync() => Task.CompletedTask;
@@ -68,78 +77,5 @@ namespace Nolvus.Core.Frames
             DashBoardInstance.OnFrameLoaded -= OnFrameLoaded;
             DashBoardInstance.OnFrameLoadedAsync -= OnFrameLoadedSync;
         }
-
-        // private void OnFrameLoadedSync(object sender, EventArgs e)
-        // {
-        //     if (!Dispatcher.UIThread.CheckAccess())
-        //     {
-        //         Dispatcher.UIThread.Post(async () => await OnLoadedAsync());
-        //     }
-        //     else
-        //     {
-        //         _ = OnLoadedAsync();
-        //     }
-        // }
-
-        // private void OnFrameLoaded(object Sender, EventArgs e)
-        // {
-        //     OnLoaded();
-        // }
-
-        // protected virtual Task OnLoadAsync()
-        // {
-        //     return Task.CompletedTask;
-        // }
-
-        // protected virtual void OnLoad() { }
-
-        // protected virtual Task OnLoadedAsync()
-        // {
-        //     return Task.CompletedTask;
-        // }
-
-        // protected virtual void OnLoaded() { }
-
-        // protected virtual async Task<T> InitializeAsync<T>() where T : DashboardFrame
-        // {
-        //     await OnLoadAsync();
-        //     return (T)this;
-        // }
-
-        // protected virtual T Initialize<T>() where T : DashboardFrame
-        // {
-        //     OnLoad();
-        //     return (T)this;
-        // }
-
-        // public static async Task<T> CreateAsync<T>(object[] Args) where T : DashboardFrame
-        // {
-        //     return await Dispatcher.UIThread.InvokeAsync(async () =>
-        //     {
-        //         var frame = Activator.CreateInstance(typeof(T)) as T;
-        //         return await frame.InitializeAsync<T>();
-        //     });
-        // }
-
-        // public static async Task<T> Create<T>(object[] Args) where T : DashboardFrame
-        // {
-        //     if (Dispatcher.UIThread.CheckAccess())
-        //     {
-        //         var frame = (T)Activator.CreateInstance(typeof(T), Args);
-        //         return frame.Initialize<T>();
-        //     }
-
-        //     return Dispatcher.UIThread.InvokeAsync(() =>
-        //     {
-        //         var frame = (T)Activator.CreateInstance(typeof(T), Args);
-        //         return frame.Initialize<T>();
-        //     }).Result;
-        // }
-
-        // public void Close()
-        // {
-        //     DashBoardInstance.OnFrameLoaded -= OnFrameLoaded;
-        //     DashBoardInstance.OnFrameLoadedAsync -= OnFrameLoadedSync;
-        // }
     }
 }

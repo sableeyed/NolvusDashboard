@@ -34,6 +34,8 @@ namespace Nolvus.Dashboard.Frames
                 {
                     INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
 
+                    ServiceSingleton.Dashboard.DisableSettings();
+
                     switch (Instance.Status.InstallStatus)
                     {
                         case InstanceInstallStatus.None:                            
@@ -72,6 +74,7 @@ namespace Nolvus.Dashboard.Frames
             }
             finally
             {
+                ServiceSingleton.Dashboard.EnableSettings();
                 ServiceSingleton.Dashboard.NoStatus();
                 ServiceSingleton.Dashboard.ProgressCompleted();
             }

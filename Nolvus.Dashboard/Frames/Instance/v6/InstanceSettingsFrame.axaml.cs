@@ -117,13 +117,6 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
             return Index == -1 ? 0 : Index;            
         }
 
-        private void EnableFlatButton(Button Button, Boolean Enabled)
-        {
-            if (Button == null)
-                return;
-            Button.IsEnabled = Enabled;
-        }
-
         public InstanceSettingsFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
@@ -144,6 +137,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
 
                 LblHeader.Text = "Settings for " + string.Format("{0} - {1} v{2}{3}", Instance.Name, Instance.Performance.Variant, Instance.Version, Instance.Tag != string.Empty ? string.Format(" - ({0})", Instance.Tag) : string.Empty);
                 List<string> Resolutions = ServiceSingleton.Globals.WindowsResolutions;
+                List<string> DownResolutions = ServiceSingleton.Globals.GetDownscaleResolutions();
                 DrpDwnLstScreenRes.ItemsSource = Resolutions;
                 DrpDwnLstScreenRes.SelectedIndex = ResolutionIndex(Resolutions, out ResError);
 
@@ -153,6 +147,9 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
                 }
 
                 LblRatio.Text = ServiceSingleton.Instances.WorkingInstance.Settings.Ratio;
+
+                DrpDwnLstDownRes.ItemsSource = DownResolutions;
+                DrpDwnLstDownRes.SelectedIndex = DownScaledResolutionIndex(DownResolutions, out ResError);
 
                 if (ResError)
                 {
@@ -180,8 +177,8 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
                 DrpDwnLstDownLoc.ItemsSource = CDN.Get();
                 DrpDwnLstDownLoc.SelectedIndex = DownloadLocationIndex(CDN.Get());
 
-                EnableFlatButton(BtnApplyRes, false);
-                EnableFlatButton(BtnApplyDownScaling, false);
+                BtnApplyRes.IsEnabled = false;
+                BtnApplyDownScaling.IsEnabled = false;
 
                 LblVariant.Text = Instance.Performance.Variant;
                 LblAntiAliasing.Text = Instance.Performance.AntiAliasing;
@@ -244,7 +241,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
             if (!Initializing)
             {
                 DrpDwnLstDownRes.IsEnabled = TglBtnDownScale.IsChecked == true;
-                EnableFlatButton(BtnApplyDownScaling, true);
+                BtnApplyDownScaling.IsEnabled = true;
             }
         }
         
@@ -252,7 +249,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
         {
             if (!Initializing)
             {
-                EnableFlatButton(BtnApplyRes, true);
+                BtnApplyRes.IsEnabled = false;
             }
         }
 
@@ -260,7 +257,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
         {
             if (!Initializing)
             {
-                EnableFlatButton(BtnApplyDownScaling, true);
+                BtnApplyDownScaling.IsEnabled = true;
             }
         }
 
@@ -293,9 +290,9 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
             }
         }
 
-        private void BtnBack_Click(object? sender, RoutedEventArgs e)
+        private async void BtnBack_Click(object? sender, RoutedEventArgs e)
         {
-            ServiceSingleton.Dashboard.LoadFrame<InstanceDetailFrame>();
+            await ServiceSingleton.Dashboard.LoadFrameAsync<InstanceDetailFrame>();
         }
 
         private void ApplyResolution()
@@ -318,7 +315,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
                 ServiceSingleton.Settings.StoreIniValue(FileName, "Display", "iSize W", Instance.Settings.Width);
                 ServiceSingleton.Settings.StoreIniValue(FileName, "Display", "iSize H", Instance.Settings.Height);
 
-                EnableFlatButton(BtnApplyRes, false);
+                BtnApplyRes.IsEnabled = false;
             }
             catch (Exception ex)
             {
@@ -413,7 +410,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
 
                 #endregion
 
-                EnableFlatButton(BtnApplyDownScaling, false);
+                BtnApplyDownScaling.IsEnabled = false;
             }
             catch (Exception ex)
             {

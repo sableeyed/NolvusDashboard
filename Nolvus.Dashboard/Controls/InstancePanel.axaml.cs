@@ -28,6 +28,7 @@ using Avalonia.Platform.Storage;
 using Nolvus.Dashboard.Services.Wine;
 using Nolvus.Dashboard.Services.Proton;
 using Nolvus.Dashboard.Frames.Manager.Proton;
+using Nolvus.Dashboard.Frames.Remap.v6;
 
 namespace Nolvus.Dashboard.Controls
 {

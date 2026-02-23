@@ -158,10 +158,9 @@
                                               Background="#2E2E2E"
                                               Foreground="White"/>
 
-                                    <Button x:Name="BtnUIHelp"
+                                    <Button x:Name="BtnShowUI"
                                             Grid.Column="1"
                                             Content="?"
-                                            Click="OnUIHelpClick"
                                             Width="28"
                                             Height="28"
                                             Padding="0"

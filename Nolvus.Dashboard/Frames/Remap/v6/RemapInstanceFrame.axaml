@@ -50,88 +50,103 @@
                                Foreground="White"
                                TextWrapping="Wrap"/>
 
-                    <!-- groupBox1 -->
-                    <GroupBox x:Name="groupBox1"
-                              Grid.Row="2"
-                              Margin="0,12,0,0"
-                              Header="Instance Info"
-                              Foreground="White">
+                    <!-- groupBox1 (Border-based GroupBox look) -->
+                    <Border x:Name="groupBox1"
+                            Grid.Row="2"
+                            Margin="0,12,0,0"
+                            BorderBrush="#808080"
+                            BorderThickness="1"
+                            Background="Transparent"
+                            Padding="10">
 
-                        <Grid RowDefinitions="Auto,Auto,Auto,Auto"
-                              ColumnDefinitions="Auto,* ,Auto"
-                              Margin="10"
-                              ColumnSpacing="10"
-                              RowSpacing="10">
+                        <Grid RowDefinitions="Auto,*"
+                              ColumnDefinitions="*">
 
-                            <!-- LblInstance -->
-                            <Border Grid.Row="0"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="3"
-                                    Background="#363636"
-                                    Height="24">
-                                <TextBlock x:Name="LblInstance"
-                                           Text="Instance Paths"
-                                           Foreground="White"
-                                           FontSize="12"
-                                           VerticalAlignment="Center"
-                                           TextAlignment="Left"/>
+                            <!-- Header (Instance Info) -->
+                            <Border Background="#363636"
+                                    HorizontalAlignment="Left"
+                                    Margin="8,-18,0,6"
+                                    Padding="6,0">
+                                <TextBlock Text="Instance Info"
+                                           Foreground="White"/>
                             </Border>
 
-                            <!-- label1 + LblCurrentInstallPath -->
-                            <TextBlock x:Name="label1"
-                                       Grid.Row="1"
-                                       Grid.Column="0"
-                                       Text="Current Installation Path"
-                                       Foreground="White"
-                                       VerticalAlignment="Center"/>
+                            <!-- Body -->
+                            <Grid Grid.Row="1"
+                                  RowDefinitions="Auto,Auto,Auto,Auto"
+                                  ColumnDefinitions="Auto,* ,Auto"
+                                  ColumnSpacing="10"
+                                  RowSpacing="10">
 
-                            <TextBlock x:Name="LblCurrentInstallPath"
-                                       Grid.Row="1"
-                                       Grid.Column="1"
-                                       Grid.ColumnSpan="2"
-                                       Text="[Path]"
-                                       Foreground="Orange"
-                                       VerticalAlignment="Center"
-                                       TextWrapping="Wrap"/>
+                                <!-- LblInstance (title-like label inside groupbox) -->
+                                <Border Grid.Row="0"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="3"
+                                        Background="#363636"
+                                        Height="24">
+                                    <TextBlock x:Name="LblInstance"
+                                               Text="Instance Paths"
+                                               Foreground="White"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"
+                                               TextAlignment="Left"/>
+                                </Border>
 
-                            <!-- label2 -->
-                            <TextBlock x:Name="label2"
-                                       Grid.Row="2"
-                                       Grid.Column="0"
-                                       Grid.ColumnSpan="3"
-                                       Text="New installation path (select an empty directory)"
-                                       Foreground="White"
-                                       VerticalAlignment="Center"/>
+                                <!-- label1 + LblCurrentInstallPath -->
+                                <TextBlock x:Name="label1"
+                                           Grid.Row="1"
+                                           Grid.Column="0"
+                                           Text="Current Installation Path"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
 
-                            <!-- TxtBxInstancePath + BtnBrowseInstancePath -->
-                            <TextBox x:Name="TxtBxInstancePath"
-                                     Grid.Row="3"
-                                     Grid.Column="0"
-                                     Grid.ColumnSpan="2"
-                                     IsReadOnly="True"
-                                     Background="#363636"
-                                     Foreground="White"
-                                     BorderBrush="#808080"
-                                     BorderThickness="1"
-                                     Height="20"
-                                     VerticalContentAlignment="Center"/>
+                                <TextBlock x:Name="LblCurrentInstallPath"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           Grid.ColumnSpan="2"
+                                           Text="[Path]"
+                                           Foreground="Orange"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap"/>
 
-                            <Button x:Name="BtnBrowseInstancePath"
-                                    Grid.Row="3"
-                                    Grid.Column="2"
-                                    Content="..."
-                                    Width="20"
-                                    Height="20"
-                                    Padding="0"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    Background="#363636"
-                                    Foreground="White"
-                                    BorderBrush="White"
-                                    BorderThickness="1"
-                                    Click="BtnBrowseInstancePath_Click"/>
+                                <!-- label2 -->
+                                <TextBlock x:Name="label2"
+                                           Grid.Row="2"
+                                           Grid.Column="0"
+                                           Grid.ColumnSpan="3"
+                                           Text="New installation path (select an empty directory)"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+
+                                <!-- TxtBxInstancePath + BtnBrowseInstancePath -->
+                                <TextBox x:Name="TxtBxInstancePath"
+                                         Grid.Row="3"
+                                         Grid.Column="0"
+                                         Grid.ColumnSpan="2"
+                                         IsReadOnly="True"
+                                         Background="#363636"
+                                         Foreground="White"
+                                         BorderBrush="#808080"
+                                         BorderThickness="1"
+                                         Height="20"
+                                         VerticalContentAlignment="Center"/>
+
+                                <Button x:Name="BtnBrowseInstancePath"
+                                        Grid.Row="3"
+                                        Grid.Column="2"
+                                        Content="..."
+                                        Width="20"
+                                        Height="20"
+                                        Padding="0"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Background="#363636"
+                                        Foreground="White"
+                                        BorderBrush="White"
+                                        BorderThickness="1"/>
+                            </Grid>
                         </Grid>
-                    </GroupBox>
+                    </Border>
 
                     <!-- PnlMessage -->
                     <Border x:Name="PnlMessage"
@@ -181,8 +196,7 @@
                                 Background="#363636"
                                 Foreground="White"
                                 BorderBrush="White"
-                                BorderThickness="1"
-                                Click="BtnCancel_Click"/>
+                                BorderThickness="1"/>
 
                         <Button x:Name="BtnRemap"
                                 Content="Remap"
@@ -191,8 +205,7 @@
                                 Background="#363636"
                                 Foreground="White"
                                 BorderBrush="White"
-                                BorderThickness="1"
-                                Click="BtnRemap_Click"/>
+                                BorderThickness="1"/>
                     </StackPanel>
 
                 </Grid>

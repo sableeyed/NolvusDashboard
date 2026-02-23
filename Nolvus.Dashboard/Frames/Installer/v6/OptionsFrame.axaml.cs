@@ -24,7 +24,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             TglLeveling.IsCheckedChanged += OnLevelingChanged;
             TglGore.IsCheckedChanged += OnGoreChanged;
             TglController.IsCheckedChanged += OnControllerChanged;
-
+            BtnShowUI.Click += BtnShowUI_Click;
         }
 
         private int AnimsIndex(List<string> Anims)

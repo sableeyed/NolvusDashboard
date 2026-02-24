@@ -36,7 +36,7 @@
                 <!-- Donation/patreon help text -->
                 <TextBlock x:Name="label2"
                            Grid.Row="1"
-                           Text="Please perform the post installation steps through the &quot;Manage&quot; button on the Instance panel, or follow the instructions on the wiki to do so manually."
+                           Text="Please perform the post installation steps through the &quot;Manage&quot; button on the Instance panel, or follow the instructions on the wiki to do so manually. Please check ModOrganizer.ini for errors, especially if you did not use X:\Instances\ as your installation layout."
                            Foreground="White"
                            TextWrapping="Wrap"
                            Margin="0,0,0,16" />

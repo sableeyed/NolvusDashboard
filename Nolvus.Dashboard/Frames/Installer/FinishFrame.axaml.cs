@@ -21,6 +21,7 @@ namespace Nolvus.Dashboard.Frames.Installer
         protected override async Task OnLoadedAsync()
         {
             ServiceSingleton.Dashboard.Info("Installation completed");
+            ServiceSingleton.Dashboard.ProgressCompleted();
         }
 
         private void BtnContinue_Click(object? sender, RoutedEventArgs e)

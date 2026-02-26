@@ -163,7 +163,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v6
 
                 if (Instance.Settings.EnableArchiving)
                 {
-                    TglBtnDownScale.IsChecked = true;
+                    TglBtnEnableArchive.IsChecked = true;
                 }
 
                 TglBtnDownScale.IsChecked = false;

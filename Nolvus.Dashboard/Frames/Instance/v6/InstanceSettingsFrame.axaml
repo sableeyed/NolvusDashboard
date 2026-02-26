@@ -60,8 +60,9 @@
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 Width="100"
-                                Background="#363636"
-                                Foreground="#F28F1A"/>
+                                Background="#2E2E2E"
+                                BorderBrush="White"
+                                Foreground="White"/>
                     </StackPanel>
                 </Border>
 
@@ -192,7 +193,7 @@
                                 <TextBlock Text="Downscaled resolution"
                                            Width="160"
                                            Foreground="White"/>
-                                <ComboBox x:Name="DrpDwnLstDownRes" Width="160" SelectionChanged="OnDownScaleResolutionChanged"/>
+                                <ComboBox x:Name="DrpDwnLstDownRes" Width="160" SelectionChanged="OnDownScaleResolutionChanged" IsEnabled="False"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -204,8 +205,9 @@
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 Width="100"
-                                Background="#363636"
-                                Foreground="#F28F1A"/>
+                                Background="#2E2E2E"
+                                BorderBrush="White"
+                                Foreground="White"/>
                     </Grid>
                 </Border>
 

@@ -14,12 +14,15 @@
                        FontWeight="SemiBold"/>
 
             <!-- CONTENT AREA -->
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="520,24,235,*">
 
-                <!-- MAIN SETTINGS PANEL, ANCHORED TOP-LEFT -->
+                <!-- MEGA SETTINGS PANEL -->
                 <Border x:Name="GrpBxMega"
+                        Grid.Column="0"
                         Background="#363636"
                         BorderBrush="#444"
+                        BorderThickness="1"
                         CornerRadius="4"
                         Padding="16"
                         Width="520"
@@ -46,9 +49,8 @@
                                            PointerPressed="OpenMega"/>
 
                                 <TextBlock Text="to create your free mega.nz account."
-                                            Foreground="#CCCCCC"/>
+                                           Foreground="#CCCCCC"/>
                             </StackPanel>
-
 
                             <!-- Anonymous toggle -->
                             <StackPanel Grid.Row="1"
@@ -57,12 +59,12 @@
                                         VerticalAlignment="Center">
 
                                 <TextBlock Text="Anonymous Connection"
-                                            Foreground="#CCCCCC"
-                                            VerticalAlignment="Center"/>
+                                           Foreground="#CCCCCC"
+                                           VerticalAlignment="Center"/>
 
                                 <ToggleSwitch x:Name="TglBtnAnonymous"
-                                            PropertyChanged="TglBtnAnonymous_PropertyChanged"
-                                            VerticalAlignment="Center"/>
+                                              PropertyChanged="TglBtnAnonymous_PropertyChanged"
+                                              VerticalAlignment="Center"/>
                             </StackPanel>
 
                             <!-- Info text -->
@@ -114,7 +116,7 @@
                                 </Grid>
                             </Border>
 
-                            <!-- EMPTY ROW (just keeping Row=6 to preserve structure) -->
+                            <!-- EMPTY ROW -->
                             <Grid Grid.Row="6"/>
 
                         </Grid>
@@ -129,12 +131,42 @@
                                 MinWidth="120"
                                 Foreground="White"/>
                     </Grid>
+                </Border>
 
+                <!-- PROCESS PANEL -->
+                <Border x:Name="GrpBxProcess"
+                        Grid.Column="2"
+                        Background="#363636"
+                        BorderBrush="#444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="16"
+                        Width="235"
+                        Height="520"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Process"
+                                   Foreground="White"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock x:Name="LblProcessCount"
+                                   Text="Number of simultaneous mods installation"
+                                   Foreground="#CCCCCC"
+                                   TextWrapping="Wrap"/>
+
+                        <ComboBox x:Name="DrpDwnLstProcessCount"
+                                  Width="189"
+                                  HorizontalAlignment="Left"
+                                  SelectionChanged="OnProcessorCountChanged"/>
+                    </StackPanel>
                 </Border>
 
             </Grid>
 
-            <!-- BACK BUTTON (bottom-right of whole frame) -->
+            <!-- BACK BUTTON -->
             <Button x:Name="BtnBack"
                     Grid.Row="2"
                     Content="Back"

@@ -2,8 +2,12 @@ using Avalonia.Interactivity;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
+using Nolvus.Core.Misc;
+using Nolvus.Core.Enums;
+using Nolvus.Dashboard.Controls;
 using Nolvus.Dashboard.Frames.Instance;
 using System.Diagnostics;
+using Avalonia.Controls;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -16,6 +20,19 @@ namespace Nolvus.Dashboard.Frames.Installer
             BtnContinue.Click += BtnContinue_Click;
             BtnPatreon.Click += BtnPatreon_Click;
             BtnDonate.Click += BtnDonate_Click;
+        }
+
+        public string InstanceName
+        {
+            get
+            {
+                if (!Parameters.IsEmpty && Parameters["Instance"] != null)
+                {
+                    return Parameters["Instance"].ToString();
+                }
+
+                return string.Empty;
+            }
         }
 
         protected override async Task OnLoadedAsync()
@@ -57,5 +74,22 @@ namespace Nolvus.Dashboard.Frames.Installer
             catch { }
         }
 
+        private void BtnGuide_Click(object? sender, RoutedEventArgs e)
+        {
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            switch (InstanceName)
+            {
+                case Strings.NolvusAscension:
+                    Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/asc/appendix/player-guide") { UseShellExecute = true });
+                    break;
+
+                case Strings.NolvusAwakening:
+                    Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide") { UseShellExecute = true });
+                    break;
+                default:
+                    NolvusMessageBox.Show(owner, "User Guide", "An error occured while trying to access the user guide!", MessageBoxType.Error);
+                    break;
+            }  
+        }
     }
 }

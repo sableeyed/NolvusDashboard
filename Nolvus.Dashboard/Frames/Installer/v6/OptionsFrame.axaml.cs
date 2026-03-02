@@ -188,5 +188,10 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/ui/choices") { UseShellExecute = true });
         }
 
+        private void BtnShowAlternateLeveling_Click(object? sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/game/leveling") { UseShellExecute = true });
+        }
+
     }
 }

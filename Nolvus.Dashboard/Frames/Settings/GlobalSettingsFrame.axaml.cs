@@ -7,8 +7,6 @@ using Nolvus.Core.Services;
 using Nolvus.Dashboard.Controls;
 using Avalonia.Threading;
 using System.Diagnostics;
-using Tmds.DBus.Protocol;
-using System.ComponentModel;
 using Avalonia;
 
 namespace Nolvus.Dashboard.Frames.Settings
@@ -39,11 +37,38 @@ namespace Nolvus.Dashboard.Frames.Settings
                 {
                     TglBtnAnonymous.IsChecked = false;
                 }
+
+                DrpDwnLstProcessCount.ItemsSource = GetProcessorCores();
+                DrpDwnLstProcessCount.SelectedIndex = CoreIndex(GetProcessorCores());
             }
             catch (Exception ex)
             {
                 ServiceSingleton.Dashboard.Error("Error during global settings loading", ex.Message, ex.StackTrace);
             }
+        }
+
+        private int CoreIndex(List<int> Cores)
+        {
+            var Index = Cores.FindIndex(x => x == ServiceSingleton.Settings.ProcessCount);
+
+            return Index == -1 ? 0 : Index;
+        }
+
+        protected List<int> GetProcessorCores()
+        {
+            List<int> Result = new List<int>();
+
+            for (var i = 0; i < Environment.ProcessorCount; i++)
+            {
+                Result.Add(i + 1);
+            }
+
+            if (Result.Where(x => x == ServiceSingleton.Settings.ProcessCount).ToList().Count == 0)
+            {
+                Result.Add(ServiceSingleton.Settings.ProcessCount);
+            }
+
+            return Result;
         }
 
         private async void BtnBack_Click(object? sender, RoutedEventArgs e)
@@ -133,6 +158,11 @@ namespace Nolvus.Dashboard.Frames.Settings
                 TxtBxPassword.IsEnabled = !anonymous;
                 PnlMessage.IsEnabled = !anonymous;
             }
+        }
+
+        private void OnProcessorCountChanged(object? sender, RoutedEventArgs e)
+        {
+            ServiceSingleton.Settings.ProcessCount = (int)DrpDwnLstProcessCount.SelectedItem!;
         }
     }
 }

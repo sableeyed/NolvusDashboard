@@ -47,6 +47,17 @@
                             Spacing="12"
                             Margin="0,0,0,20">
 
+                    <Button x:Name="BtnGuide"
+                            Width="124"
+                            Height="40"
+                            Content="Player Guide"
+                            Background="#363636"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Foreground="White"
+                            BorderBrush="White"
+                            Click="BtnGuide_Click"/>
+
                     <Button x:Name="BtnDonate"
                             Width="124"
                             Height="40"

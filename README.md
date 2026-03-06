@@ -43,8 +43,7 @@ The official Windows dashboard does not function natively on Linux and required 
 - .NET 9 Runtime installed with your package manager
 - Steam installed and configured
 - Vanilla Skyrim with AE content downloaded
-- Nexus Premium
-  - Free support planned in the future
+- Nexus Account (Premium ideally)
 - External Tools (must be accessible in PATH)
   - protontricks
   - winetricks

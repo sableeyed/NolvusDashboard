@@ -65,6 +65,16 @@ chmod +x NolvusDashboard
 
 Or double click `NolvusDashboard`
 
+## Troubleshooting
+
+### Missing Optional Language Files
+
+Steam installs commonly contain only the selected language voice archive. The
+stock-game manifest marks other language archives as optional with `FileSkip`,
+so those files should be skipped during validation, copying, and patching. If
+an installation reports a missing file such as `Skyrim - Voices_fr0.bsa`, make
+sure you are using a build that handles `FileSkip` for patch instructions.
+
 
 ## License
 

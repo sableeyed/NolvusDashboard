@@ -440,6 +440,19 @@ namespace Nolvus.StockGame.Core
 
                     foreach (var Instruction in _Package.Instructions)
                     {
+                        // Optional language files are absent from single-language Steam installs.
+                        if (Instruction.SourceFile != null &&
+                            Instruction.SourceFile.FileSkip &&
+                            !Instruction.SourceFile.Name.Equals(
+                                $"Skyrim - Voices_{_LanguageCode}0.bsa",
+                                StringComparison.OrdinalIgnoreCase))
+                        {
+                            StepProcessed("Skipping optional game file : " + Instruction.DestFile.Name);
+                            ElementProcessed(Counter, Total, StockGameProcessStep.GameFilesPatching, Instruction.DestFile.Name);
+                            Counter++;
+                            continue;
+                        }
+
                         await _Patcher.PatchFile(Instruction, _GameDir, _StockGameDir, _KeepPatches);
 
                         ElementProcessed(Counter, Total, StockGameProcessStep.GameFilesPatching, Instruction.DestFile.Name);

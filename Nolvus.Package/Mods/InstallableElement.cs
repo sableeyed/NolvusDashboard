@@ -12,6 +12,7 @@ using Nolvus.Core.Enums;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
 using Nolvus.Core.Interfaces;
+using Nolvus.Core.Errors;
 using Nolvus.Package.Files;
 using Nolvus.NexusApi;
 
@@ -307,8 +308,22 @@ namespace Nolvus.Package.Mods
                 try
                 {
                     ServiceSingleton.Logger.Log($"Awaiting manual user download link for file {file.FileName}");
-                    var browser = Browser();
-                    file.DownloadLink = await browser.GetNexusManualDownloadLink(Name, file.DownloadLink, file.NexusId).ConfigureAwait(false);
+
+                    var browserTries = 0;
+                    while (true)
+                    {
+                        try
+                        {
+                            var browser = Browser();
+                            file.DownloadLink = await browser.GetNexusManualDownloadLink(Name, file.DownloadLink, file.NexusId).ConfigureAwait(false);
+                            break;
+                        }
+                        catch (BrowserClosedException) when (browserTries < ServiceSingleton.Settings.RetryCount)
+                        {
+                            browserTries++;
+                            ServiceSingleton.Logger.Log($"Manual download window closed before completing, reopening ({browserTries}/{ServiceSingleton.Settings.RetryCount}) for file {file.FileName}");
+                        }
+                    }
                 }
                 finally
                 {

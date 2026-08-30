@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
+using Nolvus.Core.Errors;
 using Nolvus.Core.Utils;
 using Nolvus.Package.Mods;
 using Nolvus.Core.Enums;
@@ -275,7 +276,20 @@ namespace Nolvus.Package.Files
                     }
                     if (RequireManualDownload)
                     {
-                        await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                        var browserTries = 0;
+                        while (true)
+                        {
+                            try
+                            {
+                                await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                                break;
+                            }
+                            catch (BrowserClosedException) when (browserTries < RetryCount)
+                            {
+                                browserTries++;
+                                ServiceSingleton.Logger.Log($"Download window closed before completing, reopening ({browserTries}/{RetryCount}) for {FileName}");
+                            }
+                        }
                     }
                     else
                     {

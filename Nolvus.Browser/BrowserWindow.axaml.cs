@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using Nolvus.Browser.Core;
 using Nolvus.Core.Enums;
+using Nolvus.Core.Errors;
 using Nolvus.Core.Events;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
@@ -77,6 +78,16 @@ namespace Nolvus.Browser
 
         private Task WaitForClosedAsync() => _closedTcs.Task;
 
+        private async Task<T> AwaitOrClosed<T>(Task<T> task)
+        {
+            var finished = await Task.WhenAny(task, _closedTcs.Task).ConfigureAwait(false);
+
+            if (finished != task)
+                throw new BrowserClosedException();
+
+            return await task.ConfigureAwait(false);
+        }
+
         private void NavigateInternal(string url)
         {
             _cef.Address = url;
@@ -86,11 +97,14 @@ namespace Nolvus.Browser
         {
             _canClose = true;
 
-            if (!string.IsNullOrWhiteSpace(title))
-                TitleBar.Title = title;
-
             _initialUrl = link;
-            Dispatcher.UIThread.Post(() => NavigateInternal(link));
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (!string.IsNullOrWhiteSpace(title))
+                    TitleBar.Title = title;
+
+                NavigateInternal(link);
+            });
         }
 
         public void CloseBrowser()
@@ -111,8 +125,6 @@ namespace Nolvus.Browser
         public async Task NexusSSOAuthentication(string id, string slug)
         {
             _canClose = true;
-
-            TitleBar.Title = "Nexus SSO Authentication";
 
             var startUrl = $"https://www.nexusmods.com/sso?id={id}&application={slug}";
             var tcs = new TaskCompletionSource<object?>(
@@ -137,13 +149,14 @@ namespace Nolvus.Browser
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
+                TitleBar.Title = "Nexus SSO Authentication";
                 _cef.LoadEnd += Handler;
                 NavigateInternal(startUrl);
             });
 
             try
             {
-                await tcs.Task.ConfigureAwait(false);
+                await AwaitOrClosed(tcs.Task).ConfigureAwait(false);
             }
             finally
             {
@@ -196,7 +209,7 @@ namespace Nolvus.Browser
 
             try
             {
-                await mainLoadTcs.Task.ConfigureAwait(false);
+                await AwaitOrClosed(mainLoadTcs.Task).ConfigureAwait(false);
 
                 if (site == WebSite.EnbDev)
                 {
@@ -207,7 +220,7 @@ namespace Nolvus.Browser
                     });
                 }
 
-                await downloadTcs.Task.ConfigureAwait(false);
+                await AwaitOrClosed(downloadTcs.Task).ConfigureAwait(false);
 
                 await Dispatcher.UIThread.InvokeAsync(CloseBrowser);
                 await WaitForClosedAsync().ConfigureAwait(false);
@@ -241,8 +254,6 @@ namespace Nolvus.Browser
         {
             _canClose = true;
 
-            TitleBar.Title = $"Manual download [{modName}]";
-
             var handler = new LinkOnlyDownloadHandler();
 
             var tcs = new TaskCompletionSource<string>(
@@ -258,6 +269,7 @@ namespace Nolvus.Browser
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
+                TitleBar.Title = $"Manual download [{modName}]";
                 _cef.DownloadHandler = handler;
                 NavigateInternal(link);
             });
@@ -265,7 +277,7 @@ namespace Nolvus.Browser
             string result;
             try
             {
-                result = await tcs.Task.ConfigureAwait(false);
+                result = await AwaitOrClosed(tcs.Task).ConfigureAwait(false);
             }
             finally
             {

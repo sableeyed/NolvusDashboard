@@ -9,6 +9,8 @@ using Nolvus.Core.Enums;
 using Vcc.Nolvus.Api.Installer.Library;
 using Vcc.Nolvus.Api.Installer.Services;
 using Avalonia.Threading;
+using Nolvus.Dashboard.Frames;
+using Nolvus.Dashboard.Frames.Settings;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -82,7 +84,10 @@ namespace Nolvus.Dashboard.Frames.Installer
                 }
                 else if (ex is GameFileIntegrityException)
                 {
-                    await ServiceSingleton.Dashboard.Error("Error during game integrity checking", ex.Message);
+                    await ServiceSingleton.Dashboard.Error("Error during game integrity checking", ex.Message,
+                        OnRetry: () => ServiceSingleton.Dashboard.LoadFrameAsync<StockGameFrame>(),
+                        OnBack: () => ServiceSingleton.Dashboard.LoadFrameAsync<GameFrame>(),
+                        OnCancel: CancelInstall);
                 }
                 else if (ex is GameFilePatchingException)
                 {
@@ -199,6 +204,30 @@ namespace Nolvus.Dashboard.Frames.Installer
                     ServiceSingleton.Dashboard.ProgressCompleted();
                 });
             }
+        }
+
+        private async Task CancelInstall()
+        {
+            var Instance = ServiceSingleton.Instances.WorkingInstance;
+
+            if (Instance is not null)
+            {
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        ServiceSingleton.Files.RemoveDirectory(Instance.InstallDir, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        ServiceSingleton.Logger.Log("Cancel cleanup failed => " + ex.Message);
+                    }
+                });
+
+                ServiceSingleton.Instances.RemoveInstance(Instance);
+            }
+
+            await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
         }
     }
 }

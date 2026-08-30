@@ -73,7 +73,18 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private async void BtnBack_Click(object? sender, RoutedEventArgs e)
         {
-            await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            var returnType = window?.SettingsReturnFrameType;
+
+            if (returnType != null && typeof(DashboardFrame).IsAssignableFrom(returnType))
+            {
+                var method = typeof(IDashboard).GetMethod("LoadFrameAsync")!.MakeGenericMethod(returnType);
+                await (Task)method.Invoke(ServiceSingleton.Dashboard, new object?[] { null })!;
+            }
+            else
+            {
+                await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
+            }
         }
 
         private async void BtnSaveMegaInfo_Click(object? sender, RoutedEventArgs e)

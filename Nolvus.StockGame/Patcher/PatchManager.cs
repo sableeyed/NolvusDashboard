@@ -202,10 +202,16 @@ namespace Nolvus.StockGame.Patcher
 
                 process.Start();
 
-                string stdout = await process.StandardOutput.ReadToEndAsync();
-                string stderr = await process.StandardError.ReadToEndAsync();
+                Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
+                Task<string> stderrTask = process.StandardOutput.ReadToEndAsync();
+                //string stdout = await process.StandardOutput.ReadToEndAsync();
+                //string stderr = await process.StandardError.ReadToEndAsync();
 
+                await Task.WhenAll(stdoutTask, stderrTask);
                 await process.WaitForExitAsync();
+
+                string stdout = stdoutTask.Result;
+                string stderr = stderrTask.Result;
 
                 ServiceSingleton.Logger.Log($"Exit code: {process.ExitCode}");
                 if (!string.IsNullOrWhiteSpace(stdout))

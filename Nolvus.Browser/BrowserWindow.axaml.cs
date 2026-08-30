@@ -259,10 +259,22 @@ namespace Nolvus.Browser
             var tcs = new TaskCompletionSource<string>(
                 TaskCreationOptions.RunContinuationsAsynchronously);
 
+            var mainLoadTcs = new TaskCompletionSource<object?>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+
             void Requested(object? s, FileDownloadRequestEvent e)
             {
                 if (!string.IsNullOrWhiteSpace(e.DownloadUrl))
                     tcs.TrySetResult(e.DownloadUrl);
+            }
+
+            void LoadEnd(object? s, LoadEndEventArgs e)
+            {
+                if (!e.Frame.IsMain)
+                    return;
+
+                _cef.LoadEnd -= LoadEnd;
+                mainLoadTcs.TrySetResult(null);
             }
 
             handler.OnFileDownloadRequest += Requested;
@@ -271,17 +283,32 @@ namespace Nolvus.Browser
             {
                 TitleBar.Title = $"Manual download [{modName}]";
                 _cef.DownloadHandler = handler;
+                _cef.LoadEnd += LoadEnd;
                 NavigateInternal(link);
             });
 
             string result;
             try
             {
+                await AwaitOrClosed(mainLoadTcs.Task).ConfigureAwait(false);
+
+                if (ServiceSingleton.Settings.NexusAutoClick)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _cef.ExecuteJavaScript(ScriptManager.GetClickNexusSlowDownload());
+                    });
+                }
                 result = await AwaitOrClosed(tcs.Task).ConfigureAwait(false);
             }
             finally
             {
                 handler.OnFileDownloadRequest -= Requested;
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    try { _cef.LoadEnd -= LoadEnd; } catch { }
+                });
 
                 await Dispatcher.UIThread.InvokeAsync(CloseBrowser);
                 await WaitForClosedAsync().ConfigureAwait(false);

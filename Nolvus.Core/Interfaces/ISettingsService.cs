@@ -20,6 +20,7 @@ namespace Nolvus.Core.Interfaces
         int ErrorsThreshold { get; }
         string BrowserLogSeverity { get; }
         bool DevDebug { get; }
+        bool NexusAutoClick { get; set; }
         FileIniDataParser GetIniParser();
     }
 }

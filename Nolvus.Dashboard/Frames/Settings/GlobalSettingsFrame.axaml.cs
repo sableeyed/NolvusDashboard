@@ -40,6 +40,8 @@ namespace Nolvus.Dashboard.Frames.Settings
 
                 DrpDwnLstProcessCount.ItemsSource = GetProcessorCores();
                 DrpDwnLstProcessCount.SelectedIndex = CoreIndex(GetProcessorCores());
+                
+                TglBtnAutoClick.IsChecked = ServiceSingleton.Settings.NexusAutoClick;
             }
             catch (Exception ex)
             {
@@ -174,6 +176,11 @@ namespace Nolvus.Dashboard.Frames.Settings
         private void OnProcessorCountChanged(object? sender, RoutedEventArgs e)
         {
             ServiceSingleton.Settings.ProcessCount = (int)DrpDwnLstProcessCount.SelectedItem!;
+        }
+
+        private void TglBtnAutoClick_Changed(object? sender, RoutedEventArgs e)
+        {
+            ServiceSingleton.Settings.NexusAutoClick = TglBtnAutoClick.IsChecked == true;
         }
     }
 }

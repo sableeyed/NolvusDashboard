@@ -203,7 +203,7 @@ namespace Nolvus.StockGame.Patcher
                 process.Start();
 
                 Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
-                Task<string> stderrTask = process.StandardOutput.ReadToEndAsync();
+                Task<string> stderrTask = process.StandardError.ReadToEndAsync();
                 //string stdout = await process.StandardOutput.ReadToEndAsync();
                 //string stderr = await process.StandardError.ReadToEndAsync();
 

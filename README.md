@@ -23,7 +23,6 @@ The official Windows dashboard does not function natively on Linux and required 
 
 **Important Notes**
 - This project is in Beta - There will be bugs
-- Currently, Nexus Premium is required, but support for free accounts are planned
 - Please report any issues you encounter to help improve the application
 
 ## Features

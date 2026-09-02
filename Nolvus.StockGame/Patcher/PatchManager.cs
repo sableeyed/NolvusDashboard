@@ -204,8 +204,6 @@ namespace Nolvus.StockGame.Patcher
 
                 Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
                 Task<string> stderrTask = process.StandardError.ReadToEndAsync();
-                //string stdout = await process.StandardOutput.ReadToEndAsync();
-                //string stderr = await process.StandardError.ReadToEndAsync();
 
                 await Task.WhenAll(stdoutTask, stderrTask);
                 await process.WaitForExitAsync();

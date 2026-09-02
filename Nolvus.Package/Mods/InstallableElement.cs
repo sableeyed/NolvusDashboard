@@ -14,6 +14,7 @@ using Nolvus.Core.Services;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Errors;
 using Nolvus.Package.Files;
+using Nolvus.Package.Utilities;
 using Nolvus.NexusApi;
 
 
@@ -36,7 +37,6 @@ namespace Nolvus.Package.Mods
         public int Index { get; set; }
         public Image Image { get; set; }
         public string Description { get; set; } = string.Empty;
-        private static readonly SemaphoreSlim ManualBrowserGate = new(1, 1); //Gating for RequestManualNexusDownloadLink
 
         public ModProgress Progress
         {
@@ -304,8 +304,10 @@ namespace Nolvus.Package.Mods
                 if (file.Exist() && await file.CRCCheck().ConfigureAwait(false))
                     continue;
 
-                await ManualBrowserGate.WaitAsync().ConfigureAwait(false);
-                try
+                // Only the browser interaction is gated. The Exist/CRCCheck above deliberately runs
+                // outside it so mods already present in the archive are not serialized behind
+                // another mod's browser window.
+                await BrowserGate.RunAsync($"manual link for {file.FileName}", async () =>
                 {
                     ServiceSingleton.Logger.Log($"Awaiting manual user download link for file {file.FileName}");
 
@@ -324,11 +326,7 @@ namespace Nolvus.Package.Mods
                             ServiceSingleton.Logger.Log($"Manual download window closed before completing, reopening ({browserTries}/{ServiceSingleton.Settings.RetryCount}) for file {file.FileName}");
                         }
                     }
-                }
-                finally
-                {
-                    ManualBrowserGate.Release();
-                }
+                }).ConfigureAwait(false);
             }
         }
 

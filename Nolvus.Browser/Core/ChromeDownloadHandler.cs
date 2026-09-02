@@ -13,6 +13,7 @@ namespace Nolvus.Browser.Core
     public class ChromeDownloaderHandler : DownloadHandler
     {
         private bool _isDownloadComplete;
+        private bool _isFailureLogged;
         private bool _linkOnly;
         private string? _currentDownloadPath;
         public bool IsDownloadComplete => _isDownloadComplete;
@@ -40,6 +41,7 @@ namespace Nolvus.Browser.Core
             OnBeforeDownloadFired?.Invoke(this, downloadItem);
 
             _isDownloadComplete = false;
+            _isFailureLogged = false;
             LastDownloadedFilePath = null;
             _currentDownloadPath = null;
 
@@ -111,8 +113,29 @@ namespace Nolvus.Browser.Core
 
             if (downloadItem.IsComplete)
             {
+                if (_isDownloadComplete)
+                    return;
+
                 _sw.Stop();
                 _isDownloadComplete = true;
+
+                if (!string.IsNullOrWhiteSpace(downloadItem.FullPath))
+                    LastDownloadedFilePath = downloadItem.FullPath;
+
+                ServiceSingleton.Logger.Log($"[CEF] Download completed : {LastDownloadedFilePath}");
+
+                OnFileDownloadCompleted?.Invoke(this, new FileDownloadRequestEvent(downloadItem.Url));
+            }
+            else if (downloadItem.IsCanceled || downloadItem.IsInterrupted)
+            {
+                if (_isFailureLogged)
+                    return;
+
+                _sw.Stop();
+                _isFailureLogged = true;
+
+                ServiceSingleton.Logger.Log(
+                    $"[CEF] Download {(downloadItem.IsCanceled ? "canceled" : "interrupted")} : {downloadItem.Url}");
             }
         }
     }

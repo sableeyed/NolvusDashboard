@@ -31,7 +31,6 @@ namespace Nolvus.Package.Services
         XmlDocument _Storage = new XmlDocument();        
         List<InstallableElement> Elements = new List<InstallableElement>();
         SemaphoreSlim SemaphoreSlim;
-        SemaphoreSlim SemaphoreSlimBeforeDownload;
         QueueWatcher QueueWatcher;
         bool _Processing = false;
         private Dictionary<string, object> _Softwares = new Dictionary<string, object>();
@@ -377,14 +376,10 @@ namespace Nolvus.Package.Services
 
         private async Task RequestManualDownloadLinkIfAny(InstallableElement Mod, ModInstallSettings Settings)
         {
-            await SemaphoreSlimBeforeDownload.WaitAsync().ConfigureAwait(false);
-
             if (!NexusApi.ApiManager.AccountInfo.IsPremium)
             {
                 await Mod.RequestManualNexusDownloadLink(Settings.Browser).ConfigureAwait(false);
             }
-            
-            SemaphoreSlimBeforeDownload.Release();
         }
 
         private void SaveInstance(InstallableElement Mod)
@@ -398,15 +393,12 @@ namespace Nolvus.Package.Services
             try
             {
                 _Processing = true;
-                if (!NexusApi.ApiManager.AccountInfo.IsPremium)
-                {
-                    SemaphoreSlim = new SemaphoreSlim(1); //force free users to use a single thread
-                }
-                else
-                {
-                    SemaphoreSlim = new SemaphoreSlim(ServiceSingleton.Settings.ProcessCount);
-                }
-                SemaphoreSlimBeforeDownload = new SemaphoreSlim(1);
+
+                // Free accounts used to be pinned to a single thread to keep more than one browser
+                // window from appearing. BrowserGate enforces that directly now, so they get the
+                // same parallelism as everyone else - which matters most when installing from an
+                // existing archive, where no browser is needed at all.
+                SemaphoreSlim = new SemaphoreSlim(ServiceSingleton.Settings.ProcessCount);
 
                 _ErrorHandler = new ErrorHandler(ServiceSingleton.Settings.ErrorsThreshold) 
                 {

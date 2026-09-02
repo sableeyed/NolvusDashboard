@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
 
@@ -31,7 +30,7 @@ namespace Nolvus.Services.Files.Extractor
             ServiceSingleton.Logger.Log("File to extract: " + File);
             ServiceSingleton.Logger.Log("Outpath path: " + Output);
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 FileName = Path.GetFileName(File);
 
@@ -78,13 +77,9 @@ namespace Nolvus.Services.Files.Extractor
                     proc.BeginOutputReadLine();
                     proc.BeginErrorReadLine();
 
-                    int exitCode = PosixWait.WaitForExitBlocking(proc.Id);
-                    
-                    try 
-                    {
-                        proc.Refresh();
-                    } 
-                    catch { }
+                    await proc.WaitForExitAsync();
+
+                    int exitCode = proc.ExitCode;
 
                     if (exitCode != 0)
                         throw new Exception($"Error during File extraction {FileName} (exit code {exitCode}): {string.Join(" ", errorOutput)}");
@@ -108,48 +103,6 @@ namespace Nolvus.Services.Files.Extractor
                     }
                 }
             });
-        }
-
-        private static class PosixWait
-        {
-            [DllImport("libc", SetLastError = true)]
-            private static extern int waitpid(int pid, out int status, int options);
-
-            // Wait until the given PID is reaped. No timeout.
-            public static int WaitForExitBlocking(int pid)
-            {
-                while (true)
-                {
-                    int rc = waitpid(pid, out int status, 0);
-
-                    if (rc == pid)
-                        return DecodeExitCode(status);
-
-                    if (rc == -1)
-                    {
-                        int err = Marshal.GetLastWin32Error();
-
-                        // If errno == ECHILD, someone else already reaped it.
-                        // Treat as success; extraction already finished.
-                        const int ECHILD = 10;
-                        if (err == ECHILD)
-                            return 0;
-
-                        throw new Exception($"waitpid({pid}) failed errno={err}");
-                    }
-                }
-            }
-
-            private static int DecodeExitCode(int status)
-            {
-                // Normal exit: low 7 bits are zero, exit code is high byte.
-                if ((status & 0x7F) == 0)
-                    return (status >> 8) & 0xFF;
-
-                // Signaled: return 128+signal (bash convention)
-                int sig = status & 0x7F;
-                return 128 + sig;
-            }
         }
     }
 }

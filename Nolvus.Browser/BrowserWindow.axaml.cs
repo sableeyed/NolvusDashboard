@@ -198,12 +198,25 @@ namespace Nolvus.Browser
                 mainLoadTcs.TrySetResult(null);
             }
 
+            void LoadingStateChanged(object? s, LoadingStateChangeEventArgs e)
+            {
+                if (!e.IsLoading)
+                {
+                    _cef.LoadingStateChange -= LoadingStateChanged;
+                    mainLoadTcs.TrySetResult(null);
+                }
+            }
+
             handler.OnFileDownloadCompleted += Completed;
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _cef.DownloadHandler = handler;
                 _cef.LoadEnd += LoadEnd;
+
+                if (site == WebSite.EnbDev)
+                    _cef.LoadingStateChange += LoadingStateChanged;
+
                 NavigateInternal(link);
             });
 
@@ -230,6 +243,7 @@ namespace Nolvus.Browser
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     try { _cef.LoadEnd -= LoadEnd; } catch { }
+                    try { _cef.LoadingStateChange -= LoadingStateChanged ; } catch { }
                 });
 
                 handler.OnFileDownloadCompleted -= Completed;

@@ -170,6 +170,8 @@ namespace Nolvus.Dashboard.Frames.Instance
             {
                 var instance = ServiceSingleton.Instances.WorkingInstance;
 
+                ModOrganizer.SelectInstance(instance.InstallDir);
+
                 var mo2 = ModOrganizer.Start(instance.InstallDir);
                 BtnPlay.IsEnabled = false;
                 BtnPlay.Content = "Running...";

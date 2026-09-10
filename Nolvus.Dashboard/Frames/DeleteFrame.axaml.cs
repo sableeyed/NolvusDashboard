@@ -103,6 +103,17 @@ namespace Nolvus.Dashboard.Frames
                 {
                     ServiceSingleton.Logger.Log($"RemoveDirectory failed: {ex.Message}");
                 }
+
+                try
+                {
+                    // Otherwise Fluorine keeps listing the instance, and opens it on next launch if
+                    // it was the selected one.
+                    ModOrganizer.UnregisterInstance(Instance.InstallDir);
+                }
+                catch (Exception ex)
+                {
+                    ServiceSingleton.Logger.Log($"UnregisterInstance failed: {ex.Message}");
+                }
             });
         }
 

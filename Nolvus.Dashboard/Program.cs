@@ -19,8 +19,6 @@ using System.Reflection;
 using Xilium.CefGlue;
 using Xilium.CefGlue.Common;
 using System.Text;
-using Nolvus.Dashboard.Services.Wine;
-using Nolvus.Dashboard.Services.Proton;
 
 namespace Nolvus.Dashboard;
 
@@ -132,8 +130,6 @@ internal static class Program
         ServiceSingleton.RegisterService<IReportService>(new ReportService());
         ServiceSingleton.RegisterService<ICheckerService>(new CheckerService());
         ServiceSingleton.RegisterService<IENBService>(new ENBService());
-        ServiceSingleton.RegisterService<IWineRunner>(new WineRunner());
-        //ServiceSingleton.RegisterService<IProtontricks>(new Protontricks());
 
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
         QuestPDF.Settings.FontDiscoveryPaths.Clear();

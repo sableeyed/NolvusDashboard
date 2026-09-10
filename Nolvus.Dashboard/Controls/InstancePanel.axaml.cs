@@ -17,7 +17,6 @@ using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Package.Mods;
 using Vcc.Nolvus.Api.Installer.Services;
 using Nolvus.Dashboard.Frames.Instance.v5;
-using Nolvus.Dashboard.Services;
 using ValveKeyValue;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -25,9 +24,6 @@ using System.Text;
 using Avalonia.Interactivity;
 using Nolvus.Core.Utils;
 using Avalonia.Platform.Storage;
-using Nolvus.Dashboard.Services.Wine;
-using Nolvus.Dashboard.Services.Proton;
-using Nolvus.Dashboard.Frames.Manager.Proton;
 using Nolvus.Dashboard.Frames.Remap.v6;
 
 namespace Nolvus.Dashboard.Controls
@@ -36,8 +32,6 @@ namespace Nolvus.Dashboard.Controls
     {
         private INolvusInstance _instance;
         private InstancesPanel _parent;
-        private const string LauncherHash = "f0a455152530b221eba1706b42371a8f";
-        private const string NolvusHash = "d28d77bf715d577f21145bb792e70af8";
 
         public InstancePanel(InstancesPanel parent)
         {
@@ -126,38 +120,52 @@ namespace Nolvus.Dashboard.Controls
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
 
-            if (ModOrganizer.IsRunning)
+            if (!Fluorine.IsInstalled)
             {
-                NolvusMessageBox.Show(window, "Mod Organizer 2", "An instance of Mod Organizer 2 is already running!", MessageBoxType.Error);
+                await NolvusMessageBox.Show(window, "Fluorine Manager",
+                    "Fluorine Manager is not installed. Reinstall or update the instance to install it.", MessageBoxType.Error);
+                return;
+            }
+
+            if (Fluorine.IsRunning)
+            {
+                await NolvusMessageBox.Show(window, "Fluorine Manager",
+                    "An instance of Fluorine Manager is already running!", MessageBoxType.Error);
                 return;
             }
 
             SetPlayText("Running...");
             BtnPlay.IsEnabled = false;
 
-            var psi = new ProcessStartInfo
-            {
-                FileName = ExecutableResolver.RequireExecutable("steam"),
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = false,
-                RedirectStandardError = false
-            };
-
-            psi.ArgumentList.Add("steam://rungameid/489830");
-
             try
             {
-                using var proc = Process.Start(psi);
-                await Task.Delay(1500);
-                SetPlayText("Play");
-                BtnPlay.IsEnabled = true;
+                // Fluorine opens whatever CurrentInstance names, so point it at this one first.
+                ModOrganizer.SelectInstance(_instance.InstallDir);
+
+                var Manager = Fluorine.Start();
+
+                // Fluorine stays up for as long as the user is modding, so the button is held until
+                // it exits rather than being restored after a fixed delay.
+                _ = Task.Run(() =>
+                {
+                    try { Manager.WaitForExit(); } catch { }
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        SetPlayText("Play");
+                        BtnPlay.IsEnabled = true;
+                    });
+                });
             }
-            catch
+            catch (Exception ex)
             {
                 SetPlayText("Play");
                 BtnPlay.IsEnabled = true;
-                throw;
+
+                ServiceSingleton.Logger.Log($"[FLUORINE] Could not launch : {ex.Message}");
+
+                await NolvusMessageBox.Show(window, "Fluorine Manager",
+                    "Unable to start Fluorine Manager : " + ex.Message, MessageBoxType.Error);
             }
         }
 
@@ -192,22 +200,7 @@ namespace Nolvus.Dashboard.Controls
             var miShortcut = new MenuItem { Header = "Add Desktop Shortcut" };
             miShortcut.Click += (_, __) => BrItmShortCut_Click();
             menu.Items.Add(miShortcut);
-
-            //Nolvus Launcher
-            var miRedirector = new MenuItem { Header = "Setup Steam Redirector" };
-            miRedirector.Click += (_, __) => BrItmRedirector_Click();
-            menu.Items.Add(miRedirector);
-
-            //MO2 Prefix (optional)
-            var miMO2Prefix = new MenuItem { Header = "Create MO2 Prefix" };
-            miMO2Prefix.Click += async (_, __) => await BrMO2Prefix_Click();
-            menu.Items.Add(miMO2Prefix);
-
-            //Skyrim Proton Prefix
-            var miPostInstall = new MenuItem { Header = "Proton Manager" };
-            miPostInstall.Click += async (_, __) => await BrItemPostInstall_Click();
-            menu.Items.Add(miPostInstall);
-
+            
             menu.Items.Add(new Separator());
 
             // Report to PDF
@@ -341,23 +334,35 @@ namespace Nolvus.Dashboard.Controls
                     new FrameParameter { Key = "Action", Value = InstanceAction.Delete }));
         }
 
+        
         private void BrItmShortCut_Click()
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+
             try
             {
-                string winePrefix = WinePrefix.PrefixPath;
-                string mo2Path = Path.Combine(_instance.InstallDir, "MO2", "ModOrganizer.exe");
-                string exec = $"env WINEPREFIX=\"{winePrefix}\" wine \"{mo2Path}\"";
-                string path = Path.Combine(_instance.InstallDir, "MO2");
+                if (!Fluorine.IsInstalled)
+                {
+                    NolvusMessageBox.Show(window, "Desktop Shortcut",
+                        "Fluorine Manager is not installed. Reinstall or update the instance to install it.", MessageBoxType.Error);
+                    return;
+                }
+
+                // --instance opens this instance directly, so the shortcut is not at the mercy of
+                // whichever instance Fluorine happened to have selected last. Fluorine is a native
+                // binary, so there is no wine involved.
+                var ModsDir = Path.Combine(_instance.InstallDir, "MODS");
+                var Exec = $"\"{Fluorine.Executable}\" --instance \"{ModsDir}\"";
+
                 var name = _instance.Name;
                 var comment = $"Desktop shortcut for your {_instance.Name} instance.";
                 var icon = Path.Combine(AppContext.BaseDirectory, "nolvus-ico.jpg");
 
-                CreateDesktopShortcut(name, exec, comment, path, icon);
+                CreateDesktopShortcut(name, Exec, comment, Fluorine.InstallDirectory, icon);
 
-                NolvusMessageBox.Show(window, "Desktop Shortcut", $"Your {_instance.Name} shortcut has been added to your desktop. " +
-                                "This is only for using MO2 without Steam. You will not be able to launch the game this way", MessageBoxType.Info);
+                NolvusMessageBox.Show(window, "Desktop Shortcut",
+                    $"Your {_instance.Name} shortcut has been added to your desktop. It opens Fluorine Manager on this instance; launch the game from there.",
+                    MessageBoxType.Info);
             }
             catch (Exception ex)
             {
@@ -400,216 +405,6 @@ namespace Nolvus.Dashboard.Controls
                 NolvusMessageBox.Show(window, "Mod Organizer 2", "An instance of Mod Organizer 2 is running! Close it first.", MessageBoxType.Error);
             }
         }
-
-        private async Task BrItmRedirector_Click()
-        {
-            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
-            string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); //get hpme folder
-            string vdfPath = Path.Combine(home, ".steam", "steam", "config", "libraryfolders.vdf"); //get path to vdf
-            string? libraryPath = GetSteamLibraryForApp(vdfPath); //get path to the steam library from vdf
-            string? skyrimPath = Path.Combine(libraryPath, "steamapps", "common", "Skyrim Special Edition"); //combine paths to get skyrim path
-            string mo2Path = Path.Combine(_instance.InstallDir, "MO2", "ModOrganizer.exe");
-
-            if (skyrimPath == null)
-            {
-                await NolvusMessageBox.Show(window, "Error", "Skyrim installation path not found, manual configuration of the redirector is required!", MessageBoxType.Error);
-                return;
-            }
-
-            string? launcherPath = Path.Combine(skyrimPath, "SkyrimSELauncher.exe");
-            if (!File.Exists(launcherPath))
-            {
-                await NolvusMessageBox.Show(window, "Error", "SkyrimSELauncher.exe not found. If you believe this is a bug, install the launcher manually.", MessageBoxType.Error);
-                return;
-            }
-
-            //Check if the launcher is already installed
-            string? md5 = GetFileMd5(launcherPath);
-            if(md5 != null && md5.ToLowerInvariant() == NolvusHash)
-            {
-                await NolvusMessageBox.Show(window, "Error", "Redirector already exists - Update your instancepath.txt manually", MessageBoxType.Error);
-                return;
-            }
-
-            //setup launcher if not
-            if(md5 != null && md5.ToLowerInvariant() == LauncherHash)
-            {
-                string temp = launcherPath + ".new";
-
-                ExtractLauncher(temp);
-
-                File.Move(launcherPath, launcherPath + ".bak");
-                File.Move(temp, launcherPath);
-                var instancePath = Path.Combine(skyrimPath, "instancepath.txt");
-                File.WriteAllText(instancePath, mo2Path);
-
-                await NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
-            }
-            else
-            {
-                await NolvusMessageBox.Show(window, "Error", "File hash is wrong. If Skyrim recently updated please report this as a bug!", MessageBoxType.Error);
-            }
-        }
-
-        private async Task BrItemPostInstall_Click()
-        {
-            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
-
-            bool? result = await NolvusMessageBox.ShowConfirmation(window, "Skyrim Prefix", "In order to play Nolvus this step is mandatory. Please ensure winetricks/protontricks is up to date otherwise this may fail silently. Winetricks should be self updated with \"sudo winetricks --self-update\". If you encounter issues, please refer to the wiki on how to do this manually.");
-
-            if (result != true)
-                return;
-            
-            ServiceSingleton.Instances.WorkingInstance = _instance;
-            await ServiceSingleton.Dashboard.LoadFrameAsync<ProtonManagerFrame>();
-        }
-
-
-        private async Task BrMO2Prefix_Click()
-        {
-            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
-            bool? result = await NolvusMessageBox.ShowConfirmation(window, "ModOrganizer", "This is only useful if you want to use MO2 without needing to launch steam. You CANNOT play the game through MO2 with this method. Do you want to continue?");
-            if (result == true)
-            {
-                var winePath = ExecutableResolver.FindExecutable("wine");
-                if (winePath == null)
-                {
-                    var topLevel = TopLevel.GetTopLevel(this);
-                    if (topLevel == null) 
-                    {
-                        await ServiceSingleton.Dashboard.Error("MO2", "An error ocurred when trying to open system file dialog.");
-                        return;
-                    }
-
-                    var binary = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                    {
-                        Title = "Select Wine executable",
-                        AllowMultiple = false
-                    });
-
-                    if (binary == null || binary.Count == 0)
-                    {
-                        await ServiceSingleton.Dashboard.Error("MO2", "Wine binary was not selected. Please provide a valid wine binary.");
-                        return;
-                    }
-
-                    winePath = binary[0].Path.LocalPath;
-                }
-
-                WineRunner.WinePath = winePath;
-
-                await WinePrefix.InitializeAsync((_, __) => { });
-            }
-        }
-
-        private static void ExtractLauncher(string output)
-        {
-            var asm = typeof(DashboardApp).Assembly;
-
-            string resourceName = asm.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("NolvusLauncher.exe"));
-
-            if (resourceName == null)
-                throw new Exception("Launcher not found");
-
-            using Stream? resStream = asm.GetManifestResourceStream(resourceName);
-
-            if (resStream == null)
-                throw new Exception("Failed to load launcher");
-
-            using FileStream fs = File.Create(output);
-            resStream.CopyTo(fs);
-        }
-
-        private static string? GetFileMd5(string path)
-        {
-            if (!File.Exists(path))
-                return null;
-
-            using var md5 = MD5.Create();
-            using var stream = File.OpenRead(path);
-
-            byte[] hash = md5.ComputeHash(stream);
-            var sb = new StringBuilder(hash.Length * 2);
-            foreach (byte b in hash)
-                sb.Append(b.ToString("x2"));
-            
-            return sb.ToString();
-        }
-
-        public static string? GetSteamLibraryForApp(string vdfPath, string appId = "489830")
-        {
-            if (!File.Exists(vdfPath))
-                return null;
-
-            string[] lines = File.ReadAllLines(vdfPath);
-
-            string? currentPath = null;
-            bool insideLibrary = false;
-            bool insideApps = false;
-
-            foreach (var raw in lines)
-            {
-                string line = raw.Trim();
-
-                // Start of a library entry: "0", "1", "2", ...
-                if (line.StartsWith("\"") && line.EndsWith("\"") && line.Length <= 4)
-                {
-                    // New library block starting
-                    insideLibrary = true;
-                    insideApps = false;
-                    currentPath = null;
-                    continue;
-                }
-
-                if (!insideLibrary)
-                    continue;
-
-                // Detect path
-                if (line.StartsWith("\"path\""))
-                {
-                    // Extract value between quotes: "path"   "xxxxx"
-                    int idx = line.IndexOf('"', 7);
-                    if (idx > 0)
-                    {
-                        int end = line.IndexOf('"', idx + 1);
-                        if (end > idx)
-                            currentPath = line.Substring(idx + 1, end - (idx + 1));
-                    }
-                    continue;
-                }
-
-                // Detect entering apps block
-                if (line.StartsWith("\"apps\""))
-                {
-                    insideApps = true;
-                    continue;
-                }
-
-                // Inside apps block, check for appId
-                if (insideApps && line.StartsWith($"\"{appId}\""))
-                {
-                    // Found Skyrim SE inside this library
-                    return currentPath;
-                }
-
-                // Leaving blocks
-                if (line == "}")
-                {
-                    if (insideApps)
-                    {
-                        insideApps = false;
-                    }
-                    else if (insideLibrary)
-                    {
-                        insideLibrary = false;
-                        currentPath = null;
-                    }
-                }
-            }
-
-            return null;
-        }
-
 
         private SixLabors.ImageSharp.Image LoadImageSharpFromAsset(string assetPath)
         {
@@ -663,6 +458,5 @@ Categories=Game;Utility;
                 await NolvusMessageBox.Show(owner, "Mod Organizer 2", "An instance of Mod Organizer 2 is running! Close it first.", MessageBoxType.Error);
             }
         }
-
     }
 }

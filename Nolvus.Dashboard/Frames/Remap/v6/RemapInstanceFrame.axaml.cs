@@ -12,6 +12,7 @@ using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
 using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Dashboard.Controls;
+using Nolvus.Package.Mods;
 
 namespace Nolvus.Dashboard.Frames.Remap.v6
 {
@@ -35,26 +36,54 @@ namespace Nolvus.Dashboard.Frames.Remap.v6
             LblCurrentInstallPath.Text = ServiceSingleton.Instances.WorkingInstance.InstallDir;
         }
 
-        private void CheckMO2Executables()
+        private void ModifyMO2Executables(string CurrentInstallPath, string NewInstallPath)
         {
-            //STUB - The only thing that should need updated is the path in X:. Support picking their own prefix path coming Soon(TM) because we now have instance tagging
-        }
+            var Ini = Path.Combine(NewInstallPath, "MODS", "ModOrganizer.ini");
 
-        private void ModifyMO2Executables(string NewInstallPath, string StockGamePath)
-        {
-            //STUB
+            if (!File.Exists(Ini))
+            {
+                ServiceSingleton.Logger.Log($"Remap : no ModOrganizer.ini at {Ini}, nothing to rewrite");
+            }
+            else
+            {
+                var OldWine = ModOrganizer.ToWineIniPath(CurrentInstallPath);
+                var NewWine = ModOrganizer.ToWineIniPath(NewInstallPath);
+
+                var Text = System.IO.File.ReadAllText(Ini);
+
+                // Rewritten as text rather than per executable: this also covers gamePath,
+                // recentDirectories and anything the user added by hand. binary= entries are
+                // written with forward slashes (see AddExecutable) while everything else keeps the
+                // escaped backslashes, so both spellings are replaced.
+                Text = Text.Replace(OldWine.Replace(@"\\", @"/"), NewWine.Replace(@"\\", @"/"));
+                Text = Text.Replace(OldWine, NewWine);
+                Text = Text.Replace(CurrentInstallPath, NewInstallPath);
+
+                System.IO.File.WriteAllText(Ini, Text);
+
+                ServiceSingleton.Logger.Log($"Remap : rewrote {Ini} : {OldWine} -> {NewWine}");
+            }
+
+            ModOrganizer.RemapConf(CurrentInstallPath, NewInstallPath);
+
+            // The file move drops symlinks, so this is rebuilt pointing at the new location.
+            ModOrganizer.CreateNemesisSymlink(NewInstallPath, Replace: true);
         }
 
         private async Task Remap()
         {
-            CheckMO2Executables();
-
             var CurrentInstallPath = ServiceSingleton.Instances.WorkingInstance.InstallDir;
             var NewInstallPath = TxtBxInstancePath.Text;
             var StockGamePath = Path.Combine(NewInstallPath, "STOCK GAME");
             
             await Task.Run(() =>
             {
+                // Before enumerating anything: GetFiles(AllDirectories) recurses through directory
+                // symlinks but never returns them, so the Nemesis link would be followed and its
+                // target's contents moved into STOCK GAME/Data as real files. Rebuilt at the new
+                // location by ModifyMO2Executables once the move is done.
+                ModOrganizer.DeleteNemesisSymlink(CurrentInstallPath);
+
                 var Files = ServiceSingleton.Files.GetFiles(CurrentInstallPath);
 
                 Directory.CreateDirectory(Path.Combine(NewInstallPath, "MODS", "mods", "0. MASTER FILES_separator"));
@@ -72,14 +101,11 @@ namespace Nolvus.Dashboard.Frames.Remap.v6
 
                     if (Info.LinkTarget != null)
                     {
-                        Directory.CreateDirectory(Path.GetDirectoryName(DestPath)!);
+                        // Deleted rather than moved: the move follows the link and fails with a
+                        // file not found once its target has been moved out from under it.
+                        // ModifyMO2Executables puts the instance's own links back afterwards.
+                        ServiceSingleton.Logger.Log($"Remap : dropping symlink {Info.FullName} -> {Info.LinkTarget}");
 
-                        if (System.IO.File.Exists(DestPath))
-                        {
-                            System.IO.File.Delete(DestPath);
-                        }
-
-                        System.IO.File.CreateSymbolicLink(DestPath, Info.LinkTarget);
                         System.IO.File.Delete(Info.FullName);
                     }
                     else
@@ -97,7 +123,7 @@ namespace Nolvus.Dashboard.Frames.Remap.v6
                     });
                 }
 
-                ModifyMO2Executables(NewInstallPath, StockGamePath);
+                ModifyMO2Executables(CurrentInstallPath, NewInstallPath);
 
                 ServiceSingleton.Instances.WorkingInstance.InstallDir = NewInstallPath;
                 ServiceSingleton.Instances.WorkingInstance.StockGame = StockGamePath;

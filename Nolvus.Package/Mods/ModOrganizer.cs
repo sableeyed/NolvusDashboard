@@ -29,7 +29,8 @@ namespace Nolvus.Package.Mods
 gameName=Skyrim Special Edition
 selected_profile=@ByteArray({0})
 gamePath=@ByteArray({1})
-version=2.4.4
+game_edition=Steam
+version=0.3.4
 first_start=false
 
 [PluginPersistance]
@@ -170,10 +171,16 @@ Skyrim%20Special%20Edition%20Support%20Plugin\enderal_downloads=false
 Skyrim%20Support%20Plugin\sse_downloads=false
 
 [pluginBlacklist]
-size=0";
+size=0
 
-        private const string nxmhandler = @"[General]
-noregister=true";
+[fluorine]
+usvfs_exact_query_exhaustion=false
+usvfs_shared_context=false
+vfs_backend=fuse";
+
+        // Dead under Fluorine: nothing writes nxmhandler.ini any more.
+        //private const string nxmhandler = @"[General]
+        //noregister=true";
 
         #endregion
 
@@ -2347,6 +2354,321 @@ ccafdsse001-dwesanctuary.esm";
             //File.WriteAllText(FileName, string.Format(IniFile, Profile, WineGameDir, WineDataDir));
         }
 
+        // $XDG_CONFIG_HOME/Mod Organizer Team/Mod Organizer.conf - the QSettings file MO2 and
+        // Fluorine share (organization "Mod Organizer Team", application "Mod Organizer").
+        private static string ModOrganizerConfFile
+        {
+            get
+            {
+                var ConfigHome = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
+
+                if (string.IsNullOrWhiteSpace(ConfigHome))
+                    ConfigHome = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
+
+                return Path.Combine(ConfigHome, "Mod Organizer Team", "Mod Organizer.conf");
+            }
+        }
+
+        /// <summary>
+        /// Registers the instance with Fluorine.
+        ///
+        /// Fluorine locates its instance through the shared Qt settings file MO2 has always used -
+        /// organization "Mod Organizer Team", application "Mod Organizer", which resolves to
+        /// $XDG_CONFIG_HOME/Mod Organizer Team/Mod Organizer.conf - and not through anything stored
+        /// inside the instance itself. Without it Fluorine opens its instance picker rather than the
+        /// Nolvus instance, so this has to be written before the manager is ever launched.
+        ///
+        /// A conf that does not exist yet is created pointing at this instance. One that already
+        /// exists only has this instance added to PortableInstances - CurrentInstance is left as it
+        /// is, so an existing Fluorine setup is registered with the new instance without having the
+        /// instance it currently has open switched out from under it. Any other settings Fluorine
+        /// keeps in there are preserved either way.
+        /// </summary>
+        private static void CreateModOrganizerConf(string ModsDir)
+        {
+            var ConfFile = ModOrganizerConfFile;
+
+            Directory.CreateDirectory(Path.GetDirectoryName(ConfFile));
+
+            var Parser = ServiceSingleton.Settings.GetIniParser();
+
+            // Qt writes key=value; the parser would pad it to key = value by default.
+            Parser.Parser.Configuration.AssigmentSpacer = string.Empty;
+
+            // The parser cannot read what is not there, and it throws outright on a conf left half
+            // written by a crash. Neither is worth failing an install over, so fall back to a bare
+            // [General] and let the keys below repopulate it. A conf we had to create ourselves does
+            // not count as pre-existing, so it gets CurrentInstance too.
+            var Existed = File.Exists(ConfFile);
+
+            if (!Existed)
+            {
+                File.WriteAllText(ConfFile, "[General]" + "\n");
+            }
+
+            IniParser.Model.IniData Data;
+
+            try
+            {
+                Data = Parser.ReadFile(ConfFile);
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] {ConfFile} could not be parsed, rewriting it : {ex.Message}");
+
+                File.WriteAllText(ConfFile, "[General]" + "\n");
+
+                Data = Parser.ReadFile(ConfFile);
+                Existed = false;
+            }
+
+            if (!Existed)
+            {
+                // Nothing was there to respect, so point Fluorine straight at this instance.
+                Data["General"]["CurrentInstance"] = ModsDir;
+                Data["General"]["PortableInstances"] = ModsDir;
+
+                ServiceSingleton.Logger.Log($"[FLUORINE] Instance registered in {ConfFile} -> {ModsDir}");
+            }
+            else
+            {
+                var Existing = Data["General"]["PortableInstances"] ?? string.Empty;
+
+                var Instances = Existing
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Trim())
+                    .Where(x => x.Length > 0)
+                    .ToList();
+
+                if (Instances.Contains(ModsDir, StringComparer.Ordinal))
+                {
+                    ServiceSingleton.Logger.Log($"[FLUORINE] {ModsDir} already listed in {ConfFile}");
+                    return;
+                }
+
+                Instances.Add(ModsDir);
+
+                Data["General"]["PortableInstances"] = string.Join(", ", Instances);
+
+                ServiceSingleton.Logger.Log($"[FLUORINE] Instance appended to PortableInstances in {ConfFile} -> {ModsDir}");
+            }
+
+            Parser.WriteFile(ConfFile, Data);
+        }
+
+        /// <summary>
+        /// Points Fluorine at this instance. Fluorine opens whatever CurrentInstance names, so this
+        /// has to run before launching or Play opens whichever instance was selected last.
+        /// </summary>
+        public static void SelectInstance(string InstallDir)
+        {
+            var ModsDir = Path.Combine(InstallDir, "MODS");
+            var ConfFile = ModOrganizerConfFile;
+
+            var Parser = ServiceSingleton.Settings.GetIniParser();
+
+            Parser.Parser.Configuration.AssigmentSpacer = string.Empty;
+
+            var Data = OpenConf(Parser, ConfFile);
+
+            Data["General"]["CurrentInstance"] = ModsDir;
+
+            var Instances = ReadInstances(Data);
+
+            if (!Instances.Contains(ModsDir, StringComparer.Ordinal))
+                Instances.Add(ModsDir);
+
+            Data["General"]["PortableInstances"] = string.Join(", ", Instances);
+
+            Parser.WriteFile(ConfFile, Data);
+
+            ServiceSingleton.Logger.Log($"[FLUORINE] Selected instance {ModsDir}");
+        }
+
+        /// <summary>
+        /// Drops a deleted instance from the shared conf, so Fluorine is not left pointing at a
+        /// directory that no longer exists.
+        /// </summary>
+        public static void UnregisterInstance(string InstallDir)
+        {
+            var ConfFile = ModOrganizerConfFile;
+
+            if (!File.Exists(ConfFile))
+                return;
+
+            var ModsDir = Path.Combine(InstallDir, "MODS");
+
+            var Parser = ServiceSingleton.Settings.GetIniParser();
+
+            Parser.Parser.Configuration.AssigmentSpacer = string.Empty;
+
+            var Data = OpenConf(Parser, ConfFile);
+
+            var Instances = ReadInstances(Data)
+                .Where(x => !string.Equals(x, ModsDir, StringComparison.Ordinal))
+                .ToList();
+
+            Data["General"]["PortableInstances"] = string.Join(", ", Instances);
+
+            // Fall back to another instance rather than leaving the selection on the deleted one.
+            if (string.Equals(Data["General"]["CurrentInstance"], ModsDir, StringComparison.Ordinal))
+                Data["General"]["CurrentInstance"] = Instances.FirstOrDefault() ?? string.Empty;
+
+            Parser.WriteFile(ConfFile, Data);
+
+            ServiceSingleton.Logger.Log($"[FLUORINE] Unregistered instance {ModsDir}");
+        }
+
+        private static List<string> ReadInstances(IniParser.Model.IniData Data)
+        {
+            return (Data["General"]["PortableInstances"] ?? string.Empty)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => x.Length > 0)
+                .ToList();
+        }
+
+        // Opens the shared conf for editing, creating it or replacing an unparseable one. Note that
+        // CreateModOrganizerConf deliberately does not use this - it needs to know whether the file
+        // pre-existed in order to decide whether to touch CurrentInstance.
+        private static IniParser.Model.IniData OpenConf(IniParser.FileIniDataParser Parser, string ConfFile)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(ConfFile));
+
+            if (!File.Exists(ConfFile))
+                File.WriteAllText(ConfFile, "[General]" + "\n");
+
+            try
+            {
+                return Parser.ReadFile(ConfFile);
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] {ConfFile} could not be parsed, rewriting it : {ex.Message}");
+
+                File.WriteAllText(ConfFile, "[General]" + "\n");
+
+                return Parser.ReadFile(ConfFile);
+            }
+        }
+
+        /// <summary>
+        /// Removes the Nemesis symlink. Must run before anything enumerates the instance: it is a
+        /// directory symlink, so DirectoryInfo.GetFiles(AllDirectories) never yields it as an entry
+        /// yet still recurses through it, which turns a move into a copy of the Nemesis mod's
+        /// contents into STOCK GAME/Data.
+        /// </summary>
+        public static void DeleteNemesisSymlink(string InstallDir)
+        {
+            var LinkName = Path.Combine(InstallDir, "STOCK GAME", "Data", "Nemesis_Engine");
+
+            var Info = new FileInfo(LinkName);
+
+            if (Info.LinkTarget == null)
+                return;
+
+            // File.Delete unlinks the symlink and leaves the mod folder it points at alone.
+            File.Delete(LinkName);
+
+            ServiceSingleton.Logger.Log($"Nemesis symlink removed from {LinkName}");
+        }
+
+        /// <summary>
+        /// STOCK GAME/Data/Nemesis_Engine -> MODS/mods/Nemesis Unlimited Behavior Engine/Nemesis_Engine.
+        /// Absolute, so it has to be remade whenever the instance moves.
+        /// </summary>
+        public static void CreateNemesisSymlink(string InstallDir, bool Replace = false)
+        {
+            var LinkName = Path.Combine(InstallDir, "STOCK GAME", "Data", "Nemesis_Engine");
+            var LinkTarget = Path.Combine(InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine", "Nemesis_Engine");
+
+            // Path.Exists is the only dependable check: File.Exists reports false for a working
+            // directory symlink and true for a dangling one, while CreateSymbolicLink throws if
+            // anything at all is already at the path.
+            if (Path.Exists(LinkName))
+            {
+                if (!Replace)
+                {
+                    ServiceSingleton.Logger.Log($"Nemesis symlink already present at {LinkName}");
+                    return;
+                }
+
+                // File.Delete unlinks the symlink itself and leaves the mod folder it points at
+                // alone. Directory.Delete would follow it into the target, so it is not used here
+                // even though the link points at a directory.
+                File.Delete(LinkName);
+
+                ServiceSingleton.Logger.Log($"Nemesis symlink removed from {LinkName}");
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(LinkName));
+
+            File.CreateSymbolicLink(LinkName, LinkTarget);
+
+            ServiceSingleton.Logger.Log($"Nemesis symlink created {LinkName} -> {LinkTarget}");
+        }
+
+        /// <summary>
+        /// Moves an instance's registration in the shared conf. Linux-only: Windows MO2 keeps this
+        /// in the registry, so there is no upstream equivalent.
+        /// </summary>
+        public static void RemapConf(string OldInstallDir, string NewInstallDir)
+        {
+            RemapModOrganizerConf(
+                Path.Combine(OldInstallDir, "MODS"),
+                Path.Combine(NewInstallDir, "MODS"));
+        }
+
+        private static void RemapModOrganizerConf(string OldModsDir, string NewModsDir)
+        {
+            var ConfFile = ModOrganizerConfFile;
+
+            if (!File.Exists(ConfFile))
+            {
+                // Nothing registered yet - register the new location instead.
+                CreateModOrganizerConf(NewModsDir);
+                return;
+            }
+
+            var Parser = ServiceSingleton.Settings.GetIniParser();
+
+            Parser.Parser.Configuration.AssigmentSpacer = string.Empty;
+
+            IniParser.Model.IniData Data;
+
+            try
+            {
+                Data = Parser.ReadFile(ConfFile);
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] {ConfFile} could not be parsed, rewriting it : {ex.Message}");
+
+                File.Delete(ConfFile);
+                CreateModOrganizerConf(NewModsDir);
+                return;
+            }
+
+            // CurrentInstance is deliberately left alone; only PortableInstances is rewritten.
+            // Play calls SelectInstance, which is what points Fluorine at the right instance.
+
+            var Instances = (Data["General"]["PortableInstances"] ?? string.Empty)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => x.Length > 0)
+                .Select(x => string.Equals(x, OldModsDir, StringComparison.Ordinal) ? NewModsDir : x)
+                .ToList();
+
+            if (!Instances.Contains(NewModsDir, StringComparer.Ordinal))
+                Instances.Add(NewModsDir);
+
+            Data["General"]["PortableInstances"] = string.Join(", ", Instances);
+
+            Parser.WriteFile(ConfFile, Data);
+
+            ServiceSingleton.Logger.Log($"[FLUORINE] Remapped {ConfFile} : {OldModsDir} -> {NewModsDir}");
+        }
+
         public static string GetIni(bool Pref, IniLevel Level, INolvusInstance Instance)
         {
             string Result = string.Empty;
@@ -2391,39 +2713,15 @@ ccafdsse001-dwesanctuary.esm";
 
         public static bool IsRunning
         {
-            get
-            {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "pgrep",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                };
-
-                psi.ArgumentList.Add("-f");
-                psi.ArgumentList.Add("ModOrganizer.exe");
-
-                try
-                {
-                    using var p = Process.Start(psi);
-                    if (p == null)
-                        return false;
-
-                    p.WaitForExit();
-                    return p.ExitCode == 0;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
+            get { return Fluorine.IsRunning; }
         }
 
         public static Process Start(string InstallDir)
         {
-            var exe = Path.Combine(InstallDir, "MO2", "ModOrganizer.exe");
-            return ServiceSingleton.Wine.Run(exe, InstallDir, "");
+            return Fluorine.Start();
+
+            //var exe = Path.Combine(InstallDir, "MO2", "ModOrganizer.exe");
+            //return ServiceSingleton.Wine.Run(exe, InstallDir, "");
         }
 
         public void AppendToIni(string IniDir, string Section, string Key, string Value)
@@ -2467,7 +2765,7 @@ ccafdsse001-dwesanctuary.esm";
         {
             var Parser = ServiceSingleton.Settings.GetIniParser();
 
-            var IniData = Parser.ReadFile(Path.Combine(IniDir, "MO2", "ModOrganizer.ini"));
+            var IniData = Parser.ReadFile(Path.Combine(IniDir, "ModOrganizer.ini"));
 
             var Section = IniData.Sections.Where(x => x.SectionName == "customExecutables").FirstOrDefault();
 
@@ -2477,19 +2775,20 @@ ccafdsse001-dwesanctuary.esm";
             IniData["customExecutables"][KeyIndex + "\\" + "arguments"] = Args;
             IniData["customExecutables"][KeyIndex + "\\" + "workingDirectory"] = WorkingDirectory;
 
-            Parser.WriteFile(Path.Combine(IniDir, "MO2", "ModOrganizer.ini"), IniData);
+            Parser.WriteFile(Path.Combine(IniDir, "ModOrganizer.ini"), IniData);
         }
 
         public static bool CheckIfExecutableExists(string ExecutableName, string IniDir)
         {
             var Parser = ServiceSingleton.Settings.GetIniParser();
 
-            var IniData = Parser.ReadFile(Path.Combine(IniDir, "MO2", "ModOrganizer.ini"));
+            var IniData = Parser.ReadFile(Path.Combine(IniDir, "ModOrganizer.ini"));
 
             var Section = IniData.Sections.Where(x => x.SectionName == "customExecutables").FirstOrDefault();
 
             return Section.Keys.Where(x => x.KeyName.Contains("title") && x.Value.Contains(ExecutableName)).FirstOrDefault() != null;
         }
+
 
         private void CreateBaseDirectories()
         {
@@ -2511,7 +2810,10 @@ ccafdsse001-dwesanctuary.esm";
             INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
 
             var ProfileFolder = Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name);
-            var MO2Folder = Path.Combine(Instance.InstallDir, "MO2");
+
+            // Fluorine treats MODS as the portable instance directory, so ModOrganizer.ini belongs
+            // there rather than next to the MO2 binaries.
+            var ModsFolder = Path.Combine(Instance.InstallDir, "MODS");
 
             //File.WriteAllText(Path.Combine(ProfileFolder, "Skyrim.ini"), ModOrganizer.GetIni(false, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
             //File.WriteAllText(Path.Combine(ProfileFolder, "SkyrimPrefs.ini"), ModOrganizer.GetIni(true, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
@@ -2531,22 +2833,27 @@ ccafdsse001-dwesanctuary.esm";
             NormalizeLineEndings(Path.Combine(ProfileFolder, "plugins.txt"), Plugins);
             NormalizeLineEndings(Path.Combine(ProfileFolder, "settings.ini"), SettingsIni);
             NormalizeLineEndings(Path.Combine(ProfileFolder, "skyrimcustom.ini"), string.Empty);
-            NormalizeLineEndings(Path.Combine(MO2Folder, "nxmhandler.ini"), nxmhandler);
+            // Dead under Fluorine: nothing reads nxmhandler.ini any more.
+            //NormalizeLineEndings(Path.Combine(MO2Folder, "nxmhandler.ini"), nxmhandler);
 
-            CreateModOrganizerIni(MO2Folder, Instance.Name, Instance.StockGame, Path.Combine(Instance.InstallDir, "MODS"));
+            CreateModOrganizerIni(ModsFolder, Instance.Name, Instance.StockGame, ModsFolder);
+
+            CreateModOrganizerConf(ModsFolder);
         }
 
-        private void CreateLauncher()
-        {
-            Console.WriteLine("Skipping Creation of NolvusLauncher.exe");
-            //File.WriteAllBytes(Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MO2", "NolvusLauncher.exe"), Properties.Resources.NolvusLauncher);
-        }
+        // Dead under Fluorine: NolvusLauncher.exe is not deployed and its call site is already commented out.
+        //private void CreateLauncher()
+        //{
+            //Console.WriteLine("Skipping Creation of NolvusLauncher.exe");
+            ////File.WriteAllBytes(Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MO2", "NolvusLauncher.exe"), Properties.Resources.NolvusLauncher);
+        //}
 
         private void AddExecutables()
         {
             INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
 
-            var MO2Folder = Path.Combine(Instance.InstallDir, "MO2");
+            // Executables are recorded in the ini Fluorine loads, which lives in MODS.
+            var MO2Folder = Path.Combine(Instance.InstallDir, "MODS");
 
             // Skip NolvusLauncher.exe entirely
             // Add SKSE, Skyrim, Launcher
@@ -2562,11 +2869,12 @@ ccafdsse001-dwesanctuary.esm";
                 Path.Combine(Instance.StockGame, "SkyrimSELauncher.exe").Replace(@"\", @"/"),
                 true, true, "Skyrim Special Edition Launcher", false, Instance.StockGame.Replace(@"\", @"/"));
 
-            // Explorer++ (no arguments for now)
-            AddExecutable(MO2Folder, string.Empty,
-                Path.Combine(Instance.InstallDir, "MO2", "explorer++", "Explorer++.exe").Replace(@"\", @"/"),
-                true, true, "Explore Virtual Folder", false,
-                Path.Combine(Instance.InstallDir, "MO2", "explorer++").Replace(@"\", @"/"));
+            // Explorer++ dropped under Fluorine: it ships in MO2/ and browsing the VFS through it
+            // is not useful.
+            //AddExecutable(MO2Folder, string.Empty,
+            //    Path.Combine(Instance.InstallDir, "MO2", "explorer++", "Explorer++.exe").Replace(@"\", @"/"),
+            //    true, true, "Explore Virtual Folder", false,
+            //    Path.Combine(Instance.InstallDir, "MO2", "explorer++").Replace(@"\", @"/"));
 
             // Nemesis
             AddExecutable(MO2Folder, string.Empty,
@@ -2577,23 +2885,23 @@ ccafdsse001-dwesanctuary.esm";
                             "Nemesis Unlimited Behavior Engine", "Nemesis_Engine").Replace(@"\", @"/"));
             
             // Nemesis Symlink
-            string linkName = Path.Combine(Instance.InstallDir, "STOCK GAME", "Data", "Nemesis_Engine");
-            string linkLoc = Path.Combine(Instance.InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine", "Nemesis_Engine");
-            File.CreateSymbolicLink(linkName, linkLoc);
+            CreateNemesisSymlink(Instance.InstallDir);
 
             // xEdit
-            string dataPath = ToWinePath(Path.Combine(Instance.InstallDir, "STOCK GAME", "Data"));
-            string iniPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "Skyrim.ini"));
-            string pluginPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "plugins.txt"));
-            string Args = "-D:" + MO2String(dataPath) + " " + "-I:" + MO2String(iniPath) + " " + "-P:" + MO2String(pluginPath);
-            AddExecutable(Path.Combine(Instance.InstallDir, "MO2"), Args,
+            // The VFS already presents the right Data, ini and plugin list, so the explicit
+            // -D:/-I:/-P: arguments are omitted - real paths would point xEdit around the VFS.
+            //string dataPath = ToWinePath(Path.Combine(Instance.InstallDir, "STOCK GAME", "Data"));
+            //string iniPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "Skyrim.ini"));
+            //string pluginPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "plugins.txt"));
+            //string Args = "-D:" + MO2String(dataPath) + " " + "-I:" + MO2String(iniPath) + " " + "-P:" + MO2String(pluginPath);
+            AddExecutable(MO2Folder, string.Empty,
                 Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit", "SSEEdit.exe").Replace(@"\", @"/"),
                 false, true, "xEdit", true,
                 Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit").Replace(@"\", @"/"));
 
             // xEdit AutoClean
             string ArgsAutoClean = string.Empty;
-            AddExecutable(Path.Combine(Instance.InstallDir, "MO2"), ArgsAutoClean,
+            AddExecutable(MO2Folder, ArgsAutoClean,
                 Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit", "SSEEditQuickAutoClean.exe").Replace(@"\", @"/"),
                 false, true, "xEdit Cleaning", false,
                 Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit").Replace(@"\", @"/"));
@@ -2625,6 +2933,10 @@ ccafdsse001-dwesanctuary.esm";
 
         protected override async Task DoCopy()
         {
+            // Fluorine is a prerequisite of the mod list rather than part of it, so it is fetched
+            // before the instance is scaffolded.
+            await Fluorine.Install(DownloadingProgress, ExtractingProgress);
+
             var Tsk = Task.Run(() =>
             {
                 try
@@ -2791,16 +3103,28 @@ ccafdsse001-dwesanctuary.esm";
 
             path = path.TrimEnd('/');
 
-            int idx = path.IndexOf("/Instances", StringComparison.OrdinalIgnoreCase);
-            if (idx == -1)
-            {
-                if (path.StartsWith("/", StringComparison.Ordinal))
-                    return "X:" + path.Replace("/", "\\");
-                return path.Replace("/", "\\");
-            }
+            // Fluorine addresses the instance through wine's default Z: mapping (Z: == /), so paths
+            // go in whole rather than being rebased onto a drive letter. This also drops the
+            // dependency on the X: symlink, which was created by the Proton prefix setup and no
+            // longer exists.
+            if (path.StartsWith("/", StringComparison.Ordinal))
+                return "Z:" + path.Replace("/", "\\");
 
-            string trimmed = path.Substring(idx);     // "/Instances/...."
-            return "X:" + trimmed.Replace("/", "\\"); // "X:\\Instances\\...."
+            return path.Replace("/", "\\");
+
+            // Previous MO2 behaviour: rebase onto X:, which was symlinked to the Nolvus root, to
+            // keep paths short. Restore this if MAX_PATH becomes a problem again under Fluorine.
+            //
+            // int idx = path.IndexOf("/Instances", StringComparison.OrdinalIgnoreCase);
+            // if (idx == -1)
+            // {
+            //     if (path.StartsWith("/", StringComparison.Ordinal))
+            //         return "X:" + path.Replace("/", "\\");
+            //     return path.Replace("/", "\\");
+            // }
+            //
+            // string trimmed = path.Substring(idx);     // "/Instances/...."
+            // return "X:" + trimmed.Replace("/", "\\"); // "X:\\Instances\\...."
         }
 
         public static string ToWineIniPath(string path)
@@ -2827,12 +3151,13 @@ ccafdsse001-dwesanctuary.esm";
             return text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
         }
 
-        private static string MO2String(string path)
-        {
-            path = path.TrimEnd('\\');
-            var escaped = path.Replace("\\", "\\\\");
-            return "\\\"" + escaped + "\\\"";
-        }
+        // Dead under Fluorine: only used to quote the xEdit arguments, which are no longer written.
+        //private static string MO2String(string path)
+        //{
+            //path = path.TrimEnd('\\');
+            //var escaped = path.Replace("\\", "\\\\");
+            //return "\\\"" + escaped + "\\\"";
+        //}
 
         #endregion                       
     }

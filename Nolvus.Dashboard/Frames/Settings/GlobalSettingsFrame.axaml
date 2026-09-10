@@ -15,7 +15,7 @@
 
             <!-- CONTENT AREA -->
             <Grid Grid.Row="1"
-                  ColumnDefinitions="520,24,235,*">
+                  ColumnDefinitions="520,24,235,24,235,*">
 
                 <!-- MEGA SETTINGS PANEL -->
                 <Border x:Name="GrpBxMega"
@@ -162,6 +162,40 @@
                                   HorizontalAlignment="Left"
                                   SelectionChanged="OnProcessorCountChanged"/>
                     </StackPanel>
+                </Border>
+
+                <!-- BROWSER SETTINGS PANEL -->
+                <Border x:Name="GrpBxBrowser"
+                    Grid.Column="4"
+                    Background="#363636"
+                    BorderBrush="#444"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="16"
+                    Width="235"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Browser"
+                                   Foreground="White"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"/>
+                    
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="12"
+                                    VerticalAlignment="Center">
+                            <TextBlock Text="Auto Click Slow Download"
+                                       Foreground="#CCCCCC"
+                                       VerticalAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Width="115"/>
+                            <ToggleSwitch x:Name="TglBtnAutoClick"
+                                            IsCheckedChanged="TglBtnAutoClick_Changed"
+                                            VerticalAlignment="Center"/>
+                            </StackPanel>
+                    </StackPanel>
+
                 </Border>
 
             </Grid>

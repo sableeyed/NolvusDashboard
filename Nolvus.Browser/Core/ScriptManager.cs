@@ -9,6 +9,7 @@ namespace Nolvus.Browser.Core
     public static class ScriptManager
     {
         public static string ScrollToButton          = "(function () { var el = document.getElementById('slowDownloadButton'); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' }); } })();";
+        public static string ClickNexusSlowDownload  = "(function(){ var attempts=0; var iv=setInterval(function(){ var host=document.querySelector('mod-file-download'); if(host && host.shadowRoot){ var btn=host.shadowRoot.querySelector('button'); if(btn){ clearInterval(iv); var delay=1000+Math.floor(Math.random()*2000); setTimeout(function(){ btn.click(); },delay); return; } } if(++attempts>=30) clearInterval(iv); },500); })();";
         public static string IsDownloadAvailable     = "(function () { let val = 0; if (document.getElementById('slowDownloadButton') != null) { val = 1 }; return val; })();";
         public static string IsFileDeleted           = "(function() { let val = 0; if (document.getElementsByClassName('info-content') && document.getElementsByClassName('info-content')[0].innerHTML.indexOf('This file has been removed') !== -1) { val = 1 }; return val; })();";
         public static string IsModNotFound           = "(function() { let val = 0; if (document.getElementsByClassName('info-content') && document.getElementsByClassName('info-content')[0].innerHTML.indexOf('Not found') !== -1) { val = 1 }; return val; })();";
@@ -42,8 +43,13 @@ namespace Nolvus.Browser.Core
         }
 
         public static string GetNexusManualDownloadInit()
-        {            
+        {
             return ScriptManager.NexusManualDownloadInit;
+        }
+
+        public static string GetClickNexusSlowDownload()
+        {
+            return ScriptManager.ClickNexusSlowDownload;
         }
 
         public static string GetNexusManualDownload()

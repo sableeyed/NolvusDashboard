@@ -22,6 +22,7 @@ namespace Nolvus.Services.Settings
         public const string Interval = "RefreshInterval";
         public const string Browser = "Browser";
         public const string LogSeverity = "LogSeverity";
+        public const string AutoClick = "AutoClick";
         public const string DevSection = "Dev";
         public const string DebugEnabled = "Debug";
 
@@ -202,6 +203,25 @@ namespace Nolvus.Services.Settings
                 {
                     return false;
                 }
+            }
+        }
+
+        public bool NexusAutoClick
+        {
+            get
+            {
+                try
+                {
+                    return System.Convert.ToBoolean(GetIniValue(Browser, AutoClick));
+                }
+                catch
+                {
+                    return true;
+                }
+            }
+            set
+            {
+                StoreIniValue(Browser, AutoClick, value.ToString());
             }
         }
     }

@@ -85,7 +85,32 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     BorderBrush="#F28F1A"
-                    Foreground="#F28F1A"/>
+                    Foreground="#F28F1A"
+                    IsVisible="False"/>
+
+            <!-- Back button -->
+            <Button x:Name="BtnBack"
+                    Content="Back"
+                    MinWidth="90"
+                    Padding="10,6"
+                    Background="#2E2E2E"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="White"
+                    Foreground="White"
+                    IsVisible="False"/>
+
+            <!-- Cancel button -->
+            <Button x:Name="BtnCancel"
+                    Content="Cancel"
+                    MinWidth="90"
+                    Padding="10,6"
+                    Background="#2E2E2E"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="White"
+                    Foreground="White"
+                    IsVisible="False"/>
         </StackPanel>
 
     </Grid>

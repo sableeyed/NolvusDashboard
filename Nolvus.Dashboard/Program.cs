@@ -1,6 +1,7 @@
 using Avalonia;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
+using Nolvus.Core.Utils;
 using Nolvus.Services.Logger;
 using Nolvus.Services.Globals;
 using Nolvus.Services.Settings;
@@ -143,6 +144,10 @@ internal static class Program
         AppDomain.CurrentDomain.AssemblyResolve += Resolver;
         AppDomain.CurrentDomain.AssemblyLoad += Loader;
         AppDomain.CurrentDomain.UnhandledException += ExceptionHandler;
+
+        // Must happen before CEF is initialized: CEF clears the runtime's SIGCHLD handler, which
+        // makes every later Process.WaitForExit on a helper process (7z, xdelta3, ...) block forever.
+        SigChldGuard.Install();
 
         /* Debugging Stuff
         AppDomain.CurrentDomain.FirstChanceException += (s, e) =>

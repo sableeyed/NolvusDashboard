@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Events;
 using Nolvus.Core.Services;
+using Nolvus.Core.Errors;
 using Nolvus.Core.Utils;
 using Nolvus.Package.Mods;
+using Nolvus.Package.Utilities;
 using Nolvus.Core.Enums;
 using Avalonia.Controls;
 using Nolvus.Core.Utils;
@@ -275,7 +277,26 @@ namespace Nolvus.Package.Files
                     }
                     if (RequireManualDownload)
                     {
-                        await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                        // Shares one gate with the manual link resolution in InstallableElement, so
+                        // only ever one browser window is on screen no matter how many mods install
+                        // in parallel. Held across the retries so a reopened window stays exclusive.
+                        await BrowserGate.RunAsync($"download of {FileName}", async () =>
+                        {
+                            var browserTries = 0;
+                            while (true)
+                            {
+                                try
+                                {
+                                    await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                                    break;
+                                }
+                                catch (BrowserClosedException) when (browserTries < RetryCount)
+                                {
+                                    browserTries++;
+                                    ServiceSingleton.Logger.Log($"Download window closed before completing, reopening ({browserTries}/{RetryCount}) for {FileName}");
+                                }
+                            }
+                        }).ConfigureAwait(false);
                     }
                     else
                     {

@@ -22,6 +22,7 @@ namespace Nolvus.Dashboard;
 public partial class DashboardWindow : Window, IDashboard
 {
     private DashboardFrame LoadedFrame;
+    internal Type? SettingsReturnFrameType;
 
     #region Events
 
@@ -450,7 +451,7 @@ public partial class DashboardWindow : Window, IDashboard
         return Frame;
     }
 
-    public async Task Error(string Title, string Message, string Trace = null, bool Retry = false)
+    public async Task Error(string Title, string Message, string Trace = null, Func<Task> OnRetry = null, Func<Task> OnBack = null, Func<Task> OnCancel = null)
     {
         UnloadLoadingIndicator();
 
@@ -459,7 +460,8 @@ public partial class DashboardWindow : Window, IDashboard
         ServiceSingleton.Logger.Log("Error Form => " + Message);
 
         await LoadFrameAsync<ErrorFrame>(new FrameParameters(FrameParameter.Create("Title", Title), FrameParameter.Create("Message", Message),
-            FrameParameter.Create("Trace", Trace), FrameParameter.Create("Retry", Retry)));
+            FrameParameter.Create("Trace", Trace), FrameParameter.Create("OnRetry", OnRetry),
+            FrameParameter.Create("OnBack", OnBack), FrameParameter.Create("OnCancel", OnCancel)));
 
     }
 
@@ -554,12 +556,13 @@ public partial class DashboardWindow : Window, IDashboard
     }
 
     private void TitleBarControl_OnSettingsClicked(object? sender, EventArgs e)
-    {   
+    {
         var owner = TopLevel.GetTopLevel(this) as Window;
-        if (!ServiceSingleton.Packages.Processing) 
+        if (!ServiceSingleton.Packages.Processing)
         {
-            if (TitleBarControl.SettingsEnabled) 
+            if (TitleBarControl.SettingsEnabled)
             {
+                SettingsReturnFrameType = LoadedFrame?.GetType();
                 ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
             }
             else

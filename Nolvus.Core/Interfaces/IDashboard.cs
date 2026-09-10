@@ -12,7 +12,7 @@ namespace Nolvus.Core.Interfaces
     {
         Task<T> LoadFrameAsync<T>(FrameParameters Parameters = null) where T : DashboardFrame;
         T LoadFrame<T>(FrameParameters Parameters = null) where T : DashboardFrame;
-        Task Error(string Title, string Message, string Trace = null, bool Retry = false);        
+        Task Error(string Title, string Message, string Trace = null, Func<Task> OnRetry = null, Func<Task> OnBack = null, Func<Task> OnCancel = null);
 
         void ShutDown();
         

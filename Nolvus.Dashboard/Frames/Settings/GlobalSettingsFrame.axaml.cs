@@ -40,6 +40,8 @@ namespace Nolvus.Dashboard.Frames.Settings
 
                 DrpDwnLstProcessCount.ItemsSource = GetProcessorCores();
                 DrpDwnLstProcessCount.SelectedIndex = CoreIndex(GetProcessorCores());
+                
+                TglBtnAutoClick.IsChecked = ServiceSingleton.Settings.NexusAutoClick;
             }
             catch (Exception ex)
             {
@@ -73,7 +75,18 @@ namespace Nolvus.Dashboard.Frames.Settings
 
         private async void BtnBack_Click(object? sender, RoutedEventArgs e)
         {
-            await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+            var returnType = window?.SettingsReturnFrameType;
+
+            if (returnType != null && typeof(DashboardFrame).IsAssignableFrom(returnType))
+            {
+                var method = typeof(IDashboard).GetMethod("LoadFrameAsync")!.MakeGenericMethod(returnType);
+                await (Task)method.Invoke(ServiceSingleton.Dashboard, new object?[] { null })!;
+            }
+            else
+            {
+                await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
+            }
         }
 
         private async void BtnSaveMegaInfo_Click(object? sender, RoutedEventArgs e)
@@ -163,6 +176,11 @@ namespace Nolvus.Dashboard.Frames.Settings
         private void OnProcessorCountChanged(object? sender, RoutedEventArgs e)
         {
             ServiceSingleton.Settings.ProcessCount = (int)DrpDwnLstProcessCount.SelectedItem!;
+        }
+
+        private void TglBtnAutoClick_Changed(object? sender, RoutedEventArgs e)
+        {
+            ServiceSingleton.Settings.NexusAutoClick = TglBtnAutoClick.IsChecked == true;
         }
     }
 }

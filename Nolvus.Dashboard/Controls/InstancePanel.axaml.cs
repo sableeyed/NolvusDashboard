@@ -36,7 +36,7 @@ namespace Nolvus.Dashboard.Controls
     {
         private INolvusInstance _instance;
         private InstancesPanel _parent;
-        private const string LauncherHash = "03559ba20b8cae267508c4a4849bc2a6";
+        private const string LauncherHash = "f0a455152530b221eba1706b42371a8f";
         private const string NolvusHash = "d28d77bf715d577f21145bb792e70af8";
 
         public InstancePanel(InstancesPanel parent)
@@ -419,7 +419,7 @@ namespace Nolvus.Dashboard.Controls
             string? launcherPath = Path.Combine(skyrimPath, "SkyrimSELauncher.exe");
             if (!File.Exists(launcherPath))
             {
-                await NolvusMessageBox.Show(window, "Error", "SkyrimSE.exe not found. If you believe this is a bug, install the launcher manually.", MessageBoxType.Error);
+                await NolvusMessageBox.Show(window, "Error", "SkyrimSELauncher.exe not found. If you believe this is a bug, install the launcher manually.", MessageBoxType.Error);
                 return;
             }
 
@@ -444,6 +444,10 @@ namespace Nolvus.Dashboard.Controls
                 File.WriteAllText(instancePath, mo2Path);
 
                 await NolvusMessageBox.Show(window, "Success", "Skyrim Redirector installed", MessageBoxType.Info);
+            }
+            else
+            {
+                await NolvusMessageBox.Show(window, "Error", "File hash is wrong. If Skyrim recently updated please report this as a bug!", MessageBoxType.Error);
             }
         }
 

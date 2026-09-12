@@ -142,7 +142,7 @@ namespace Nolvus.Dashboard.Controls
                 // Fluorine opens whatever CurrentInstance names, so point it at this one first.
                 ModOrganizer.SelectInstance(_instance.InstallDir);
 
-                var Manager = Fluorine.Start();
+                var Manager = Fluorine.Start(_instance.InstallDir);
 
                 // Fluorine stays up for as long as the user is modding, so the button is held until
                 // it exits rather than being restored after a fixed delay.
@@ -200,6 +200,11 @@ namespace Nolvus.Dashboard.Controls
             var miShortcut = new MenuItem { Header = "Add Desktop Shortcut" };
             miShortcut.Click += (_, __) => BrItmShortCut_Click();
             menu.Items.Add(miShortcut);
+
+            // Fluorine Prefix
+            var miPrefix = new MenuItem { Header = "Configure Fluorine Prefix" };
+            miPrefix.Click += async (_, __) => await BrItmConfigurePrefix_Click();
+            menu.Items.Add(miPrefix);
             
             menu.Items.Add(new Separator());
 
@@ -335,6 +340,52 @@ namespace Nolvus.Dashboard.Controls
         }
 
         
+        private async Task BrItmConfigurePrefix_Click()
+        {
+            var window = TopLevel.GetTopLevel(this) as DashboardWindow;
+
+            try
+            {
+                if (!Fluorine.IsInstalled)
+                {
+                    await NolvusMessageBox.Show(window, "Fluorine Prefix",
+                        "Fluorine Manager is not installed. Reinstall or update the instance to install it.", MessageBoxType.Error);
+                    return;
+                }
+
+                // Fluorine builds its prefix the first time it runs, so there is nothing to
+                // configure before that has happened.
+                if (!Fluorine.PrefixExists)
+                {
+                    await NolvusMessageBox.Show(window, "Fluorine Prefix",
+                        "No Fluorine prefix found at " + Fluorine.PrefixDirectory + Environment.NewLine + Environment.NewLine +
+                        "Launch Fluorine Manager once so it can create the prefix, close it, then run this again.",
+                        MessageBoxType.Error);
+                    return;
+                }
+
+                if (!Fluorine.TryMapInstanceDrive(_instance.InstallDir))
+                {
+                    await NolvusMessageBox.Show(window, "Fluorine Prefix",
+                        "The X: drive could not be created in " + Fluorine.PrefixDirectory + ". See the log for details.",
+                        MessageBoxType.Error);
+                    return;
+                }
+
+                await NolvusMessageBox.Show(window, "Fluorine Prefix",
+                    $"X: now points at your {_instance.Name} instance." + Environment.NewLine + Environment.NewLine +
+                    "Mods, tools and the game are addressed through X: to keep paths short enough for Skyrim. " +
+                    "Run this again if you move the instance, or if Fluorine rebuilds its prefix.",
+                    MessageBoxType.Info);
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] Prefix configuration failed : {ex.Message}");
+
+                await NolvusMessageBox.Show(window, "Error", ex.Message, MessageBoxType.Error);
+            }
+        }
+
         private void BrItmShortCut_Click()
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;

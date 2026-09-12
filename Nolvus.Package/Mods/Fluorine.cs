@@ -77,10 +77,78 @@ namespace Nolvus.Package.Mods
 
         // Native Linux binary, so no wine. The instance it opens comes from
         // ~/.config/Mod Organizer Team/Mod Organizer.conf, not from anything passed here.
-        public static Process Start()
+        /// <summary>
+        /// Fluorine's own wine prefix. It does not necessarily exist - on a first install there is
+        /// nothing here at all, and Fluorine rebuilds it whenever it finds it missing or invalid
+        /// (it validates by looking for drive_c) - so nothing may assume it is present.
+        /// </summary>
+        public static string PrefixDirectory
+        {
+            get { return Path.Combine(Path.GetDirectoryName(InstallDirectory), "Prefix", "pfx"); }
+        }
+
+        /// <summary>
+        /// Points X: at the instance directory. The ini addresses everything in the instance
+        /// relative to X: to stay inside MAX_PATH, so without this the instance resolves to nothing.
+        /// Returns false when the prefix is not there yet, which is not an error - it just means
+        /// Fluorine has not built it.
+        /// </summary>
+        public static bool PrefixExists
+        {
+            get { return Directory.Exists(Path.Combine(PrefixDirectory, "dosdevices")); }
+        }
+
+        public static bool TryMapInstanceDrive(string InstallDir)
+        {
+            if (string.IsNullOrWhiteSpace(InstallDir))
+                return false;
+
+            var DosDevices = Path.Combine(PrefixDirectory, "dosdevices");
+
+            if (!Directory.Exists(DosDevices))
+                return false;
+
+            var Drive = Path.Combine(DosDevices, "x:");
+
+            try
+            {
+                var Current = new FileInfo(Drive).LinkTarget;
+
+                if (string.Equals(Current, InstallDir, StringComparison.Ordinal))
+                    return true;
+
+                // Path.Exists covers a working link, a dangling one and a real directory; any of
+                // them would make CreateSymbolicLink throw. File.Delete unlinks without following.
+                if (Path.Exists(Drive) || Current != null)
+                    File.Delete(Drive);
+
+                File.CreateSymbolicLink(Drive, InstallDir);
+
+                ServiceSingleton.Logger.Log($"[FLUORINE] Mapped X: -> {InstallDir} in {PrefixDirectory}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] Could not map X: in {PrefixDirectory} : {ex.Message}");
+
+                return false;
+            }
+        }
+
+        public static Process Start(string InstallDir = null)
         {
             if (!IsInstalled)
                 throw new FileNotFoundException("Fluorine Manager is not installed", Executable);
+
+            if (!string.IsNullOrWhiteSpace(InstallDir))
+            {
+                // Cheap re-assert so X: follows the instance being launched; with more than one
+                // instance installed it would otherwise still point at whichever was configured
+                // last. Silent when the prefix is absent - "Configure Fluorine Prefix" is where the
+                // user gets told about that.
+                TryMapInstanceDrive(InstallDir);
+            }
 
             var psi = new ProcessStartInfo
             {

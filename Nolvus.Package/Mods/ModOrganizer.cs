@@ -2718,7 +2718,7 @@ ccafdsse001-dwesanctuary.esm";
 
         public static Process Start(string InstallDir)
         {
-            return Fluorine.Start();
+            return Fluorine.Start(InstallDir);
 
             //var exe = Path.Combine(InstallDir, "MO2", "ModOrganizer.exe");
             //return ServiceSingleton.Wine.Run(exe, InstallDir, "");
@@ -3091,7 +3091,62 @@ ccafdsse001-dwesanctuary.esm";
             return await DoGetModsMetaData(Profile, Progress);
         }
 
+        // X: is mapped to the instance directory inside the wine prefix, so anything living in the
+        // instance is addressed relative to it. Windows MAX_PATH (260 chars) is a real limit for the
+        // game and its tools, and a full Z:\home\user\... path spends most of that budget before
+        // reaching the mod folder. Paths outside the instance fall back to Z:, wine's mapping of /.
         public static string ToWinePath(string path)
+        {
+            path = NormalizeSlashes(path);
+
+            if (path.Length == 0)
+                return string.Empty;
+
+            var InstallDir = string.Empty;
+
+            try
+            {
+                InstallDir = NormalizeSlashes(ServiceSingleton.Instances.WorkingInstance?.InstallDir);
+            }
+            catch
+            {
+                // No instance loaded - fall through to the absolute form below.
+            }
+
+            if (InstallDir.Length > 0 &&
+                (path.Equals(InstallDir, StringComparison.Ordinal) ||
+                 path.StartsWith(InstallDir + "/", StringComparison.Ordinal)))
+            {
+                var Relative = path.Substring(InstallDir.Length).TrimStart('/');
+
+                return Relative.Length == 0 ? "X:\\" : "X:\\" + Relative.Replace("/", "\\");
+            }
+
+            return ToWineAbsolutePath(path);
+        }
+
+        // Always the absolute Z: form, whichever instance happens to be loaded. Needed wherever a
+        // path has to be expressed independently of the current instance - the remap in particular
+        // deals with two install directories at once, and X: would mean the same thing for both.
+        public static string ToWineAbsolutePath(string path)
+        {
+            path = NormalizeSlashes(path);
+
+            if (path.Length == 0)
+                return string.Empty;
+
+            if (path.StartsWith("/", StringComparison.Ordinal))
+                return "Z:" + path.Replace("/", "\\");
+
+            return path.Replace("/", "\\");
+        }
+
+        public static string ToWineAbsoluteIniPath(string path)
+        {
+            return ToWineAbsolutePath(path).Replace("\\", "\\\\");
+        }
+
+        private static string NormalizeSlashes(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return string.Empty;
@@ -3101,30 +3156,7 @@ ccafdsse001-dwesanctuary.esm";
             while (path.Contains("//", StringComparison.Ordinal))
                 path = path.Replace("//", "/", StringComparison.Ordinal);
 
-            path = path.TrimEnd('/');
-
-            // Fluorine addresses the instance through wine's default Z: mapping (Z: == /), so paths
-            // go in whole rather than being rebased onto a drive letter. This also drops the
-            // dependency on the X: symlink, which was created by the Proton prefix setup and no
-            // longer exists.
-            if (path.StartsWith("/", StringComparison.Ordinal))
-                return "Z:" + path.Replace("/", "\\");
-
-            return path.Replace("/", "\\");
-
-            // Previous MO2 behaviour: rebase onto X:, which was symlinked to the Nolvus root, to
-            // keep paths short. Restore this if MAX_PATH becomes a problem again under Fluorine.
-            //
-            // int idx = path.IndexOf("/Instances", StringComparison.OrdinalIgnoreCase);
-            // if (idx == -1)
-            // {
-            //     if (path.StartsWith("/", StringComparison.Ordinal))
-            //         return "X:" + path.Replace("/", "\\");
-            //     return path.Replace("/", "\\");
-            // }
-            //
-            // string trimmed = path.Substring(idx);     // "/Instances/...."
-            // return "X:" + trimmed.Replace("/", "\\"); // "X:\\Instances\\...."
+            return path.TrimEnd('/');
         }
 
         public static string ToWineIniPath(string path)

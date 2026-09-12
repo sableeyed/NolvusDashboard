@@ -46,8 +46,13 @@ namespace Nolvus.Dashboard.Frames.Remap.v6
             }
             else
             {
-                var OldWine = ModOrganizer.ToWineIniPath(CurrentInstallPath);
-                var NewWine = ModOrganizer.ToWineIniPath(NewInstallPath);
+                // Absolute Z: forms deliberately: ToWineIniPath is relative to the loaded instance
+                // and would render both directories as X:, turning the replace below into a
+                // corrupting no-op. Instances written since the move to X: hold no absolute
+                // instance paths at all, so this only rewrites older Z:-based inis; the X: mapping
+                // itself is what moves them.
+                var OldWine = ModOrganizer.ToWineAbsoluteIniPath(CurrentInstallPath);
+                var NewWine = ModOrganizer.ToWineAbsoluteIniPath(NewInstallPath);
 
                 var Text = System.IO.File.ReadAllText(Ini);
 

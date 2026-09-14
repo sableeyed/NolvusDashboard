@@ -2457,11 +2457,110 @@ ccafdsse001-dwesanctuary.esm";
         }
 
         /// <summary>
+        /// Brings the Mod Organizer 2 ini across for an instance installed before the switch to
+        /// Fluorine. Those instances keep ModOrganizer.ini under MO2/ and have none in MODS, and without
+        /// one Fluorine runs its own setup and can settle on the Steam copy of Skyrim. The MO2 ini works
+        /// once its paths are fixed: the old dashboard addressed everything through X:, mapped to the
+        /// folder holding Instances, and Fluorine resolves only Z:. base_directory is dropped so Fluorine
+        /// uses the folder the ini sits in, and game_edition, which MO2 never wrote, is added.
+        /// Does nothing if MODS already has an ini, and writes nothing while Fluorine is running
+        /// because it re-saves the ini on exit.
+        /// </summary>
+        public static void EnsureInstanceIni(string InstallDir)
+        {
+            var Target = Path.Combine(InstallDir, "MODS", "ModOrganizer.ini");
+            var Source = Path.Combine(InstallDir, "MO2", "ModOrganizer.ini");
+
+            if (File.Exists(Target) || !File.Exists(Source) ||
+                !Directory.Exists(Path.GetDirectoryName(Target)) || Fluorine.IsRunning)
+                return;
+
+            try
+            {
+                // Same rule as the MO2-era ToWinePath: X: stood for everything before /Instances, or for
+                // the filesystem root when the install was not inside an Instances folder.
+                var Normalized = InstallDir.Replace("\\", "/").TrimEnd('/');
+                var Index = Normalized.IndexOf("/Instances", StringComparison.OrdinalIgnoreCase);
+                var Root = Index > 0 ? Normalized.Substring(0, Index) : string.Empty;
+
+                var EscapedRoot = "Z:" + Root.Replace("/", @"\\");
+                var ForwardRoot = "Z:" + Root;
+
+                // Unanchored on purpose: the MO2 ini used X: for nothing but these paths, and xEdit's
+                // arguments carry them inside quotes (-D:\"X:\\Instances...).
+                var Text = File.ReadAllText(Source)
+                    .Replace(@"X:\\", EscapedRoot + @"\\")
+                    .Replace("X:/", ForwardRoot + "/");
+
+                var NewLine = Text.Contains("\r\n") ? "\r\n" : "\n";
+                var Lines = Text.Split(NewLine).ToList();
+
+                Lines.RemoveAll(x => Regex.IsMatch(x, @"^\s*base_directory\s*="));
+
+                if (!Lines.Any(x => Regex.IsMatch(x, @"^\s*game_edition\s*=")))
+                {
+                    var GamePath = Lines.FindIndex(x => Regex.IsMatch(x, @"^\s*gamePath\s*="));
+
+                    if (GamePath >= 0)
+                        Lines.Insert(GamePath + 1, "game_edition=Steam");
+                }
+
+                File.WriteAllText(Target, string.Join(NewLine, Lines));
+
+                ServiceSingleton.Logger.Log($"[FLUORINE] Copied {Source} to {Target}, X: paths converted to {EscapedRoot}");
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] Could not bring {Source} across : {ex.Message}");
+
+                // A half-written ini would stop the next launch from trying again.
+                try { File.Delete(Target); } catch { }
+            }
+        }
+
+        /// <summary>
+        /// Puts X: paths in MODS/ModOrganizer.ini back to Z:. Builds made while instance paths were
+        /// written relative to X: left inis Fluorine cannot use: it only resolves Z: when reading the
+        /// ini, and it removes every drive other than C: and Z: from its prefix before each launch.
+        /// Any X: at the start of a value is therefore one of ours and always meant this instance.
+        /// Skipped while Fluorine is running, because it re-saves the ini on exit.
+        /// </summary>
+        public static void RepairIniDriveLetters(string InstallDir)
+        {
+            var Ini = Path.Combine(InstallDir, "MODS", "ModOrganizer.ini");
+
+            if (!File.Exists(Ini) || Fluorine.IsRunning)
+                return;
+
+            // Z:\\home\\...\\Instance as stored in the ini, and the Z:/home/.../Instance spelling
+            // AddExecutable uses for binary= entries.
+            var Escaped = ToWineIniPath(InstallDir);
+            var Forward = Escaped.Replace(@"\\", "/");
+
+            var Text = File.ReadAllText(Ini);
+
+            // Anchored to the start of a value (key=X: or @ByteArray(X:) so a folder name that happens
+            // to contain "X:" is left alone. Evaluators rather than replacement strings, so a '$' in
+            // the install path is not treated as a substitution.
+            var Repaired = Regex.Replace(Text, @"(?<=[=(])X:\\\\", _ => Escaped + @"\\");
+            Repaired = Regex.Replace(Repaired, @"(?<=[=(])X:/", _ => Forward + "/");
+
+            if (Repaired == Text)
+                return;
+
+            File.WriteAllText(Ini, Repaired);
+
+            ServiceSingleton.Logger.Log($"[FLUORINE] Repaired X: paths in {Ini} back to {Escaped}");
+        }
+
+        /// <summary>
         /// Points Fluorine at this instance. Fluorine opens whatever CurrentInstance names, so this
         /// has to run before launching or Play opens whichever instance was selected last.
         /// </summary>
         public static void SelectInstance(string InstallDir)
         {
+            RepairIniDriveLetters(InstallDir);
+
             var ModsDir = Path.Combine(InstallDir, "MODS");
             var ConfFile = ModOrganizerConfFile;
 
@@ -2718,7 +2817,7 @@ ccafdsse001-dwesanctuary.esm";
 
         public static Process Start(string InstallDir)
         {
-            return Fluorine.Start(InstallDir);
+            return Fluorine.Start();
 
             //var exe = Path.Combine(InstallDir, "MO2", "ModOrganizer.exe");
             //return ServiceSingleton.Wine.Run(exe, InstallDir, "");
@@ -3091,62 +3190,7 @@ ccafdsse001-dwesanctuary.esm";
             return await DoGetModsMetaData(Profile, Progress);
         }
 
-        // X: is mapped to the instance directory inside the wine prefix, so anything living in the
-        // instance is addressed relative to it. Windows MAX_PATH (260 chars) is a real limit for the
-        // game and its tools, and a full Z:\home\user\... path spends most of that budget before
-        // reaching the mod folder. Paths outside the instance fall back to Z:, wine's mapping of /.
         public static string ToWinePath(string path)
-        {
-            path = NormalizeSlashes(path);
-
-            if (path.Length == 0)
-                return string.Empty;
-
-            var InstallDir = string.Empty;
-
-            try
-            {
-                InstallDir = NormalizeSlashes(ServiceSingleton.Instances.WorkingInstance?.InstallDir);
-            }
-            catch
-            {
-                // No instance loaded - fall through to the absolute form below.
-            }
-
-            if (InstallDir.Length > 0 &&
-                (path.Equals(InstallDir, StringComparison.Ordinal) ||
-                 path.StartsWith(InstallDir + "/", StringComparison.Ordinal)))
-            {
-                var Relative = path.Substring(InstallDir.Length).TrimStart('/');
-
-                return Relative.Length == 0 ? "X:\\" : "X:\\" + Relative.Replace("/", "\\");
-            }
-
-            return ToWineAbsolutePath(path);
-        }
-
-        // Always the absolute Z: form, whichever instance happens to be loaded. Needed wherever a
-        // path has to be expressed independently of the current instance - the remap in particular
-        // deals with two install directories at once, and X: would mean the same thing for both.
-        public static string ToWineAbsolutePath(string path)
-        {
-            path = NormalizeSlashes(path);
-
-            if (path.Length == 0)
-                return string.Empty;
-
-            if (path.StartsWith("/", StringComparison.Ordinal))
-                return "Z:" + path.Replace("/", "\\");
-
-            return path.Replace("/", "\\");
-        }
-
-        public static string ToWineAbsoluteIniPath(string path)
-        {
-            return ToWineAbsolutePath(path).Replace("\\", "\\\\");
-        }
-
-        private static string NormalizeSlashes(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return string.Empty;
@@ -3156,7 +3200,30 @@ ccafdsse001-dwesanctuary.esm";
             while (path.Contains("//", StringComparison.Ordinal))
                 path = path.Replace("//", "/", StringComparison.Ordinal);
 
-            return path.TrimEnd('/');
+            path = path.TrimEnd('/');
+
+            // Fluorine addresses the instance through wine's default Z: mapping (Z: == /), so paths
+            // go in whole rather than being rebased onto a drive letter. This also drops the
+            // dependency on the X: symlink, which was created by the Proton prefix setup and no
+            // longer exists.
+            if (path.StartsWith("/", StringComparison.Ordinal))
+                return "Z:" + path.Replace("/", "\\");
+
+            return path.Replace("/", "\\");
+
+            // Previous MO2 behaviour: rebase onto X:, which was symlinked to the Nolvus root, to
+            // keep paths short. Restore this if MAX_PATH becomes a problem again under Fluorine.
+            //
+            // int idx = path.IndexOf("/Instances", StringComparison.OrdinalIgnoreCase);
+            // if (idx == -1)
+            // {
+            //     if (path.StartsWith("/", StringComparison.Ordinal))
+            //         return "X:" + path.Replace("/", "\\");
+            //     return path.Replace("/", "\\");
+            // }
+            //
+            // string trimmed = path.Substring(idx);     // "/Instances/...."
+            // return "X:" + trimmed.Replace("/", "\\"); // "X:\\Instances\\...."
         }
 
         public static string ToWineIniPath(string path)

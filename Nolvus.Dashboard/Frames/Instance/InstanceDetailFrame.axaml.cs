@@ -181,6 +181,8 @@ namespace Nolvus.Dashboard.Frames.Instance
             {
                 var instance = ServiceSingleton.Instances.WorkingInstance;
 
+                ModOrganizer.EnsureInstanceIni(instance.InstallDir);
+
                 ModOrganizer.SelectInstance(instance.InstallDir);
 
                 var mo2 = ModOrganizer.Start(instance.InstallDir);

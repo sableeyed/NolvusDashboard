@@ -172,18 +172,19 @@ namespace Nolvus.Package.Mods
             }
 
             string Tag;
-            string AssetUrl;
+            string ApiUrl;
+            string BrowserUrl;
 
             try
             {
-                (Tag, AssetUrl) = await GetLatestRelease();
+                (Tag, ApiUrl, BrowserUrl) = await GetLatestRelease();
             }
             catch (Exception ex)
             {
                 throw new Exception("Unable to download Fluorine Manager : " + ex.Message, ex);
             }
 
-            ServiceSingleton.Logger.Log($"[FLUORINE] Installing {Tag} from {AssetUrl}");
+            ServiceSingleton.Logger.Log($"[FLUORINE] Installing {Tag} from {ApiUrl}");
 
             Directory.CreateDirectory(InstallDirectory);
 
@@ -191,7 +192,16 @@ namespace Nolvus.Package.Mods
 
             try
             {
-                await ServiceSingleton.Files.DownloadFile(AssetUrl, Archive, OnDownload);
+                try
+                {
+                    await DownloadAsset(ApiUrl, Archive, OnDownload);
+                }
+                catch (Exception ex)
+                {
+                    ServiceSingleton.Logger.Log($"[FLUORINE] API asset download failed ({ex.Message}), trying {BrowserUrl}");
+
+                    await ServiceSingleton.Files.DownloadFile(BrowserUrl, Archive, OnDownload);
+                }
 
                 await ServiceSingleton.Files.ExtractFile(Archive, InstallDirectory, OnExtract);
 
@@ -212,11 +222,19 @@ namespace Nolvus.Package.Mods
             }
         }
 
-        private static async Task<(string Tag, string AssetUrl)> GetLatestRelease()
+        private static HttpClient CreateClient()
         {
-            using var Client = new HttpClient();
+            var Client = new HttpClient();
 
             Client.DefaultRequestHeaders.Add("User-Agent", "NolvusDashboard");
+
+            return Client;
+        }
+
+        private static async Task<(string Tag, string ApiUrl, string BrowserUrl)> GetLatestRelease()
+        {
+            using var Client = CreateClient();
+
             Client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
 
             var Json = await Client.GetStringAsync(LatestReleaseApi);
@@ -233,7 +251,67 @@ namespace Nolvus.Package.Mods
             if (Asset.ValueKind == JsonValueKind.Undefined)
                 throw new Exception($"Release {Tag} does not contain {AssetName}");
 
-            return (Tag, Asset.GetProperty("browser_download_url").GetString());
+            return (Tag, Asset.GetProperty("url").GetString(), Asset.GetProperty("browser_download_url").GetString());
+        }
+
+        private static async Task DownloadAsset(string Url, string Destination, DownloadProgressChangedHandler OnDownload)
+        {
+            using var Client = CreateClient();
+            using var Request = new HttpRequestMessage(HttpMethod.Get, Url);
+
+            Request.Headers.Accept.ParseAdd("application/octet-stream");
+
+            using var Response = await Client.SendAsync(Request, HttpCompletionOption.ResponseHeadersRead);
+
+            Response.EnsureSuccessStatusCode();
+
+            var Progress = new DownloadProgress
+            {
+                FileName = Path.GetFileName(Destination),
+                TotalBytesToReceive = Response.Content.Headers.ContentLength ?? -1
+            };
+
+            Progress.TotalBytesToReceiveAsString = ToMegabytes(Progress.TotalBytesToReceive);
+
+            var Watch = Stopwatch.StartNew();
+
+            await using var Input = await Response.Content.ReadAsStreamAsync();
+            await using var Output = File.Open(Destination, FileMode.Create, FileAccess.Write, FileShare.None);
+
+            var Buffer = new byte[81920];
+            var LastPercent = -1;
+            int Read;
+
+            while ((Read = await Input.ReadAsync(Buffer)) > 0)
+            {
+                await Output.WriteAsync(Buffer.AsMemory(0, Read));
+
+                Progress.BytesReceived += Read;
+
+                var Percent = Progress.TotalBytesToReceive > 0
+                    ? (int)(Progress.BytesReceived * 100 / Progress.TotalBytesToReceive)
+                    : 0;
+
+                // One UI update per percent rather than per 80KB chunk.
+                if (Percent == LastPercent)
+                    continue;
+
+                LastPercent = Percent;
+
+                Progress.ProgressPercentage = Percent;
+                Progress.BytesReceivedAsString = ToMegabytes(Progress.BytesReceived);
+                Progress.Speed = Progress.BytesReceived / 1024d / 1024d / Math.Max(Watch.Elapsed.TotalSeconds, 0.001);
+
+                OnDownload?.Invoke(null, Progress);
+            }
+
+            if (Progress.TotalBytesToReceive > 0 && Progress.BytesReceived != Progress.TotalBytesToReceive)
+                throw new IOException($"Download truncated : {Progress.BytesReceived} of {Progress.TotalBytesToReceive} bytes");
+        }
+
+        private static string ToMegabytes(long Bytes)
+        {
+            return (Bytes / 1024d / 1024d).ToString("0.00");
         }
 
         // Unused while an existing install is always kept. Restore alongside a version comparison

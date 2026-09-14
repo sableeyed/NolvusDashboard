@@ -122,9 +122,16 @@ namespace Nolvus.Dashboard.Controls
 
             if (!Fluorine.IsInstalled)
             {
-                await NolvusMessageBox.Show(window, "Fluorine Manager",
-                    "Fluorine Manager is not installed. Reinstall or update the instance to install it.", MessageBoxType.Error);
-                return;
+                bool? Install = await NolvusMessageBox.ShowConfirmation(window, "Fluorine Manager",
+                    "This instance was set up with Mod Organizer 2, which Nolvus no longer uses. " +
+                    "Fluorine Manager replaces it and needs to be downloaded once. " +
+                    "Your mods, profiles and downloads are not touched. Install it now?");
+
+                if (Install != true)
+                    return;
+
+                if (!await InstallFluorine(window))
+                    return;
             }
 
             if (Fluorine.IsRunning)
@@ -166,6 +173,46 @@ namespace Nolvus.Dashboard.Controls
 
                 await NolvusMessageBox.Show(window, "Fluorine Manager",
                     "Unable to start Fluorine Manager : " + ex.Message, MessageBoxType.Error);
+            }
+        }
+
+        private async Task<bool> InstallFluorine(DashboardWindow? window)
+        {
+            SetPlayText("Installing...");
+            BtnPlay.IsEnabled = false;
+
+            try
+            {
+                await Fluorine.Install(
+                    (_, p) =>
+                    {
+                        ServiceSingleton.Dashboard.Status($"Downloading Fluorine Manager ({p.BytesReceivedAsString} / {p.TotalBytesToReceiveAsString} MB)");
+                        ServiceSingleton.Dashboard.Progress(p.ProgressPercentage);
+                    },
+                    (_, p) =>
+                    {
+                        ServiceSingleton.Dashboard.Status($"Extracting Fluorine Manager ({p.ProgressPercentage}%)");
+                        ServiceSingleton.Dashboard.Progress(p.ProgressPercentage);
+                    });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] Install from the play button failed : {ex.Message}");
+
+                await NolvusMessageBox.Show(window, "Fluorine Manager",
+                    "Unable to install Fluorine Manager : " + ex.Message, MessageBoxType.Error);
+
+                return false;
+            }
+            finally
+            {
+                ServiceSingleton.Dashboard.NoStatus();
+                ServiceSingleton.Dashboard.ProgressCompleted();
+
+                SetPlayText("Play");
+                BtnPlay.IsEnabled = true;
             }
         }
 

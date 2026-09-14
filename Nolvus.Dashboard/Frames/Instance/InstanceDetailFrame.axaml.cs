@@ -166,6 +166,17 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         private void BtnPlay_Click(object? sender, RoutedEventArgs e)
         {
+            // Without this an instance predating the Fluorine switch throws FileNotFoundException
+            // out of an async void handler, so the user sees nothing at all. The offer to install
+            // lives on the instance list's play button.
+            if (!Fluorine.IsInstalled)
+            {
+                NolvusMessageBox.Show(TopLevel.GetTopLevel(this) as Window, "Fluorine Manager",
+                    "Fluorine Manager is not installed. Go back to the instance list and press Play there to install it.",
+                    MessageBoxType.Error);
+                return;
+            }
+
             if (!ModOrganizer.IsRunning)
             {
                 var instance = ServiceSingleton.Instances.WorkingInstance;

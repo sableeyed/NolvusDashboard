@@ -15,11 +15,27 @@
                 BorderThickness="1"
                 Padding="0">
 
-				<Grid x:Name="LoadingOverlay" IsVisible="True" Grid.RowSpan="4" Background="#80000000">
-					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
-						<gif:GifImage Width="150" Height="150" Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif" />
-					</StackPanel>
-				</Grid>
+            <Panel>
+
+                <!-- The change logs are rendered in here by the embedded browser -->
+                <Panel x:Name="BrowserHost"/>
+
+                <TextBlock x:Name="LblLoadError"
+                           IsVisible="False"
+                           Foreground="White"
+                           FontSize="13"
+                           Margin="20"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+                <Panel x:Name="LoadingOverlay" IsVisible="True" Background="#80000000">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                        <gif:GifImage Width="150" Height="150" Source="avares://NolvusDashboard/Assets/cog-loader-alpha.gif" />
+                    </StackPanel>
+                </Panel>
+
+            </Panel>
 
         </Border>
 

@@ -80,8 +80,8 @@ namespace Nolvus.Dashboard.Frames.Settings
 
             if (returnType != null && typeof(DashboardFrame).IsAssignableFrom(returnType))
             {
-                var method = typeof(IDashboard).GetMethod("LoadFrameAsync")!.MakeGenericMethod(returnType);
-                await (Task)method.Invoke(ServiceSingleton.Dashboard, new object?[] { null })!;
+                var method = typeof(IDashboard).GetMethod("LoadFrame")!.MakeGenericMethod(returnType);
+                method.Invoke(ServiceSingleton.Dashboard, new object?[] { null });
             }
             else
             {

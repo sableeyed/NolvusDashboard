@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Nolvus.Core.Errors;
 using Nolvus.Core.Events;
@@ -16,6 +18,10 @@ namespace Nolvus.Package.Mods
     {
         public const string Domain = "site";
         public const int NexusId = 1997;
+        public const string GitHubRepository = "SulfurNitride/Fluorine-Manager";
+        private const string GitHubLatestReleaseApi = "https://api.github.com/repos/" + GitHubRepository + "/releases/latest";
+        private const string GitHubReleasePage = "https://github.com/" + GitHubRepository + "/releases/latest";
+        private const string GitHubAssetName = "Fluorine-Manager.zip";
         private const string ReleaseMarker = "nolvus-fluorine-release.txt";
 
         public static string ModPage
@@ -41,9 +47,14 @@ namespace Nolvus.Package.Mods
             get { return Path.Combine(InstallDirectory, "fluorine-manager"); }
         }
 
+        private static string MarkerFile
+        {
+            get { return Path.Combine(InstallDirectory, ReleaseMarker); }
+        }
+
         public static bool IsInstalled
         {
-            get { return File.Exists(Executable); }
+            get { return File.Exists(Executable) && File.Exists(MarkerFile); }
         }
 
         // fluorine-manager is a bash wrapper that ends in `exec ModOrganizer-core`, so the wrapper
@@ -101,87 +112,80 @@ namespace Nolvus.Package.Mods
         }
 
         /// <summary>
-        /// Downloads and installs the latest Fluorine Manager from Nexus, updating an existing
-        /// install when a newer file has been uploaded.
+        /// Installs Fluorine Manager if it is not already there, latest release first from Nexus
+        /// and from the project's GitHub releases if Nexus cannot provide it.
         /// </summary>
         /// <remarks>
+        /// This runs on a fresh list install, on the upgrade from Mod Organizer 2, and behind the
+        /// play button. All three are the same case : put a complete install in place, or leave the
+        /// one that is already there alone. Fluorine updates itself in place once installed, so the
+        /// dashboard replacing it would clobber a newer build it had updated itself to, along with
+        /// whatever its overlay update preserves in bin/.
+        ///
         /// Fluorine is not part of the Nolvus package, so it has no entry in the mod list and no
-        /// NexusModFile to go through. It is fetched the same way every other Nexus file is though:
+        /// NexusModFile to go through, but it is fetched the same way every other Nexus file is :
         /// premium accounts get a CDN link straight from the API, free accounts resolve one through
-        /// the browser, and the download itself goes through the shared file service either way.
-        /// <paramref name="Browser"/> may be left null when the caller has no browser to offer, in
-        /// which case a free account cannot install and an existing install is kept as it is.
+        /// the browser, and the download goes through the shared file service either way. A failure
+        /// anywhere in that path - the lookup, the link, the download, the extract - falls back to
+        /// GitHub, which covers a Nexus outage, a rate limited key, and a free account with no
+        /// browser to resolve a link with.
+        ///
+        /// <paramref name="Browser"/> may be left null when the caller has no browser to offer.
         /// </remarks>
         public static async Task Install(DownloadProgressChangedHandler OnDownload, ExtractProgressChangedHandler OnExtract, Func<IBrowserInstance> Browser = null)
         {
-            NexusApi.Responses.ModFile Latest;
-
-            try
-            {
-                Latest = await GetLatestFile();
-            }
-            catch (Exception ex)
-            {
-                // An existing install is still playable when Nexus cannot be reached, so only a
-                // first install is worth failing over.
-                if (IsInstalled)
-                {
-                    ServiceSingleton.Logger.Log($"[FLUORINE] Unable to look up the latest version ({ex.Message}), keeping the install in {InstallDirectory}");
-                    return;
-                }
-
-                throw new Exception("Unable to download Fluorine Manager : " + ex.Message, ex);
-            }
-
-            var Release = ReleaseName(Latest);
-
             if (IsInstalled)
             {
-                if (IsUpToDate(Latest))
-                {
-                    ServiceSingleton.Logger.Log($"[FLUORINE] {Release} already installed in {InstallDirectory}, skipping download");
-                    return;
-                }
-
-                // Replacing the binaries out from under a running Fluorine would break it mid
-                // session, so the update waits until the next time it is closed.
-                if (IsRunning)
-                {
-                    ServiceSingleton.Logger.Log($"[FLUORINE] {Release} is available but Fluorine Manager is running, leaving {InstallDirectory} alone");
-                    return;
-                }
-
-                ServiceSingleton.Logger.Log($"[FLUORINE] Updating {GetInstalledRelease()} to {Release}");
+                ServiceSingleton.Logger.Log($"[FLUORINE] Release {GetInstalledRelease()} already installed in {InstallDirectory}, skipping download");
+                return;
             }
-
-            string Link;
 
             try
             {
-                Link = await GetDownloadLink(Latest, Browser);
+                await DownloadAndInstall(await GetNexusDownload(Browser), OnDownload, OnExtract);
+
+                return;
             }
             catch (Exception ex)
             {
-                if (IsInstalled)
-                {
-                    ServiceSingleton.Logger.Log($"[FLUORINE] Unable to get a download link for {Release} ({ex.Message}), keeping the install in {InstallDirectory}");
-                    return;
-                }
-
-                throw new Exception("Unable to download Fluorine Manager : " + ex.Message, ex);
+                ServiceSingleton.Logger.Log($"[FLUORINE] Unable to install from {ModPage} ({ex.Message}), falling back to {GitHubReleasePage}");
             }
-
-            ServiceSingleton.Logger.Log($"[FLUORINE] Installing {Release} from {ModPage}");
-
-            var Archive = Path.Combine(ServiceSingleton.Folders.DownloadDirectory, Latest.FileName);
 
             try
             {
-                await ServiceSingleton.Files.DownloadFile(Link, Archive, OnDownload);
+                await DownloadAndInstall(await GetGitHubDownload(), OnDownload, OnExtract);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to download Fluorine Manager : " + ex.Message, ex);
+            }
+        }
 
-                // An update ships different binaries under the same names, and anything the old
-                // release left behind is not wanted. The wine prefix sits beside this directory
-                // rather than inside it, so it survives.
+        /// <summary>
+        /// A release to install : where to get it, what the archive is called, and what is recorded
+        /// in the marker file to say which release the install came from.
+        /// </summary>
+        private sealed class Download
+        {
+            public string Link;
+            public string FileName;
+            public string Release;
+            public string Source;
+        }
+
+        private static async Task DownloadAndInstall(Download Download, DownloadProgressChangedHandler OnDownload, ExtractProgressChangedHandler OnExtract)
+        {
+            ServiceSingleton.Logger.Log($"[FLUORINE] Installing {Download.Release} from {Download.Source}");
+
+            var Archive = Path.Combine(ServiceSingleton.Folders.DownloadDirectory, Download.FileName);
+
+            try
+            {
+                await ServiceSingleton.Files.DownloadFile(Download.Link, Archive, OnDownload);
+
+                // Only ever reached with nothing properly installed, so this clears whatever an
+                // interrupted attempt left behind rather than a working install. The wine prefix
+                // sits beside this directory rather than inside it, so it survives.
                 ServiceSingleton.Files.RemoveDirectory(InstallDirectory, true);
 
                 Directory.CreateDirectory(InstallDirectory);
@@ -190,9 +194,14 @@ namespace Nolvus.Package.Mods
 
                 EnsureExecutable();
 
-                File.WriteAllText(Path.Combine(InstallDirectory, ReleaseMarker), Latest.FileID.ToString());
+                if (!File.Exists(Executable))
+                    throw new FileNotFoundException($"{Download.FileName} did not contain Fluorine Manager", Executable);
 
-                ServiceSingleton.Logger.Log($"[FLUORINE] {Release} installed in {InstallDirectory}");
+                // Written last, so anything that fails before this point leaves no marker and does
+                // not count as installed - see IsInstalled.
+                File.WriteAllText(MarkerFile, Download.Release);
+
+                ServiceSingleton.Logger.Log($"[FLUORINE] {Download.Release} installed in {InstallDirectory}");
             }
             finally
             {
@@ -203,6 +212,56 @@ namespace Nolvus.Package.Mods
                 }
                 catch { }
             }
+        }
+
+        private static async Task<Download> GetNexusDownload(Func<IBrowserInstance> Browser)
+        {
+            var Latest = await GetLatestFile();
+
+            return new Download
+            {
+                Link = await GetDownloadLink(Latest, Browser),
+                FileName = Latest.FileName,
+                Release = Latest.FileID.ToString(),
+                Source = ModPage
+            };
+        }
+
+        /// <summary>
+        /// The latest GitHub release, used only as a fallback for a first install.
+        /// </summary>
+        /// <remarks>
+        /// The marker keeps the release tag here rather than a Nexus file id. IsUpToDate compares
+        /// on version as well as file id for exactly this reason, so an install that came from
+        /// GitHub is not re-downloaded from Nexus the next time round.
+        /// </remarks>
+        private static async Task<Download> GetGitHubDownload()
+        {
+            using var Client = new HttpClient();
+
+            // GitHub rejects API requests that do not identify themselves.
+            Client.DefaultRequestHeaders.Add("User-Agent", "NolvusDashboard");
+            Client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+
+            using var Document = JsonDocument.Parse(await Client.GetStringAsync(GitHubLatestReleaseApi));
+
+            var Tag = Document.RootElement.GetProperty("tag_name").GetString();
+
+            var Asset = Document.RootElement
+                .GetProperty("assets")
+                .EnumerateArray()
+                .FirstOrDefault(x => x.GetProperty("name").GetString() == GitHubAssetName);
+
+            if (Asset.ValueKind == JsonValueKind.Undefined)
+                throw new Exception($"Release {Tag} does not contain {GitHubAssetName}");
+
+            return new Download
+            {
+                Link = Asset.GetProperty("browser_download_url").GetString(),
+                FileName = GitHubAssetName,
+                Release = Tag,
+                Source = GitHubReleasePage
+            };
         }
 
         /// <summary>
@@ -278,38 +337,11 @@ namespace Nolvus.Package.Mods
             }).ConfigureAwait(false);
         }
 
-        private static string ReleaseName(NexusApi.Responses.ModFile File_)
-        {
-            return $"{File_.Version} (file {File_.FileID})";
-        }
-
-        /// <summary>
-        /// Whether the install in <see cref="InstallDirectory"/> is already the given Nexus file.
-        /// </summary>
-        /// <remarks>
-        /// The marker holds the Nexus file id, so a file re-uploaded under an unchanged version
-        /// still counts as an update. Installs predating the move to Nexus left the GitHub release
-        /// tag there instead, which is recognised by version so they are not made to re-download a
-        /// couple of hundred megabytes of the release they already have.
-        /// </remarks>
-        private static bool IsUpToDate(NexusApi.Responses.ModFile Latest)
-        {
-            var Installed = GetInstalledRelease();
-
-            if (Installed == string.Empty)
-                return false;
-
-            return Installed == Latest.FileID.ToString() ||
-                   Installed.TrimStart('v', 'V') == (Latest.Version ?? string.Empty).TrimStart('v', 'V');
-        }
-
         private static string GetInstalledRelease()
         {
-            var Marker = Path.Combine(InstallDirectory, ReleaseMarker);
-
             try
             {
-                return File.Exists(Marker) ? File.ReadAllText(Marker).Trim() : string.Empty;
+                return File.Exists(MarkerFile) ? File.ReadAllText(MarkerFile).Trim() : string.Empty;
             }
             catch
             {

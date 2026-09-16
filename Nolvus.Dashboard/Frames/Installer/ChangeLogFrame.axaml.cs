@@ -21,6 +21,7 @@ namespace Nolvus.Dashboard.Frames.Installer
         private string _ToVersion;
         private string _ChangeLogUrl;
         private AvaloniaCefBrowser _Browser;
+        private bool _Detached;
 
         public ChangeLogFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
@@ -55,6 +56,12 @@ namespace Nolvus.Dashboard.Frames.Installer
         /// </remarks>
         private void ShowChangeLog()
         {
+            // The version lookup ahead of this is a network call, so the user can have pressed Back
+            // and left the frame by the time it returns. Nothing disposes a frame that is already
+            // detached, so a browser built now would keep its CEF process for the whole session.
+            if (_Detached)
+                return;
+
             _Browser = new AvaloniaCefBrowser();
 
             // CEF raises these off the UI thread.
@@ -95,6 +102,8 @@ namespace Nolvus.Dashboard.Frames.Installer
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromVisualTree(e);
+
+            _Detached = true;
 
             var Browser = _Browser;
 

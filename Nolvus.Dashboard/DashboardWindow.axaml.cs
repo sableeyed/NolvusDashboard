@@ -23,6 +23,7 @@ public partial class DashboardWindow : Window, IDashboard
 {
     private DashboardFrame LoadedFrame;
     internal Type? SettingsReturnFrameType;
+    internal FrameParameters? SettingsReturnFrameParameters;
 
     #region Events
 
@@ -563,6 +564,8 @@ public partial class DashboardWindow : Window, IDashboard
             if (TitleBarControl.SettingsEnabled)
             {
                 SettingsReturnFrameType = LoadedFrame?.GetType();
+                SettingsReturnFrameParameters = LoadedFrame?.Parameters;
+
                 ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
             }
             else

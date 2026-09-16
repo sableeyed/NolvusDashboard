@@ -3030,12 +3030,18 @@ ccafdsse001-dwesanctuary.esm";
             }            
         }
 
+        protected override async Task DoDownload(Func<IBrowserInstance> Browser)
+        {
+            // Fluorine is a prerequisite of the mod list rather than part of it, so it has no entry
+            // in the package and is fetched here instead. It needs the browser a free account
+            // resolves its Nexus links with, which is only handed down as far as this step.
+            await Fluorine.Install(DownloadingProgress, ExtractingProgress, Browser);
+
+            await base.DoDownload(Browser);
+        }
+
         protected override async Task DoCopy()
         {
-            // Fluorine is a prerequisite of the mod list rather than part of it, so it is fetched
-            // before the instance is scaffolded.
-            await Fluorine.Install(DownloadingProgress, ExtractingProgress);
-
             var Tsk = Task.Run(() =>
             {
                 try

@@ -2,20 +2,26 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Nolvus.Core.Errors;
 using Nolvus.Core.Events;
+using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
+using Nolvus.NexusApi;
+using Nolvus.Package.Utilities;
 
 namespace Nolvus.Package.Mods
 {
     public static class Fluorine
     {
-        public const string Repository = "SulfurNitride/Fluorine-Manager";
-        private const string LatestReleaseApi = "https://api.github.com/repos/" + Repository + "/releases/latest";
-        private const string AssetName = "Fluorine-Manager.zip";
+        public const string Domain = "site";
+        public const int NexusId = 1997;
         private const string ReleaseMarker = "nolvus-fluorine-release.txt";
+
+        public static string ModPage
+        {
+            get { return $"https://www.nexusmods.com/{Domain}/mods/{NexusId}"; }
+        }
 
         public static string InstallDirectory
         {
@@ -94,54 +100,99 @@ namespace Nolvus.Package.Mods
             return Process.Start(psi);
         }
 
-        public static async Task Install(DownloadProgressChangedHandler OnDownload, ExtractProgressChangedHandler OnExtract)
+        /// <summary>
+        /// Downloads and installs the latest Fluorine Manager from Nexus, updating an existing
+        /// install when a newer file has been uploaded.
+        /// </summary>
+        /// <remarks>
+        /// Fluorine is not part of the Nolvus package, so it has no entry in the mod list and no
+        /// NexusModFile to go through. It is fetched the same way every other Nexus file is though:
+        /// premium accounts get a CDN link straight from the API, free accounts resolve one through
+        /// the browser, and the download itself goes through the shared file service either way.
+        /// <paramref name="Browser"/> may be left null when the caller has no browser to offer, in
+        /// which case a free account cannot install and an existing install is kept as it is.
+        /// </remarks>
+        public static async Task Install(DownloadProgressChangedHandler OnDownload, ExtractProgressChangedHandler OnExtract, Func<IBrowserInstance> Browser = null)
         {
-            // An existing install is left alone whatever version it is
-            if (IsInstalled)
-            {
-                ServiceSingleton.Logger.Log($"[FLUORINE] Already installed in {InstallDirectory}, skipping download");
-                return;
-            }
-
-            string Tag;
-            string ApiUrl;
-            string BrowserUrl;
+            NexusApi.Responses.ModFile Latest;
 
             try
             {
-                (Tag, ApiUrl, BrowserUrl) = await GetLatestRelease();
+                Latest = await GetLatestFile();
             }
             catch (Exception ex)
             {
+                // An existing install is still playable when Nexus cannot be reached, so only a
+                // first install is worth failing over.
+                if (IsInstalled)
+                {
+                    ServiceSingleton.Logger.Log($"[FLUORINE] Unable to look up the latest version ({ex.Message}), keeping the install in {InstallDirectory}");
+                    return;
+                }
+
                 throw new Exception("Unable to download Fluorine Manager : " + ex.Message, ex);
             }
 
-            ServiceSingleton.Logger.Log($"[FLUORINE] Installing {Tag} from {ApiUrl}");
+            var Release = ReleaseName(Latest);
 
-            Directory.CreateDirectory(InstallDirectory);
+            if (IsInstalled)
+            {
+                if (IsUpToDate(Latest))
+                {
+                    ServiceSingleton.Logger.Log($"[FLUORINE] {Release} already installed in {InstallDirectory}, skipping download");
+                    return;
+                }
 
-            var Archive = Path.Combine(ServiceSingleton.Folders.DownloadDirectory, AssetName);
+                // Replacing the binaries out from under a running Fluorine would break it mid
+                // session, so the update waits until the next time it is closed.
+                if (IsRunning)
+                {
+                    ServiceSingleton.Logger.Log($"[FLUORINE] {Release} is available but Fluorine Manager is running, leaving {InstallDirectory} alone");
+                    return;
+                }
+
+                ServiceSingleton.Logger.Log($"[FLUORINE] Updating {GetInstalledRelease()} to {Release}");
+            }
+
+            string Link;
 
             try
             {
-                try
+                Link = await GetDownloadLink(Latest, Browser);
+            }
+            catch (Exception ex)
+            {
+                if (IsInstalled)
                 {
-                    await DownloadAsset(ApiUrl, Archive, OnDownload);
+                    ServiceSingleton.Logger.Log($"[FLUORINE] Unable to get a download link for {Release} ({ex.Message}), keeping the install in {InstallDirectory}");
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    ServiceSingleton.Logger.Log($"[FLUORINE] API asset download failed ({ex.Message}), trying {BrowserUrl}");
 
-                    await ServiceSingleton.Files.DownloadFile(BrowserUrl, Archive, OnDownload);
-                }
+                throw new Exception("Unable to download Fluorine Manager : " + ex.Message, ex);
+            }
+
+            ServiceSingleton.Logger.Log($"[FLUORINE] Installing {Release} from {ModPage}");
+
+            var Archive = Path.Combine(ServiceSingleton.Folders.DownloadDirectory, Latest.FileName);
+
+            try
+            {
+                await ServiceSingleton.Files.DownloadFile(Link, Archive, OnDownload);
+
+                // An update ships different binaries under the same names, and anything the old
+                // release left behind is not wanted. The wine prefix sits beside this directory
+                // rather than inside it, so it survives.
+                ServiceSingleton.Files.RemoveDirectory(InstallDirectory, true);
+
+                Directory.CreateDirectory(InstallDirectory);
 
                 await ServiceSingleton.Files.ExtractFile(Archive, InstallDirectory, OnExtract);
 
                 EnsureExecutable();
 
-                File.WriteAllText(Path.Combine(InstallDirectory, ReleaseMarker), Tag);
+                File.WriteAllText(Path.Combine(InstallDirectory, ReleaseMarker), Latest.FileID.ToString());
 
-                ServiceSingleton.Logger.Log($"[FLUORINE] {Tag} installed in {InstallDirectory}");
+                ServiceSingleton.Logger.Log($"[FLUORINE] {Release} installed in {InstallDirectory}");
             }
             finally
             {
@@ -154,113 +205,117 @@ namespace Nolvus.Package.Mods
             }
         }
 
-        private static HttpClient CreateClient()
+        /// <summary>
+        /// The newest file the Nexus page publishes, which is what "latest Fluorine" means here -
+        /// the mod has no version endpoint of its own worth trusting over its uploads.
+        /// </summary>
+        private static async Task<NexusApi.Responses.ModFile> GetLatestFile()
         {
-            var Client = new HttpClient();
+            // Filtering by category makes ApiManager block on the request internally, so it is
+            // kept off the UI thread - the play button calls Install from its click handler.
+            var Files = await Task.Run(() => ApiManager.GetModFiles(Domain, NexusId, NexusApi.Responses.FileCategory.Main));
 
-            Client.DefaultRequestHeaders.Add("User-Agent", "NolvusDashboard");
-
-            return Client;
-        }
-
-        private static async Task<(string Tag, string ApiUrl, string BrowserUrl)> GetLatestRelease()
-        {
-            using var Client = CreateClient();
-
-            Client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-
-            var Json = await Client.GetStringAsync(LatestReleaseApi);
-
-            using var Document = JsonDocument.Parse(Json);
-
-            var Tag = Document.RootElement.GetProperty("tag_name").GetString();
-
-            var Asset = Document.RootElement
-                .GetProperty("assets")
-                .EnumerateArray()
-                .FirstOrDefault(x => x.GetProperty("name").GetString() == AssetName);
-
-            if (Asset.ValueKind == JsonValueKind.Undefined)
-                throw new Exception($"Release {Tag} does not contain {AssetName}");
-
-            return (Tag, Asset.GetProperty("url").GetString(), Asset.GetProperty("browser_download_url").GetString());
-        }
-
-        private static async Task DownloadAsset(string Url, string Destination, DownloadProgressChangedHandler OnDownload)
-        {
-            using var Client = CreateClient();
-            using var Request = new HttpRequestMessage(HttpMethod.Get, Url);
-
-            Request.Headers.Accept.ParseAdd("application/octet-stream");
-
-            using var Response = await Client.SendAsync(Request, HttpCompletionOption.ResponseHeadersRead);
-
-            Response.EnsureSuccessStatusCode();
-
-            var Progress = new DownloadProgress
+            // Fall back to whatever else is published if nothing is flagged as a main file.
+            if (Files.Length == 0)
             {
-                FileName = Path.GetFileName(Destination),
-                TotalBytesToReceive = Response.Content.Headers.ContentLength ?? -1
-            };
-
-            Progress.TotalBytesToReceiveAsString = ToMegabytes(Progress.TotalBytesToReceive);
-
-            var Watch = Stopwatch.StartNew();
-
-            await using var Input = await Response.Content.ReadAsStreamAsync();
-            await using var Output = File.Open(Destination, FileMode.Create, FileAccess.Write, FileShare.None);
-
-            var Buffer = new byte[81920];
-            var LastPercent = -1;
-            int Read;
-
-            while ((Read = await Input.ReadAsync(Buffer)) > 0)
-            {
-                await Output.WriteAsync(Buffer.AsMemory(0, Read));
-
-                Progress.BytesReceived += Read;
-
-                var Percent = Progress.TotalBytesToReceive > 0
-                    ? (int)(Progress.BytesReceived * 100 / Progress.TotalBytesToReceive)
-                    : 0;
-
-                // One UI update per percent rather than per 80KB chunk.
-                if (Percent == LastPercent)
-                    continue;
-
-                LastPercent = Percent;
-
-                Progress.ProgressPercentage = Percent;
-                Progress.BytesReceivedAsString = ToMegabytes(Progress.BytesReceived);
-                Progress.Speed = Progress.BytesReceived / 1024d / 1024d / Math.Max(Watch.Elapsed.TotalSeconds, 0.001);
-
-                OnDownload?.Invoke(null, Progress);
+                Files = await Task.Run(() => ApiManager.GetModFiles(Domain, NexusId,
+                    NexusApi.Responses.FileCategory.Update,
+                    NexusApi.Responses.FileCategory.Optional,
+                    NexusApi.Responses.FileCategory.Miscellaneous));
             }
 
-            if (Progress.TotalBytesToReceive > 0 && Progress.BytesReceived != Progress.TotalBytesToReceive)
-                throw new IOException($"Download truncated : {Progress.BytesReceived} of {Progress.TotalBytesToReceive} bytes");
+            var Latest = Files.OrderByDescending(x => x.UploadedTimestamp).FirstOrDefault();
+
+            if (Latest == null)
+                throw new Exception($"No downloadable file found on {ModPage}");
+
+            return Latest;
         }
 
-        private static string ToMegabytes(long Bytes)
+        private static async Task<string> GetDownloadLink(NexusApi.Responses.ModFile File_, Func<IBrowserInstance> Browser)
         {
-            return (Bytes / 1024d / 1024d).ToString("0.00");
+            if (ApiManager.AccountInfo.IsPremium)
+            {
+                var Links = await ApiManager.GetDownloadLinks(Domain, NexusId, File_.FileID);
+
+                // Fluorine can be installed from the play button, where there is no working
+                // instance to take a CDN preference from, so any link will do as a fallback.
+                var Cdn = ServiceSingleton.Instances.WorkingInstance?.Settings?.CDN;
+
+                var Link = Links.FirstOrDefault(x => x.ShortName == Cdn) ?? Links.FirstOrDefault();
+
+                if (Link == null)
+                    throw new Exception($"Nexus returned no download link for {File_.FileName}");
+
+                return Link.Uri.ToString();
+            }
+
+            if (Browser == null)
+                throw new Exception($"A free Nexus account has to download {File_.FileName} through the browser, which is not available here");
+
+            var ManualLink = $"{ModPage}?tab=files&file_id={File_.FileID}&nmm=1";
+
+            // Shares the gate with the mod installs so only ever one browser window is on screen,
+            // which matters because Fluorine is fetched while the mod list is installing.
+            return await BrowserGate.RunAsync($"manual link for {File_.FileName}", async () =>
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] Awaiting manual user download link for file {File_.FileName}");
+
+                var browserTries = 0;
+
+                while (true)
+                {
+                    try
+                    {
+                        return await Browser().GetNexusManualDownloadLink("Fluorine Manager", ManualLink, NexusId.ToString()).ConfigureAwait(false);
+                    }
+                    catch (BrowserClosedException) when (browserTries < ServiceSingleton.Settings.RetryCount)
+                    {
+                        browserTries++;
+                        ServiceSingleton.Logger.Log($"[FLUORINE] Manual download window closed before completing, reopening ({browserTries}/{ServiceSingleton.Settings.RetryCount}) for file {File_.FileName}");
+                    }
+                }
+            }).ConfigureAwait(false);
         }
 
-        // Unused while an existing install is always kept. Restore alongside a version comparison
-        // in Install() if update checking is reintroduced.
-        //private static string GetInstalledRelease()
-        //{
-        //    var Marker = Path.Combine(InstallDirectory, ReleaseMarker);
-        //
-        //    try
-        //    {
-        //        return File.Exists(Marker) ? File.ReadAllText(Marker).Trim() : string.Empty;
-        //    }
-        //    catch
-        //    {
-        //        return string.Empty;
-        //    }
-        //}
+        private static string ReleaseName(NexusApi.Responses.ModFile File_)
+        {
+            return $"{File_.Version} (file {File_.FileID})";
+        }
+
+        /// <summary>
+        /// Whether the install in <see cref="InstallDirectory"/> is already the given Nexus file.
+        /// </summary>
+        /// <remarks>
+        /// The marker holds the Nexus file id, so a file re-uploaded under an unchanged version
+        /// still counts as an update. Installs predating the move to Nexus left the GitHub release
+        /// tag there instead, which is recognised by version so they are not made to re-download a
+        /// couple of hundred megabytes of the release they already have.
+        /// </remarks>
+        private static bool IsUpToDate(NexusApi.Responses.ModFile Latest)
+        {
+            var Installed = GetInstalledRelease();
+
+            if (Installed == string.Empty)
+                return false;
+
+            return Installed == Latest.FileID.ToString() ||
+                   Installed.TrimStart('v', 'V') == (Latest.Version ?? string.Empty).TrimStart('v', 'V');
+        }
+
+        private static string GetInstalledRelease()
+        {
+            var Marker = Path.Combine(InstallDirectory, ReleaseMarker);
+
+            try
+            {
+                return File.Exists(Marker) ? File.ReadAllText(Marker).Trim() : string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
 
         private static void EnsureExecutable()
         {

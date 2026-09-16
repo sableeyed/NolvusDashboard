@@ -15,6 +15,7 @@ using Nolvus.Dashboard.Frames;
 using Nolvus.Dashboard.Frames.Installer;
 using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Package.Mods;
+using Nolvus.Browser;
 using Vcc.Nolvus.Api.Installer.Services;
 using Nolvus.Dashboard.Frames.Instance.v5;
 using ValveKeyValue;
@@ -196,6 +197,15 @@ namespace Nolvus.Dashboard.Controls
                     {
                         ServiceSingleton.Dashboard.Status($"Extracting Fluorine Manager ({p.ProgressPercentage}%)");
                         ServiceSingleton.Dashboard.Progress(p.ProgressPercentage);
+                    },
+                    () =>
+                    {
+                        return Dispatcher.UIThread.Invoke(() =>
+                        {
+                            var Win = new BrowserWindow("about:blank");
+                            Win.Show();
+                            return (IBrowserInstance)Win;
+                        });
                     });
 
                 return true;

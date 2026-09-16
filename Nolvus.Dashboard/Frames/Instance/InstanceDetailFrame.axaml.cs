@@ -5,6 +5,8 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Nolvus.Core.Frames;
@@ -35,6 +37,8 @@ namespace Nolvus.Dashboard.Frames.Instance
             BtnSettings.Click += BtnSettings_Click;
             BtnLoadOrder.Click += BtnLoadOrder_Click;
             BtnReport.Click += BtnReport_Click;
+
+            SetupReportMenu();
 
             DrpDwnLstProfiles.SelectionChanged += DrpDwnLstProfiles_SelectionChanged;
 
@@ -230,10 +234,131 @@ namespace Nolvus.Dashboard.Frames.Instance
             await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>();
         }
 
+        private void SetupReportMenu()
+        {
+            var Menu = new ContextMenu();
+
+            var MiClipboard = new MenuItem { Header = "Copy to clipboard" };
+            MiClipboard.Click += (_, __) => BrItmClipboardReport_Click();
+            Menu.Items.Add(MiClipboard);
+
+            var MiPdf = new MenuItem { Header = "Generate PDF" };
+            MiPdf.Click += (_, __) => BrItmPDFReport_Click();
+            Menu.Items.Add(MiPdf);
+
+            BtnReport.ContextMenu = Menu;
+        }
+
         private void BtnReport_Click(object? sender, RoutedEventArgs e)
         {
-            var win = TopLevel.GetTopLevel(this) as Window;
-            NolvusMessageBox.Show(win, "Report", "Report generation menu not yet implemented", MessageBoxType.Info);
+            BtnReport.ContextMenu.Open();
+        }
+
+        private async void BrItmClipboardReport_Click()
+        {
+            var Window_ = TopLevel.GetTopLevel(this) as Window;
+
+            ShowLoading();
+
+            try
+            {
+                var Report = await ServiceSingleton.Report.GenerateReportToClipBoard(ModListStatus, (s, p) =>
+                {
+                    ServiceSingleton.Dashboard.Status($"{s} ({p}%)");
+                    ServiceSingleton.Dashboard.Progress(p);
+                });
+
+                var Clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+
+                if (Clipboard == null)
+                    throw new Exception("No clipboard is available");
+
+                await Clipboard.SetTextAsync(Report);
+
+                ReportDone();
+
+                await NolvusMessageBox.Show(Window_, "Information", "Configuration has been copied to the clipboard", MessageBoxType.Info);
+            }
+            catch (Exception ex)
+            {
+                ReportDone();
+
+                ServiceSingleton.Logger.Log(ex.ToString());
+
+                await NolvusMessageBox.Show(Window_, "Error during report generation", ex.Message, MessageBoxType.Error);
+            }
+        }
+
+        private async void BrItmPDFReport_Click()
+        {
+            var Window_ = TopLevel.GetTopLevel(this) as Window;
+
+            ShowLoading();
+
+            try
+            {
+                var Instance = ServiceSingleton.Instances.WorkingInstance;
+
+                var Pdf = await ServiceSingleton.Report.GenerateReportToPdf(
+                    ModListStatus,
+                    LoadImageSharpFromAsset("avares://NolvusDashboard/Assets/background-nolvus.jpg"),
+                    (s, p) =>
+                    {
+                        ServiceSingleton.Dashboard.Status($"{s} ({p}%)");
+                        ServiceSingleton.Dashboard.Progress(p);
+                    });
+
+                Directory.CreateDirectory(ServiceSingleton.Folders.ReportDirectory);
+
+                File.WriteAllBytes(
+                    Path.Combine(ServiceSingleton.Folders.ReportDirectory, string.Format("{0}-v{1}.pdf", Instance.Name, Instance.Version)),
+                    Pdf);
+
+                ReportDone();
+
+                await NolvusMessageBox.Show(Window_, "Information", $"PDF report has been generated in {ServiceSingleton.Folders.ReportDirectory}", MessageBoxType.Info);
+
+                OpenReportDirectory();
+            }
+            catch (Exception ex)
+            {
+                ReportDone();
+
+                ServiceSingleton.Logger.Log(ex.ToString());
+
+                await NolvusMessageBox.Show(Window_, "Error during report generation", ex.Message, MessageBoxType.Error);
+            }
+        }
+
+        private void ReportDone()
+        {
+            HideLoading();
+            ServiceSingleton.Dashboard.NoStatus();
+            ServiceSingleton.Dashboard.ProgressCompleted();
+        }
+
+        private void OpenReportDirectory()
+        {
+            // UseShellExecute, or this tries to run the directory as a program.
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = ServiceSingleton.Folders.ReportDirectory,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                ServiceSingleton.Logger.Log($"Unable to open the report directory : {ex.Message}");
+            }
+        }
+
+        private SixLabors.ImageSharp.Image LoadImageSharpFromAsset(string AssetPath)
+        {
+            using var Stream = Avalonia.Platform.AssetLoader.Open(new Uri(AssetPath));
+
+            return SixLabors.ImageSharp.Image.Load(Stream);
         }
     }
 }

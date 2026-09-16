@@ -355,7 +355,23 @@ namespace Nolvus.Dashboard.Controls
 
                 NolvusMessageBox.Show(window, "Information", $"PDF report has been generated in {ServiceSingleton.Folders.ReportDirectory}", MessageBoxType.Info);
 
-                Process.Start(ServiceSingleton.Folders.ReportDirectory);
+                // Process.Start(string) leaves UseShellExecute false, so this tried to execute the
+                // report directory as a program rather than open it. Opening a folder is the same
+                // shell handover the Discord and Patreon buttons use for their links.
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = ServiceSingleton.Folders.ReportDirectory,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    // The report is already written and the message box above says where it is, so
+                    // failing to open a file manager is not worth an error dialog of its own.
+                    ServiceSingleton.Logger.Log($"Unable to open the report directory : {ex.Message}");
+                }
             }
             catch (Exception ex)
             {

@@ -77,11 +77,12 @@ namespace Nolvus.Dashboard.Frames.Settings
         {
             var window = TopLevel.GetTopLevel(this) as DashboardWindow;
             var returnType = window?.SettingsReturnFrameType;
+            var returnParameters = window?.SettingsReturnFrameParameters;
 
             if (returnType != null && typeof(DashboardFrame).IsAssignableFrom(returnType))
             {
-                var method = typeof(IDashboard).GetMethod("LoadFrameAsync")!.MakeGenericMethod(returnType);
-                await (Task)method.Invoke(ServiceSingleton.Dashboard, new object?[] { null })!;
+                var method = typeof(IDashboard).GetMethod("LoadFrame")!.MakeGenericMethod(returnType);
+                method.Invoke(ServiceSingleton.Dashboard, new object?[] { returnParameters });
             }
             else
             {

@@ -60,9 +60,13 @@
                        Canvas.Left="261"
                        Canvas.Top="44"
                        Width="368"
-                       Height="36"
+                       Height="31"
                        Text="[Description]"
+                       FontSize="11"
+                       LineHeight="15"
+                       MaxLines="2"
                        TextWrapping="Wrap"
+                       TextTrimming="CharacterEllipsis"
                        Foreground="White"/>
 
             <!-- Version -->

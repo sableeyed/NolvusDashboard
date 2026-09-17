@@ -1,12 +1,13 @@
 using Avalonia.Controls;
 using Avalonia.LogicalTree;
 using Nolvus.Core.Interfaces;
+using Nolvus.Core.Services;
 
 namespace Nolvus.Core.Frames
 {
     public partial class DashboardFrame : UserControl, IDashboardFrame
     {
-        protected FrameParameters Parameters;
+        public FrameParameters Parameters { get; private set; }
         IDashboard DashBoardInstance;
 
         public DashboardFrame(IDashboard Dashboard, FrameParameters Params)
@@ -58,7 +59,23 @@ namespace Nolvus.Core.Frames
 
         private void OnFrameLoaded(object sender, EventArgs e) => OnLoaded();
 
-        private void OnFrameLoadedSync(object sender, EventArgs e) => _ = OnLoadedAsync();
+        // OnLoadedAsync is raised from an event, so there is nobody to hand an exception back to.
+        // Discarding the task left a frame that threw while loading on screen half built, with
+        // nothing anywhere to say so - log it at least.
+        private async void OnFrameLoadedSync(object sender, EventArgs e)
+        {
+            try
+            {
+                await OnLoadedAsync();
+            }
+            catch (Exception ex)
+            {
+                // Null conditional : this runs in an async void, so an exception thrown while
+                // reporting an exception would go unhandled, and the logger is resolved from a
+                // service registry that hands back null when nothing is registered.
+                ServiceSingleton.Logger?.Log($"[FRAME] {GetType().Name} failed while loading : {ex}");
+            }
+        }
 
         public virtual T Initialize<T>() where T : DashboardFrame
         {

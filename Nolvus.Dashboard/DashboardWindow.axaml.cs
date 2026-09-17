@@ -1,3 +1,4 @@
+using System.Threading;
 using Avalonia.Media;
 using Avalonia.Input;
 using Avalonia.Controls;
@@ -22,7 +23,9 @@ namespace Nolvus.Dashboard;
 public partial class DashboardWindow : Window, IDashboard
 {
     private DashboardFrame LoadedFrame;
+    private int _ProgressGeneration;
     internal Type? SettingsReturnFrameType;
+    internal FrameParameters? SettingsReturnFrameParameters;
 
     #region Events
 
@@ -300,7 +303,15 @@ public partial class DashboardWindow : Window, IDashboard
     {
         if (!Dispatcher.UIThread.CheckAccess())
         {
-            Dispatcher.UIThread.Post(() => Progress(Value));
+            // Queued, not applied - see ProgressCompleted for why the generation is carried along.
+            var Generation = Volatile.Read(ref _ProgressGeneration);
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (Generation == Volatile.Read(ref _ProgressGeneration))
+                    Progress(Value);
+            });
+
             return;
         }
 
@@ -308,8 +319,32 @@ public partial class DashboardWindow : Window, IDashboard
         DashboardProgressBar.Value = Value;
     }
 
+    /// <summary>
+    /// Hides the progress bar and discards any progress update that has not been applied yet.
+    /// </summary>
+    /// <remarks>
+    /// Work reports its progress from background threads, so Progress posts to the UI thread
+    /// instead of touching the bar directly. The last update a task makes is usually 100, and the
+    /// caller's completion runs on the UI thread as soon as it is awaited - ahead of that queued
+    /// post. The post then landed after the bar had been hidden and put it back up at 100% for
+    /// good, which the message box that normally follows was enough to pump. Completion opens a
+    /// new generation and updates posted during an older one are dropped when they run.
+    /// </remarks>
     public void ProgressCompleted()
     {
+        Interlocked.Increment(ref _ProgressGeneration);
+
+        HideProgress();
+    }
+
+    private void HideProgress()
+    {
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            Dispatcher.UIThread.Post(HideProgress);
+            return;
+        }
+
         DashboardProgressBar.IsVisible = false;
         DashboardProgressBar.Value = 0;
     }
@@ -563,6 +598,8 @@ public partial class DashboardWindow : Window, IDashboard
             if (TitleBarControl.SettingsEnabled)
             {
                 SettingsReturnFrameType = LoadedFrame?.GetType();
+                SettingsReturnFrameParameters = LoadedFrame?.Parameters;
+
                 ServiceSingleton.Dashboard.LoadFrame<GlobalSettingsFrame>();
             }
             else

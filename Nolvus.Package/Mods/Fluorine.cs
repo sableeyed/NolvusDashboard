@@ -312,7 +312,7 @@ namespace Nolvus.Package.Mods
             if (Browser == null)
                 throw new Exception($"A free Nexus account has to download {File_.FileName} through the browser, which is not available here");
 
-            var ManualLink = $"{ModPage}?tab=files&file_id={File_.FileID}&nmm=1";
+            var ManualLink = $"{ModPage}?tab=files&file_id={File_.FileID}&nmm=0";
 
             // Shares the gate with the mod installs so only ever one browser window is on screen,
             // which matters because Fluorine is fetched while the mod list is installing.

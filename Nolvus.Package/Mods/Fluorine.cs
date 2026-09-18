@@ -111,6 +111,51 @@ namespace Nolvus.Package.Mods
             return Process.Start(psi);
         }
 
+        // Python plugins the Nolvus package drops into MO2/plugins that Fluorine should load too.
+        // Fluorine only looks in its own bin/plugins, so these are brought across on every launch -
+        // which also restores them after a Fluorine reinstall and picks up list updates.
+        private static readonly string[] InstancePlugins = { "crdw_auto_mode" };
+
+        /// <summary>
+        /// Copies the instance's MO2 Python plugins listed in <see cref="InstancePlugins"/> into
+        /// Fluorine's plugin folder. Bytecode caches are left behind, since they were compiled for
+        /// MO2's Python and Fluorine builds its own. A plugin the instance does not have is skipped,
+        /// and a failure is logged rather than stopping the launch.
+        /// </summary>
+        public static void InstallPlugins(string InstallDir)
+        {
+            foreach (var Plugin in InstancePlugins)
+            {
+                var Source = Path.Combine(InstallDir, "MO2", "plugins", Plugin);
+                var Target = Path.Combine(InstallDirectory, "plugins", Plugin);
+
+                if (!Directory.Exists(Source))
+                    continue;
+
+                try
+                {
+                    foreach (var File_ in Directory.EnumerateFiles(Source, "*", SearchOption.AllDirectories))
+                    {
+                        var Relative = Path.GetRelativePath(Source, File_);
+
+                        if (Relative.Split(Path.DirectorySeparatorChar).Contains("__pycache__"))
+                            continue;
+
+                        var Destination = Path.Combine(Target, Relative);
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(Destination));
+                        File.Copy(File_, Destination, true);
+                    }
+
+                    ServiceSingleton.Logger.Log($"[FLUORINE] Plugin {Plugin} copied from {Source} to {Target}");
+                }
+                catch (Exception ex)
+                {
+                    ServiceSingleton.Logger.Log($"[FLUORINE] Could not copy plugin {Plugin} to {Target} : {ex.Message}");
+                }
+            }
+        }
+
         /// <summary>
         /// Installs Fluorine Manager if it is not already there, latest release first from Nexus
         /// and from the project's GitHub releases if Nexus cannot provide it.

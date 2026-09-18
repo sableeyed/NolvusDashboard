@@ -155,9 +155,11 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
             {
                 bool resError;
 
-                var instance = ServiceSingleton.Instances.WorkingInstance;
+                var Instance = ServiceSingleton.Instances.WorkingInstance;
 
-                LblHeader.Text = $"Settings for {instance.Name} v{instance.Version}";
+                LblHeader.Text = $"Settings for {Instance.Name} v{Instance.Version}";
+
+                ServiceSingleton.Dashboard.Info("Instance settings for " + Instance.Name + " v" + Instance.Version);
 
                 // Screen resolutions
                 List<string> resolutions = ServiceSingleton.Globals.WindowsResolutions;
@@ -178,14 +180,14 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                     ApplyDowncalingResolution();
 
                 // Paths
-                TxtBxInstancePath.Text = instance.InstallDir;
-                TxtBxArchivePath.Text = instance.ArchiveDir;
+                TxtBxInstancePath.Text = Instance.InstallDir;
+                TxtBxArchivePath.Text = Instance.ArchiveDir;
 
                 // Archiving toggle
-                TglBtnEnableArchive.IsChecked = instance.Settings.EnableArchiving;
+                TglBtnEnableArchive.IsChecked = Instance.Settings.EnableArchiving;
 
                 // Downscale toggle
-                TglBtnDownScale.IsChecked = instance.Performance.DownScaling == "TRUE";
+                TglBtnDownScale.IsChecked = Instance.Performance.DownScaling == "TRUE";
                 DrpDwnLstDownRes.IsEnabled = TglBtnDownScale.IsChecked == true;
 
                 // Download locations
@@ -197,13 +199,13 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                 BtnApplyDownScaling.IsEnabled = false;
 
                 // Labels
-                LblVariant.Text = instance.Performance.Variant;
-                LblAntiAliasing.Text = instance.Performance.AntiAliasing;
+                LblVariant.Text = Instance.Performance.Variant;
+                LblAntiAliasing.Text = Instance.Performance.AntiAliasing;
 
-                if (instance.Performance.Variant == "Redux")
+                if (Instance.Performance.Variant == "Redux")
                     LblLODs.Text = "Redux";
                 else
-                    LblLODs.Text = instance.Performance.LODs;
+                    LblLODs.Text = Instance.Performance.LODs;
 
                 LblPhysics.Text = "No";
                 LblRayTracing.Text = "No";
@@ -213,33 +215,33 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                 LblAltStart.Text = "No";
                 LblFantasyMode.Text = "No";
                 LblNude.Text = "No";
-                LblSkinType.Text = instance.Options.SkinType;
+                LblSkinType.Text = Instance.Options.SkinType;
 
-                if (instance.Performance.AdvancedPhysics == "TRUE")
+                if (Instance.Performance.AdvancedPhysics == "TRUE")
                     LblPhysics.Text = "Yes";
 
-                if (instance.Performance.RayTracing == "TRUE")
+                if (Instance.Performance.RayTracing == "TRUE")
                     LblRayTracing.Text = "Yes";
 
-                if (instance.Performance.FPSStabilizer == "TRUE")
+                if (Instance.Performance.FPSStabilizer == "TRUE")
                     LblFPS.Text = "Yes";
 
-                if (instance.Options.HardcoreMode == "TRUE")
+                if (Instance.Options.HardcoreMode == "TRUE")
                     LblHC.Text = "Yes";
 
-                if (instance.Options.AlternateLeveling == "TRUE")
+                if (Instance.Options.AlternateLeveling == "TRUE")
                     LblLeveling.Text = "Yes";
 
-                if (instance.Options.AlternateStart == "TRUE")
+                if (Instance.Options.AlternateStart == "TRUE")
                     LblAltStart.Text = "Yes";
 
-                if (instance.Options.FantasyMode == "TRUE")
+                if (Instance.Options.FantasyMode == "TRUE")
                     LblFantasyMode.Text = "Yes";
 
-                if (instance.Options.Nudity == "TRUE")
+                if (Instance.Options.Nudity == "TRUE")
                     LblNude.Text = "Yes";
 
-                LblENB.Text = ENBs.GetENBByCode(instance.Options.AlternateENB);
+                LblENB.Text = ENBs.GetENBByCode(Instance.Options.AlternateENB);
 
                 // Ini profile settings
                 List<string> iniSettings = new()
@@ -250,7 +252,7 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                 };
                 DrpDwnLstIni.ItemsSource = iniSettings;
 
-                if (int.TryParse(instance.Performance.IniSettings, out var iniIndex) &&
+                if (int.TryParse(Instance.Performance.IniSettings, out var iniIndex) &&
                     iniIndex >= 0 && iniIndex < iniSettings.Count)
                 {
                     DrpDwnLstIni.SelectedIndex = iniIndex;
@@ -261,8 +263,8 @@ namespace Nolvus.Dashboard.Frames.Instance.v5
                 }
 
                 // Disable downscaling when Anti Aliasing is DLAA
-                DrpDwnLstDownRes.IsEnabled = instance.Performance.AntiAliasing != "DLAA";
-                BtnApplyDownScaling.IsEnabled = instance.Performance.AntiAliasing != "DLAA";
+                DrpDwnLstDownRes.IsEnabled = Instance.Performance.AntiAliasing != "DLAA";
+                BtnApplyDownScaling.IsEnabled = Instance.Performance.AntiAliasing != "DLAA";
 
                 _initializing = false;
             }

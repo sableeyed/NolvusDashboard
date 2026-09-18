@@ -38,14 +38,15 @@ namespace Nolvus.Dashboard.Frames.Remap.v6
 
         private void ModifyMO2Executables(string CurrentInstallPath, string NewInstallPath)
         {
-            var Ini = Path.Combine(NewInstallPath, "MODS", "ModOrganizer.ini");
+            // Fluorine's ini in MODS, and the one plain MO2 reads next to ModOrganizer.exe.
+            foreach (var Ini in new[] { Path.Combine(NewInstallPath, "MODS", "ModOrganizer.ini"), Path.Combine(NewInstallPath, "MO2", "ModOrganizer.ini") })
+            {
+                if (!File.Exists(Ini))
+                {
+                    ServiceSingleton.Logger.Log($"Remap : no ModOrganizer.ini at {Ini}, nothing to rewrite");
+                    continue;
+                }
 
-            if (!File.Exists(Ini))
-            {
-                ServiceSingleton.Logger.Log($"Remap : no ModOrganizer.ini at {Ini}, nothing to rewrite");
-            }
-            else
-            {
                 var OldWine = ModOrganizer.ToWineIniPath(CurrentInstallPath);
                 var NewWine = ModOrganizer.ToWineIniPath(NewInstallPath);
 

@@ -33,10 +33,10 @@
                            Foreground="White"
                            Margin="0,0,0,8" />
 
-                <!-- Donation/patreon help text -->
+                <!-- Help text -->
                 <TextBlock x:Name="label2"
                            Grid.Row="1"
-                           Text="Please perform the post installation steps through the &quot;Manage&quot; button on the Instance panel, or follow the instructions on the wiki to do so manually. Please check ModOrganizer.ini for errors, especially if you did not use X:\Instances\ as your installation layout."
+                           Text="Your instance is ready to play from the Instance panel. Check the wiki for help, including how to use Mod Organizer 2 instead of Fluorine if you prefer it."
                            Foreground="White"
                            TextWrapping="Wrap"
                            Margin="0,0,0,16" />
@@ -57,6 +57,17 @@
                             Foreground="White"
                             BorderBrush="White"
                             Click="BtnGuide_Click"/>
+
+                    <Button x:Name="BtnWiki"
+                            Width="124"
+                            Height="40"
+                            Content="Wiki"
+                            Background="#363636"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Foreground="White"
+                            BorderBrush="White"
+                            Click="BtnWiki_Click"/>
 
                     <Button x:Name="BtnDonate"
                             Width="124"

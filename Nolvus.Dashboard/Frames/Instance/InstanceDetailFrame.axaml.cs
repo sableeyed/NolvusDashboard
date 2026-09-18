@@ -189,6 +189,8 @@ namespace Nolvus.Dashboard.Frames.Instance
 
                 ModOrganizer.SelectInstance(instance.InstallDir);
 
+                Fluorine.InstallPlugins(instance.InstallDir);
+
                 var mo2 = ModOrganizer.Start(instance.InstallDir);
                 BtnPlay.IsEnabled = false;
                 BtnPlay.Content = "Running...";

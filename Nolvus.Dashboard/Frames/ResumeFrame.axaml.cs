@@ -33,7 +33,7 @@ namespace Nolvus.Dashboard.Frames
         protected override async Task OnLoadedAsync()
         {
             ServiceSingleton.Dashboard.Title("Nolvus Dashboard - [Instance Auto Installer]");
-            ServiceSingleton.Dashboard.Status(string.Empty);
+            ServiceSingleton.Dashboard.Status("Resume your Nolvus installation");
 
             DrpDwnLstInstances.ItemsSource = ServiceSingleton.Instances.InstancesToResume;
             //DrpDwnLstInstances.DisplayMember = "Name";

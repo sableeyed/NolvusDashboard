@@ -10,5 +10,6 @@ namespace Nolvus.Core.Interfaces
     {
         void Log(string Message);
         void LineBreak();
+        void ClearLog();
     }
 }

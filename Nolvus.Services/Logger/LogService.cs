@@ -37,5 +37,13 @@ namespace Nolvus.Services.Logger
         {
             Log("");
         }
+
+        public void ClearLog()
+        {
+            lock (_sync)
+            {
+                File.Delete(_logFilePath);
+            }
+        }
     }
 }

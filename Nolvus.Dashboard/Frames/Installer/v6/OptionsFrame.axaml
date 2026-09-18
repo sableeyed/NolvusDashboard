@@ -197,7 +197,7 @@
                                             Cursor="Hand"/>
                                 </Grid>
 
-                                <TextBlock Text="Select between Untarnished UI, Edge UI or Oathvein UI"
+                                <TextBlock Text="Select between Untarnished UI, Edge UI, Oathvein UI, Norden UI or Vel'dun UI"
                                            Foreground="#F28F1A"
                                            FontSize="12"/>
                             </StackPanel>

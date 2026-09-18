@@ -34,8 +34,15 @@ namespace Nolvus.Services.Globals
         {
             get
             {
-                var val = ServiceSingleton.Settings.GetIniValue(MegaSection, MegaAnonymous);
-                return val == null ? true : Convert.ToBoolean(val);
+                try
+                {
+                    var Anonymous = ServiceSingleton.Settings.GetIniValue(MegaSection, MegaAnonymous);
+                    return Anonymous == null ? true : Convert.ToBoolean(Anonymous);
+                }
+                catch
+                {
+                    return true;
+                }
             }
             set => ServiceSingleton.Settings.StoreIniValue(MegaSection, MegaAnonymous, value.ToString().Trim());
         }

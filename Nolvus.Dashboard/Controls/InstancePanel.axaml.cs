@@ -153,6 +153,8 @@ namespace Nolvus.Dashboard.Controls
                 // Fluorine opens whatever CurrentInstance names, so point it at this one first.
                 ModOrganizer.SelectInstance(_instance.InstallDir);
 
+                Fluorine.InstallPlugins(_instance.InstallDir);
+
                 var Manager = Fluorine.Start();
 
                 // Fluorine stays up for as long as the user is modding, so the button is held until

@@ -357,14 +357,9 @@ namespace Nolvus.Package.Services
 
         private async Task AddModToQueue(InstallableElement Mod)
         {
-            var Tsk = Task.Run(async () => 
-            {                
-                ProgressQueue.Add(await Mod.PrepareProgress());
-                InstallingModsQueue.Add(Mod);
-                ServiceSingleton.Logger.Log("Mod : " + Mod.Name + " added to queue.");
-            });
-
-            await Tsk;
+            ProgressQueue.Add(await Mod.PrepareProgress());
+            InstallingModsQueue.Add(Mod);
+            ServiceSingleton.Logger.Log("Mod : " + Mod.Name + " added to queue.");
         }
 
         private void RemoveModFromQueue(InstallableElement Mod)

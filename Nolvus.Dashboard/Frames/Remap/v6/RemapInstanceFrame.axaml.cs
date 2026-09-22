@@ -152,7 +152,14 @@ namespace Nolvus.Dashboard.Frames.Remap.v6
             var folder = result[0];
             var folderPath = folder.Path.LocalPath;
 
-            if (ServiceSingleton.Files.IsDirectoryEmpty(folderPath))
+            var current = Path.TrimEndingDirectorySeparator(Path.GetFullPath(ServiceSingleton.Instances.WorkingInstance.InstallDir));
+            var chosen = Path.TrimEndingDirectorySeparator(Path.GetFullPath(folderPath));
+
+            if (chosen == current || chosen.StartsWith(current + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+            {
+                await NolvusMessageBox.Show(owner, "Invalid Installation Directory", "The new location can't be inside your current instance. Please select a directory outside it.", MessageBoxType.Error);
+            }
+            else if (ServiceSingleton.Files.IsDirectoryEmpty(folderPath))
             {
                 TxtBxInstancePath.Text = folderPath;
             }

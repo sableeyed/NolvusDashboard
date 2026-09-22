@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Xml;
 using System.Linq;
 using System.IO;
@@ -13,7 +12,6 @@ using Nolvus.Package.Mods;
 using Nolvus.Package.Utilities;
 using Nolvus.Core.Enums;
 using Avalonia.Controls;
-using Nolvus.Core.Utils;
 
 namespace Nolvus.Package.Files
 {
@@ -192,7 +190,7 @@ namespace Nolvus.Package.Files
 
                     ServiceSingleton.Logger.Log(string.Format("Checking CRC for file {0}", FileName));
 
-                    var FileCRC32 = await ServiceSingleton.Files.GetCRC32(FileInfo, HashProgress);
+                    var FileCRC32 = FileInfo.Exists ? await ServiceSingleton.Files.GetCRC32(FileInfo, HashProgress) : string.Empty;
 
                     if (CRC32 == string.Empty || !FileInfo.Exists || FileInfo.Length == 0 || (CRC32 != string.Empty && CRC32 != FileCRC32))
                     {
@@ -235,101 +233,82 @@ namespace Nolvus.Package.Files
             }
         }
 
-        private WebSite DetectSiteFromUrl(string url)
-        {
-            if (url.Contains("enbdev.com", StringComparison.OrdinalIgnoreCase))
-                return WebSite.EnbDev;
-
-            if (url.Contains("nexusmods.com", StringComparison.OrdinalIgnoreCase))
-                return WebSite.Nexus;
-
-            return WebSite.Other;
-        }
-
-
         private async Task InternalDownload(string Link, DownloadProgressChangedHandler OnProgress, Action<string, int> HashProgress, int RetryCount, Func<IBrowserInstance> Browser)
         {
             var Tries = 0;
             Exception CaughtException = null;
-            var site = DetectSiteFromUrl(Link);
-
-            if (!Exist())
-            {
-                try
-                {
-                    if (Link.Contains("distaranimation.com", StringComparison.OrdinalIgnoreCase))
-                    {
-                        ServiceSingleton.Logger.Log($"[Direct wget] {FileName}");
-
-                        var psi = new ProcessStartInfo
-                        {
-                            FileName = ExecutableResolver.RequireExecutable("wget"),
-                            Arguments = $"-O \"{Path.Combine(ServiceSingleton.Folders.DownloadDirectory, FileName)}\" \"{Link}\"",
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        };
-
-                        var proc = Process.Start(psi);
-                        await proc.WaitForExitAsync();
-
-                        if (proc.ExitCode != 0)
-                            throw new Exception($"wget failed for {FileName}");
-                    }
-                    if (RequireManualDownload)
-                    {
-                        // Shares one gate with the manual link resolution in InstallableElement, so
-                        // only ever one browser window is on screen no matter how many mods install
-                        // in parallel. Held across the retries so a reopened window stays exclusive.
-                        await BrowserGate.RunAsync($"download of {FileName}", async () =>
-                        {
-                            var browserTries = 0;
-                            while (true)
-                            {
-                                try
-                                {
-                                    await Browser().AwaitUserDownload(Link, FileName, OnProgress);
-                                    break;
-                                }
-                                catch (BrowserClosedException) when (browserTries < RetryCount)
-                                {
-                                    browserTries++;
-                                    ServiceSingleton.Logger.Log($"Download window closed before completing, reopening ({browserTries}/{RetryCount}) for {FileName}");
-                                }
-                            }
-                        }).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await DoDownload(Link, OnProgress);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    CaughtException = ex.InnerException ?? ex;
-                }
-            }
 
             while (true)
             {
-                if (await CRCCheck(HashProgress))
-                    break;
+                ServiceSingleton.Logger.Log(string.Format("Checking file {0}", FileName));
 
-                if (Tries == RetryCount)
+                if (!Exist())
                 {
+                    ServiceSingleton.Logger.Log(string.Format("File {0} not found!", FileName));
+                    ServiceSingleton.Logger.Log(string.Format("Trying to download file {0} ({1}/{2})", FileName, Tries.ToString(), RetryCount.ToString()));
+
+                    try
+                    {
+                        if (RequireManualDownload)
+                        {
+                            await BrowserGate.RunAsync($"download of {FileName}", async () =>
+                            {
+                                var browserTries = 0;
+                                while (true)
+                                {
+                                    try
+                                    {
+                                        await Browser().AwaitUserDownload(Link, FileName, OnProgress);
+                                        break;
+                                    }
+                                    catch (BrowserClosedException) when (browserTries < RetryCount)
+                                    {
+                                        browserTries++;
+                                        ServiceSingleton.Logger.Log($"Download window closed before completing, reopening ({browserTries}/{RetryCount}) for {FileName}");
+                                    }
+                                }
+                            }).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await DoDownload(Link, OnProgress);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        CaughtException = ex;
+
+                        if (ex.InnerException != null) CaughtException = ex.InnerException;
+
+                        ServiceSingleton.Logger.Log(string.Format("Error during file download {0} with error {1}", FileName, CaughtException.Message));
+                    }
+                }
+                else
+                {
+                    ServiceSingleton.Logger.Log(string.Format("File exists ({0}), about to check crc", LocationFileName));
+                }
+
+                if (await CRCCheck(HashProgress))
+                {
+                    break;
+                }
+                else if (Tries == RetryCount)
+                {
+                    ServiceSingleton.Logger.Log(string.Format("Download retry count reached for file {0}", FileName));
+
                     if (CaughtException != null)
-                        throw new Exception($"Unable to download file {FileName}...", CaughtException);
+                    {
+                        throw new Exception(string.Format("Unable to download file {0} after {1} retries with error {2}!", FileName, RetryCount.ToString(), CaughtException.Message), CaughtException);
+                    }
                     else
-                        throw new Exception($"Unable to download file {FileName} after retries!");
+                    {
+                        throw new Exception(string.Format("Unable to download file {0} after {1} retries!", FileName, RetryCount.ToString()));
+                    }
                 }
 
                 Tries++;
-
-                await Task.Delay(200);
             }
         }
-       
 
         public async Task Extract(ExtractProgressChangedHandler OnProgress)
         {

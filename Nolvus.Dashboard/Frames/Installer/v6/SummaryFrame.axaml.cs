@@ -67,6 +67,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 LblExhaustion.Text = string.Format("{0} {1}", Instance.Options.Exhaustion == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
                 LblNerfPA.Text = string.Format("{0} {1}", Instance.Options.NerfPA, Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
                 LblBoss.Text = string.Format("{0} {1}", Instance.Options.Boss == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
+                LblZoneLevelIndicator.Text = string.Format("{0} {1}", Instance.Options.ZoneLevelIndicator == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
                 LblController.Text = string.Format("{0} {1}", Instance.Options.Controller == "TRUE" ? "Yes" : "No", Instance.Performance.Variant == Strings.GO ? " (Not used)" : string.Empty);
                 LblUI.Text = Instance.Options.UI;
 
@@ -77,6 +78,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 LblExhaustion.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
                 LblNerfPA.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
                 LblBoss.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
+                LblZoneLevelIndicator.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
                 LblController.Foreground = Instance.Performance.Variant == Strings.GO ? new SolidColorBrush(Colors.Silver) : new SolidColorBrush(Color.FromRgb(242,143,26));
 
                 if (!ApiManager.AccountInfo.IsPremium)

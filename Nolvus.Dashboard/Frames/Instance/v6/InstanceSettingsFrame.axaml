@@ -295,6 +295,11 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="Zone Level Indicator" Width="120" Foreground="White"/>
+                                <TextBlock x:Name="LblZoneLevelIndicator" Foreground="#F28F1A"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Controller" Width="120" Foreground="White"/>
                                 <TextBlock x:Name="LblController" Foreground="#F28F1A"/>
                             </StackPanel>

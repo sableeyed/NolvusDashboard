@@ -16,10 +16,12 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             InitializeComponent();
             TglBtnBoss.IsCheckedChanged += OnBossChanged;
             TglBtnExhaustion.IsCheckedChanged += OnExhaustionChanged;
+            TglBtnZoneLevel.IsCheckedChanged += OnZoneLevelChanged;
             BtnContinue.Click += BtnContinue_Click;
             BtnPrevious.Click += BtnPrevious_Click;
             BtnPresetsExplained.Click += BtnPresetsExplained_Click;
             BtnScalingExplained.Click += BtnScalingExplained_Click;
+            BtnZoneLevelExplained.Click += BtnZoneLevelExplained_Click;
         }
 
         private int ScalingsIndex(List<string> Scalings)
@@ -177,6 +179,13 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             TglBtnBoss.IsEnabled = Instance.Performance.Variant != Strings.GO;
 
+            if (Instance.Options.ZoneLevelIndicator == "TRUE")
+            {
+                TglBtnZoneLevel.IsChecked = true;
+            }
+
+            TglBtnZoneLevel.IsEnabled = Instance.Performance.Variant != Strings.GO;
+
             ServiceSingleton.Dashboard.Info("Difficulty options");
         }
 
@@ -254,6 +263,18 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             }
         }
 
+        private void OnZoneLevelChanged(object? sender, RoutedEventArgs e)
+        {
+            if (TglBtnZoneLevel.IsChecked == true)
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.ZoneLevelIndicator = "TRUE";
+            }
+            else
+            {
+                ServiceSingleton.Instances.WorkingInstance.Options.ZoneLevelIndicator = "FALSE";
+            }
+        }
+
         private void OnScalingChanged(object? sender, SelectionChangedEventArgs e)
         {
             if (DrpDwnLstCombatScaling.SelectedItem is string value)
@@ -274,6 +295,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         private void BtnScalingExplained_Click(object? sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/combat/scaling") { UseShellExecute = true });
+        }
+
+        private void BtnZoneLevelExplained_Click(object? sender, RoutedEventArgs e)
+        {
+            //upstream has not provided a guide page for this option yet
         }
     }
 }

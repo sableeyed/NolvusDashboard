@@ -198,6 +198,45 @@
                                                Text="Face new boss encounters. These bosses can be very hard to beat and don't scale with your level whether you selected the Deleveled Enemies options or not. You can even encounter some of them early game, be warned!!!"/>
                                 </StackPanel>
 
+                                <!-- Zone Level Indicator -->
+                                <StackPanel Spacing="4">
+                                    <TextBlock x:Name="LblZoneLevel"
+                                               Text="Zone Level Indicator"
+                                               Foreground="White"/>
+                                    <Grid ColumnDefinitions="Auto,Auto"
+                                          ColumnSpacing="6">
+
+                                        <ToggleSwitch x:Name="TglBtnZoneLevel"
+                                                      Grid.Column="0"/>
+
+                                        <Button x:Name="BtnZoneLevelExplained"
+                                                Grid.Column="1"
+                                                Content="?"
+                                                Width="28"
+                                                Height="28"
+                                                Padding="0"
+                                                VerticalAlignment="Center"
+                                                VerticalContentAlignment="Center"
+                                                HorizontalContentAlignment="Center"
+                                                Background="#363636"
+                                                BorderBrush="White"
+                                                BorderThickness="1"
+                                                Foreground="White"
+                                                FontWeight="SemiBold"
+                                                Cursor="Hand"/>
+                                    </Grid>
+
+                                    <TextBlock x:Name="ZoneLevelDesc"
+                                               TextWrapping="Wrap"
+                                               TextTrimming="None"
+                                               HorizontalAlignment="Left"
+                                               TextAlignment="Left"
+                                               MaxWidth="400"
+                                               Foreground="#F28F1A"
+                                               FontSize="12"
+                                               Text="Display an icon representing the difficulty level when you are close to a dungeon or a sewer door."/>
+                                </StackPanel>
+
                                 <!-- Poise System -->
                                 <StackPanel Spacing="4" IsVisible="False">
                                     <TextBlock x:Name="LblPoise"

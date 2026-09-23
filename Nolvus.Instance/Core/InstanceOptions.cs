@@ -30,6 +30,7 @@ namespace Nolvus.Instance.Core
         public string CombatScaling { get; set; } = "Hard";
         public string Controller { get; set; } = "FALSE";
         public string UI { get; set; } = "Norden UI";
+        public string ZoneLevelIndicator { get; set; } = "TRUE";
 
 
         public void Load(XmlNode Node)
@@ -124,6 +125,11 @@ namespace Nolvus.Instance.Core
                 UI = Node["UI"].InnerText.Trim();
             }
 
+            if (Node["ZoneLevelIndicator"] != null)
+            {
+                ZoneLevelIndicator = Node["ZoneLevelIndicator"].InnerText.Trim();
+            }
+
             ServiceSingleton.Logger.Log(string.Format("Instance nudity : {0}", Nudity));
             ServiceSingleton.Logger.Log(string.Format("Instance enb : {0}", AlternateENB));
             ServiceSingleton.Logger.Log(string.Format("Instance fantasy mode : {0}", FantasyMode));
@@ -141,6 +147,7 @@ namespace Nolvus.Instance.Core
             //ServiceSingleton.Logger.Log(string.Format("Poise : {0}", Poise));
             ServiceSingleton.Logger.Log(string.Format("Gore : {0}", Gore));
             ServiceSingleton.Logger.Log(string.Format("Combat Scaling : {0}", CombatScaling));
+            ServiceSingleton.Logger.Log(string.Format("Zone Level Indicator : {0}", ZoneLevelIndicator));
             ServiceSingleton.Logger.Log(string.Format("Controller : {0}", Controller));
             ServiceSingleton.Logger.Log(string.Format("UI : {0}", UI));
         }      
@@ -223,6 +230,10 @@ namespace Nolvus.Instance.Core
 
             XMLWriter.WriteStartElement("UI");
             XMLWriter.WriteString(UI.Trim());
+            XMLWriter.WriteEndElement();
+
+            XMLWriter.WriteStartElement("ZoneLevelIndicator");
+            XMLWriter.WriteString(ZoneLevelIndicator.Trim());
             XMLWriter.WriteEndElement();
 
             XMLWriter.WriteEndElement();

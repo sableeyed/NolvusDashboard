@@ -103,6 +103,8 @@
                                     <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblNerfPA" Foreground="#F28F1A" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="3" Text="Boss Encounter" Foreground="White"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblBoss" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="4" Text="Zone Level Indicator" Foreground="White"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblZoneLevelIndicator" Foreground="#F28F1A" Margin="12,0,0,0"/>
                                 </Grid>
                             </StackPanel>
                         </Border>

@@ -164,6 +164,7 @@ namespace Nolvus.Core.Services
                     sb.AppendLine($"Nerf Power Attacks : {Instance.Options.NerfPA}");
                     //sb.AppendLine($"Enemies Resistance : {(Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Boss : {(Instance.Options.Boss == "TRUE" ? "Yes" : "No")}");
+                    sb.AppendLine($"Zone Level Indicator : {(Instance.Options.ZoneLevelIndicator == "TRUE" ? "Yes" : "No")}");
                     //sb.AppendLine($"Poise : {(Instance.Options.Poise == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Controller : {(Instance.Options.Controller == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"User Interface : {Instance.Options.UI}");
@@ -370,6 +371,7 @@ namespace Nolvus.Core.Services
                                 AddRow(col, "Nerf power attacks : ", Instance.Options.NerfPA);
                                 //AddRow(col, "Enemies resistance : ", Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Boss : ", Instance.Options.Boss == "TRUE" ? "Yes" : "No");
+                                AddRow(col, "Zone Level Indicator : ", Instance.Options.ZoneLevelIndicator == "TRUE" ? "Yes" : "No");
                                 //AddRow(col, "Poise system : ", Instance.Options.Poise == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Controller : ", Instance.Options.Controller == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "User Interface : ", Instance.Options.UI);

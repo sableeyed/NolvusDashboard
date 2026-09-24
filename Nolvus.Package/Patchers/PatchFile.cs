@@ -76,8 +76,6 @@ namespace Nolvus.Package.Patchers
 
                     // Determine working directory (mod or game)
                     var Dir = System.IO.Directory.Exists(ModDir) ? ModDir : GameDir;
-                    Dir = PathResolver.ResolveCaseInsensitiveDirectory(null, Dir)
-                        ?? Dir; // fallback if no changes
 
                     FileInfo? SourceFileToPatch = null;
 

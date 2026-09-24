@@ -233,16 +233,10 @@ namespace Nolvus.StockGame.Core
         {
             var Tsk = Task.Run(async () =>
             {
-                string DownloadedFile = "";
+                string DownloadedFile = Path.Combine(_WorkingDir, (_GamePackage.Name + ".zip").Replace(" ", "_"));
+
                 try
                 {
-                    string Link = _GamePackage.DownloadLink;
-                    string OriginalName = Path.GetFileName(Link);
-                    string EncodedName = Uri.EscapeDataString(OriginalName);
-                    if (!string.Equals(OriginalName, EncodedName, StringComparison.Ordinal))
-                        Link = Link.Replace(OriginalName, EncodedName);
-                    string SafeLocalName = (_GamePackage.Name + ".zip").Replace(" ", "_");
-                    DownloadedFile = Path.Combine(_WorkingDir, SafeLocalName);
                     try
                     {
                         this.StepProcessed("Initializing stock game installation");

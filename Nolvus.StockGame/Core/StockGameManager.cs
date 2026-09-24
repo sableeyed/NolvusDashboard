@@ -23,9 +23,6 @@ namespace Nolvus.StockGame.Core
         private const string FileKey = "GameManifest/Files/File";
         private const string InstructionKey = "GameManifest/Patcher/Instruction";
 
-        //We have to work around case sensitivity on Linux in a user friendly way.
-        private Dictionary<string, string> FileDict = new Dictionary<string, string>();
-
         #region Fields
 
         XmlDocument _Storage = new XmlDocument();
@@ -274,9 +271,6 @@ namespace Nolvus.StockGame.Core
 
         private async Task DoLoad()
         {
-            this.StepProcessed("Pre-computing hashes. Please be patient.");
-            BuildHashTable();
-
             var Tsk = Task.Run(() =>
             {
                 try
@@ -296,35 +290,10 @@ namespace Nolvus.StockGame.Core
 
                     StepProcessed("Processing game files meta data");
 
+                    // Case differences between the manifest and the Steam install are handled where
+                    // files are read (GameFile.GetSourceFullName), never by renaming the install.
                     foreach (XmlNode FileNode in FileElements)
                     {
-                        string expectedName = FileNode["Name"]?.InnerText?.Trim();
-                        string location = FileNode["Location"]?.InnerText?.Trim();
-                        string hash = FileNode["Hash"]?.InnerText?.Trim()?.ToLowerInvariant();
-
-                        if (!string.IsNullOrWhiteSpace(hash) &&
-                            FileDict.TryGetValue(hash, out var actualName))
-                        {
-                            // ★ RENAME BLOCK ★
-                            if (!string.Equals(actualName, expectedName, StringComparison.Ordinal))
-                            {
-                                string targetDir = location == "Data"
-                                    ? Path.Combine(_GameDir, "Data")
-                                    : _GameDir;
-
-                                string actualPath = Path.Combine(targetDir, actualName);
-                                string expectedPath = Path.Combine(targetDir, expectedName);
-
-                                if (File.Exists(actualPath) &&
-                                    !File.Exists(expectedPath))
-                                {
-                                    File.Move(actualPath, expectedPath);
-                                }
-                            }
-                            // Update XML so downstream logic sees correct casing
-                            FileNode["Name"].InnerText = expectedName;
-                        }
-
                         _Package.AddFile(FileNode);
 
                         ElementProcessed(Counter, FileCount, StockGameProcessStep.GameFileInfoLoading, _Package.Name);
@@ -464,32 +433,6 @@ namespace Nolvus.StockGame.Core
             await CheckIntegrity();
             await CopyGameFiles();
             await PatchGameFiles();
-        }
-
-        private void BuildHashTable()
-        {
-            FileDict.Clear();
-
-            var Files = Directory.EnumerateFiles(_GameDir, "*", SearchOption.AllDirectories);
-
-            foreach (var File in Files)
-            {
-                try
-                {
-                    string hash = ComputeMD5(File);
-                    string name = Path.GetFileName(File);
-                    if (!FileDict.ContainsKey(hash))
-                        FileDict.Add(hash, name);
-                }
-                catch { }
-            }
-        }
-
-        private string ComputeMD5(string Path)
-        {
-            using var sha = System.Security.Cryptography.MD5.Create();
-            using var stream = File.OpenRead(Path);
-            return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
         }
 
         #endregion

@@ -52,7 +52,7 @@ namespace Nolvus.StockGame.Meta
 
         public void Check(string GameDir, string LgCode)
         {
-            string FileName = Path.Combine(this.GetGameDir(GameDir), this.Name);
+            string FileName = this.GetSourceFullName(GameDir);
 
             if (!File.Exists(FileName))
             {
@@ -89,9 +89,50 @@ namespace Nolvus.StockGame.Meta
             return Path.Combine(this.GetGameDir(Dir), this.Name);
         }
 
+        public string GetSourceFullName(string Dir)
+        {
+            string Exact = this.GetFullName(Dir);
+
+            if (File.Exists(Exact))
+            {
+                return Exact;
+            }
+
+            var Segments = new List<string>();
+
+            if (this.Location == FileLocation.Data)
+            {
+                Segments.Add("Data");
+            }
+
+            Segments.AddRange(this.Name.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
+
+            string Current = Dir;
+
+            foreach (var Segment in Segments)
+            {
+                if (!Directory.Exists(Current))
+                {
+                    return Exact;
+                }
+
+                var Match = Directory.EnumerateFileSystemEntries(Current)
+                    .FirstOrDefault(x => string.Equals(Path.GetFileName(x), Segment, StringComparison.OrdinalIgnoreCase));
+
+                if (Match == null)
+                {
+                    return Exact;
+                }
+
+                Current = Match;
+            }
+
+            return Current;
+        }
+
         public void Copy(string GameDir, string StockGameDir, string LgCode)
         {
-            string SourceFileName = this.GetFullName(GameDir);
+            string SourceFileName = this.GetSourceFullName(GameDir);
             string DestinationFileName = this.GetFullName(StockGameDir);
 
             FileInfo DestFileInfo = new FileInfo(DestinationFileName);

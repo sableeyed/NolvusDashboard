@@ -276,9 +276,9 @@ namespace Nolvus.Package.Mods
         /// The latest GitHub release, used only as a fallback for a first install.
         /// </summary>
         /// <remarks>
-        /// The marker keeps the release tag here rather than a Nexus file id. IsUpToDate compares
-        /// on version as well as file id for exactly this reason, so an install that came from
-        /// GitHub is not re-downloaded from Nexus the next time round.
+        /// The marker records the release tag here rather than a Nexus file id. It is only reported
+        /// in the log: IsInstalled checks that the marker exists, and an existing install is never
+        /// replaced, since Fluorine updates itself.
         /// </remarks>
         private static async Task<Download> GetGitHubDownload()
         {

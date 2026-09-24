@@ -71,7 +71,7 @@ namespace Nolvus.StockGame.Meta
         {
             if (FileSkip)
             {
-                if (this.Name == string.Format("Skyrim - Voice_{0}0.bsa", LgCode.ToLower()))
+                if (this.Name == string.Format("Skyrim - Voices_{0}0.bsa", LgCode.ToLower()))
                 {
                     return true;
                 }

@@ -39,7 +39,9 @@ internal static class Program
         if (_cefCachePath != null)
             return;
 
-        _cefCachePath = Path.Combine(Path.GetTempPath(), "Nolvus_Cef");
+        _cefCachePath = ServiceSingleton.Folders.WebCacheDirectory;
+
+        Directory.CreateDirectory(_cefCachePath);
 
         AppDomain.CurrentDomain.ProcessExit += (_, __) => CleanupCef();
 

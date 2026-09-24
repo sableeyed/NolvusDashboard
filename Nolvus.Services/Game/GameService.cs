@@ -17,7 +17,9 @@ namespace Nolvus.Services.Game
         private static readonly string[] CheckForSteamRoot =
         {
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local/share/Steam"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".steam/steam")
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".steam/steam"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".var/app/com.valvesoftware.Steam/.local/share/Steam"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".var/app/com.valvesoftware.Steam/data/Steam")
         };
 
         private string? FindSkyrimInstallPath()

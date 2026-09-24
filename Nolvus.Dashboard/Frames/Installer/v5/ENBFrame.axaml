@@ -60,7 +60,7 @@ It cannot be shipped with Nolvus automatically."
                                 <TextBlock Text="Click"
                                            Foreground="White"/>
                                 <TextBlock Text="here"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            Classes="link"
                                            Cursor="Hand"
                                            PointerPressed="LnkCabbageTutorial_PointerPressed"
@@ -71,7 +71,7 @@ It cannot be shipped with Nolvus automatically."
 
                             <!-- Final Warning -->
                             <TextBlock Text="BE SURE TO FOLLOW THIS TUTORIAL AFTER THE LIST IS INSTALLED."
-                                       Foreground="#F28F1A"
+                                       Foreground="#FFA500"
                                        FontWeight="SemiBold"
                                        TextWrapping="Wrap"/>
 
@@ -118,8 +118,8 @@ PI-CHO is the default and recommended preset for Nolvus."
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="#F28F1A"
-                                    Foreground="#F28F1A"/>
+                                    BorderBrush="#FFA500"
+                                    Foreground="#FFA500"/>
                         </StackPanel>
                     </Grid>
 

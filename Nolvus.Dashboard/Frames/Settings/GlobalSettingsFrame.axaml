@@ -43,7 +43,7 @@
                                 <TextBlock Text="Click" Foreground="#CCCCCC"/>
 
                                 <TextBlock Text="here"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            Classes="link"
                                            Cursor="Hand"
                                            PointerPressed="OpenMega"/>

@@ -74,7 +74,7 @@
                                            Grid.Row="1"
                                            Grid.Column="1"
                                            Text="Disabled and not used when selecting the Graphics Only variant"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontSize="12"
                                            VerticalAlignment="Center"
                                            IsVisible="False"
@@ -123,7 +123,7 @@
                                                HorizontalAlignment="Left"
                                                TextAlignment="Left"
                                                MaxWidth="400"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                FontSize="12"
                                                Text="Combat scaling dictates how enemy levels will be scaled in relation to the player level. The easiest difficulty will allow the player to out level enemy factions earlier on, while the hardest will require substantially more time. Moderate is in between these two."/>
                                 </StackPanel>
@@ -140,7 +140,7 @@
                                                HorizontalAlignment="Left"
                                                TextAlignment="Left"
                                                MaxWidth="400"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                FontSize="12"
                                                Text="When you reach 30% of your remaining stamina, your character will start to be out of breath. When you are exhausted (stamina reaches 0), you will do 25% less damage (you can still do normal attacks), your character will be slowed down by 20% and you lose 10% on damage resistance. Your stamina regeneration rate will be slower until you reach 30% of your stamina again."/>
                                 </StackPanel>
@@ -161,7 +161,7 @@
                                                HorizontalAlignment="Left"
                                                TextAlignment="Left"
                                                MaxWidth="400"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                FontSize="12"
                                                Text="Power attack, dual wield attacks and dual wield power attacks damages are reduced by 30%"/>
                                 </StackPanel>
@@ -176,7 +176,7 @@
                                     <TextBlock x:Name="ResistanceDesc"
                                                TextWrapping="Wrap"
                                                IsVisible="False"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                FontSize="12"
                                                Text="Creatures and enemies have specific armor resistances depending on weapon used."/>
                                 </StackPanel>
@@ -193,7 +193,7 @@
                                                HorizontalAlignment="Left"
                                                TextAlignment="Left"
                                                MaxWidth="400"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                FontSize="12"
                                                Text="Face new boss encounters. These bosses can be very hard to beat and don't scale with your level whether you selected the Deleveled Enemies options or not. You can even encounter some of them early game, be warned!!!"/>
                                 </StackPanel>
@@ -232,7 +232,7 @@
                                                HorizontalAlignment="Left"
                                                TextAlignment="Left"
                                                MaxWidth="400"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                FontSize="12"
                                                Text="Display an icon representing the difficulty level when you are close to a dungeon or a sewer door."/>
                                 </StackPanel>
@@ -247,7 +247,7 @@
                                     <TextBlock x:Name="PoiseDesc"
                                                IsVisible="False"
                                                TextWrapping="Wrap"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                FontSize="12"
                                                Text="Poise affects stagger thresholds and enemy resistances to stagger mechanics."/>
                                 </StackPanel>
@@ -279,7 +279,7 @@
                                    Grid.Row="1"
                                    Text="⚠ These difficulty options cannot be changed after installation!"
                                    TextWrapping="Wrap"
-                                   Foreground="#F28F1A"/>
+                                   Foreground="#FFA500"/>
 
                         <!-- Bottom Buttons -->
                         <StackPanel Grid.Row="2"
@@ -303,8 +303,8 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#363636"
-                                    Foreground="#F28F1A"
-                                    BorderBrush="#F28F1A"
+                                    Foreground="#FFA500"
+                                    BorderBrush="#FFA500"
                                     BorderThickness="1"/>
                         </StackPanel>
 

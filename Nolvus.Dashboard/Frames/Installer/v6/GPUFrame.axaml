@@ -79,17 +79,17 @@
                         <StackPanel Grid.Row="1" Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <TextBlock Text="Variant" Foreground="White"/>
-                                <TextBlock x:Name="LblVariant" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblVariant" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <TextBlock Text="Resolution" Foreground="White"/>
-                                <TextBlock x:Name="LblResolution" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblResolution" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <TextBlock Text="SR Exterior Cities" Foreground="White"/>
-                                <TextBlock x:Name="LblSREX" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblSREX" Foreground="#FFA500"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -98,7 +98,7 @@
                                 <Image x:Name="ImgWarning" Width="32" Height="32"/>
                                 <TextBlock Text="Warning"
                                            FontSize="16"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <TextBlock x:Name="label5"

@@ -40,7 +40,7 @@
                             <StackPanel Spacing="16">
 
                                 <TextBlock Text="Resolution"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontWeight="SemiBold"
                                            FontSize="16"/>
 
@@ -87,7 +87,7 @@
 
                                     <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
                                                Text="Not compatible with DLAA/FSR/Frame Generation"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                TextWrapping="Wrap"
                                                Margin="0,8,0,0"/>
 
@@ -126,7 +126,7 @@
                             <StackPanel Spacing="16">
 
                                 <TextBlock Text="Graphics"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontWeight="SemiBold"
                                            FontSize="16"/>
 
@@ -145,7 +145,7 @@
 
                                     <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
                                                Text="DLAA only available on Nvidia RTX."
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                TextWrapping="Wrap"
                                                Margin="0,8,0,0"/>
                                 </Grid>
@@ -205,7 +205,7 @@
                             <StackPanel Spacing="16">
 
                                 <TextBlock Text="Variant"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontWeight="SemiBold"
                                            FontSize="16"/>
 
@@ -232,7 +232,7 @@
                                                    Foreground="White"/>
                                         <TextBlock Grid.Column="1"
                                                    x:Name="LblTextures"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
                                     </Grid>
 
                                     <Grid ColumnDefinitions="150,*">
@@ -240,7 +240,7 @@
                                                    Foreground="White"/>
                                         <TextBlock Grid.Column="1"
                                                    x:Name="LblTrees"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
                                     </Grid>
 
                                     <Grid ColumnDefinitions="150,*">
@@ -248,7 +248,7 @@
                                                    Foreground="White"/>
                                         <TextBlock Grid.Column="1"
                                                    x:Name="LblCities"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
                                     </Grid>
 
                                 </StackPanel>
@@ -264,7 +264,7 @@
 
                                     <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
                                                Text="Removes loading screens entering/exiting major cities. Very heavy on CPU/GPU."
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                TextWrapping="Wrap"
                                                Margin="0,8,0,0"/>
                                 </Grid>
@@ -292,7 +292,7 @@
                                                VerticalAlignment="Top"/>
                                     <TextBlock Grid.Column="1"
                                                x:Name="LblNote"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                TextWrapping="Wrap"/>
                                 </Grid>
 
@@ -315,7 +315,7 @@
                             <StackPanel Spacing="16">
 
                                 <TextBlock Text="Hardware Requirement"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontWeight="SemiBold"
                                            FontSize="16"/>
 
@@ -342,20 +342,20 @@
 
 
                                     <TextBlock Grid.Row="1" Text="CPU" Foreground="White"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblMinCPU" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="2" x:Name="LblMaxCPU" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblMinCPU" Foreground="#FFA500"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" x:Name="LblMaxCPU" Foreground="#FFA500"/>
 
                                     <TextBlock Grid.Row="2" Text="GPU" Foreground="White"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblMinGPU" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="2" x:Name="LblMaxGPU" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblMinGPU" Foreground="#FFA500"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" x:Name="LblMaxGPU" Foreground="#FFA500"/>
 
                                     <TextBlock Grid.Row="3" Text="RAM" Foreground="White"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblMinRAM" Text="16 GB" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="2" x:Name="LblMaxRAM" Text="32 GB" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblMinRAM" Text="16 GB" Foreground="#FFA500"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" x:Name="LblMaxRAM" Text="32 GB" Foreground="#FFA500"/>
 
                                     <TextBlock Grid.Row="4" Text="VRAM" Foreground="White"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblMinVRAM" Foreground="#F28F1A"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="2" x:Name="LblMaxVRAM" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblMinVRAM" Foreground="#FFA500"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="2" x:Name="LblMaxVRAM" Foreground="#FFA500"/>
                                 </Grid>
 
 
@@ -363,10 +363,10 @@
                                 <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto" RowSpacing="6">
 
                                     <TextBlock Text="Installation Size:" Foreground="White"/>
-                                    <TextBlock Grid.Column="1" x:Name="LblMinInstallSize" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Column="1" x:Name="LblMinInstallSize" Foreground="#FFA500"/>
 
                                     <TextBlock Grid.Row="1" Text="Download Size:" Foreground="White"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblMinDownloadSize" Foreground="#F28F1A"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblMinDownloadSize" Foreground="#FFA500"/>
 
                                 </Grid>
 
@@ -403,7 +403,7 @@
                                            TextWrapping="Wrap"/>
 
                                 <TextBlock Text="Requirements here are estimations only. Real performance varies."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
 
                                 <TextBlock Text="Current hardware configuration:"
@@ -413,17 +413,17 @@
                                 <StackPanel Spacing="6">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <TextBlock Text="GPU:" Foreground="White"/>
-                                        <TextBlock x:Name="LblGPUs" Foreground="#F28F1A"/>
+                                        <TextBlock x:Name="LblGPUs" Foreground="#FFA500"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <TextBlock Text="CPU:" Foreground="White"/>
-                                        <TextBlock x:Name="LblCPU" Foreground="#F28F1A"/>
+                                        <TextBlock x:Name="LblCPU" Foreground="#FFA500"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <TextBlock Text="RAM:" Foreground="White"/>
-                                        <TextBlock x:Name="LblRAM" Foreground="#F28F1A"/>
+                                        <TextBlock x:Name="LblRAM" Foreground="#FFA500"/>
                                     </StackPanel>
                                 </StackPanel>
 
@@ -459,8 +459,8 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
-                                    BorderBrush="#F28F1A"
-                                    Foreground="#F28F1A"/>
+                                    BorderBrush="#FFA500"
+                                    Foreground="#FFA500"/>
 
                         </StackPanel>
 

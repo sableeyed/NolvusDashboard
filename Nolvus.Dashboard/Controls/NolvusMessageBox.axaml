@@ -3,7 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="Nolvus.Dashboard.Controls.NolvusMessageBox"
     Width="460"
-    Height="220"
+    MinHeight="220"
+    SizeToContent="Height"
     CanResize="False"
     SystemDecorations="None"
     Background="#363636"
@@ -22,7 +23,7 @@
       <TextBlock x:Name="LblTitle"
                  Grid.Column="1"
                  FontSize="20"
-                 Foreground="#F28F1A"
+                 Foreground="#FFA500"
                  FontWeight="SemiBold"
                  Text="Title"/>
 

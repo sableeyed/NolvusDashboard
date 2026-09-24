@@ -38,7 +38,7 @@
                                 <TextBlock Text="Enable nudity" Foreground="White"/>
                                 <ToggleSwitch x:Name="TglNudity"/>
                                 <TextBlock Text="When nudity is enabled all npc's will be nude when undressed."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontSize="12"/>
                             </StackPanel>
 
@@ -78,7 +78,7 @@
                                 </Grid>
 
                                 <TextBlock Text="When alternate leveling is disabled, the game uses vanilla skills based leveling. When this option is enabled the player gains xp when killing enemies, exploring the world and completing quests. Skill points are distributed manually by the player in every perk tree when leveling."
-                                        Foreground="#F28F1A"
+                                        Foreground="#FFA500"
                                         TextWrapping="Wrap"
                                         TextTrimming="None"
                                         HorizontalAlignment="Left"
@@ -92,7 +92,7 @@
                                 <TextBlock Text="Alternate Start" Foreground="White" IsVisible="False"/>
                                 <ToggleSwitch x:Name="TglAltStart" IsVisible="False"/>
                                 <TextBlock Text="Start the game in different scenarios rather than Helgen."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            IsVisible="False"
                                            FontSize="12"/>
                             </StackPanel>
@@ -114,7 +114,7 @@
                                           Background="#2E2E2E"
                                           Foreground="White"/>
                                 <TextBlock Text="Select between more flashy movesets or more conventional movesets for combat"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontSize="12"/>
                             </StackPanel>
 
@@ -123,7 +123,7 @@
                                 <TextBlock Text="Stances Perks Tree" Foreground="White" IsVisible="False"/>
                                 <ToggleSwitch x:Name="TglStances" IsEnabled="False" IsVisible="False"/>
                                 <TextBlock Text="Perk system overhaul tied to stance-based combat."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            IsVisible="False"
                                            FontSize="12"/>
                             </StackPanel>
@@ -141,7 +141,7 @@
                                 </Grid>
                                 <ToggleSwitch x:Name="TglGore"/>
                                 <TextBlock Text="Dismember your enemies"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontSize="12"/>
                             </StackPanel>
 
@@ -158,7 +158,7 @@
                                 </Grid>
                                 <ToggleSwitch x:Name="TglController"/>
                                 <TextBlock Text="Enable controller support. You can view the controller layout in the MCM menu when the list is installed. It is not recommended to play with mouse and keyboard when the controller mods are installed."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"
                                            TextTrimming="None"
                                            HorizontalAlignment="Left"
@@ -198,7 +198,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Select between Untarnished UI, Edge UI, Oathvein UI, Norden UI or Vel'dun UI"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontSize="12"/>
                             </StackPanel>
 
@@ -230,7 +230,7 @@
                         <TextBlock x:Name="LblGOWarning"
                                    Grid.Row="2"
                                    Text="WARNING!!! Some options are disabled if you selected the Graphics Only variant."
-                                   Foreground="#F28F1A"
+                                   Foreground="#FFA500"
                                    TextWrapping="Wrap"
                                    IsVisible="False"/>
 
@@ -257,8 +257,8 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
-                                    BorderBrush="#F28F1A"
-                                    Foreground="#F28F1A"/>
+                                    BorderBrush="#FFA500"
+                                    Foreground="#FFA500"/>
                         </StackPanel>
 
                     </Grid>

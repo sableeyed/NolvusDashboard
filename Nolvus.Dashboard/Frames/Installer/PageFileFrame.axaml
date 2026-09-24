@@ -44,7 +44,7 @@
                                            Foreground="White"/>
                                 <TextBlock x:Name="LnkPageFile"
                                            Text="here"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            Classes="link"
                                            Cursor="Hand"
                                            PointerPressed="LnkPageFile_PointerPressed"/>
@@ -98,8 +98,8 @@
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="#F28F1A"
-                                    Foreground="#F28F1A"/>
+                                    BorderBrush="#FFA500"
+                                    Foreground="#FFA500"/>
 
                         </StackPanel>
 

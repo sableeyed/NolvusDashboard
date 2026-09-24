@@ -20,13 +20,13 @@
 
     <!-- Focus border + caret -->
     <Style Selector="TextBox:focus">
-      <Setter Property="BorderBrush" Value="#F28C35" />
-      <Setter Property="CaretBrush" Value="#F28C35" />
-      <Setter Property="SelectionForegroundBrush" Value="#F28C35" />
+      <Setter Property="BorderBrush" Value="#FFA500" />
+      <Setter Property="CaretBrush" Value="#FFA500" />
+      <Setter Property="SelectionForegroundBrush" Value="#FFA500" />
     </Style>
 
     <!-- <Style Selector="TextBox:focus-within /template/ Border">
-      <Setter Property="Background" Value="#F28C35" />
+      <Setter Property="Background" Value="#FFA500" />
     </Style> -->
 
   </UserControl.Styles>
@@ -103,7 +103,7 @@
     <StackPanel Grid.Row="4" Margin="24,12,24,24"
                 Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
       <Button x:Name="BtnNext" Content="Next" MinWidth="90" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-              Background="#2E2E2E" BorderBrush="#F28F1A" Foreground="#F28F1A"/>
+              Background="#2E2E2E" BorderBrush="#FFA500" Foreground="#FFA500"/>
     </StackPanel>
 
   </Grid>

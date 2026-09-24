@@ -8,7 +8,7 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<!-- Highlight brush -->
-			<SolidColorBrush x:Key="NolvusHighlightBrush" Color="#F28F1A"/>
+			<SolidColorBrush x:Key="NolvusHighlightBrush" Color="#FFA500"/>
 			<!-- Instance Card Template -->
 			<DataTemplate x:Key="InstanceCardTemplate">
 				<Grid ColumnDefinitions="220,16,*">
@@ -32,6 +32,33 @@
                             Padding="4"
                             Margin="4">
 						<TextBlock Text="{Binding Version}"
+                                   Foreground="White"
+                                   FontSize="12"
+                                   FontWeight="Bold"/>
+					</Border>
+					<!-- Beta badge, bottom right of the thumbnail as upstream draws it. The API only
+					     returns beta versions to accounts with beta access, so no access check here. -->
+					<Border HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Background="Orange"
+                            CornerRadius="4"
+                            Padding="6,2"
+                            Margin="4"
+                            IsVisible="{Binding IsBeta}">
+						<TextBlock Text="Beta"
+                                   Foreground="White"
+                                   FontSize="12"
+                                   FontWeight="Bold"/>
+					</Border>
+					<!-- Maintenance badge, bottom left, as upstream. -->
+					<Border HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Background="OrangeRed"
+                            CornerRadius="4"
+                            Padding="6,2"
+                            Margin="4"
+                            IsVisible="{Binding Maintenance}">
+						<TextBlock Text="Maintenance"
                                    Foreground="White"
                                    FontSize="12"
                                    FontWeight="Bold"/>
@@ -163,8 +190,8 @@
                     				HorizontalContentAlignment="Center"
                     				MinWidth="90"
                     				Background="#2E2E2E"
-        							BorderBrush="#F28F1A"
-        							Foreground="#F28F1A"/>
+        							BorderBrush="#FFA500"
+        							Foreground="#FFA500"/>
 						</StackPanel>
 					</Grid>
 				</Border>

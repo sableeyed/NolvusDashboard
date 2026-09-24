@@ -58,7 +58,7 @@
                                 <TextBlock x:Name="TxtWarning"
                                            Text="This application will auto install ENB and Reshade. Don’t swap presets if you want to keep intended visuals."
                                            TextWrapping="Wrap"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            FontSize="11"
                                            Width="500"/>
                             </StackPanel>
@@ -142,8 +142,8 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
-                                    Foreground="#F28F1A"
-                                    BorderBrush="#F28F1A"
+                                    Foreground="#FFA500"
+                                    BorderBrush="#FFA500"
                                     BorderThickness="1"/>
                         </StackPanel>
 

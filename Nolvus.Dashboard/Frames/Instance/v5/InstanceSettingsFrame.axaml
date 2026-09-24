@@ -77,7 +77,7 @@
                                 HorizontalContentAlignment="Center"
                                 Width="100"
                                 Background="#363636"
-                                Foreground="#F28F1A"/>
+                                Foreground="#FFA500"/>
                     </StackPanel>
                 </Border>
 
@@ -181,7 +181,7 @@
                                    TextWrapping="Wrap"/>
 
                         <TextBlock Text="Recommended: 720p on a 1080p monitor or 1080p on a 1440p monitor."
-                                   Foreground="#F28F1A"
+                                   Foreground="#FFA500"
                                    TextWrapping="Wrap"/>
 
                         <!-- enable toggle -->
@@ -208,7 +208,7 @@
                                 HorizontalContentAlignment="Center"
                                 Width="100"
                                 Background="#363636"
-                                Foreground="#F28F1A"/>
+                                Foreground="#FFA500"/>
                     </StackPanel>
                 </Border>
 
@@ -235,7 +235,7 @@
                                 <TextBlock Text="Variant"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblVariant"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- AntiAliasing -->
@@ -243,7 +243,7 @@
                                 <TextBlock Text="Anti Aliasing"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblAntiAliasing"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- LODs -->
@@ -251,7 +251,7 @@
                                 <TextBlock Text="LODs"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblLODs"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- Physics -->
@@ -259,7 +259,7 @@
                                 <TextBlock Text="Advanced Physics"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblPhysics"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- RayTracing -->
@@ -267,7 +267,7 @@
                                 <TextBlock Text="Ray Tracing"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblRayTracing"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- Hardcore -->
@@ -275,7 +275,7 @@
                                 <TextBlock Text="Hardcore Mode"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblHC"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- Leveling -->
@@ -283,7 +283,7 @@
                                 <TextBlock Text="Alternate Leveling"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblLeveling"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- Nude -->
@@ -291,7 +291,7 @@
                                 <TextBlock Text="Nude"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblNude"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- Skin Type -->
@@ -299,7 +299,7 @@
                                 <TextBlock Text="Skin Type"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblSkinType"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- FPS -->
@@ -307,7 +307,7 @@
                                 <TextBlock Text="FPS Stabilizer"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblFPS"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- Alternate Start -->
@@ -315,7 +315,7 @@
                                 <TextBlock Text="Alternate Start"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblAltStart"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- Fantasy -->
@@ -323,7 +323,7 @@
                                 <TextBlock Text="Fantasy Mode"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblFantasyMode"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- ENB -->
@@ -331,7 +331,7 @@
                                 <TextBlock Text="ENB"
                                            Foreground="White" Width="120"/>
                                 <TextBlock x:Name="LblENB"
-                                           Foreground="#F28F1A"/>
+                                           Foreground="#FFA500"/>
                             </StackPanel>
 
                             <!-- Skyrim INI Profile -->

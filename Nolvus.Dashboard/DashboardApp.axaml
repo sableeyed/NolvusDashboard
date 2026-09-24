@@ -5,7 +5,15 @@
     RequestedThemeVariant="Dark">
     
   <Application.Styles>
-    <FluentTheme />
+    <!-- Pin the accent to the Nolvus orange. Left unset, Fluent follows the desktop's accent
+         color, so radio buttons, check boxes, progress bars and selections took on the OS
+         theme instead of matching the rest of the dashboard. -->
+    <FluentTheme>
+      <FluentTheme.Palettes>
+        <ColorPaletteResources x:Key="Dark" Accent="#FFA500" />
+        <ColorPaletteResources x:Key="Light" Accent="#FFA500" />
+      </FluentTheme.Palettes>
+    </FluentTheme>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
   </Application.Styles>
 

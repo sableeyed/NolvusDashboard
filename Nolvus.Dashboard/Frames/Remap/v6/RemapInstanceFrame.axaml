@@ -96,7 +96,7 @@
                                            Grid.Column="1"
                                            Grid.ColumnSpan="2"
                                            Text="[Path]"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            VerticalAlignment="Center"
                                            TextWrapping="Wrap"/>
 
@@ -142,7 +142,7 @@
                     <!-- PnlMessage -->
                     <Border x:Name="PnlMessage"
                             Grid.Row="3"
-                            Background="#F28F1A"
+                            Background="#FFA500"
                             BorderBrush="#444"
                             BorderThickness="1"
                             CornerRadius="4"
@@ -192,8 +192,8 @@
                                 MinWidth="90"
                                 Padding="10,6"
                                 Background="#2E2E2E"
-                                Foreground="#F28F1A"
-                                BorderBrush="#F28F1A"
+                                Foreground="#FFA500"
+                                BorderBrush="#FFA500"
                                 BorderThickness="1"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"/>

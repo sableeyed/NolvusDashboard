@@ -36,7 +36,7 @@
                                 </Grid>
 
                                 <TextBlock Text="When nudity is enabled all NPCs will be nude when undressed."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -54,7 +54,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Choose between 'babe' type or 'muscular' type skins."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -68,7 +68,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Unleveled dungeons, aggressive AI, difficult sneaking, poise-based stagger."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -82,7 +82,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Gives you multiple progression paths and modified leveling behavior."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -96,7 +96,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Begin your adventure in a different location with a unique backstory."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -110,7 +110,7 @@
                                 </Grid>
 
                                 <TextBlock Text="Enables fantasy combat animations and JARPG-inspired features."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -155,8 +155,8 @@
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="#F28F1A"
-                                    Foreground="#F28F1A"/>
+                                    BorderBrush="#FFA500"
+                                    Foreground="#FFA500"/>
 
                         </StackPanel>
 

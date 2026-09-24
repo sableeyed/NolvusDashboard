@@ -67,21 +67,21 @@
                                             <TextBlock Text="GPU"
                                                        Foreground="White"
                                                        FontWeight="SemiBold"/>
-                                            <TextBlock x:Name="LblReqGpu" Foreground="#F28F1A"/>
+                                            <TextBlock x:Name="LblReqGpu" Foreground="#FFA500"/>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal" Spacing="6">
                                             <TextBlock Text="VRAM"
                                                        Foreground="White"
                                                        FontWeight="SemiBold"/>
-                                            <TextBlock x:Name="LblReqVram" Foreground="#F28F1A"/>
+                                            <TextBlock x:Name="LblReqVram" Foreground="#FFA500"/>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal" Spacing="6">
                                             <TextBlock Text="Storage"
                                                        Foreground="White"
                                                        FontWeight="SemiBold"/>
-                                            <TextBlock x:Name="LblReqStorageTotal" Foreground="#F28F1A"/>
+                                            <TextBlock x:Name="LblReqStorageTotal" Foreground="#FFA500"/>
                                         </StackPanel>
 
                                         <TextBlock x:Name="LblReqDisclaimer"
@@ -135,7 +135,7 @@
                                            Foreground="White"/>
                                 <ToggleSwitch x:Name="TglBtnPhysics"/>
                                 <TextBlock Text="Physics on hair and armors (can be taxing on cities)"
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -146,7 +146,7 @@
                                            Foreground="White"/>
                                 <ToggleSwitch x:Name="TglBtnRayTracing"/>
                                 <TextBlock Text="Global Illumination will cost about 5–10 FPS."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -157,7 +157,7 @@
                                            Foreground="White"/>
                                 <ToggleSwitch x:Name="TglBtnFPSStabilizer"/>
                                 <TextBlock Text="Auto-reduces draw distance to maintain smooth FPS."
-                                           Foreground="#F28F1A"
+                                           Foreground="#FFA500"
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
@@ -204,7 +204,7 @@
                                                TextWrapping="Wrap"/>
 
                                     <TextBlock Text="Recommended setup is 720p on 1080p, 1080p on 1440p."
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                TextWrapping="Wrap"/>
 
                                     <ToggleSwitch x:Name="TglBtnDownScale"/>
@@ -279,11 +279,11 @@
                                 <!-- HARDWARE INFO -->
                                 <StackPanel Spacing="4">
                                     <TextBlock Text="GPU:" Foreground="White"/>
-                                    <TextBlock x:Name="LblGPU" Foreground="#F28F1A"/>
+                                    <TextBlock x:Name="LblGPU" Foreground="#FFA500"/>
                                     <TextBlock Text="CPU:" Foreground="White"/>
-                                    <TextBlock x:Name="LblCPU" Foreground="#F28F1A"/>
+                                    <TextBlock x:Name="LblCPU" Foreground="#FFA500"/>
                                     <TextBlock Text="RAM:" Foreground="White"/>
-                                    <TextBlock x:Name="LblRAM" Foreground="#F28F1A"/>
+                                    <TextBlock x:Name="LblRAM" Foreground="#FFA500"/>
                                 </StackPanel>
 
                             </StackPanel>
@@ -310,8 +310,8 @@
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Background="#2E2E2E"
-                                        BorderBrush="#F28F1A"
-                                        Foreground="#F28F1A"/>
+                                        BorderBrush="#FFA500"
+                                        Foreground="#FFA500"/>
 
                             </StackPanel>
 

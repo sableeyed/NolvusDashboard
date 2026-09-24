@@ -22,8 +22,8 @@ namespace Nolvus.Components.Controls
 
         private readonly Dictionary<SixLabors.ImageSharp.Image, Bitmap> _bitmapCache = new();
 
-        // Accent color (#F28F1A)
-        private static readonly Color AccentColor = Color.FromRgb(242, 143, 26);
+        // Accent color (#FFA500)
+        private static readonly Color AccentColor = Color.FromRgb(255, 165, 0);
 
         public ModsBox()
         {

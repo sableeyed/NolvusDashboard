@@ -26,17 +26,17 @@
                             <TextBlock Text="Settings" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
                             <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                                 <TextBlock Text="Instance Name" Foreground="White"/>
-                                <TextBlock Grid.Column="1" x:Name="LblName" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                <TextBlock Grid.Column="1" x:Name="LblName" Foreground="#FFA500" Margin="12,0,0,0"/>
                                 <TextBlock Grid.Row="1" Text="Screen ratio" Foreground="White"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblRatio" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblRatio" Foreground="#FFA500" Margin="12,0,0,0"/>
                                 <TextBlock Grid.Row="2" Text="Resolution" Foreground="White"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblResolution" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblResolution" Foreground="#FFA500" Margin="12,0,0,0"/>
                                 <TextBlock Grid.Row="3" Text="Installation directory" Foreground="White"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblInstallDir" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblInstallDir" Foreground="#FFA500" Margin="12,0,0,0"/>
                                 <TextBlock Grid.Row="4" Text="Enable archiving" Foreground="White"/>
-                                <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblEnableArchiving" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblEnableArchiving" Foreground="#FFA500" Margin="12,0,0,0"/>
                                 <TextBlock Grid.Row="5" Text="Archive directory" Foreground="White"/>
-                                <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblArchiveDir" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblArchiveDir" Foreground="#FFA500" Margin="12,0,0,0"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -50,17 +50,17 @@
                                 <TextBlock Text="Performance" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                                     <TextBlock Text="Downscaling" Foreground="White"/>
-                                    <TextBlock Grid.Column="1" x:Name="LblDownscaling" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Column="1" x:Name="LblDownscaling" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="1" Text="Variant" Foreground="White"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblVariant" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblVariant" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="2" Text="Anti Aliasing" Foreground="White"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblAA" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblAA" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="3" Text="Ini" Foreground="White"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblIni" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblIni" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="4" Text="SR Exterior Cities" Foreground="White"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblSREX" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblSREX" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="5" Text="LODs" Foreground="White"/>
-                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblLODs" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblLODs" Foreground="#FFA500" Margin="12,0,0,0"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -71,21 +71,21 @@
                                 <TextBlock Text="Options" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                                     <TextBlock Text="Nudity" Foreground="White"/>
-                                    <TextBlock Grid.Column="1" x:Name="LblNudity" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Column="1" x:Name="LblNudity" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="1" Text="Alternate Leveling" Foreground="White"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblLeveling" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblLeveling" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="2" Text="Combat animations" Foreground="White"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblCombatAnims" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblCombatAnims" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="3" Text="Gore" Foreground="White"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblGore" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblGore" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="4" Text="Controller" Foreground="White"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblController" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblController" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="5" Text="User Interface" Foreground="White"/>
-                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblUI" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblUI" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="6" Text="ENB" Foreground="White"/>
-                                    <TextBlock Grid.Row="6" Grid.Column="1" x:Name="LblENB" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1" x:Name="LblENB" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="7" Text="Frame Gen" Foreground="White"/>
-                                    <TextBlock Grid.Row="7" Grid.Column="1" x:Name="LblFrameGen" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="1" x:Name="LblFrameGen" Foreground="#FFA500" Margin="12,0,0,0"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -96,15 +96,15 @@
                                 <TextBlock Text="Difficulty" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                                     <TextBlock Text="Combat Scaling" Foreground="White"/>
-                                    <TextBlock Grid.Column="1" x:Name="LblCombatScaling" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Column="1" x:Name="LblCombatScaling" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="1" Text="Exhaustion System" Foreground="White"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblExhaustion" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblExhaustion" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="2" Text="Nerf Power Attacks" Foreground="White"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblNerfPA" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblNerfPA" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="3" Text="Boss Encounter" Foreground="White"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblBoss" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblBoss" Foreground="#FFA500" Margin="12,0,0,0"/>
                                     <TextBlock Grid.Row="4" Text="Zone Level Indicator" Foreground="White"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblZoneLevelIndicator" Foreground="#F28F1A" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblZoneLevelIndicator" Foreground="#FFA500" Margin="12,0,0,0"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -154,9 +154,9 @@
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                         BorderBrush="White" BorderThickness="1"/>
                 <Button x:Name="BtnStart" Content="Start" MinWidth="90"
-                        Background="#2E2E2E" Foreground="#F28F1A"
+                        Background="#2E2E2E" Foreground="#FFA500"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                        BorderBrush="#F28F1A" BorderThickness="1"/>
+                        BorderBrush="#FFA500" BorderThickness="1"/>
             </StackPanel>
 
         </Grid>

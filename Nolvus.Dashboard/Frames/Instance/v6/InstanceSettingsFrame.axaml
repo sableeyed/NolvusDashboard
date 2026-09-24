@@ -51,7 +51,7 @@
                                        Width="120"
                                        Foreground="White"/>
                             <TextBlock x:Name="LblRatio"
-                                       Foreground="#F28F1A"/>
+                                       Foreground="#FFA500"/>
                         </StackPanel>
 
                         <Button x:Name="BtnApplyRes"
@@ -171,7 +171,7 @@
                                        TextWrapping="Wrap"/>
 
                             <TextBlock Text="Recommended: 720p on 1080p, 1080p on 1440p."
-                                       Foreground="#F28F1A"
+                                       Foreground="#FFA500"
                                        TextWrapping="Wrap"/>
 
                             <Grid ColumnDefinitions="160,Auto,Auto"
@@ -226,87 +226,87 @@
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Variant" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblVariant" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblVariant" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="SR Exterior Cities" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblSREX" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblSREX" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Frame Generation" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblFrameGen" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblFrameGen" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Combat Animations" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblCombatAnims" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblCombatAnims" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Alternate levelling" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblLeveling" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblLeveling" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Nude" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblNude" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblNude" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Gore" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblGore" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblGore" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Anti Aliasing" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblAntiAliasing" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblAntiAliasing" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="LODs" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblLODs" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblLODs" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="ENB" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblENB" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblENB" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Combat Scaling" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblCombatScaling" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblCombatScaling" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Boss Encounter" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblBoss" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblBoss" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Exhaustion System" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblExhaustion" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblExhaustion" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Nerf Power Attacks" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblNerfPA" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblNerfPA" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Zone Level Indicator" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblZoneLevelIndicator" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblZoneLevelIndicator" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Controller" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblController" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblController" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="User Interface" Width="120" Foreground="White"/>
-                                <TextBlock x:Name="LblUI" Foreground="#F28F1A"/>
+                                <TextBlock x:Name="LblUI" Foreground="#FFA500"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,20,0,0">

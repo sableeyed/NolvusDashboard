@@ -14,7 +14,7 @@
     Background="#363636">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="AccentBrush" Color="#F28F1A"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#FFA500"/>
     </Window.Resources>
 
     <Window.Styles>
@@ -29,7 +29,7 @@
 
         <!-- Slider Thumb -->
         <Style Selector="Slider.accent /template/ primitives|Thumb">
-            <Setter Property="Background" Value="#F28F1A"/>
+            <Setter Property="Background" Value="#FFA500"/>
             <Setter Property="BorderBrush" Value="White"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
@@ -45,7 +45,7 @@
 
         <!-- Inner border -->
         <Style Selector="Slider.accent /template/ primitives|Thumb Border">
-            <Setter Property="Background" Value="#F28F1A"/>
+            <Setter Property="Background" Value="#FFA500"/>
             <Setter Property="CornerRadius" Value="8"/>
         </Style>
 
@@ -59,7 +59,7 @@
 
         <!-- Slider fill -->
         <Style Selector="Slider.accent /template/ RepeatButton#PART_DecreaseButton">
-            <Setter Property="Background" Value="#F28F1A"/>
+            <Setter Property="Background" Value="#FFA500"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="CornerRadius" Value="3"/>
             <Setter Property="Height" Value="6"/>

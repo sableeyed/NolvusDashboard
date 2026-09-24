@@ -5,7 +5,13 @@
     RequestedThemeVariant="Dark">
     
   <Application.Styles>
-    <FluentTheme />
+    <!-- Same orange accent as the dashboard, rather than the desktop's. -->
+    <FluentTheme>
+      <FluentTheme.Palettes>
+        <ColorPaletteResources x:Key="Dark" Accent="#FFA500" />
+        <ColorPaletteResources x:Key="Light" Accent="#FFA500" />
+      </FluentTheme.Palettes>
+    </FluentTheme>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
   </Application.Styles>
 

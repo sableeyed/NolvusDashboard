@@ -53,7 +53,7 @@
                                                Margin="0,0,12,0"/>
                                     <TextBlock Grid.Row="0" Grid.Column="1"
                                                x:Name="LblInstanceName"
-                                               Foreground="#F28F1A"/>
+                                               Foreground="#FFA500"/>
 
                                     <TextBlock Grid.Row="1" Grid.Column="0"
                                                Text="Screen ratio"
@@ -61,7 +61,7 @@
                                                Margin="0,0,12,0"/>
                                     <TextBlock Grid.Row="1" Grid.Column="1"
                                                x:Name="LblScreenRatio"
-                                               Foreground="#F28F1A"/>
+                                               Foreground="#FFA500"/>
 
                                     <TextBlock Grid.Row="2" Grid.Column="0"
                                                Text="Resolution"
@@ -69,7 +69,7 @@
                                                Margin="0,0,12,0"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1"
                                                x:Name="LblResolution"
-                                               Foreground="#F28F1A"/>
+                                               Foreground="#FFA500"/>
 
                                     <TextBlock Grid.Row="3" Grid.Column="0"
                                                Text="Installation directory"
@@ -77,7 +77,7 @@
                                                Margin="0,0,12,0"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1"
                                                x:Name="LblInstallDir"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                TextWrapping="Wrap"/>
 
                                     <TextBlock Grid.Row="4" Grid.Column="0"
@@ -86,7 +86,7 @@
                                                Margin="0,0,12,0"/>
                                     <TextBlock Grid.Row="4" Grid.Column="1"
                                                x:Name="LblEnableArchiving"
-                                               Foreground="#F28F1A"/>
+                                               Foreground="#FFA500"/>
 
                                     <TextBlock Grid.Row="5" Grid.Column="0"
                                                Text="Archive directory"
@@ -94,7 +94,7 @@
                                                Margin="0,0,12,0"/>
                                     <TextBlock Grid.Row="5" Grid.Column="1"
                                                x:Name="LblArchiveDir"
-                                               Foreground="#F28F1A"
+                                               Foreground="#FFA500"
                                                TextWrapping="Wrap"/>
                                 </Grid>
                             </StackPanel>
@@ -130,7 +130,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="0" Grid.Column="1"
                                                    x:Name="LblDownscaling"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="1" Grid.Column="0"
                                                    Text="Variant"
@@ -138,7 +138,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="1" Grid.Column="1"
                                                    x:Name="LblVariant"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="2" Grid.Column="0"
                                                    Text="Anti aliasing"
@@ -146,7 +146,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="2" Grid.Column="1"
                                                    x:Name="LblAntiAliasing"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="3" Grid.Column="0"
                                                    Text="Ini"
@@ -154,7 +154,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="3" Grid.Column="1"
                                                    x:Name="LblIniProfile"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="4" Grid.Column="0"
                                                    Text="Advanced physics"
@@ -162,7 +162,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="4" Grid.Column="1"
                                                    x:Name="LblAdvancedPhysics"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="5" Grid.Column="0"
                                                    Text="LODs"
@@ -170,7 +170,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="5" Grid.Column="1"
                                                    x:Name="LblLods"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="6" Grid.Column="0"
                                                    Text="Ray tracing"
@@ -178,7 +178,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="6" Grid.Column="1"
                                                    x:Name="LblRayTracing"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="7" Grid.Column="0"
                                                    Text="FPS stabilizer"
@@ -186,7 +186,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="7" Grid.Column="1"
                                                    x:Name="LblFpsStabilizer"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -216,7 +216,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="0" Grid.Column="1"
                                                    x:Name="LblNudity"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="1" Grid.Column="0"
                                                    Text="Hardcore mode"
@@ -224,7 +224,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="1" Grid.Column="1"
                                                    x:Name="LblHardcoreMode"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="2" Grid.Column="0"
                                                    Text="Alternate leveling"
@@ -232,7 +232,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="2" Grid.Column="1"
                                                    x:Name="LblAlternateLeveling"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="3" Grid.Column="0"
                                                    Text="Skin type"
@@ -240,7 +240,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="3" Grid.Column="1"
                                                    x:Name="LblSkinType"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="4" Grid.Column="0"
                                                    Text="Alternate start"
@@ -248,7 +248,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="4" Grid.Column="1"
                                                    x:Name="LblAlternateStart"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="5" Grid.Column="0"
                                                    Text="Fantasy mode"
@@ -256,7 +256,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="5" Grid.Column="1"
                                                    x:Name="LblFantasyMode"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
 
                                         <TextBlock Grid.Row="6" Grid.Column="0"
                                                    Text="ENB"
@@ -264,7 +264,7 @@
                                                    Margin="0,0,12,0"/>
                                         <TextBlock Grid.Row="6" Grid.Column="1"
                                                    x:Name="LblENB"
-                                                   Foreground="#F28F1A"/>
+                                                   Foreground="#FFA500"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -371,8 +371,8 @@
                                         VerticalContentAlignment="Center"
                                         MinWidth="90"
                                         Background="#2E2E2E"
-                                        BorderBrush="#F28F1A"
-                                        Foreground="#F28F1A"/>
+                                        BorderBrush="#FFA500"
+                                        Foreground="#FFA500"/>
                             </StackPanel>
                         </Grid>
 

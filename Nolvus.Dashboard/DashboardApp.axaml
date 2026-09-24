@@ -4,6 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     RequestedThemeVariant="Dark">
     
+  <!-- Segoe UI where installed, otherwise the bundled Open Sans; see Nolvus.Components.UiFont.
+       Fluent's control themes read ContentControlThemeFontFamily, and everything else inherits the
+       window's font. -->
+  <Application.Resources>
+    <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI, avares://Nolvus.Components/Assets/Fonts/OpenSans#Open Sans</FontFamily>
+  </Application.Resources>
+
   <Application.Styles>
     <!-- Pin the accent to the Nolvus orange. Left unset, Fluent follows the desktop's accent
          color, so radio buttons, check boxes, progress bars and selections took on the OS
@@ -15,6 +22,13 @@
       </FluentTheme.Palettes>
     </FluentTheme>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    <!-- Upstream draws every button in Segoe UI Semibold. -->
+    <Style Selector="Button">
+      <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style Selector=":is(Window)">
+      <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
+    </Style>
   </Application.Styles>
 
 </Application>

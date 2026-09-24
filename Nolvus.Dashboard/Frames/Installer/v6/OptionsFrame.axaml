@@ -14,7 +14,6 @@
                        Text="Additional Options"
                        FontSize="20"
                        Foreground="White"
-                       FontWeight="SemiBold"
                        VerticalAlignment="Center"/>
 
             <!-- Split Grid -->

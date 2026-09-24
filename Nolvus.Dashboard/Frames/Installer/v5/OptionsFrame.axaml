@@ -9,7 +9,6 @@
             <!-- HEADER -->
             <TextBlock Text="Additional Options"
                        FontSize="20"
-                       FontWeight="SemiBold"
                        Foreground="White"/>
 
             <!-- MAIN CONTENT AREA -->

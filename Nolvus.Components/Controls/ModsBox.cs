@@ -69,8 +69,8 @@ namespace Nolvus.Components.Controls
             var titleFont = 14 * ScalingFactor;
             var infoFont = 11 * ScalingFactor;
 
-            var titleTypeface = new Typeface("Segoe UI");
-            var infoTypeface = new Typeface("Segoe UI");
+            var titleTypeface = new Typeface(UiFont.Family);
+            var infoTypeface = new Typeface(UiFont.Family);
 
             for (int index = 0; index < Items.Count; index++)
             {

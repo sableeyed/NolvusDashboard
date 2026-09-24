@@ -24,7 +24,6 @@
                  Grid.Column="1"
                  FontSize="20"
                  Foreground="#FFA500"
-                 FontWeight="SemiBold"
                  Text="Title"/>
 
       <!-- Message -->

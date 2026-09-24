@@ -11,8 +11,7 @@
                        Grid.Row="0"
                        Text="Installation Summary"
                        Foreground="White"
-                       FontSize="20"
-                       FontWeight="SemiBold"/>
+                       FontSize="20"/>
 
             <ScrollViewer Grid.Row="1"
                           VerticalScrollBarVisibility="Auto"
@@ -23,7 +22,7 @@
                     <!-- SETTINGS -->
                     <Border Background="#363636" BorderBrush="#444" BorderThickness="1" CornerRadius="4" Padding="12">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Settings" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock Text="Settings" Foreground="White" FontSize="14"/>
                             <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                                 <TextBlock Text="Instance Name" Foreground="White"/>
                                 <TextBlock Grid.Column="1" x:Name="LblName" Foreground="#FFA500" Margin="12,0,0,0"/>
@@ -47,7 +46,7 @@
                         <!-- PERFORMANCE -->
                         <Border Grid.Column="0" Background="#363636" BorderBrush="#444" BorderThickness="1" CornerRadius="4" Padding="12">
                             <StackPanel Spacing="6">
-                                <TextBlock Text="Performance" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                                <TextBlock Text="Performance" Foreground="White" FontSize="14"/>
                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                                     <TextBlock Text="Downscaling" Foreground="White"/>
                                     <TextBlock Grid.Column="1" x:Name="LblDownscaling" Foreground="#FFA500" Margin="12,0,0,0"/>
@@ -68,7 +67,7 @@
                         <!-- OPTIONS -->
                         <Border Grid.Column="1" Background="#363636" BorderBrush="#444" BorderThickness="1" CornerRadius="4" Padding="12">
                             <StackPanel Spacing="6">
-                                <TextBlock Text="Options" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                                <TextBlock Text="Options" Foreground="White" FontSize="14"/>
                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                                     <TextBlock Text="Nudity" Foreground="White"/>
                                     <TextBlock Grid.Column="1" x:Name="LblNudity" Foreground="#FFA500" Margin="12,0,0,0"/>
@@ -93,7 +92,7 @@
                         <!-- DIFFICULTY -->
                         <Border Grid.Column="2" Background="#363636" BorderBrush="#444" BorderThickness="1" CornerRadius="4" Padding="12">
                             <StackPanel Spacing="6">
-                                <TextBlock Text="Difficulty" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                                <TextBlock Text="Difficulty" Foreground="White" FontSize="14"/>
                                 <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
                                     <TextBlock Text="Combat Scaling" Foreground="White"/>
                                     <TextBlock Grid.Column="1" x:Name="LblCombatScaling" Foreground="#FFA500" Margin="12,0,0,0"/>
@@ -134,7 +133,7 @@
                     <!-- ERRORS -->
                     <Border Background="#363636" BorderBrush="#444" BorderThickness="1" CornerRadius="4" Padding="12">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Errors Management" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock Text="Errors Management" Foreground="White" FontSize="14"/>
                             <RadioButton x:Name="RdBtnOneError" Content="Stop installation and display the error message"/>
                             <RadioButton x:Name="RdBtnThreshold" Content="Stop the installation when 50 errors occurred"/>
                             <RadioButton x:Name="RdBtnNoThreshold" Content="Don't stop installation and show all errors at end"/>

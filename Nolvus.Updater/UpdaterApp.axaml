@@ -4,6 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     RequestedThemeVariant="Dark">
     
+  <!-- Segoe UI where installed, otherwise the bundled Open Sans -->
+  <Application.Resources>
+    <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI, avares://Nolvus.Components/Assets/Fonts/OpenSans#Open Sans</FontFamily>
+  </Application.Resources>
+
   <Application.Styles>
     <!-- Same orange accent as the dashboard, rather than the desktop's. -->
     <FluentTheme>
@@ -13,6 +18,12 @@
       </FluentTheme.Palettes>
     </FluentTheme>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    <Style Selector="Button">
+      <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style Selector=":is(Window)">
+      <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
+    </Style>
   </Application.Styles>
 
 </Application>

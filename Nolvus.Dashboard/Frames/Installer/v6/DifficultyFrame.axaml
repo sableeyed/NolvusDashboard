@@ -11,8 +11,7 @@
                        Grid.Row="0"
                        Text="Difficulty Options"
                        FontSize="20"
-                       Foreground="White"
-                       FontWeight="SemiBold"/>
+                       Foreground="White"/>
 
             <!-- Split -->
             <Grid Grid.Row="1"

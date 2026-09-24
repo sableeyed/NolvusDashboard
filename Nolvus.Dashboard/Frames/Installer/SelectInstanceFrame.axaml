@@ -33,8 +33,7 @@
                             Margin="4">
 						<TextBlock Text="{Binding Version}"
                                    Foreground="White"
-                                   FontSize="12"
-                                   FontWeight="Bold"/>
+                                   FontSize="12"/>
 					</Border>
 					<!-- Beta badge, bottom right of the thumbnail as upstream draws it. The API only
 					     returns beta versions to accounts with beta access, so no access check here. -->
@@ -84,8 +83,7 @@
 			<!-- HEADER -->
 			<TextBlock Text="Instance Prerequisites"
                        Foreground="White"
-                       FontSize="20"
-                       FontWeight="SemiBold"/>
+                       FontSize="20"/>
 			<!-- CONTENT -->
 			<Grid Grid.Row="1"
                   RowDefinitions="Auto,16,*"

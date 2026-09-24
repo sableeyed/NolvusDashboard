@@ -13,7 +13,6 @@
                        Text="Remap Instance Paths"
                        FontSize="20"
                        Foreground="White"
-                       FontWeight="SemiBold"
                        VerticalAlignment="Center"/>
 
             <!-- panel3 -->
@@ -57,7 +56,6 @@
                             <!-- Group header text (WinForms GroupBox.Text = "Instance Info") -->
                             <TextBlock Text="Instance Info"
                                        Foreground="White"
-                                       FontWeight="SemiBold"
                                        Margin="0,0,0,4"/>
 
                             <!-- Body -->
@@ -163,7 +161,7 @@
                                        Grid.Column="1"
                                        Foreground="White"
                                        FontSize="14"
-                                       FontWeight="SemiBold"
+                                       FontWeight="Bold"
                                        TextWrapping="Wrap"
                                        Text="DO NOT CLOSE YOUR DASHBOARD DURING THIS OPERATION, YOU WILL BREAK YOUR INSTANCE!!!"/>
                         </Grid>

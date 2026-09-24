@@ -10,8 +10,7 @@
             <TextBlock x:Name="LblStepText"
                        Text="Swap Size Configuration"
                        Foreground="White"
-                       FontSize="20"
-                       FontWeight="SemiBold"/>
+                       FontSize="20"/>
 
             <!-- MAIN CONTENT -->
             <Grid Grid.Row="1"

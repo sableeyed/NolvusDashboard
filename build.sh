@@ -46,6 +46,12 @@ cp -a "$OUT_DIR/Updater/." "$OUT_DIR/Nolvus/"
 echo "Removing debug symbols..."
 find "$OUT_DIR/Nolvus" -name "*.pdb" -type f -delete
 
+# QuestPDF's build targets copy its default Lato fonts (~12MB) into every output, with no switch to
+# turn that off. Nothing reads them: Program.cs limits QuestPDF's font discovery to
+# /usr/share/fonts, and the UI uses its own bundled font.
+echo "Removing QuestPDF's unused Lato fonts..."
+rm -rf "$OUT_DIR/Nolvus/LatoFont"
+
 # The CefGlue package ships its browser subprocess as a self-contained .NET 8 application, so the
 # payload carries a second copy of the runtime (~70MB) that the machine already has - the dashboard
 # itself is framework dependent and resolves Microsoft.NETCore.App from the system. Point the

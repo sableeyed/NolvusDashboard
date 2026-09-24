@@ -12,7 +12,6 @@
                        Text="Select your ENB"
                        FontSize="20"
                        Foreground="White"
-                       FontWeight="SemiBold"
                        VerticalAlignment="Center"/>
 
             <Grid Grid.Row="1"

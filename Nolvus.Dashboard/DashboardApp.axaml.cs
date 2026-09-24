@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using Nolvus.Core.Services;
+using Nolvus.Dashboard.Core;
 
 namespace Nolvus.Dashboard;
 
@@ -35,6 +36,8 @@ public partial class DashboardApp : Application
     public override void OnFrameworkInitializationCompleted()
     {
         RegisterReportFonts();
+
+        UiExceptionHandler.Install(() => (ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = new DashboardWindow();

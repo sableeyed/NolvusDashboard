@@ -43,33 +43,19 @@ namespace Nolvus.Package.Rules
             string? resolvedSource = PathResolver.ResolvePathSegments(extractDir, normalizedSource);
 
             // ------------------------------------------------------------
-            // 2) Fallback for FLAT archives (files directly at extract root)
+            // 2) Source not found → fail the mod, as upstream does
+            //    Upstream enumerates Path.Combine(ExtractDir, Source) and throws when it is missing.
+            //    Copying the extract root instead installed Skyrim Priority one Data level too deep.
             // ------------------------------------------------------------
             if (resolvedSource == null)
             {
-                bool extractHasRootFiles = Directory.GetFiles(extractDir).Any();
-
-                if (extractHasRootFiles)
-                {
-                    ServiceSingleton.Logger.Log(
-                        $"DirectoryCopy fallback: using extract root '{extractDir}' because '{Source}' not found.");
-                    resolvedSource = extractDir;
-                }
-            }
-
-            // ------------------------------------------------------------
-            // 3) If still null → path truly not found
-            // ------------------------------------------------------------
-            if (resolvedSource == null)
-            {
-                ServiceSingleton.Logger.Log($"DirectoryCopy skipped: source not found: {Source}");
-                return;
+                throw new DirectoryNotFoundException($"DirectoryCopy source not found: '{Source}' in {extractDir}");
             }
 
             string sourceAbsolute = resolvedSource;
 
             // ------------------------------------------------------------
-            // 4) Determine final destination path
+            // 3) Determine final destination path
             // ------------------------------------------------------------
             string platformDest = normalizedDest.Replace("/", Path.DirectorySeparatorChar.ToString());
 
@@ -81,7 +67,7 @@ namespace Nolvus.Package.Rules
             Directory.CreateDirectory(finalDestination);
 
             // ------------------------------------------------------------
-            // 5) Copy directories
+            // 4) Copy directories
             // ------------------------------------------------------------
             if (!IncludeRootDirectory)
             {

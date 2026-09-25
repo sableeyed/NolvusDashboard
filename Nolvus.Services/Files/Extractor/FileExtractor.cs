@@ -113,7 +113,7 @@ namespace Nolvus.Services.Files.Extractor
         /// flat, with every rule pointing into a subfolder missing its file. Rebuilds the folders
         /// Windows would have extracted.
         /// </summary>
-        private static void SplitBackslashPaths(string Root)
+        internal static void SplitBackslashPaths(string Root)
         {
             var Files = Directory.EnumerateFiles(Root, "*", SearchOption.AllDirectories)
                 .Where(x => Path.GetRelativePath(Root, x).Contains('\\'))

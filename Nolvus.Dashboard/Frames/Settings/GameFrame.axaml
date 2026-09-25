@@ -86,7 +86,7 @@
                      TextWrapping="Wrap"
                      Foreground="#F2D16B"
                      FontSize="28"
-                     Text="If you click on auto detect and have several different Skyrim installations, the installer will only use the first one that is found which could be wrong. So if you are not sure, browse manually to the directory where the latest version of Skyrim with the AE content is installed. The only directories that will be checked are ~/.local/share/Steam/steamapps/common and ~/.steam/steam/steamapps/common"/>
+                     Text="If you click on auto detect and have several different Skyrim installations, the installer will only use the first one that is found which could be wrong. So if you are not sure, browse manually to the directory where the latest version of Skyrim with the AE content is installed."/>
         </Grid>
       </Border>
       <TextBlock x:Name="LblError"

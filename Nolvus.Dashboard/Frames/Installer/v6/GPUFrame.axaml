@@ -49,11 +49,31 @@
                                 Binding="{Binding VRAM}"
                                 Width="*"/>
 
-                            <!-- No icons. Yes/No only -->
-                            <DataGridTextColumn
+                            <DataGridTemplateColumn
                                 Header="Supported"
-                                Binding="{Binding Supported}"
-                                Width="*"/>
+                                Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Panel Margin="12,0"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center">
+                                            <Path IsVisible="{Binding Supported}"
+                                                  Data="M 2,8 L 6,12 L 14,4"
+                                                  Width="16" Height="16"
+                                                  Stroke="LimeGreen"
+                                                  StrokeThickness="2.5"
+                                                  StrokeLineCap="Round"
+                                                  StrokeJoin="Round"/>
+                                            <Path IsVisible="{Binding !Supported}"
+                                                  Data="M 3,3 L 13,13 M 13,3 L 3,13"
+                                                  Width="16" Height="16"
+                                                  Stroke="OrangeRed"
+                                                  StrokeThickness="2.5"
+                                                  StrokeLineCap="Round"/>
+                                        </Panel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
                         </DataGrid.Columns>
                     </DataGrid>
@@ -112,7 +132,7 @@
 
                         <StackPanel Grid.Row="3"
                                     Orientation="Horizontal"
-                                    HorizontalAlignment="Right">
+                                    HorizontalAlignment="Center">
                             <Button x:Name="BtnBack"
                                     Content="Back"
                                     MinWidth="90"

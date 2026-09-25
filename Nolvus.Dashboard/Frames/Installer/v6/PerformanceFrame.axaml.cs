@@ -8,6 +8,7 @@ using Nolvus.Dashboard.Core;
 using Vcc.Nolvus.Api.Installer.Services;
 using Vcc.Nolvus.Api.Installer.Library;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
 using System.Linq.Expressions;
@@ -551,9 +552,18 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             catch { }
         }
 
-        private void LblInfo_Click(object? sender, RoutedEventArgs e)
+        private void LnkLblInfo_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            //TODO
+            try
+            {
+                var url = "https://www.nolvus.net/appendix/installer/tech";
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }
     }
 }

@@ -21,17 +21,11 @@ Nolvus Dashboard for Linux is a Linux native application written in .NET 9 and u
 
 The official Windows dashboard does not function natively on Linux and required a Windows system in some form (VM or dual boot) to complete installation. This project exists to remove that requirement entirely.
 
-**Important Notes**
-- This project is in Beta - There will be bugs
-- Please report any issues you encounter to help improve the application
-
 ## Features
 
 - Linux First: Designed specifically for Linux with minimal external dependencies
 - Upstream Parity: Aims to be bug-for-bug compatible with the official Windows Dashboard
 - Automated Nolvus Installation: Install just like you would on Windows
-- Proton Prefix Configuration: Attempts to manually configure Proton for you, but can also be done manually
-- Launcher Setup: Automatically installs and configures the [Nolvus Launcher](https://github.com/sableeyed/NolvusDashboard/tree/main/Nolvus.Launcher)
 - Improved User Experience: Full GUI application with terminal support
 
 
@@ -42,14 +36,12 @@ The official Windows dashboard does not function natively on Linux and required 
 - .NET 9 Runtime installed with your package manager
 - Steam installed and configured
 - Vanilla Skyrim with AE content downloaded
-- Nexus Account (Premium ideally)
+- Nexus Account
 - External Tools (must be accessible in PATH)
   - protontricks
   - winetricks
   - xrandr (for resolution detection)
   - xwayland (if using a wayland compositor)
-- Ensure winetricks is up to date (necessary for automated prefix setup)
-  - `sudo winetricks --self-update`
 
 ## Installation
 

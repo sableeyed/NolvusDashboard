@@ -1,4 +1,4 @@
-![Nolvus Banner](Nolvus.Dashboard/Assets/background-nolvus-banner.svg)
+![Nolvus Banner](Nolvus.Dashboard/Assets/background-nolvus-banner-orange.svg)
 
 <div align="center">
 
@@ -42,6 +42,8 @@ The official Windows dashboard does not function natively on Linux and required 
   - winetricks
   - xrandr (for resolution detection)
   - xwayland (if using a wayland compositor)
+  - lspci
+  - glxinfo
 
 ## Installation
 

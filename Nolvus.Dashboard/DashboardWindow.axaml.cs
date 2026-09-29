@@ -590,6 +590,12 @@ public partial class DashboardWindow : Window, IDashboard
             BeginMoveDrag(e);
     }
 
+    private void ResizeEdge_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (sender is Control { Tag: string Edge } && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            BeginResizeDrag(Enum.Parse<WindowEdge>(Edge), e);
+    }
+
     private void TitleBarControl_OnSettingsClicked(object? sender, EventArgs e)
     {
         var owner = TopLevel.GetTopLevel(this) as Window;

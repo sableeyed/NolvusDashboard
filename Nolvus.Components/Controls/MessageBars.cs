@@ -33,7 +33,8 @@ namespace Nolvus.Components.Controls
                 {
                     Foreground = Brushes.White,
                     VerticalAlignment = VerticalAlignment.Center,
-                    FontFamily = new FontFamily("Segoe UI Semibold"),
+                    FontFamily = UiFont.Family,
+                    FontWeight = FontWeight.SemiBold,
                     FontSize = 12
                 })
             };

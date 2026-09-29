@@ -1,0 +1,40 @@
+# Builds the dashboard and updater the way build.sh does and runs the unit tests, on every push to
+# main or dev and on every pull request into them. Results show as a tick or a cross on the commit
+# or pull request, and in the repository's Actions tab.
+name: Build and test
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      # Reuses downloaded NuGet packages between runs until a project's dependencies change.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      # Release builds, as build.sh publishes them. These are where XAML compile errors show up.
+      - name: Build dashboard
+        run: dotnet build Nolvus.Dashboard/Nolvus.Dashboard.csproj -c Release -r linux-x64
+
+      - name: Build updater
+        run: dotnet build Nolvus.Updater/Nolvus.Updater.csproj -c Release -r linux-x64
+
+      # The lib folder the release ships (7-Zip, xdelta3, BSArch and the game patches) is not in
+      # the repository, so tests must not run anything from it.
+      - name: Run tests
+        run: dotnet test Nolvus.Tests --logger "console;verbosity=normal"

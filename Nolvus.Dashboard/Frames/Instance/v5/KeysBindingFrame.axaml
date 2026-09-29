@@ -72,49 +72,49 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Block:" Foreground="White"/>
                     <TextBlock Text="   Valhalla Combat MCM menu + Dual Wield Parrying"
-                               Foreground="#F28F1A" Margin="10,0,0,0"/>
+                               Foreground="#FFA500" Margin="10,0,0,0"/>
                 </StackPanel>
 
                 <!-- iEquip -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="iEquip / Cycling:" Foreground="White"/>
                     <TextBlock Text="iEquip MCM menu"
-                               Foreground="#F28F1A" Margin="10,0,0,0"/>
+                               Foreground="#FFA500" Margin="10,0,0,0"/>
                 </StackPanel>
 
                 <!-- Dodge -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Dodge:" Foreground="White"/>
                     <TextBlock Text="TK Dodge RE ini file"
-                               Foreground="#F28F1A" Margin="10,0,0,0"/>
+                               Foreground="#FFA500" Margin="10,0,0,0"/>
                 </StackPanel>
 
                 <!-- Power Attack -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Power Attack:" Foreground="White"/>
                     <TextBlock Text="One Click Power Attack ini file"
-                               Foreground="#F28F1A" Margin="10,0,0,0"/>
+                               Foreground="#FFA500" Margin="10,0,0,0"/>
                 </StackPanel>
 
                 <!-- UI -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="UI:" Foreground="White"/>
                     <TextBlock Text="Widget mod MCM menu"
-                               Foreground="#F28F1A" Margin="10,0,0,0"/>
+                               Foreground="#FFA500" Margin="10,0,0,0"/>
                 </StackPanel>
 
                 <!-- Easy Wheel -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Easy Wheel:" Foreground="White"/>
                     <TextBlock Text="Easy Wheel MCM menu"
-                               Foreground="#F28F1A" Margin="10,0,0,0"/>
+                               Foreground="#FFA500" Margin="10,0,0,0"/>
                 </StackPanel>
 
                 <!-- Quick Light -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Quick Light:" Foreground="White"/>
                     <TextBlock Text="Quick Light MCM menu"
-                               Foreground="#F28F1A" Margin="10,0,0,0"/>
+                               Foreground="#FFA500" Margin="10,0,0,0"/>
                 </StackPanel>
 
             </StackPanel>

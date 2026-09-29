@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Xml;
 using Nolvus.Core.Services;
+using Nolvus.Package.Utilities;
 
 namespace Nolvus.Package.Rules
 {
@@ -29,8 +30,18 @@ namespace Nolvus.Package.Rules
 
             string baseDir = (Source == 0) ? modDir : gamePath;
 
-            string srcPath = Path.Combine(baseDir, OldName);
-            string dstPath = Path.Combine(baseDir, NewName);
+            // Rule names come from Windows, where case does not matter; the archive's own spelling
+            // (Terrain for a rule's terrain) is what is on disk here.
+            string srcPath = PathResolver.ResolveCaseInsensitivePath(baseDir, OldName);
+            string dstPath = PathResolver.ResolveCaseInsensitivePath(baseDir, NewName);
+
+            // A rename that only changes case resolves both names to the same entry, and the
+            // "delete existing destination" steps below would then delete the source itself.
+            if (string.Equals(srcPath, dstPath, StringComparison.Ordinal))
+            {
+                ServiceSingleton.Logger.Log($"RenameRule: {OldName} -> {NewName} only differs in case, left as {srcPath}");
+                return;
+            }
 
             // Ensure containing directory exists
             Directory.CreateDirectory(Path.GetDirectoryName(dstPath)!);

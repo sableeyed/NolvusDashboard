@@ -22,8 +22,8 @@ namespace Nolvus.Components.Controls
 
         private readonly Dictionary<SixLabors.ImageSharp.Image, Bitmap> _bitmapCache = new();
 
-        // Accent color (#F28F1A)
-        private static readonly Color AccentColor = Color.FromRgb(242, 143, 26);
+        // Accent color (#FFA500)
+        private static readonly Color AccentColor = Color.FromRgb(255, 165, 0);
 
         public ModsBox()
         {
@@ -69,8 +69,8 @@ namespace Nolvus.Components.Controls
             var titleFont = 14 * ScalingFactor;
             var infoFont = 11 * ScalingFactor;
 
-            var titleTypeface = new Typeface("Segoe UI");
-            var infoTypeface = new Typeface("Segoe UI");
+            var titleTypeface = new Typeface(UiFont.Family);
+            var infoTypeface = new Typeface(UiFont.Family);
 
             for (int index = 0; index < Items.Count; index++)
             {

@@ -50,15 +50,32 @@ namespace Nolvus.Package.Rules
 
         private string FixMangledNames(string input)
         {
-            if (string.IsNullOrEmpty(input))
+            // Some package paths are UTF-8 that was read as Windows-1252 somewhere upstream (日本語
+            // arrives as æ—¥æœ¬èªž, — as â€”). Undo that only when it provably happened: the text
+            // must encode to 1252 exactly and those bytes must be valid UTF-8. Real CJK cannot be
+            // encoded to 1252, and a real é is not valid UTF-8 on its own, so both are left alone.
+            if (string.IsNullOrEmpty(input) || input.All(c => c < 128))
                 return input;
 
-            // detect UTF-8→1252 mojibake sequences ("æ", "ç", "è", "é", "å")
-            if (!(input.Contains("æ") || input.Contains("ç") || input.Contains("è") || input.Contains("é") || input.Contains("å")))
-                return input; // do nothing for valid Unicode names
+            byte[] bytes;
 
-            var bytes = Encoding.GetEncoding("Windows-1252").GetBytes(input);
-            return Encoding.UTF8.GetString(bytes);
+            try
+            {
+                bytes = Encoding.GetEncoding(1252, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback).GetBytes(input);
+            }
+            catch (EncoderFallbackException)
+            {
+                return input;
+            }
+
+            try
+            {
+                return new UTF8Encoding(false, true).GetString(bytes);
+            }
+            catch (DecoderFallbackException)
+            {
+                return input;
+            }
         }
     }
 }

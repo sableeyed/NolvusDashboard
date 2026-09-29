@@ -8,6 +8,7 @@ using Nolvus.Dashboard.Core;
 using Vcc.Nolvus.Api.Installer.Services;
 using Vcc.Nolvus.Api.Installer.Library;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
 using System.Linq.Expressions;
@@ -385,6 +386,24 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             WorkingInstance.Settings.Width = Reso[0];
             WorkingInstance.Settings.Height = Reso[1];
 
+            if (
+                    (WorkingInstance.Settings.Width == "2560" && WorkingInstance.Settings.Height == "1080") ||
+                    (WorkingInstance.Settings.Width == "3440" && WorkingInstance.Settings.Height == "1440") ||
+                    (WorkingInstance.Settings.Width == "5120" && WorkingInstance.Settings.Height == "2160")
+                )
+            {
+                DrpDwnLstRatios.SelectedIndex = 1;
+            }
+            else if (
+                        (WorkingInstance.Settings.Width == "3840" && WorkingInstance.Settings.Height == "1080") ||
+                        (WorkingInstance.Settings.Width == "5120" && WorkingInstance.Settings.Height == "1440") ||
+                        (WorkingInstance.Settings.Width == "7680" && WorkingInstance.Settings.Height == "2160")
+                    )
+            {
+                DrpDwnLstRatios.SelectedIndex = 2;
+            }
+
+
             UpdateHardwareConfiguration();
         }
 
@@ -533,9 +552,18 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             catch { }
         }
 
-        private void LblInfo_Click(object? sender, RoutedEventArgs e)
+        private void LnkLblInfo_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            //TODO
+            try
+            {
+                var url = "https://www.nolvus.net/appendix/installer/tech";
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }
     }
 }

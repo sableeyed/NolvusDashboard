@@ -168,7 +168,7 @@ namespace Nolvus.StockGame.Patcher
                 StepProcessed("Patching game file : " + Instruction.DestFile.Name);
                 ElementProcessed(0, 1, StockGameProcessStep.PatchGameFile, Instruction.DestFile.Name);
 
-                string SourceFileName = Instruction.SourceFile.GetFullName(SourceDir);
+                string SourceFileName = Instruction.SourceFile.GetSourceFullName(SourceDir);
                 string DestinationFileName = Instruction.DestFile.GetFullName(DestDir);
                 string PatchFileName = Path.Combine(_PatchDir, Instruction.PatchFile);
 

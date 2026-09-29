@@ -169,6 +169,7 @@ Python%20Proxy\python_dir=
 Simple%20Installer\silent=false
 Skyrim%20Special%20Edition%20Support%20Plugin\enderal_downloads=false
 Skyrim%20Support%20Plugin\sse_downloads=false
+CRDW%20Automatic%20Mode\ini_output_path={3}
 
 [pluginBlacklist]
 size=0
@@ -178,9 +179,9 @@ usvfs_exact_query_exhaustion=false
 usvfs_shared_context=false
 vfs_backend=fuse";
 
-        // Dead under Fluorine: nothing writes nxmhandler.ini any more.
-        //private const string nxmhandler = @"[General]
-        //noregister=true";
+        // Only the MO2 install reads this; Fluorine registers its own nxm handler.
+        private const string nxmhandler = @"[General]
+noregister=true";
 
         #endregion
 
@@ -2340,7 +2341,7 @@ ccafdsse001-dwesanctuary.esm";
 
         #region Methods        
 
-        private void CreateModOrganizerIni(string InstallDir, string Profile, string GameDir, string DataDir)
+        private void CreateModOrganizerIni(string InstallDir, string Profile, string GameDir, string DataDir, bool ForMO2)
         {
             var FileName = Path.Combine(InstallDir, "ModOrganizer.ini");
 
@@ -2349,9 +2350,35 @@ ccafdsse001-dwesanctuary.esm";
             string WineGameDir = ToWineIniPath(GameDir);
             string WineDataDir = ToWineIniPath(DataDir);
 
-            NormalizeLineEndings(FileName, string.Format(IniFile, Profile, WineGameDir, WineDataDir));
+            // The CRDW plugin reads its output path as a raw plugin setting and writes CRDW.ini there
+            // itself. Fluorine only translates Z: paths for its own keys, so for Fluorine this one
+            // stays native; MO2 runs the plugin under wine, where it needs the Z: path like the rest.
+            string CRDWCacheDir = Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MODS", "mods", "CRDW - Cache");
+
+            if (ForMO2)
+                CRDWCacheDir = ToWineIniPath(CRDWCacheDir);
+
+            var Ini = string.Format(IniFile, Profile, WineGameDir, WineDataDir, CRDWCacheDir);
+
+            if (ForMO2)
+            {
+                // The template carries Fluorine's version; left as is, MO2 would treat the ini as
+                // coming from an older release and run its settings migrations over it. 2.4.4 is
+                // the MO2 build the package installs into MO2/.
+                Ini = Regex.Replace(Ini, @"(?m)^version=[^\r\n]*", "version=2.4.4");
+
+                var FluorineSection = Ini.IndexOf("[fluorine]", StringComparison.Ordinal);
+
+                if (FluorineSection >= 0)
+                    Ini = Ini.Substring(0, FluorineSection).TrimEnd();
+            }
+
+            NormalizeLineEndings(FileName, Ini);
 
             //File.WriteAllText(FileName, string.Format(IniFile, Profile, WineGameDir, WineDataDir));
+
+            //new with 3.8.12
+            //File.WriteAllText(FileName, string.Format(IniFile, Profile, GameDir.Replace(@"\", @"\\"), DataDir, Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MODS", "mods", "CRDW - Cache").Replace(@"\", @"\\")));
         }
 
         // $XDG_CONFIG_HOME/Mod Organizer Team/Mod Organizer.conf - the QSettings file MO2 and
@@ -2910,9 +2937,10 @@ ccafdsse001-dwesanctuary.esm";
 
             var ProfileFolder = Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name);
 
-            // Fluorine treats MODS as the portable instance directory, so ModOrganizer.ini belongs
-            // there rather than next to the MO2 binaries.
+            // Fluorine treats MODS as the portable instance directory, so its ModOrganizer.ini goes
+            // there; plain MO2 reads its own copy next to the MO2 binaries.
             var ModsFolder = Path.Combine(Instance.InstallDir, "MODS");
+            var MO2Folder = Path.Combine(Instance.InstallDir, "MO2");
 
             //File.WriteAllText(Path.Combine(ProfileFolder, "Skyrim.ini"), ModOrganizer.GetIni(false, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
             //File.WriteAllText(Path.Combine(ProfileFolder, "SkyrimPrefs.ini"), ModOrganizer.GetIni(true, (IniLevel)System.Convert.ToInt16(Instance.Performance.IniSettings), Instance));
@@ -2932,10 +2960,13 @@ ccafdsse001-dwesanctuary.esm";
             NormalizeLineEndings(Path.Combine(ProfileFolder, "plugins.txt"), Plugins);
             NormalizeLineEndings(Path.Combine(ProfileFolder, "settings.ini"), SettingsIni);
             NormalizeLineEndings(Path.Combine(ProfileFolder, "skyrimcustom.ini"), string.Empty);
-            // Dead under Fluorine: nothing reads nxmhandler.ini any more.
-            //NormalizeLineEndings(Path.Combine(MO2Folder, "nxmhandler.ini"), nxmhandler);
+            NormalizeLineEndings(Path.Combine(MO2Folder, "nxmhandler.ini"), nxmhandler);
 
-            CreateModOrganizerIni(ModsFolder, Instance.Name, Instance.StockGame, ModsFolder);
+            CreateModOrganizerIni(ModsFolder, Instance.Name, Instance.StockGame, ModsFolder, false);
+
+            // Also kept for anyone who prefers plain MO2 under wine: it reads the ini next to
+            // ModOrganizer.exe and shares the same MODS folder. Paths use Z: like Fluorine's.
+            CreateModOrganizerIni(MO2Folder, Instance.Name, Instance.StockGame, ModsFolder, true);
 
             CreateModOrganizerConf(ModsFolder);
         }
@@ -2951,8 +2982,18 @@ ccafdsse001-dwesanctuary.esm";
         {
             INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
 
-            // Executables are recorded in the ini Fluorine loads, which lives in MODS.
-            var MO2Folder = Path.Combine(Instance.InstallDir, "MODS");
+            // Fluorine loads the ini in MODS; plain MO2 under wine loads the one next to
+            // ModOrganizer.exe. Both get the same executables, MO2 with its arguments restored.
+            AddExecutables(Path.Combine(Instance.InstallDir, "MODS"), false);
+            AddExecutables(Path.Combine(Instance.InstallDir, "MO2"), true);
+
+            // Nemesis Symlink
+            CreateNemesisSymlink(Instance.InstallDir);
+        }
+
+        private void AddExecutables(string MO2Folder, bool ForMO2)
+        {
+            INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
 
             // Skip NolvusLauncher.exe entirely
             // Add SKSE, Skyrim, Launcher
@@ -2968,12 +3009,15 @@ ccafdsse001-dwesanctuary.esm";
                 Path.Combine(Instance.StockGame, "SkyrimSELauncher.exe").Replace(@"\", @"/"),
                 true, true, "Skyrim Special Edition Launcher", false, Instance.StockGame.Replace(@"\", @"/"));
 
-            // Explorer++ dropped under Fluorine: it ships in MO2/ and browsing the VFS through it
-            // is not useful.
-            //AddExecutable(MO2Folder, string.Empty,
-            //    Path.Combine(Instance.InstallDir, "MO2", "explorer++", "Explorer++.exe").Replace(@"\", @"/"),
-            //    true, true, "Explore Virtual Folder", false,
-            //    Path.Combine(Instance.InstallDir, "MO2", "explorer++").Replace(@"\", @"/"));
+            // Explorer++ (no arguments for now). Dropped under Fluorine: it ships in MO2/ and
+            // browsing the VFS through it is not useful there.
+            if (ForMO2)
+            {
+                AddExecutable(MO2Folder, string.Empty,
+                    Path.Combine(Instance.InstallDir, "MO2", "explorer++", "Explorer++.exe").Replace(@"\", @"/"),
+                    true, true, "Explore Virtual Folder", false,
+                    Path.Combine(Instance.InstallDir, "MO2", "explorer++").Replace(@"\", @"/"));
+            }
 
             // Nemesis
             AddExecutable(MO2Folder, string.Empty,
@@ -2982,18 +3026,21 @@ ccafdsse001-dwesanctuary.esm";
                 false, true, "Nemesis Unlimited Behavior Engine", true,
                 Path.Combine(Instance.InstallDir, "MODS", "mods",
                             "Nemesis Unlimited Behavior Engine", "Nemesis_Engine").Replace(@"\", @"/"));
-            
-            // Nemesis Symlink
-            CreateNemesisSymlink(Instance.InstallDir);
 
             // xEdit
-            // The VFS already presents the right Data, ini and plugin list, so the explicit
-            // -D:/-I:/-P: arguments are omitted - real paths would point xEdit around the VFS.
-            //string dataPath = ToWinePath(Path.Combine(Instance.InstallDir, "STOCK GAME", "Data"));
-            //string iniPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "Skyrim.ini"));
-            //string pluginPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "plugins.txt"));
-            //string Args = "-D:" + MO2String(dataPath) + " " + "-I:" + MO2String(iniPath) + " " + "-P:" + MO2String(pluginPath);
-            AddExecutable(MO2Folder, string.Empty,
+            // Under Fluorine the VFS already presents the right Data, ini and plugin list, so the
+            // explicit -D:/-I:/-P: arguments are omitted - real paths would point xEdit around the VFS.
+            string Args = string.Empty;
+
+            if (ForMO2)
+            {
+                string dataPath = ToWinePath(Path.Combine(Instance.InstallDir, "STOCK GAME", "Data"));
+                string iniPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "Skyrim.ini"));
+                string pluginPath = ToWinePath(Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "plugins.txt"));
+                Args = "-D:" + MO2String(dataPath) + " " + "-I:" + MO2String(iniPath) + " " + "-P:" + MO2String(pluginPath);
+            }
+
+            AddExecutable(MO2Folder, Args,
                 Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit", "SSEEdit.exe").Replace(@"\", @"/"),
                 false, true, "xEdit", true,
                 Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit").Replace(@"\", @"/"));
@@ -3256,13 +3303,13 @@ ccafdsse001-dwesanctuary.esm";
             return text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
         }
 
-        // Dead under Fluorine: only used to quote the xEdit arguments, which are no longer written.
-        //private static string MO2String(string path)
-        //{
-            //path = path.TrimEnd('\\');
-            //var escaped = path.Replace("\\", "\\\\");
-            //return "\\\"" + escaped + "\\\"";
-        //}
+        // Quotes the xEdit arguments written for the MO2 install.
+        private static string MO2String(string path)
+        {
+            path = path.TrimEnd('\\');
+            var escaped = path.Replace("\\", "\\\\");
+            return "\\\"" + escaped + "\\\"";
+        }
 
         #endregion                       
     }

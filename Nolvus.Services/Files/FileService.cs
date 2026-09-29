@@ -166,7 +166,7 @@ namespace Nolvus.Services.Files
                     byte[] buff = new byte[1024];
                     int len = s.Read(buff, 0, buff.Length);
                     r = Crc32Algorithm.Compute(buff, 0, len);
-                    uint Counter = 0;
+                    long Counter = len;
                     int Internal = 0;
                     while ((len = s.Read(buff, 0, buff.Length)) > 0)
                     {
@@ -174,7 +174,7 @@ namespace Nolvus.Services.Files
 
                         if (Progress != null)
                         {
-                            Counter = Counter + 1024;
+                            Counter += len;
 
                             int Percent = System.Convert.ToInt16(Math.Round(((double)Counter / s.Length * 100)));
 

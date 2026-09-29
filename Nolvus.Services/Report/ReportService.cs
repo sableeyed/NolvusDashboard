@@ -23,6 +23,9 @@ namespace Nolvus.Core.Services
         private static readonly string BgHex = "#363636";
         private static readonly string OrangeHex = "#FFA500";
 
+        private static readonly string[] ReportFonts =
+            { "Open Sans", "Noto Sans CJK SC", "Source Han Sans SC", "WenQuanYi Micro Hei", "Droid Sans Fallback" };
+
         public Task<string> GenerateReportToClipBoard(ModObjectList ModObjects, Action<string, int> Progress)
         {
             return Task.Run(async () =>
@@ -164,6 +167,7 @@ namespace Nolvus.Core.Services
                     sb.AppendLine($"Nerf Power Attacks : {Instance.Options.NerfPA}");
                     //sb.AppendLine($"Enemies Resistance : {(Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Boss : {(Instance.Options.Boss == "TRUE" ? "Yes" : "No")}");
+                    sb.AppendLine($"Zone Level Indicator : {(Instance.Options.ZoneLevelIndicator == "TRUE" ? "Yes" : "No")}");
                     //sb.AppendLine($"Poise : {(Instance.Options.Poise == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"Controller : {(Instance.Options.Controller == "TRUE" ? "Yes" : "No")}");
                     sb.AppendLine($"User Interface : {Instance.Options.UI}");
@@ -227,7 +231,7 @@ namespace Nolvus.Core.Services
                         // NOTE: If PageSizes is not available in your version, see note in section (3) below.
                         page.Size(PageSizes.A4);
                         page.Margin(0);
-                        page.DefaultTextStyle(x => x.FontColor(Colors.White));
+                        page.DefaultTextStyle(x => x.FontFamily(ReportFonts).FontColor(Colors.White));
                         page.PageColor(BgHex);
 
                         page.Content().PaddingHorizontal(36).PaddingVertical(28).Column(col =>
@@ -370,6 +374,7 @@ namespace Nolvus.Core.Services
                                 AddRow(col, "Nerf power attacks : ", Instance.Options.NerfPA);
                                 //AddRow(col, "Enemies resistance : ", Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Boss : ", Instance.Options.Boss == "TRUE" ? "Yes" : "No");
+                                AddRow(col, "Zone Level Indicator : ", Instance.Options.ZoneLevelIndicator == "TRUE" ? "Yes" : "No");
                                 //AddRow(col, "Poise system : ", Instance.Options.Poise == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "Controller : ", Instance.Options.Controller == "TRUE" ? "Yes" : "No");
                                 AddRow(col, "User Interface : ", Instance.Options.UI);
@@ -456,7 +461,7 @@ namespace Nolvus.Core.Services
                     .PaddingVertical(16).PaddingHorizontal(12)
                     .AlignCenter()
                     .Text(text)
-                    .FontSize(20).SemiBold().FontColor(Colors.White);
+                    .FontSize(20).Bold().FontColor(Colors.White);
             });
         }
 

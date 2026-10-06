@@ -9,6 +9,7 @@ using Nolvus.Core.Errors;
 using Nolvus.Core.Events;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
+using Nolvus.Core.Utils;
 using Nolvus.NexusApi;
 using Nolvus.Package.Utilities;
 
@@ -21,7 +22,6 @@ namespace Nolvus.Package.Mods
         public const string GitHubRepository = "SulfurNitride/Fluorine-Manager";
         private const string GitHubLatestReleaseApi = "https://api.github.com/repos/" + GitHubRepository + "/releases/latest";
         private const string GitHubReleasePage = "https://github.com/" + GitHubRepository + "/releases/latest";
-        private const string GitHubAssetName = "Fluorine-Manager.zip";
         private const string ReleaseMarker = "nolvus-fluorine-release.txt";
 
         public static string ModPage
@@ -54,7 +54,7 @@ namespace Nolvus.Package.Mods
 
         public static bool IsInstalled
         {
-            get { return File.Exists(Executable) && File.Exists(MarkerFile); }
+            get { return File.Exists(Executable) || File.Exists(MarkerFile); }
         }
 
         // fluorine-manager is a bash wrapper that ends in `exec ModOrganizer-core`, so the wrapper
@@ -181,7 +181,7 @@ namespace Nolvus.Package.Mods
         {
             if (IsInstalled)
             {
-                ServiceSingleton.Logger.Log($"[FLUORINE] Release {GetInstalledRelease()} already installed in {InstallDirectory}, skipping download");
+                ServiceSingleton.Logger.Log($"[FLUORINE] Already installed in {InstallDirectory}, skipping download");
                 return;
             }
 
@@ -224,26 +224,32 @@ namespace Nolvus.Package.Mods
 
             var Archive = Path.Combine(ServiceSingleton.Folders.DownloadDirectory, Download.FileName);
 
+            var Staging = InstallDirectory + ".extract";
+
             try
             {
                 await ServiceSingleton.Files.DownloadFile(Download.Link, Archive, OnDownload);
 
-                // Only ever reached with nothing properly installed, so this clears whatever an
-                // interrupted attempt left behind rather than a working install. The wine prefix
-                // sits beside this directory rather than inside it, so it survives.
+                ServiceSingleton.Files.RemoveDirectory(Staging, true);
+
+                if (new[] { ".7z", ".rar", ".zip" }.Contains(Path.GetExtension(Download.FileName), StringComparer.OrdinalIgnoreCase))
+                    await ServiceSingleton.Files.ExtractFile(Archive, Staging, OnExtract);
+                else
+                    await ExtractWithTar(Archive, Staging, OnExtract);
+
+                var Root = new[] { Staging }
+                    .Concat(Directory.GetDirectories(Staging))
+                    .FirstOrDefault(x => File.Exists(Path.Combine(x, "fluorine-manager")));
+
+                if (Root == null)
+                    throw new FileNotFoundException($"{Download.FileName} did not contain Fluorine Manager", Executable);
+
                 ServiceSingleton.Files.RemoveDirectory(InstallDirectory, true);
 
-                Directory.CreateDirectory(InstallDirectory);
-
-                await ServiceSingleton.Files.ExtractFile(Archive, InstallDirectory, OnExtract);
+                Directory.Move(Root, InstallDirectory);
 
                 EnsureExecutable();
 
-                if (!File.Exists(Executable))
-                    throw new FileNotFoundException($"{Download.FileName} did not contain Fluorine Manager", Executable);
-
-                // Written last, so anything that fails before this point leaves no marker and does
-                // not count as installed - see IsInstalled.
                 File.WriteAllText(MarkerFile, Download.Release);
 
                 ServiceSingleton.Logger.Log($"[FLUORINE] {Download.Release} installed in {InstallDirectory}");
@@ -256,7 +262,43 @@ namespace Nolvus.Package.Mods
                         File.Delete(Archive);
                 }
                 catch { }
+
+                try
+                {
+                    ServiceSingleton.Files.RemoveDirectory(Staging, true);
+                }
+                catch { }
             }
+        }
+
+        private static async Task ExtractWithTar(string Archive, string Output, ExtractProgressChangedHandler OnExtract)
+        {
+            var Tar = ExecutableResolver.RequireExecutable("tar");
+
+            Directory.CreateDirectory(Output);
+
+            OnExtract?.Invoke(typeof(Fluorine), new ExtractProgress { FileName = Path.GetFileName(Archive), ProgressPercentage = 0 });
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = Tar,
+                UseShellExecute = false,
+                RedirectStandardError = true
+            };
+
+            psi.ArgumentList.Add("-xf");
+            psi.ArgumentList.Add(Archive);
+            psi.ArgumentList.Add("-C");
+            psi.ArgumentList.Add(Output);
+
+            using var p = Process.Start(psi) ?? throw new Exception($"Unable to start {Tar}");
+
+            var Error = await p.StandardError.ReadToEndAsync();
+
+            await p.WaitForExitAsync();
+
+            if (p.ExitCode != 0)
+                throw new Exception($"{Tar} could not extract {Path.GetFileName(Archive)} (exit code {p.ExitCode}) : {Error.Trim()}");
         }
 
         private static async Task<Download> GetNexusDownload(Func<IBrowserInstance> Browser)
@@ -277,7 +319,7 @@ namespace Nolvus.Package.Mods
         /// </summary>
         /// <remarks>
         /// The marker records the release tag here rather than a Nexus file id. It is only reported
-        /// in the log: IsInstalled checks that the marker exists, and an existing install is never
+        /// in the log: IsInstalled does not read it, and an existing install is never
         /// replaced, since Fluorine updates itself.
         /// </remarks>
         private static async Task<Download> GetGitHubDownload()
@@ -292,18 +334,25 @@ namespace Nolvus.Package.Mods
 
             var Tag = Document.RootElement.GetProperty("tag_name").GetString();
 
-            var Asset = Document.RootElement
-                .GetProperty("assets")
-                .EnumerateArray()
-                .FirstOrDefault(x => x.GetProperty("name").GetString() == GitHubAssetName);
+            static bool Matches(JsonElement Asset, string Extension) =>
+                Asset.GetProperty("name").GetString() is string Name &&
+                Name.Contains("fluorine", StringComparison.OrdinalIgnoreCase) &&
+                Name.EndsWith(Extension, StringComparison.OrdinalIgnoreCase);
+
+            var Assets = Document.RootElement.GetProperty("assets").EnumerateArray().ToList();
+
+            var Asset = Assets.FirstOrDefault(x => Matches(x, ".zip"));
 
             if (Asset.ValueKind == JsonValueKind.Undefined)
-                throw new Exception($"Release {Tag} does not contain {GitHubAssetName}");
+                Asset = Assets.FirstOrDefault(x => Matches(x, ".tar.gz"));
+
+            if (Asset.ValueKind == JsonValueKind.Undefined)
+                throw new Exception($"Release {Tag} does not contain a Fluorine Manager zip or tarball");
 
             return new Download
             {
                 Link = Asset.GetProperty("browser_download_url").GetString(),
-                FileName = GitHubAssetName,
+                FileName = Asset.GetProperty("name").GetString(),
                 Release = Tag,
                 Source = GitHubReleasePage
             };
@@ -380,18 +429,6 @@ namespace Nolvus.Package.Mods
                     }
                 }
             }).ConfigureAwait(false);
-        }
-
-        private static string GetInstalledRelease()
-        {
-            try
-            {
-                return File.Exists(MarkerFile) ? File.ReadAllText(MarkerFile).Trim() : string.Empty;
-            }
-            catch
-            {
-                return string.Empty;
-            }
         }
 
         private static void EnsureExecutable()

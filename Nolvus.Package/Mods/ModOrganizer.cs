@@ -3082,7 +3082,14 @@ ccafdsse001-dwesanctuary.esm";
             // Fluorine is a prerequisite of the mod list rather than part of it, so it has no entry
             // in the package and is fetched here instead. It needs the browser a free account
             // resolves its Nexus links with, which is only handed down as far as this step.
-            await Fluorine.Install(DownloadingProgress, ExtractingProgress, Browser);
+            try
+            {
+                await Fluorine.Install(DownloadingProgress, ExtractingProgress, Browser);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                ServiceSingleton.Logger.Log($"[FLUORINE] {ex.Message}");
+            }
 
             await base.DoDownload(Browser);
         }

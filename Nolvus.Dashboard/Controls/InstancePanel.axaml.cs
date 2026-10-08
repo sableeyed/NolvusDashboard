@@ -5,7 +5,9 @@ using Avalonia.Platform;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using Nolvus.Core.Events;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Enums;
@@ -189,18 +191,11 @@ namespace Nolvus.Dashboard.Controls
 
             try
             {
-                await Fluorine.Install(
-                    (_, p) =>
-                    {
-                        ServiceSingleton.Dashboard.Status($"Downloading Fluorine Manager ({p.BytesReceivedAsString} / {p.TotalBytesToReceiveAsString} MB)");
-                        ServiceSingleton.Dashboard.Progress(p.ProgressPercentage);
-                    },
-                    (_, p) =>
-                    {
-                        ServiceSingleton.Dashboard.Status($"Extracting Fluorine Manager ({p.ProgressPercentage}%)");
-                        ServiceSingleton.Dashboard.Progress(p.ProgressPercentage);
-                    },
-                    () =>
+                var Manager = new FluorineManager();
+
+                var Installing = Manager.Install(CancellationToken.None, new ModInstallSettings
+                {
+                    Browser = () =>
                     {
                         return Dispatcher.UIThread.Invoke(() =>
                         {
@@ -208,7 +203,18 @@ namespace Nolvus.Dashboard.Controls
                             Win.Show();
                             return (IBrowserInstance)Win;
                         });
-                    });
+                    }
+                });
+
+                while (!Installing.IsCompleted)
+                {
+                    ServiceSingleton.Dashboard.Status($"{Manager.Name} : {Manager.Progress.Status}");
+                    ServiceSingleton.Dashboard.Progress(Manager.Progress.PercentDone);
+
+                    await Task.WhenAny(Installing, Task.Delay(ServiceSingleton.Settings.RefreshInterval));
+                }
+
+                await Installing;
 
                 return true;
             }

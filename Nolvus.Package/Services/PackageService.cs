@@ -246,6 +246,9 @@ namespace Nolvus.Package.Services
                         Progress(string.Format("Loading softwares for version {0}", Storage.SelectSingleNode(VersionKey).InnerText), System.Convert.ToInt16(Math.Round(((double)++Counter / Total * 100))));
                     }
 
+                    // Force Fluorine to install separately of MO2
+                    new FluorineManager().Load(Elements);
+
                     Counter = 1;
 
                     foreach (XmlNode CatNode in CategoriesNode)

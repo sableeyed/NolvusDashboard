@@ -3074,24 +3074,10 @@ ccafdsse001-dwesanctuary.esm";
                 case Strings.NolvusAwakening:
                     Properties.Resources.splash_v6.Save(SplashPath, new PngEncoder());
                     break;
-            }            
-        }
-
-        protected override async Task DoDownload(Func<IBrowserInstance> Browser)
-        {
-            // Fluorine is a prerequisite of the mod list rather than part of it, so it has no entry
-            // in the package and is fetched here instead. It needs the browser a free account
-            // resolves its Nexus links with, which is only handed down as far as this step.
-            try
-            {
-                await Fluorine.Install(DownloadingProgress, ExtractingProgress, Browser);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                ServiceSingleton.Logger.Log($"[FLUORINE] {ex.Message}");
             }
 
-            await base.DoDownload(Browser);
+            if (File.Exists(SplashPath))
+                File.Copy(SplashPath, Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MODS", "splash.png"), true);
         }
 
         protected override async Task DoCopy()

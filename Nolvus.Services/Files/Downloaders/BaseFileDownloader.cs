@@ -74,7 +74,14 @@ namespace Nolvus.Services.Files
                     ? (int)((double)Progress.BytesReceived / Progress.TotalBytesToReceive * 100)
                     : 0;
 
-                Progress.Speed = Progress.BytesReceived / 1024d / 1024d / SW.Elapsed.TotalSeconds;
+                var Seconds = SW.Elapsed.TotalSeconds;
+                Progress.Speed = Seconds > 0.001 ? Progress.BytesReceived / 1024d / 1024d / Seconds : 0;
+
+                Progress.BytesReceivedAsString = (Progress.BytesReceived / 1024d / 1024d).ToString("0.00");
+                Progress.TotalBytesToReceiveAsString = Progress.TotalBytesToReceive > 0
+                    ? (Progress.TotalBytesToReceive / 1024d / 1024d).ToString("0.00")
+                    : "?";
+
                 Progress.FileName = FileName;
 
                 NotifyProgress();

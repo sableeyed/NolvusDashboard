@@ -8,7 +8,10 @@ using Nolvus.Dashboard.Frames.Installer;
 using Nolvus.Dashboard.Frames.Instance;
 using Nolvus.Dashboard.Frames.Manager.ENB.v6;
 using Nolvus.Instance.Core;
+using Nolvus.Dashboard.Controls;
 using DynamicData;
+using Avalonia.Controls;
+using System.Threading.Tasks;
 
 namespace Nolvus.Dashboard.Frames
 {
@@ -22,6 +25,29 @@ namespace Nolvus.Dashboard.Frames
         public InstanceMode Mode
         {
             get { return (InstanceMode)Parameters["Mode"]; }
+        }
+
+        private async Task<bool> CheckDashboardVersionForPackages(INolvusInstance Instance, IEnumerable<IInstallPackageDTO> Packages)
+        {
+            foreach (var Package in Packages)
+            {
+                if (ServiceSingleton.Dashboard.IsOlder(Package.InstallerVersion))
+                {
+                    var top = TopLevel.GetTopLevel(this) as Window;
+                    ServiceSingleton.Dashboard.NoStatus();
+                    ServiceSingleton.Dashboard.ProgressCompleted();
+
+                    var Message = string.Format("To install {0} - v {1}, you need the latest Dashboard version {2}.\n\nIf the dashboard didn't auto update, please ask for support in the Nolvus discord Linux channel.", Instance.Name, Packages.Last().Version, Package.InstallerVersion);
+
+                    ServiceSingleton.Logger.Log(string.Format("Dashboard Version Error ==> {0}", Message));
+
+                    await NolvusMessageBox.Show(top, "Dashboard Version Error", Message, MessageBoxType.Error);
+
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         protected override async Task OnLoadedAsync()
@@ -94,7 +120,24 @@ namespace Nolvus.Dashboard.Frames
 
             ServiceSingleton.Logger.Log(string.Format("Start installing {0} -v {1}...", Instance.Name, Instance.Version));
 
-            await ServiceSingleton.Dashboard.LoadFrameAsync<StockGameFrame>();
+            if (ServiceSingleton.Dashboard.IsOlder(Package.InstallerVersion))
+            {
+                var top = TopLevel.GetTopLevel(this) as Window;
+                ServiceSingleton.Dashboard.NoStatus();
+                ServiceSingleton.Dashboard.ProgressCompleted();
+
+                var Message = string.Format("To install {0} - v {1}, you need the latest Dashboard version {2}.\n\nIf the dashboard didn't auto update, please ask for support in the Nolvus discord linux channel.", Instance.Name, Instance.Version, Package.InstallerVersion);
+
+                ServiceSingleton.Logger.Log(string.Format("Dashboard Version Error ==> {0}", Message));
+
+                await NolvusMessageBox.Show(top, "Dashboard Version Error", Message, MessageBoxType.Error);
+
+                await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
+            }
+            else
+            {
+                await ServiceSingleton.Dashboard.LoadFrameAsync<StockGameFrame>();
+            }
         }
 
         protected async Task ChangeEnb(INolvusInstance Instance)
@@ -124,26 +167,35 @@ namespace Nolvus.Dashboard.Frames
                 ServiceSingleton.Dashboard.Progress(p);
             });
 
-            if (ServiceSingleton.EnbManager.EnbPresetsNeedUpdate)
+            ServiceSingleton.Dashboard.NoStatus();
+            ServiceSingleton.Dashboard.ProgressCompleted();
+
+            if (!await CheckDashboardVersionForPackages(Instance, Packages))
             {
-                IInstanceStatusField EnbDeleted = ServiceSingleton.Instances.WorkingInstance.Status.GetFieldByKey("EnbDeleted");
-
-                if (EnbDeleted == null)
-                {                    
-                    await ServiceSingleton.EnbManager.DeleteENB((s, p) =>
-                    {
-                        ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
-                        ServiceSingleton.Dashboard.Progress(p);
-                    });
-
-                    ServiceSingleton.Instances.WorkingInstance.Status.AddField("EnbDeleted", "TRUE");
-                    ServiceSingleton.Instances.Save();
-                }
+                await ServiceSingleton.Dashboard.LoadFrameAsync<StartFrame>();
             }
+            else
+            {
+                if (ServiceSingleton.EnbManager.EnbPresetsNeedUpdate)
+                {
+                    IInstanceStatusField EnbDeleted = ServiceSingleton.Instances.WorkingInstance.Status.GetFieldByKey("EnbDeleted");
 
-            ServiceSingleton.Logger.Log(string.Format("Updating {0} - v {1} to v {2}...", Instance.Name, Instance.Version, Packages.Last().Version));
+                    if (EnbDeleted == null)
+                    {                    
+                        await ServiceSingleton.EnbManager.DeleteENB((s, p) =>
+                        {
+                            ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                            ServiceSingleton.Dashboard.Progress(p);
+                        });
 
-            await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>();
+                        ServiceSingleton.Instances.WorkingInstance.Status.AddField("EnbDeleted", "TRUE");
+                        ServiceSingleton.Instances.Save();
+                    }
+                }
+
+                ServiceSingleton.Logger.Log(string.Format("Updating {0} - v {1} to v {2}...", Instance.Name, Instance.Version, Packages.Last().Version));
+                await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>();
+            }
         }
 
         protected async Task View(INolvusInstance Instance)

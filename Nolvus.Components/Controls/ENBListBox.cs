@@ -112,8 +112,8 @@ namespace Nolvus.Components.Controls
                 return;
 
             // Fonts: close enough to WinForms defaults (Segoe UI / MS Sans Serif)
-            var titleTypeface = new Typeface("Segoe UI");
-            var infoTypeface = new Typeface("Segoe UI");
+            var titleTypeface = new Typeface(UiFont.Family);
+            var infoTypeface = new Typeface(UiFont.Family);
 
             // Sizes roughly matching WinForms: title ~12 bold, desc ~8.25, version ~7, badge ~8.25 bold
             double titleSize = 16 * ScalingFactor;

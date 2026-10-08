@@ -19,7 +19,8 @@ namespace Nolvus.Components.Controls
         {
             Background = new SolidColorBrush(Color.FromArgb(255, 54, 54, 54));
             Foreground = new SolidColorBrush(Colors.Orange);
-            FontFamily = new FontFamily("Segoe UI Semibold");
+            FontFamily = UiFont.Family;
+            FontWeight = FontWeight.SemiBold;
             FontSize = 9;
             _currentBackColor = ((SolidColorBrush)Background).Color;
         }

@@ -74,7 +74,7 @@ namespace Nolvus.Components.Controls
 
             // Mouse event handler
             LblTitle.PointerPressed += LblTitle_PointerPressed;
-            BtnClose.PointerEntered += (_, __) => BtnClose.Foreground = new SolidColorBrush(Color.Parse("#F28F1A"));
+            BtnClose.PointerEntered += (_, __) => BtnClose.Foreground = new SolidColorBrush(Color.Parse("#FFA500"));
             BtnClose.PointerExited += (_, __) => BtnClose.Foreground = Brushes.White;
             BtnClose.Click += (_, __) => CloseRequested.Invoke(this, EventArgs.Empty);
 

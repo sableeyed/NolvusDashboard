@@ -89,7 +89,6 @@ namespace Nolvus.Components.Controls
             LblTitle = new TextBlock
             {
                 Foreground = Brushes.Orange,
-                FontWeight = FontWeight.SemiBold,
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                 FontSize = 16
             };

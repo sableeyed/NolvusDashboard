@@ -5,7 +5,9 @@ using Avalonia.Platform;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using Nolvus.Core.Events;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Enums;
@@ -153,6 +155,8 @@ namespace Nolvus.Dashboard.Controls
                 // Fluorine opens whatever CurrentInstance names, so point it at this one first.
                 ModOrganizer.SelectInstance(_instance.InstallDir);
 
+                Fluorine.InstallPlugins(_instance.InstallDir);
+
                 var Manager = Fluorine.Start();
 
                 // Fluorine stays up for as long as the user is modding, so the button is held until
@@ -187,18 +191,11 @@ namespace Nolvus.Dashboard.Controls
 
             try
             {
-                await Fluorine.Install(
-                    (_, p) =>
-                    {
-                        ServiceSingleton.Dashboard.Status($"Downloading Fluorine Manager ({p.BytesReceivedAsString} / {p.TotalBytesToReceiveAsString} MB)");
-                        ServiceSingleton.Dashboard.Progress(p.ProgressPercentage);
-                    },
-                    (_, p) =>
-                    {
-                        ServiceSingleton.Dashboard.Status($"Extracting Fluorine Manager ({p.ProgressPercentage}%)");
-                        ServiceSingleton.Dashboard.Progress(p.ProgressPercentage);
-                    },
-                    () =>
+                var Manager = new FluorineManager();
+
+                var Installing = Manager.Install(CancellationToken.None, new ModInstallSettings
+                {
+                    Browser = () =>
                     {
                         return Dispatcher.UIThread.Invoke(() =>
                         {
@@ -206,7 +203,18 @@ namespace Nolvus.Dashboard.Controls
                             Win.Show();
                             return (IBrowserInstance)Win;
                         });
-                    });
+                    }
+                });
+
+                while (!Installing.IsCompleted)
+                {
+                    ServiceSingleton.Dashboard.Status($"{Manager.Name} : {Manager.Progress.Status}");
+                    ServiceSingleton.Dashboard.Progress(Manager.Progress.PercentDone);
+
+                    await Task.WhenAny(Installing, Task.Delay(ServiceSingleton.Settings.RefreshInterval));
+                }
+
+                await Installing;
 
                 return true;
             }
@@ -247,58 +255,67 @@ namespace Nolvus.Dashboard.Controls
             BtnView.ContextMenu.Open();
         }
 
+        private const double MenuIconSize = 12;
+
+        private static Image MenuIcon(string Name)
+        {
+            using var Asset = AssetLoader.Open(new Uri($"avares://NolvusDashboard/Assets/InstanceMenu/{Name}.png"));
+
+            return new Image { Source = new Bitmap(Asset), Width = MenuIconSize, Height = MenuIconSize };
+        }
+
         private void SetupContextMenu()
         {
             var menu = new ContextMenu();
 
             // Instance
-            var miInstance = new MenuItem { Header = "Instance" };
+            var miInstance = new MenuItem { Header = "Instance", Icon = MenuIcon("BrItmMods") };
             miInstance.Click += (_, __) => BrItmMods_Click();
             menu.Items.Add(miInstance);
 
             // Add Desktop Shortcut
-            var miShortcut = new MenuItem { Header = "Add Desktop Shortcut" };
+            var miShortcut = new MenuItem { Header = "Add Desktop Shortcut", Icon = MenuIcon("BrItmShortCut") };
             miShortcut.Click += (_, __) => BrItmShortCut_Click();
             menu.Items.Add(miShortcut);
             
             menu.Items.Add(new Separator());
 
             // Report to PDF
-            var miReport = new MenuItem { Header = "Report to PDF" };
+            var miReport = new MenuItem { Header = "Report to PDF", Icon = MenuIcon("BrItmReport") };
             miReport.Click += (_, __) => BrItmReport_Click();
             menu.Items.Add(miReport);
 
             menu.Items.Add(new Separator());
 
             // Keybinds
-            var miKeybinds = new MenuItem { Header = "Keybinds" };
+            var miKeybinds = new MenuItem { Header = "Keybinds", Icon = MenuIcon("BrItmKeyBinds") };
             miKeybinds.Click += (_, __) => BrItmKeyBinds_Click();
             menu.Items.Add(miKeybinds);
 
             menu.Items.Add(new Separator());
 
             // User Manual
-            var miManual = new MenuItem { Header = "User Manual" };
+            var miManual = new MenuItem { Header = "User Manual", Icon = MenuIcon("BrItmManual") };
             miManual.Click += (_, __) => BrItmManual_Click();
             menu.Items.Add(miManual);
 
             menu.Items.Add(new Separator());
 
             // ENB Manager
-            var miEnbManager = new MenuItem { Header = "Enb Manager" };
+            var miEnbManager = new MenuItem { Header = "Enb Manager", Icon = MenuIcon("BrItmENBManager") };
             miEnbManager.Click += (_, __) => BrItmENBManager_Click();
             menu.Items.Add(miEnbManager);
 
             menu.Items.Add(new Separator());
 
             // Delete Instance
-            var miDelete = new MenuItem { Header = "Delete Instance" };
+            var miDelete = new MenuItem { Header = "Delete Instance", Icon = MenuIcon("BrItmDelete") };
             miDelete.Click += (_, __) => BrItmDelete_Click();
             menu.Items.Add(miDelete);
 
             menu.Items.Add(new Separator());
 
-            var miRemap = new MenuItem { Header = "Remap Instance" };
+            var miRemap = new MenuItem { Header = "Remap Instance", Icon = MenuIcon("BrItmRemap") };
             miRemap.Click += (_, __) => BrItmRemap_Click();
             menu.Items.Add(miRemap);
 

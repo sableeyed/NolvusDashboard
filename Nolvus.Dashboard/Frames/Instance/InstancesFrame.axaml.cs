@@ -19,6 +19,7 @@ namespace Nolvus.Dashboard.Frames.Instance
             BtnDiscord.Click += BtnDiscord_Click;
             BtnPatreon.Click += BtnPatreon_Click;
             BtnDonate.Click += BtnDonate_Click;
+            BtnWiki.Click += BtnWiki_Click;
         }
 
         public void LockButtons()
@@ -27,6 +28,7 @@ namespace Nolvus.Dashboard.Frames.Instance
             BtnDonate.IsEnabled = false;            
             BtnNewInstance.IsEnabled = false;
             BtnPatreon.IsEnabled = false;            
+            BtnWiki.IsEnabled = false;
         }
 
         public void UnLockButtons()
@@ -35,6 +37,7 @@ namespace Nolvus.Dashboard.Frames.Instance
             BtnDonate.IsEnabled = true;            
             BtnNewInstance.IsEnabled = true;
             BtnPatreon.IsEnabled = true;
+            BtnWiki.IsEnabled = true;
         }
 
         protected override void OnLoad()
@@ -91,6 +94,20 @@ namespace Nolvus.Dashboard.Frames.Instance
                 });
             }
             catch { }
-        }   
+        }
+
+        private void BtnWiki_Click(object? sender, RoutedEventArgs e)
+        {
+            var url = "https://github.com/sableeyed/NolvusDashboard/wiki";
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
+        }
     }
 }

@@ -126,11 +126,9 @@ public partial class MainWindow : Window
             });
 
             var payloadRoot = DetectPayloadRoot(extractDir);
-            var backupDir = Path.Combine(_installDir, $".backup-{DateTime.UtcNow:yyyyMMddHHmmss}");
-            Directory.CreateDirectory(backupDir);
 
             SetInfo("Finalizing update (0%)...");
-            await ApplyPayloadWithBackup(payloadRoot, _installDir, backupDir, p =>
+            await ApplyPayload(payloadRoot, _installDir, p =>
             {
                 SetInfo($"Finalizing update ({p}%)...");
                 SetProgress(80 + (int)(p * 0.20));
@@ -138,6 +136,9 @@ public partial class MainWindow : Window
 
             DeleteDirectory(extractDir);
             DeleteFile(archivePath);
+
+            foreach (var oldBackup in Directory.EnumerateDirectories(_installDir, ".backup-*"))
+                DeleteDirectory(oldBackup);
 
             SetInfo("Your Nolvus Dashboard has been installed.");
             SetProgress(100);
@@ -391,7 +392,7 @@ public partial class MainWindow : Window
         return extractDir;
     }
 
-    private static async Task ApplyPayloadWithBackup(string payloadDir, string installDir, string backupDir, Action<int> onProgress)
+    private static async Task ApplyPayload(string payloadDir, string installDir, Action<int> onProgress)
     {
         var files = Directory.EnumerateFiles(payloadDir, "*", SearchOption.AllDirectories).ToList();
         int total = files.Count;
@@ -404,14 +405,9 @@ public partial class MainWindow : Window
 
             Directory.CreateDirectory(Path.GetDirectoryName(dstPath)!);
 
-            if (File.Exists(dstPath))
-            {
-                var backupPath = Path.Combine(backupDir, rel);
-                Directory.CreateDirectory(Path.GetDirectoryName(backupPath)!);
-                File.Move(dstPath, backupPath, overwrite: true);
-            }
-
-            File.Copy(srcPath, dstPath, overwrite: true);
+            var tmpPath = dstPath + ".new";
+            File.Copy(srcPath, tmpPath, overwrite: true);
+            File.Move(tmpPath, dstPath, overwrite: true);
 
             done++;
             var pct = total == 0 ? 100 : (int)((done * 100L) / total);

@@ -4,11 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Globalization;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -44,6 +42,13 @@ namespace Nolvus.Core.Services
 
                 var ram = await ServiceSingleton.Globals.GetRamCount();
                 sb.AppendLine(ram != "RAM count not found" ? $"RAM : {ram} GB" : ram);
+                sb.AppendLine().AppendLine();
+
+                // SYSTEM
+                sb.AppendLine("SYSTEM");
+                sb.AppendLine();
+                foreach (var (label, value) in GetSystemConfiguration())
+                    sb.AppendLine(label + value);
                 sb.AppendLine().AppendLine();
 
                 Progress?.Invoke("Generating report", 20);
@@ -200,7 +205,7 @@ namespace Nolvus.Core.Services
             });
         }
 
-        public Task<byte[]> GenerateReportToPdf(ModObjectList ModObjects, SixLabors.ImageSharp.Image coverImage, Action<string, int> Progress)
+        public Task<byte[]> GenerateReportToPdf(ModObjectList ModObjects, string coverSvg, Action<string, int> Progress)
         {
             return Task.Run(async () =>
             {
@@ -212,15 +217,12 @@ namespace Nolvus.Core.Services
                 string cpu = await ServiceSingleton.Globals.GetCPUInfo();
                 string gpu = string.Join(Environment.NewLine, ServiceSingleton.Globals.GetVideoAdapters().ToArray());
                 string ram = await ServiceSingleton.Globals.GetRamCount();
+                var system = GetSystemConfiguration();
 
                 int addedMods = ModObjects.AddedModsCount;
                 int removedMods = ModObjects.RemovedModsCount;
                 int versionMismatch = ModObjects.VersionMismatchCount;
                 int disabledMods = ModObjects.DisabledModsCount;
-
-                // Convert cover image to PNG bytes (ImageSharp) for QuestPDF
-                byte[] coverBytes = coverImage is null ? null : ToPngBytes(coverImage);
-
 
                 Progress?.Invoke("Composing PDF", 15);
 
@@ -236,10 +238,10 @@ namespace Nolvus.Core.Services
 
                         page.Content().PaddingHorizontal(36).PaddingVertical(28).Column(col =>
                         {
-                            // Cover image
-                            if (coverBytes != null)
+                            // Cover image, drawn as vector paths so it stays sharp at any zoom
+                            if (!string.IsNullOrWhiteSpace(coverSvg))
                             {
-                                col.Item().AlignCenter().Height(250).Width(450).Image(coverBytes).FitWidth();
+                                col.Item().AlignCenter().Height(250).Width(450).Svg(SvgImage.FromText(coverSvg)).FitWidth();
                                 col.Item().PaddingTop(8);
                             }
 
@@ -263,6 +265,12 @@ namespace Nolvus.Core.Services
                             AddRow(col, "CPU : ", cpu);
                             AddRow(col, "GPU : ", gpu);
                             AddRow(col, "RAM : ", ram != "RAM count not found" ? $"{ram} GB" : ram);
+
+                            Progress?.Invoke("System", 30);
+                            col.Item().PaddingTop(12);
+                            AddHeader(col, "SYSTEM CONFIGURATION");
+                            foreach (var (label, value) in system)
+                                AddRow(col, label, value);
 
                             Progress?.Invoke("Instance configuration", 35);
                             col.Item().PaddingTop(12);
@@ -479,11 +487,212 @@ namespace Nolvus.Core.Services
             col.Item().Text(value ?? string.Empty).FontSize(10).FontColor(Colors.White);
         }
 
-        private static byte[] ToPngBytes(SixLabors.ImageSharp.Image img)
+        // ---------- System configuration ----------
+
+        private sealed record MountEntry(string Device, string MountPoint, string FileSystem);
+
+        private static List<(string Label, string Value)> GetSystemConfiguration()
         {
-            using var ms = new MemoryStream();
-            img.Save(ms, new PngEncoder());   // ImageSharp → PNG in-memory
-            return ms.ToArray();
+            var rows = new List<(string Label, string Value)>
+            {
+                ("Distribution : ", GetDistribution()),
+                ("Kernel : ", GetKernel()),
+                ("Desktop : ", GetDesktop()),
+                ("Graphics driver : ", GetGraphicsDriver()),
+                ("Swap : ", GetSwap()),
+                ("Dashboard version : ", ServiceSingleton.Dashboard.Version)
+            };
+
+            rows.AddRange(GetDisks());
+
+            return rows;
+        }
+
+        private static string GetDistribution()
+        {
+            foreach (var file in new[] { "/etc/os-release", "/usr/lib/os-release" })
+            {
+                try
+                {
+                    if (!File.Exists(file))
+                        continue;
+
+                    string? prettyName = null, name = null, version = null;
+
+                    foreach (var line in File.ReadLines(file))
+                    {
+                        var idx = line.IndexOf('=');
+                        if (idx <= 0)
+                            continue;
+
+                        var value = line[(idx + 1)..].Trim().Trim('"', '\'');
+
+                        switch (line[..idx].Trim())
+                        {
+                            case "PRETTY_NAME": prettyName = value; break;
+                            case "NAME": name = value; break;
+                            case "VERSION": version = value; break;
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(prettyName))
+                        return prettyName;
+
+                    if (!string.IsNullOrWhiteSpace(name))
+                        return $"{name} {version}".Trim();
+                }
+                catch { }
+            }
+
+            return "Unknown";
+        }
+
+        private static string GetKernel()
+        {
+            try
+            {
+                return File.ReadAllText("/proc/sys/kernel/osrelease").Trim();
+            }
+            catch
+            {
+                return "Unknown";
+            }
+        }
+
+        private static string GetDesktop()
+        {
+            var desktop = Environment.GetEnvironmentVariable("XDG_CURRENT_DESKTOP");
+            var session = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE");
+
+            if (string.IsNullOrWhiteSpace(session))
+            {
+                if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("WAYLAND_DISPLAY")))
+                    session = "wayland";
+                else if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DISPLAY")))
+                    session = "x11";
+            }
+
+            session = session?.ToLowerInvariant() switch
+            {
+                "wayland" => "Wayland",
+                "x11" => "X11",
+                _ => session
+            };
+
+            if (string.IsNullOrWhiteSpace(desktop))
+                return string.IsNullOrWhiteSpace(session) ? "Unknown" : session;
+
+            return string.IsNullOrWhiteSpace(session) ? desktop : $"{desktop} ({session})";
+        }
+
+        private static string GetGraphicsDriver()
+        {
+            try
+            {
+                var psi = new ProcessStartInfo("glxinfo", "-B")
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false
+                };
+
+                using var proc = Process.Start(psi);
+                var output = proc?.StandardOutput.ReadToEnd() ?? string.Empty;
+                proc?.WaitForExit(2000);
+
+                // OpenGL version string: 4.6 (Compatibility Profile) Mesa 25.2.4-arch1.1
+                // OpenGL version string: 4.6.0 NVIDIA 580.95.05
+                var match = Regex.Match(output, @"OpenGL version string:.*?\b(Mesa|NVIDIA)\s+(\S+)");
+                if (match.Success)
+                    return $"{match.Groups[1].Value} {match.Groups[2].Value}";
+            }
+            catch { }
+
+            // glxinfo is not installed everywhere, but the NVIDIA kernel module reports its own version
+            try
+            {
+                if (File.Exists("/sys/module/nvidia/version"))
+                    return "NVIDIA " + File.ReadAllText("/sys/module/nvidia/version").Trim();
+            }
+            catch { }
+
+            return "Unknown";
+        }
+
+        private static string GetSwap()
+        {
+            try
+            {
+                foreach (var line in File.ReadLines("/proc/meminfo"))
+                {
+                    if (line.StartsWith("SwapTotal"))
+                    {
+                        var kb = long.Parse(line.Split(':')[1].Replace("kB", "").Trim());
+                        return kb == 0 ? "None" : FormatSize(kb * 1024);
+                    }
+                }
+            }
+            catch { }
+
+            return "Unknown";
+        }
+
+        // One row per disk partition. A partition mounted more than once (btrfs subvolumes, bind mounts)
+        // is listed at its shortest mount point; boot partitions and loop/zram devices are left out.
+        private static List<(string Label, string Value)> GetDisks()
+        {
+            return GetMounts()
+                .Where(m => m.Device.StartsWith("/dev/") && !m.Device.StartsWith("/dev/loop") && !m.Device.StartsWith("/dev/zram"))
+                .Where(m => m.MountPoint != "/boot" && !m.MountPoint.StartsWith("/boot/") && m.MountPoint != "/efi")
+                .GroupBy(m => m.Device)
+                .Select(g => g.OrderBy(m => m.MountPoint.Length).First())
+                .OrderBy(m => m.MountPoint, StringComparer.Ordinal)
+                .Select(m => ("Disk : ", DescribeMount(m)))
+                .ToList();
+        }
+
+        private static List<MountEntry> GetMounts()
+        {
+            var mounts = new List<MountEntry>();
+
+            try
+            {
+                foreach (var line in File.ReadLines("/proc/self/mounts"))
+                {
+                    var parts = line.Split(' ');
+                    if (parts.Length < 3)
+                        continue;
+
+                    mounts.Add(new MountEntry(UnescapeMountField(parts[0]), UnescapeMountField(parts[1]), parts[2]));
+                }
+            }
+            catch { }
+
+            return mounts;
+        }
+
+        // /proc/self/mounts writes spaces, tabs and backslashes in paths as octal escapes (\040 etc.)
+        private static string UnescapeMountField(string value)
+        {
+            return Regex.Replace(value, @"\\([0-7]{3})", m => ((char)Convert.ToInt32(m.Groups[1].Value, 8)).ToString());
+        }
+
+        private static string DescribeMount(MountEntry mount)
+        {
+            var space = "free space unknown";
+
+            try
+            {
+                space = $"{FormatSize(new DriveInfo(mount.MountPoint).AvailableFreeSpace)} free";
+            }
+            catch { }
+
+            return $"{mount.MountPoint} - {space} ({mount.FileSystem})";
+        }
+
+        private static string FormatSize(long bytes)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0:0.#} GB", bytes / 1024.0 / 1024.0 / 1024.0);
         }
     }
 }

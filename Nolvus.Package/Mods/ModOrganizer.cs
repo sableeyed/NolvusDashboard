@@ -30,7 +30,7 @@ gameName=Skyrim Special Edition
 selected_profile=@ByteArray({0})
 gamePath=@ByteArray({1})
 game_edition=Steam
-version=0.3.4
+version=0.4
 first_start=false
 
 [PluginPersistance]
@@ -2363,9 +2363,9 @@ ccafdsse001-dwesanctuary.esm";
             if (ForMO2)
             {
                 // The template carries Fluorine's version; left as is, MO2 would treat the ini as
-                // coming from an older release and run its settings migrations over it. 2.4.4 is
+                // coming from an older release and run its settings migrations over it. 2.5.2 is
                 // the MO2 build the package installs into MO2/.
-                Ini = Regex.Replace(Ini, @"(?m)^version=[^\r\n]*", "version=2.4.4");
+                Ini = Regex.Replace(Ini, @"(?m)^version=[^\r\n]*", "version=2.5.2");
 
                 var FluorineSection = Ini.IndexOf("[fluorine]", StringComparison.Ordinal);
 
@@ -3041,7 +3041,7 @@ ccafdsse001-dwesanctuary.esm";
             }
 
             AddExecutable(MO2Folder, Args,
-                Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit", "SSEEdit.exe").Replace(@"\", @"/"),
+                Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit", "SSEEdit64.exe").Replace(@"\", @"/"),
                 false, true, "xEdit", true,
                 Path.Combine(Instance.InstallDir, "TOOLS", "SSE Edit").Replace(@"\", @"/"));
 

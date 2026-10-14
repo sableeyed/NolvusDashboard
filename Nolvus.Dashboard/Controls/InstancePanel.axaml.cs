@@ -353,7 +353,7 @@ namespace Nolvus.Dashboard.Controls
                         await ServiceSingleton.SoftwareProvider.ModOrganizer2.GetModsMetaData(),
                         await ServiceSingleton.Packages.GetModsMetaData(),
                         s => dashboard.Status(s)),
-                    LoadImageSharpFromAsset("avares://NolvusDashboard/Assets/background-nolvus.jpg"),
+                    LoadTextFromAsset("avares://NolvusDashboard/Assets/background-nolvus.svg"),
                     (s, p) =>
                     {
                         dashboard.Status($"{s} ({p}%)");
@@ -499,11 +499,12 @@ namespace Nolvus.Dashboard.Controls
             }
         }
 
-        private SixLabors.ImageSharp.Image LoadImageSharpFromAsset(string assetPath)
+        private string LoadTextFromAsset(string assetPath)
         {
             var uri = new Uri(assetPath);
             using var stream = Avalonia.Platform.AssetLoader.Open(uri);
-            return SixLabors.ImageSharp.Image.Load(stream);
+            using var reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
 
         private void CreateDesktopShortcut(string name, string execPath, string comment, string path, string iconPath = "")

@@ -114,7 +114,7 @@ namespace Nolvus.Dashboard.Frames
 
             await ServiceSingleton.Packages.Load(Package, (s, p) =>
             {
-                ServiceSingleton.Dashboard.Status(string.Format("0 ({1}%)", s, p));
+                ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
                 ServiceSingleton.Dashboard.Progress(p);
             });
 

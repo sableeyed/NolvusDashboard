@@ -65,7 +65,7 @@ A good bug report saves a lot of back-and-forth. Please include:
 
 - `winetricks` is up to date: `sudo winetricks --self-update`
 - `protontricks`, `winetricks`, `xrandr`, and (on Wayland) `xwayland` are installed and on your `PATH`.
-- The .NET 9 runtime is installed.
+- The .NET 10 runtime is installed.
 - Vanilla Skyrim with the Anniversary Edition content is fully downloaded in Steam.
 
 ---
@@ -86,7 +86,7 @@ Features that diverge from the Windows dashboard's behavior need a strong Linux-
 ### Prerequisites
 
 - Linux (x86_64)
-- [.NET 9 SDK](https://learn.microsoft.com/dotnet/core/install/linux) (the SDK, not only the runtime)
+- [.NET 10 SDK](https://learn.microsoft.com/dotnet/core/install/linux) (the SDK, not only the runtime)
 - Git
 - The same runtime tools end users need, if you plan to test installs end to end: `protontricks`, `winetricks`, `xrandr`, and `xwayland` on Wayland
 - An IDE of your choice. JetBrains Rider, VS Code with the C# Dev Kit, or plain `dotnet` CLI all work with the solution file.

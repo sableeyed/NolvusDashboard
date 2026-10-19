@@ -22,16 +22,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.8" />
+    <PackageReference Include="Avalonia" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.13" />
     <PackageReference Include="Avalonia.Labs.Gif" Version="11.3.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
-    <PackageReference Include="CefGlue.Common" Version="120.6099.211" />
-    <PackageReference Include="CefGlue.Avalonia" Version="120.6099.211" />
-    <PackageReference Include="ReactiveUI" Version="20.1.1" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
+    <PackageReference Include="CefGlue.Common" Version="120.6099.215" />
+    <PackageReference Include="CefGlue.Avalonia" Version="120.6099.215" />
+    <PackageReference Include="ReactiveUI" Version="22.2.1" />
+    <PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
     <PackageReference Include="ValveKeyValue" Version="0.20.0.417" />
     <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="11.3.6.2" />
   </ItemGroup>

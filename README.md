@@ -17,7 +17,7 @@ Nolvus Linux automatically downloads and install all requirements for Nolvus and
 
 ## Introduction
 
-Nolvus Dashboard for Linux is a Linux native application written in .NET 9 and uses the same codebase as the Windows version, only changing what is necessary for functionality.
+Nolvus Dashboard for Linux is a Linux native application written in .NET 10 and uses the same codebase as the Windows version, only changing what is necessary for functionality.
 
 The official Windows dashboard does not function natively on Linux and required a Windows system in some form (VM or dual boot) to complete installation. This project exists to remove that requirement entirely.
 
@@ -33,7 +33,7 @@ The official Windows dashboard does not function natively on Linux and required 
 
 ### Requirements
 - Linux
-- .NET 9 Runtime installed with your package manager
+- .NET 10 Runtime installed with your package manager
 - Steam installed and configured
 - Vanilla Skyrim with AE content downloaded
 - Nexus Account

@@ -57,8 +57,8 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     Background="#2E2E2E"
-                    BorderBrush="#F28F1A"
-                    Foreground="#F28F1A"
+                    BorderBrush="#FFA500"
+                    Foreground="#FFA500"
                     Click="BtnRetry_Click" />
         </Grid>
 

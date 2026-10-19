@@ -12,7 +12,7 @@ namespace Nolvus.Services.Settings
 {
     public class SettingsService : ISettingsService
     {
-        public const string IniFile = "NolvusDashboard.ini";
+        public static readonly string IniFile = Path.Combine(AppContext.BaseDirectory, "NolvusDashboard.ini");
         public const string ProcessSection = "Process";
         public const string Count = "Count";
         public const string Retry = "Retry";

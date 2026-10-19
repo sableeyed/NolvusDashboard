@@ -16,10 +16,6 @@ namespace Nolvus.Dashboard.Frames.Installer
         public FinishFrame(IDashboard Dashboard, FrameParameters Params) :base(Dashboard, Params)
         {
             InitializeComponent();
-
-            BtnContinue.Click += BtnContinue_Click;
-            BtnPatreon.Click += BtnPatreon_Click;
-            BtnDonate.Click += BtnDonate_Click;
         }
 
         public string InstanceName
@@ -65,6 +61,20 @@ namespace Nolvus.Dashboard.Frames.Installer
             try
             {
                 var url = "https://ko-fi.com/mel49542";
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
+        }
+
+        private void BtnWiki_Click(object? sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var url = "https://github.com/sableeyed/NolvusDashboard/wiki";
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = url,

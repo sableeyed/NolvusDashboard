@@ -34,5 +34,6 @@ namespace Nolvus.Core.Interfaces
         string GetSelectedResolution();
         string GetSelectedHeight();
         string GetSelectedWidth();
+        string InstanceVersion { get; }
     }
 }

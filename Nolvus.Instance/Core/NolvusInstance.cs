@@ -43,6 +43,13 @@ namespace Nolvus.Instance.Core
         public IInstancePerformance Performance { get; }
         public IInstanceOptions Options { get; }
         public IInstanceStatus Status { get;}
+        public string InstanceVersion
+        {
+            get
+            {
+                return string.Format("{0} v{1}", Performance.Variant, Version);
+            }
+        }
 
         public string Overwrite
         {
@@ -95,12 +102,16 @@ namespace Nolvus.Instance.Core
             }
             else
             {
+                if (Package.IsBeta)
+                {
+                    return "New version available (" + Package.Version + " - Beta)";
+                }
                 return "New version available (" + Package.Version + ")";
             }
         }
         public async Task<bool> IsBeta()
         {
-            var Package = await ApiManager.Service.Installer.GetLatestPackage(Id);
+            var Package = await ApiManager.Service.Installer.GetPackage(Id, Version);
 
             return Package.IsBeta;
         }

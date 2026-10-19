@@ -127,46 +127,46 @@
                         Content="Play"
                         Height="40"
                         Background="#363636"
-                        Foreground="#F28F1A" />
+                        Foreground="#FFA500" />
 
                 <!--
                 <Button x:Name="BtnExpand"
                         Content="Expand"
                         Height="40"
                         Background="#363636"
-                        Foreground="#F28F1A" />
+                        Foreground="#FFA500" />
 
                 <Button x:Name="BtnCollapse"
                         Content="Collapse"
                         Height="40"
                         Background="#363636"
-                        Foreground="#F28F1A" />
+                        Foreground="#FFA500" />
                 -->
 
                 <Button x:Name="BtnSettings"
                         Content="Settings"
                         Height="40"
                         Background="#363636"
-                        Foreground="#F28F1A" />
+                        Foreground="#FFA500" />
 
                 <Button x:Name="BtnReport"
                         Content="Report"
                         Height="40"
                         Background="#363636"
-                        Foreground="#F28F1A" />
+                        Foreground="#FFA500" />
 
                 <Button x:Name="BtnLoadOrder"
                         Content="Apply Order"
                         Height="40"
                         Background="#363636"
-                        Foreground="#F28F1A" />
+                        Foreground="#FFA500" />
 
                 <Button x:Name="BtnBack"
                         Content="Back to instances"
                         Margin="0,30,0,0"
                         Height="40"
                         Background="#363636"
-                        Foreground="#F28F1A" />
+                        Foreground="#FFA500" />
             </StackPanel>
         </Grid>
     </Grid>

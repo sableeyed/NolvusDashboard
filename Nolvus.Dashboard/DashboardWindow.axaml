@@ -7,6 +7,8 @@
     x:Class="Nolvus.Dashboard.DashboardWindow"
     Width="1200"
     Height="800"
+    MinWidth="1200"
+    MinHeight="800"
     CanResize="True"
     SystemDecorations="None"
     ExtendClientAreaToDecorationsHint="True"
@@ -14,7 +16,7 @@
     Background="#363636">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="AccentBrush" Color="#F28F1A"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#FFA500"/>
     </Window.Resources>
 
     <Window.Styles>
@@ -29,7 +31,7 @@
 
         <!-- Slider Thumb -->
         <Style Selector="Slider.accent /template/ primitives|Thumb">
-            <Setter Property="Background" Value="#F28F1A"/>
+            <Setter Property="Background" Value="#FFA500"/>
             <Setter Property="BorderBrush" Value="White"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
@@ -45,7 +47,7 @@
 
         <!-- Inner border -->
         <Style Selector="Slider.accent /template/ primitives|Thumb Border">
-            <Setter Property="Background" Value="#F28F1A"/>
+            <Setter Property="Background" Value="#FFA500"/>
             <Setter Property="CornerRadius" Value="8"/>
         </Style>
 
@@ -59,7 +61,7 @@
 
         <!-- Slider fill -->
         <Style Selector="Slider.accent /template/ RepeatButton#PART_DecreaseButton">
-            <Setter Property="Background" Value="#F28F1A"/>
+            <Setter Property="Background" Value="#FFA500"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="CornerRadius" Value="3"/>
             <Setter Property="Height" Value="6"/>
@@ -74,8 +76,17 @@
             <Setter Property="Height" Value="6"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+
+        <!-- Nothing to resize while maximized or full screen. -->
+        <Style Selector="Window[WindowState=Maximized] Panel#ResizeEdges">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        <Style Selector="Window[WindowState=FullScreen] Panel#ResizeEdges">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
     </Window.Styles>
 
+    <Panel>
     <LayoutTransformControl x:Name="RootScaleHost">
         <LayoutTransformControl.LayoutTransform>
             <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
@@ -215,4 +226,25 @@
             </Grid>
         </Border>
     </LayoutTransformControl>
+
+    <Panel x:Name="ResizeEdges">
+        <Border Tag="North" Height="6" VerticalAlignment="Top" Cursor="TopSide"
+                Background="Transparent" PointerPressed="ResizeEdge_PointerPressed"/>
+        <Border Tag="South" Height="6" VerticalAlignment="Bottom" Cursor="BottomSide"
+                Background="Transparent" PointerPressed="ResizeEdge_PointerPressed"/>
+        <Border Tag="West" Width="6" HorizontalAlignment="Left" Cursor="LeftSide"
+                Background="Transparent" PointerPressed="ResizeEdge_PointerPressed"/>
+        <Border Tag="East" Width="6" HorizontalAlignment="Right" Cursor="RightSide"
+                Background="Transparent" PointerPressed="ResizeEdge_PointerPressed"/>
+
+        <Border Tag="NorthWest" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Cursor="TopLeftCorner" Background="Transparent" PointerPressed="ResizeEdge_PointerPressed"/>
+        <Border Tag="NorthEast" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Top"
+                Cursor="TopRightCorner" Background="Transparent" PointerPressed="ResizeEdge_PointerPressed"/>
+        <Border Tag="SouthWest" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Cursor="BottomLeftCorner" Background="Transparent" PointerPressed="ResizeEdge_PointerPressed"/>
+        <Border Tag="SouthEast" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Cursor="BottomRightCorner" Background="Transparent" PointerPressed="ResizeEdge_PointerPressed"/>
+    </Panel>
+    </Panel>
 </Window>

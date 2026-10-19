@@ -189,6 +189,8 @@ namespace Nolvus.Dashboard.Frames.Instance
 
                 ModOrganizer.SelectInstance(instance.InstallDir);
 
+                Fluorine.InstallPlugins(instance.InstallDir);
+
                 var mo2 = ModOrganizer.Start(instance.InstallDir);
                 BtnPlay.IsEnabled = false;
                 BtnPlay.Content = "Running...";
@@ -301,7 +303,7 @@ namespace Nolvus.Dashboard.Frames.Instance
 
                 var Pdf = await ServiceSingleton.Report.GenerateReportToPdf(
                     ModListStatus,
-                    LoadImageSharpFromAsset("avares://NolvusDashboard/Assets/background-nolvus.jpg"),
+                    LoadTextFromAsset("avares://NolvusDashboard/Assets/background-nolvus.svg"),
                     (s, p) =>
                     {
                         ServiceSingleton.Dashboard.Status($"{s} ({p}%)");
@@ -354,11 +356,12 @@ namespace Nolvus.Dashboard.Frames.Instance
             }
         }
 
-        private SixLabors.ImageSharp.Image LoadImageSharpFromAsset(string AssetPath)
+        private string LoadTextFromAsset(string AssetPath)
         {
             using var Stream = Avalonia.Platform.AssetLoader.Open(new Uri(AssetPath));
+            using var Reader = new StreamReader(Stream);
 
-            return SixLabors.ImageSharp.Image.Load(Stream);
+            return Reader.ReadToEnd();
         }
     }
 }

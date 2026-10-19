@@ -91,7 +91,7 @@ namespace Nolvus.Dashboard.Frames
                     {
                         ServiceSingleton.Dashboard.Progress(percent);
                         ServiceSingleton.Dashboard.Status(string.Format("Deleting {0}...", f.Name));
-                        ServiceSingleton.Dashboard.AdditionalInfo(string.Format("Deleting instance ({0}%)", percent));
+                        ServiceSingleton.Dashboard.Info(string.Format("Deleting instance ({0}%)", percent));
                     });
                 }
 

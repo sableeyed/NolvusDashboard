@@ -297,7 +297,7 @@ WindowRounding=0.000000";
                             ReshadePreset = string.Empty;
                         }
 
-                        File.WriteAllText(Path.Combine(Instance.StockGame, "ReShade.ini"), string.Format(ReshadeIni, Path.GetTempPath(), ReshadePreset, ShotsDir));
+                        File.WriteAllText(Path.Combine(Instance.StockGame, "ReShade.ini"), string.Format(ReshadeIni, ModOrganizer.ToWinePath(Path.GetTempPath()), ReshadePreset, ModOrganizer.ToWinePath(ShotsDir)));
 
                     }
                     catch (Exception ex)

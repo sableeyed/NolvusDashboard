@@ -13,9 +13,6 @@ namespace Nolvus.Dashboard.Controls
     {
         private TaskCompletionSource<bool?> _tcs;
         private bool? _dialogResult = null;
-        public int CustomWidth { get; set; } = 700;
-        public int CustomHeight { get; set; } = 300;
-        public Avalonia.Media.Color HighlightColor { get; set; } = Avalonia.Media.Colors.Red;
 
         public NolvusMessageBox(string title, string message, MessageBoxType type)
         {
@@ -72,12 +69,16 @@ namespace Nolvus.Dashboard.Controls
 
         public static async Task<bool?> Show(Window owner, string title, string message, MessageBoxType type, int height, int width, Color color)
         {
+            // Upstream sets the size and colors the message text. The height is a minimum here
+            // rather than fixed: upstream's sizes were fitted to Windows' smaller default font,
+            // and the window grows to fit the message instead of cutting it off.
             var msgBox = new NolvusMessageBox(title, message, type)
             {
-                CustomHeight = height,
-                CustomWidth = width,
-                HighlightColor = color
+                MinHeight = height,
+                Width = width
             };
+
+            msgBox.LblMessage.Foreground = new SolidColorBrush(color);
 
             return await msgBox.ShowDialog<bool?>(owner);
         }
@@ -90,9 +91,10 @@ namespace Nolvus.Dashboard.Controls
 
         public static async Task<bool?> ShowConfirmation(Window owner, string title, string message, int height, int width)
         {
+            // Height is a minimum, as above, so a long message is not cut off.
             var msgBox = new NolvusMessageBox(title, message, MessageBoxType.Question)
             {
-                Height = height,
+                MinHeight = height,
                 Width = width
             };
 

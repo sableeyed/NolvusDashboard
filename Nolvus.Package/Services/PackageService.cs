@@ -246,6 +246,9 @@ namespace Nolvus.Package.Services
                         Progress(string.Format("Loading softwares for version {0}", Storage.SelectSingleNode(VersionKey).InnerText), System.Convert.ToInt16(Math.Round(((double)++Counter / Total * 100))));
                     }
 
+                    // Force Fluorine to install separately of MO2
+                    new FluorineManager().Load(Elements);
+
                     Counter = 1;
 
                     foreach (XmlNode CatNode in CategoriesNode)
@@ -357,14 +360,9 @@ namespace Nolvus.Package.Services
 
         private async Task AddModToQueue(InstallableElement Mod)
         {
-            var Tsk = Task.Run(async () => 
-            {                
-                ProgressQueue.Add(await Mod.PrepareProgress());
-                InstallingModsQueue.Add(Mod);
-                ServiceSingleton.Logger.Log("Mod : " + Mod.Name + " added to queue.");
-            });
-
-            await Tsk;
+            ProgressQueue.Add(await Mod.PrepareProgress());
+            InstallingModsQueue.Add(Mod);
+            ServiceSingleton.Logger.Log("Mod : " + Mod.Name + " added to queue.");
         }
 
         private void RemoveModFromQueue(InstallableElement Mod)

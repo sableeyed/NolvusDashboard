@@ -54,6 +54,33 @@ namespace Nolvus.Package.Utilities
         }
 
         /// <summary>
+        /// Resolves <paramref name="relativePath"/> under <paramref name="root"/> case-insensitively,
+        /// file or directory, for as far as it exists. The part that does not exist is appended as
+        /// written, so the result is also usable as a destination: new entries land in the existing
+        /// folders rather than beside them in a second spelling. The caller checks existence.
+        /// </summary>
+        public static string ResolveCaseInsensitivePath(string root, string relativePath)
+        {
+            string current = root;
+
+            var parts = relativePath.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                var match = Directory.Exists(current)
+                    ? FindCaseInsensitiveMatch(Directory.GetFileSystemEntries(current), parts[i])
+                    : null;
+
+                if (match == null)
+                    return Path.Combine(new[] { current }.Concat(parts.Skip(i)).ToArray());
+
+                current = match;
+            }
+
+            return current;
+        }
+
+        /// <summary>
         /// Finds a directory or file in <paramref name="entries"/> matching <paramref name="name"/>
         /// using case-insensitive comparison. Returns absolute path or null.
         /// </summary>

@@ -77,8 +77,8 @@ namespace Nolvus.Components.Controls
             if (Items.Count == 0)
                 return;
 
-            Typeface nameFont = new Typeface("Segoe UI Light", FontStyle.Normal, FontWeight.Bold);
-            Typeface infoFont = new Typeface("Microsoft Sans Serif", FontStyle.Normal, FontWeight.Normal);
+            Typeface nameFont = new Typeface(UiFont.Family, FontStyle.Normal, FontWeight.Bold);
+            Typeface infoFont = new Typeface(UiFont.Family, FontStyle.Normal, FontWeight.Normal);
 
             for (int i = 0; i < Items.Count; i++)
             {

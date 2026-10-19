@@ -30,7 +30,7 @@
                                    Foreground="White"
                                    FontSize="16"/>
 
-                        <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys_V6.jpg"
+                        <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys_V6.0.21.jpg"
                                Stretch="Uniform"
                                HorizontalAlignment="Center"
                                MaxHeight="320"/>

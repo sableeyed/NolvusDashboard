@@ -299,7 +299,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private void BtnZoneLevelExplained_Click(object? sender, RoutedEventArgs e)
         {
-            //upstream has not provided a guide page for this option yet
+            Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/combat/scaling") { UseShellExecute = true });
         }
     }
 }

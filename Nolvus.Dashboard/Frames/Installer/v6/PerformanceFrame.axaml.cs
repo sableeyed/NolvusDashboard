@@ -187,7 +187,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 #region Variants
 
-                var Variants = await ApiManager.Service.Installer.GetNolvusVariants();
+                var Variants = await ApiManager.Service.Installer.GetNolvusVariants(Instance.Id);
 
                 DrpDwnLstVariant.ItemsSource = Variants;
                 DrpDwnLstVariant.SelectedIndex = VariantIndex(Variants);

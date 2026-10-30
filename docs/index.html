@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nolvus Dashboard for Linux</title>
+<meta name="description" content="Install and play the Nolvus Skyrim modlist natively on Linux. No Windows VM or dual boot required.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="./"><img src="assets/logo.svg" alt="Nolvus" width="82" height="30">for Linux</a>
+    <nav class="site-nav">
+      <a href="requirements.html">Requirements</a>
+      <a href="install.html">Install</a>
+      <a href="play.html">Playing</a>
+      <a href="help.html">Troubleshooting</a>
+      <a class="button primary" href="https://github.com/sableeyed/NolvusDashboard/releases/latest">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <img src="assets/logo.svg" alt="Nolvus" width="426" height="156">
+    <h1>Nolvus Dashboard for Linux</h1>
+    <p class="lede">A native Linux port of the official Nolvus Dashboard. Install, update and play the Nolvus Skyrim modlist on Linux, with no Windows VM or dual boot.</p>
+    <div class="actions">
+      <a class="button primary" href="https://github.com/sableeyed/NolvusDashboard/releases/latest">Download latest release</a>
+      <a class="button" href="install.html">Installation guide</a>
+    </div>
+  </section>
+
+  <div class="home">
+    <div class="callout important">
+      <span class="label">Important</span>
+      <p>Nolvus is <strong>not officially supported on Linux</strong>. The Linux port has the blessing of the Nolvus developers, but do not ask them or the official Nolvus Discord for help with it. Use the <a href="https://discord.gg/Tazgf4Tr4u">Nolvus Linux Discord</a> or <a href="https://github.com/sableeyed/NolvusDashboard/issues">GitHub issues</a> instead. The port is a hobby project maintained by one person.</p>
+    </div>
+
+    <h2>From nothing to playing</h2>
+    <div class="cards">
+      <a class="card" href="requirements.html"><span class="num">Step 1</span><strong>Check requirements</strong><span>Steam Skyrim AE, Nexus and Nolvus accounts, .NET 10, an SSD and a capable GPU.</span></a>
+      <a class="card" href="install.html#prepare-skyrim"><span class="num">Step 2</span><strong>Prepare Skyrim</strong><span>Install it from Steam and download all of the Anniversary (Creation Club) content.</span></a>
+      <a class="card" href="install.html#first-launch"><span class="num">Step 3</span><strong>Install Nolvus</strong><span>Run the dashboard, sign in, pick your options and let it download and build the list.</span></a>
+      <a class="card" href="play.html#first-play"><span class="num">Step 4</span><strong>Play</strong><span>Press Play, let it install Fluorine, set up a Wine prefix once, and start the game.</span></a>
+    </div>
+
+    <h2>What is Nolvus?</h2>
+    <p><a href="https://www.nolvus.net">Nolvus</a> is a large modlist and modding guide for Skyrim Anniversary Edition, created by Vektor. It overhauls graphics, characters and gameplay. The Nolvus Dashboard installs it automatically, then keeps it updated and lets you manage it.</p>
+    <ul>
+      <li><strong>Nolvus Awakening (v6)</strong> is the current version. It comes in Ultimate, Ultra, Redux and Graphics Only variants. <a href="https://www.nolvus.net/awakening">Mod list</a> · <a href="https://www.nolvus.net/guide/awake/appendix/player-guide">Quick player guide</a></li>
+      <li><strong>Nolvus Ascension (v5)</strong> is the previous version, and you can still install it. <a href="https://www.nolvus.net/ascension">Mod list</a> · <a href="https://www.nolvus.net/guide/asc/appendix/player-guide">Quick player guide</a> · <a href="https://www.nolvus.net/guide/asc/appendix/knownissues">Known issues</a></li>
+    </ul>
+    <p>The official dashboard is a Windows program. This port is written in .NET 10 from the same codebase and changes only what Linux needs, so it aims to behave exactly like the Windows version.</p>
+
+    <h2>How Linux differs from the Windows guide</h2>
+    <p>Most of the official <a href="https://www.nolvus.net/appendix/installer/introduction">Auto Installer guide</a> on nolvus.net applies as it is. Where it gives Windows-specific instructions, use these instead:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Topic</th><th>Windows (nolvus.net)</th><th>Linux</th></tr></thead>
+        <tbody>
+          <tr><td>Mod manager</td><td>Mod Organizer 2</td><td><a href="play.html#fluorine">Fluorine Manager</a>, a native Linux build of MO2. The dashboard installs it for you.</td></tr>
+          <tr><td>Runtime</td><td>.NET 5 SDK and Visual C++ Redistributable</td><td><a href="requirements.html#software">.NET 10 Runtime</a> from your package manager</td></tr>
+          <tr><td>Running the game</td><td>Windows</td><td>Proton, through a Wine prefix that Fluorine creates</td></tr>
+          <tr><td>Install location</td><td><code>C:\Nolvus</code> at the root of a drive</td><td>A short path on an SSD, such as <code>~/Games/Nolvus</code></td></tr>
+          <tr><td>Setup program</td><td>Run <code>NolvusUpdater.exe</code></td><td>Extract the release archive and run <code>NolvusDashboard</code></td></tr>
+          <tr><td>Page file</td><td>Windows page file</td><td><a href="https://wiki.archlinux.org/title/Swap">Swap</a></td></tr>
+          <tr><td>Dashboard log</td><td><code>log.txt</code></td><td><code>Logs/&lt;date&gt;.log</code> in the dashboard folder</td></tr>
+          <tr><td>Antivirus and Windows scaling fixes</td><td>Sometimes needed</td><td>Not applicable</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Links</h2>
+    <ul class="link-grid">
+      <li><a href="https://github.com/sableeyed/NolvusDashboard/releases">Releases</a><span>Download the dashboard</span></li>
+      <li><a href="https://discord.gg/Tazgf4Tr4u">Nolvus Linux Discord</a><span>Hang out with Linux nerds</span></li>
+      <li><a href="https://github.com/sableeyed/NolvusDashboard/issues">Issues</a><span>Report bugs in the Linux port</span></li>
+      <li><a href="https://github.com/sableeyed/NolvusDashboard/wiki">Wiki</a><span>The full Linux user guide and FAQ</span></li>
+      <li><a href="https://www.nolvus.net">Nolvus.net</a><span>The official Nolvus site, guides and mod lists</span></li>
+      <li><a href="https://discord.gg/Zkh5PwD">Official Nolvus Discord</a><span>For Nolvus itself</span></li>
+      <li><a href="https://raw.githubusercontent.com/sableeyed/image-cdn/refs/heads/master/RoadmapSep2026.png">Roadmap</a><span>What is planned for the Linux port</span></li>
+      <li><a href="https://github.com/vektor9999/NolvusDashboard">Original project</a><span>The upstream Windows dashboard</span></li>
+      <li><a href="https://ko-fi.com/mel49542">Ko-fi</a><span>Support the Linux port</span></li>
+      <li><a href="https://www.patreon.com/nolvus">Nolvus Patreon</a><span>Support Nolvus itself</span></li>
+    </ul>
+
+    <h2>Credits</h2>
+    <ul>
+      <li>Vektor, for creating Nolvus and open sourcing the dashboard</li>
+      <li>SulfurNitride, for <a href="https://github.com/SulfurNitride/Fluorine-Manager">Fluorine Manager</a></li>
+      <li>Furglitch and Rockerbacon, for their work on MO2 on Linux</li>
+      <li>The Nolvus community, and the Linux gaming and modding community</li>
+      <li>Valve, for Proton</li>
+      <li>Everyone who has contributed code or testing to this project</li>
+    </ul>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Licensed under the <a href="https://github.com/sableeyed/NolvusDashboard/blob/main/LICENSE">GNU GPL v3</a>. Not affiliated with Bethesda Softworks.</span>
+    <span><a href="https://github.com/sableeyed/NolvusDashboard">Source on GitHub</a></span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install · Nolvus Dashboard for Linux</title>
+<meta name="description" content="Prepare Skyrim, set up the Nolvus Dashboard and install Nolvus on Linux, step by step.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="./"><img src="assets/logo.svg" alt="Nolvus" width="82" height="30">for Linux</a>
+    <nav class="site-nav">
+      <a href="requirements.html">Requirements</a>
+      <a href="install.html" aria-current="page">Install</a>
+      <a href="play.html">Playing</a>
+      <a href="help.html">Troubleshooting</a>
+      <a class="button primary" href="https://github.com/sableeyed/NolvusDashboard/releases/latest">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout with-toc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <ol>
+      <li><a href="#prepare-skyrim">Prepare Skyrim</a></li>
+      <li><a href="#download">Download the dashboard</a></li>
+      <li><a href="#first-launch">First launch</a>
+        <ol>
+          <li><a href="#skyrim-folder">Skyrim folder</a></li>
+          <li><a href="#nexus">Nexus sign-in</a></li>
+          <li><a href="#nolvus-account">Nolvus account</a></li>
+          <li><a href="#settings">Mega and settings</a></li>
+        </ol>
+      </li>
+      <li><a href="#installer">Installing Nolvus</a>
+        <ol>
+          <li><a href="#version">Version and language</a></li>
+          <li><a href="#paths">Where to install</a></li>
+          <li><a href="#performance">Performance</a></li>
+          <li><a href="#options">Options and difficulty</a></li>
+          <li><a href="#enb">ENB</a></li>
+          <li><a href="#swap">Swap</a></li>
+          <li><a href="#download-location">Download location</a></li>
+          <li><a href="#summary">Summary and start</a></li>
+          <li><a href="#let-it-run">Let it run</a></li>
+        </ol>
+      </li>
+      <li><a href="#change-later">What can I change later?</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <p class="eyebrow">Step by step</p>
+    <h1 class="page-title">Installing Nolvus</h1>
+    <p class="lede">Prepare Skyrim, set up the dashboard, then let it download and build the modlist. Check the <a href="requirements.html">requirements</a> first.</p>
+
+    <h2 id="prepare-skyrim">1. Prepare Skyrim</h2>
+    <ol class="steps">
+      <li>Install <strong>Skyrim Special Edition</strong> with the Anniversary upgrade from Steam. You can check in the game's <strong>Properties → DLC</strong> in Steam that the Anniversary content is listed.</li>
+      <li>Start the game once from Steam and wait at the <strong>main menu</strong>.</li>
+      <li>Skyrim offers to download the Anniversary Edition content (the Creation Club items). Click <strong>Download</strong>. <strong>Stay on the main menu and don't alt-tab away</strong> until the download has finished.</li>
+      <li>Quit the game.</li>
+    </ol>
+    <div class="callout important">
+      <span class="label">Important</span>
+      <p><strong>Don't continue until all of the Creation Club content is installed.</strong> Nolvus needs it, and the install fails without it.</p>
+    </div>
+    <p>To check, count the Creation Club files in Skyrim's <code>Data</code> folder. Adjust the path if your Steam library is somewhere else:</p>
+<pre><code>ls "$HOME/.local/share/Steam/steamapps/common/Skyrim Special Edition/Data" | grep -ic '^cc'</code></pre>
+    <p>This should print a large number. If it prints <code>0</code>, the content is missing.</p>
+
+    <details>
+      <summary>The Download button never appeared</summary>
+      <div class="details-body">
+        <p>Close the game and delete Skyrim's two ini files, <code>Skyrim.ini</code> and <code>SkyrimPrefs.ini</code>, if they exist. On Linux they're inside Skyrim's Proton prefix, in your Steam library:</p>
+<pre><code>steamapps/compatdata/489830/pfx/drive_c/users/steamuser/Documents/My Games/Skyrim Special Edition/</code></pre>
+        <p>Start the game from Steam again and the prompt should appear. If it still doesn't, open the <strong>Creation Club</strong> menu from the main menu and install every item manually.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Optional: start from a completely clean Skyrim</summary>
+      <div class="details-body">
+        <p>If you have modded Skyrim before, a clean install is the safest starting point. Uninstall Skyrim in Steam, delete anything left in its <code>steamapps/common/Skyrim Special Edition</code> folder, and delete its Proton prefix at <code>steamapps/compatdata/489830</code>. Then reinstall and follow the steps above.</p>
+        <p>Deleting the prefix also deletes any vanilla Skyrim saves and settings stored in it, so back those up first if you want to keep them.</p>
+      </div>
+    </details>
+
+    <h2 id="download">2. Download the dashboard</h2>
+    <ol class="steps">
+      <li>Go to the <a href="https://github.com/sableeyed/NolvusDashboard/releases/latest">latest release</a>. Always use the latest version, unless someone helping you says otherwise.</li>
+      <li>Download the file named <code>Binaries-&lt;version&gt;.tar.gz</code>.</li>
+      <li>Extract it. Right-click it in your file manager and choose <em>Extract</em>, or run:
+<pre><code>tar xvzf Binaries-*.tar.gz</code></pre></li>
+      <li>You now have a folder called <code>Nolvus</code>. Move it to where you want it to live, for example <code>~/Games/Nolvus</code>.</li>
+    </ol>
+    <div class="callout tip">
+      <span class="label">Choose the location carefully</span>
+      <ul>
+        <li>By default, Nolvus is installed <strong>inside</strong> this folder, in <code>Nolvus/Instances</code>, so put it on an <strong>SSD</strong> with plenty of free space. You can pick a different install location later.</li>
+        <li>Keep the path <strong>short</strong>. Skyrim's tools are Windows programs, and Windows limits how long a file path can be. <strong>Nolvus Awakening (v6) won't start from a long path.</strong> <code>~/Games/Nolvus</code> is good. A drive mounted by UUID, such as <code>/run/media/you/9c4e1f2a-…/Stuff/Modding/Nolvus</code>, is asking for trouble. See <a href="help.html#path-length">path length</a> if you can't avoid a long one.</li>
+        <li>Don't put it inside your Steam library or your Skyrim folder.</li>
+      </ul>
+    </div>
+    <div class="callout caution">
+      <span class="label">Caution</span>
+      <p><strong>Never move the dashboard folder while an install is in progress.</strong> Doing so breaks the install. If you move an instance after it has finished installing, use <strong>Manage → Remap Instance</strong> to fix its paths.</p>
+    </div>
+
+    <h2 id="first-launch">3. First launch</h2>
+    <p>Open the <code>Nolvus</code> folder and double-click <strong><code>NolvusDashboard</code></strong>, or start it from a terminal. If you use a terminal, <code>cd</code> into the folder first:</p>
+<pre><code>cd ~/Games/Nolvus
+./NolvusDashboard</code></pre>
+    <p><strong>If nothing happens</strong>, the .NET 10 Runtime is probably missing (see <a href="requirements.html#software">Software</a>). Starting the dashboard from a terminal shows the error message, which also helps if you need to ask for help.</p>
+    <p>On its first launch, the dashboard walks you through a few setup screens.</p>
+
+    <h3 id="skyrim-folder">Select your Skyrim folder</h3>
+    <p>Click <strong>Auto Detect</strong>. The dashboard finds Skyrim in your Steam library, including Flatpak Steam. If it can't, click <strong>Browse…</strong> and select the folder that contains <code>SkyrimSE.exe</code>. That's usually one of these:</p>
+<pre><code># Normal Steam
+~/.local/share/Steam/steamapps/common/Skyrim Special Edition
+
+# Flatpak Steam
+~/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common/Skyrim Special Edition</code></pre>
+    <p>If you have more than one Skyrim install, Auto Detect uses the first one it finds, so check the path it fills in. The folder can be a copy rather than your Steam folder, but it <strong>must</strong> be the latest Steam version with the Anniversary content installed (1.6.1170 at the time of writing). When the path is right, click <strong>Next</strong>.</p>
+    <p>The dashboard copies this game into your instance as <strong>STOCK GAME</strong>. Nolvus modifies that copy and never touches your Steam installation, so a Skyrim update in Steam won't break Nolvus.</p>
+
+    <h3 id="nexus">Nexus sign-in</h3>
+    <ol class="steps">
+      <li>Click <strong>Nexus SSO Authentication</strong>. A browser window opens on the Nexus Mods website.</li>
+      <li>Log in to Nexus.</li>
+      <li>Click <strong>Authorise</strong> to let Nolvus use your account. The Nolvus Dashboard is a Nexus-approved application.</li>
+      <li>Back in the dashboard, a green message appears and <strong>Next</strong> becomes clickable. Click it.</li>
+    </ol>
+
+    <h3 id="nolvus-account">Nolvus account</h3>
+    <p>Enter the username and password of your <strong>Nolvus.net</strong> account, <strong>not</strong> your Nexus account, and click <strong>Next</strong>. If you don't have one yet, <a href="https://www.nolvus.net/account/register">register here</a>.</p>
+
+    <h3 id="settings">Mega account and other settings</h3>
+    <p>You're now at the main dashboard. Before you install, add your Mega account. It's optional, but strongly recommended, because Mega downloads often fail without it.</p>
+    <ol class="steps">
+      <li>Click the <strong>settings cog</strong> next to your username at the top right.</li>
+      <li>Untick <strong>Anonymous Connection</strong>.</li>
+      <li>Enter your Mega email address and password and click <strong>Save</strong>. The dashboard tells you whether it worked. Your credentials are stored only on your own computer.</li>
+      <li>Click <strong>Back</strong>.</li>
+    </ol>
+    <p>The same screen has two other settings worth knowing about:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Setting</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Number of simultaneous mods installation</strong></td><td>How many mods are downloaded and installed at once. They share your bandwidth. Lower it if your computer struggles, or if you run low on disk space during the install.</td></tr>
+          <tr><td><strong>Auto Click Slow Download</strong></td><td>For <strong>free</strong> Nexus accounts. The dashboard clicks the <em>Slow download</em> button on each mod's page for you, so you don't have to do it hundreds of times.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout caution">
+      <span class="label">Caution</span>
+      <p>Auto-clicking the slow download button is against the Nexus terms of service and may get your account terminated. Use it at your own risk.</p>
+    </div>
+
+    <h2 id="installer">4. Installing Nolvus</h2>
+    <p>The installer asks a series of questions, then downloads and installs everything. Until the install starts, you can use <strong>Previous</strong> to go back and change any answer.</p>
+    <div class="callout important">
+      <span class="label">Important</span>
+      <p>Several choices <strong>can't be changed after installation</strong> without reinstalling. Read <a href="#change-later">What can I change later?</a> before you start.</p>
+    </div>
+
+    <h3 id="version">Version and language</h3>
+    <p>Pick the version to install: <strong>Awakening</strong> (v6, the current version) or <strong>Ascension</strong> (v5).</p>
+    <p>Choose the <strong>Language</strong>. It only translates the base game, not the mods, and it <strong>must match the language Skyrim is set to in Steam</strong>. Click <strong>Continue</strong>.</p>
+
+    <h3 id="paths">Where to install</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Setting</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Instance Directory</strong></td><td>Where Nolvus itself goes: the mod manager profile, the installed mods and the STOCK GAME. By default it's inside the dashboard folder, in <code>Instances</code>. <strong>Must be on an SSD.</strong></td></tr>
+          <tr><td><strong>Archive Directory</strong></td><td>Where downloaded mod files are kept, so you can reinstall later without downloading everything again. This one can be on an HDD. <strong>Never put it inside the instance directory.</strong></td></tr>
+          <tr><td><strong>Enable Archiving</strong></td><td>Keeps the downloaded files. Turning it off saves the "download size" worth of disk space, but a reinstall then has to download everything again.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>If you already have a folder of Nolvus downloads from an earlier install, point <strong>Archive Directory</strong> at it. The installer checks each file and reuses the ones that match, so they aren't downloaded again.</p>
+
+    <h3 id="performance">Performance</h3>
+    <p>This screen decides how Nolvus looks and runs. The right-hand side shows the graphics card, CPU and memory the dashboard detected, and the requirements for what you've picked. <strong>View supported GPUs</strong> lists the cards that meet them. If you're unsure about anything here, the defaults are a sensible starting point.</p>
+    <details open>
+      <summary>Awakening (v6) options</summary>
+      <div class="details-body">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Variant</th><th>Textures</th><th>Towns and cities</th><th>Trees and clutter</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Ultimate</strong></td><td>4K–2K</td><td>Heavily overhauled</td><td>The most</td></tr>
+            <tr><td><strong>Ultra</strong></td><td>2K</td><td>Moderately overhauled</td><td>Fewer than Ultimate</td></tr>
+            <tr><td><strong>Redux</strong></td><td>2K–1K</td><td>Lightly overhauled</td><td>No trees around or inside cities</td></tr>
+          </tbody>
+        </table></div>
+        <p>All variants have the same gameplay.</p>
+        <ul>
+          <li><strong>SR Exterior Cities</strong> removes the loading screens when you enter major cities. It's heavy on performance and VRAM, which is why it's optional.</li>
+          <li><strong>Anti-aliasing:</strong> <strong>TAA</strong> is the performance-friendly choice. <strong>DLAA</strong> is NVIDIA's newer anti-aliasing and costs more performance.</li>
+          <li><strong>Ini profile:</strong> Skyrim graphics presets based on BethINI's recommendations. You can change this after installation. Don't run BethINI yourself on Nolvus, because it can conflict with the installer's options.</li>
+          <li><strong>LODs</strong> (Ultra only): the quality of distant objects and vegetation.</li>
+          <li><strong>Resolution:</strong> normally your screen's resolution. If the list is empty or wrong, xrandr or XWayland is missing (see <a href="requirements.html#software">Software</a>).</li>
+          <li><strong>Downscaling:</strong> play at a lower resolution than your monitor, for example 1080p on a 1440p screen, to gain performance. Not compatible with DLAA.</li>
+          <li><strong>Monitor ratio</strong> (16:9 or 21:9): some mods are only installed for one ratio, so pick the right one.</li>
+        </ul>
+        <div class="callout warning">
+          <span class="label">Warning</span>
+          <p>Only choose <strong>DLAA</strong> if you have an <strong>NVIDIA RTX</strong> card. On anything else the game <strong>crashes at start</strong>. DLAA installs extra mods, so you can't change it after installation, and you can't combine it with downscaling.</p>
+        </div>
+      </div>
+    </details>
+    <details>
+      <summary>Ascension (v5) options</summary>
+      <div class="details-body">
+        <p><strong>Ultra</strong> is the maxed-out preset. <strong>Redux</strong> is lighter on cities and vegetation but keeps the same gameplay. Anti-aliasing, Ini profile, LODs, Resolution, Downscaling and Monitor ratio work exactly as described for Awakening, including the DLAA warning.</p>
+        <p>v5 also has these options, none of which can be changed after installation:</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><strong>SMP physics</strong></td><td>Physics for hair, clothing and armour. Costs performance.</td></tr>
+            <tr><td><strong>Fake raytracing</strong></td><td>An extra lighting effect. Costs performance.</td></tr>
+            <tr><td><strong>FPS Stabilizer</strong></td><td>Reduces draw distance on the fly to protect your frame rate, at the cost of some actors, objects and trees popping in.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </details>
+
+    <h3 id="options">Options and difficulty</h3>
+    <p>These screens set gameplay options such as the user interface and combat. Awakening also has a <strong>difficulty</strong> screen: pick a preset, then turn individual features on or off. None of these can be changed after installation.</p>
+    <p>They're the same choices as on Windows, and the Nolvus player guides explain every option: <a href="https://www.nolvus.net/guide/awake/appendix/player-guide">Awakening (v6)</a> · <a href="https://www.nolvus.net/guide/asc/appendix/player-guide">Ascension (v5)</a>.</p>
+
+    <h3 id="enb">ENB</h3>
+    <p>Choose your <strong>ENB</strong> preset, which sets the lighting and colour style of the game.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Version</th><th>Available presets</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Awakening (v6)</strong></td><td>Cabbage ENB, Cabbaval ENB (a Cabbage edit), KAUZ ENB, PI-CHO ENB</td></tr>
+          <tr><td><strong>Ascension (v5)</strong></td><td>PI-CHO ENB, RUDY ENB, BJORN ENB, BJORN ENB - Dark Ages, BJORN ENB - The White Wolf Cut. Cabbage ENB is manual only and must be installed <strong>after</strong> Nolvus; see the <a href="https://www.nolvus.net/guide/asc/enb">Cabbage ENB tutorial</a>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>You can switch presets later with <strong>Manage → Enb Manager</strong>.</p>
+
+    <h3 id="swap">Swap</h3>
+    <p>The dashboard reminds you to configure <strong>swap</strong>, the Linux equivalent of the Windows page file. Nolvus uses a lot of memory, and too little swap can crash the game, especially with 16 GB of RAM. The link on that screen goes to the <a href="https://wiki.archlinux.org/title/Swap">ArchWiki's swap page</a>, which explains how to change it on any distribution.</p>
+
+    <h3 id="download-location">Download location</h3>
+    <p>This screen is for <strong>Nexus Premium</strong> accounts only. Pick the Nexus download server nearest to you. If downloads are slow or keep failing, come back and try a different one.</p>
+
+    <h3 id="summary">Summary and start</h3>
+    <p>Check your choices. At the bottom, choose what should happen <strong>when a mod fails to install</strong>:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Choice</th><th>What happens</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>Stop installation and display the error message</td><td>Stops at the first problem.</td><td>Free Nexus accounts, since their downloads aren't automatic.</td></tr>
+          <tr><td>Stop the installation when 50 errors occurred</td><td>Keeps going through a few problems, but stops if there are many, for example if your disk fills up.</td><td>Most people.</td></tr>
+          <tr><td>Don't stop installation and show all errors at end</td><td>Installs everything it can, then lists everything that failed.</td><td>Experienced users.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Click <strong>Start</strong>.</p>
+
+    <h3 id="let-it-run">Let it run</h3>
+    <p>How long the install takes depends on your Nexus account, internet speed, SSD and CPU. On a modern PC with Nexus Premium and fast internet it can be done in about an hour, and much less when it reuses archives. Otherwise, several hours is common.</p>
+    <ul>
+      <li><strong>Free Nexus accounts:</strong> a browser window opens for each mod. Click <strong>Slow download</strong> each time, or turn on <strong>Auto Click Slow Download</strong> (see <a href="#settings">settings</a>).</li>
+      <li><strong>It isn't frozen.</strong> Some steps, especially the ones that build distant landscapes (<strong>LODGen</strong> and <strong>DynDOLOD</strong>), can show no progress for a long time. Let them finish.</li>
+      <li><strong>Closed it by accident, or had to restart your computer?</strong> Open the dashboard again. It offers to <strong>Resume</strong> the install from where it stopped.</li>
+      <li>Fluorine Manager is downloaded as part of the install, from <a href="https://www.nexusmods.com/site/mods/1997">Nexus</a>, or from <a href="https://github.com/SulfurNitride/Fluorine-Manager/releases/latest">GitHub</a> if Nexus can't provide it.</li>
+    </ul>
+    <p>If mods fail, the dashboard lists them with <strong>Fix</strong> (opens help for that error) and <strong>Retry</strong> buttons. Retry is often all it takes, especially for download problems. See <a href="help.html#downloads">download problems</a> for specific mods.</p>
+    <p>When you see <strong>Installation Completed</strong>, click <strong>Manage Instances</strong> and continue with <a href="play.html#first-play">playing for the first time</a>.</p>
+
+    <h2 id="change-later">What can I change later?</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Setting</th><th>Can it be changed after installation?</th></tr></thead>
+        <tbody>
+          <tr><td>Resolution</td><td class="yes">Yes</td></tr>
+          <tr><td>Ini profile</td><td class="yes">Yes</td></tr>
+          <tr><td>ENB preset</td><td class="yes">Yes, with <strong>Manage → Enb Manager</strong></td></tr>
+          <tr><td>Anti-aliasing (TAA / DLAA)</td><td class="no">No</td></tr>
+          <tr><td>LODs</td><td class="no">No</td></tr>
+          <tr><td>Monitor ratio</td><td class="no">No</td></tr>
+          <tr><td>Gameplay options and difficulty</td><td class="no">No</td></tr>
+          <tr><td>SMP physics, Fake raytracing, FPS Stabilizer (v5)</td><td class="no">No</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>To change something marked No, delete the instance and reinstall it. If you kept your archive, nothing needs to be downloaded again.</p>
+
+    <p><a class="button primary" href="play.html#first-play">Next: Play for the first time</a></p>
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Sources: the <a href="https://github.com/sableeyed/NolvusDashboard/wiki/User-Guide">Linux user guide</a> and the <a href="https://www.nolvus.net/appendix/installer/install">nolvus.net installation guide</a>. Not affiliated with Bethesda Softworks.</span>
+    <span><a href="https://github.com/sableeyed/NolvusDashboard">Source on GitHub</a> · <a href="https://github.com/sableeyed/NolvusDashboard/blob/main/LICENSE">GPL v3</a></span>
+  </div>
+</footer>
+</body>
+</html>

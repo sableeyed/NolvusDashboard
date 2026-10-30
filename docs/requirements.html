@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Requirements · Nolvus Dashboard for Linux</title>
+<meta name="description" content="Accounts, software and hardware you need to install Nolvus on Linux.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="./"><img src="assets/logo.svg" alt="Nolvus" width="82" height="30">for Linux</a>
+    <nav class="site-nav">
+      <a href="requirements.html" aria-current="page">Requirements</a>
+      <a href="install.html">Install</a>
+      <a href="play.html">Playing</a>
+      <a href="help.html">Troubleshooting</a>
+      <a class="button primary" href="https://github.com/sableeyed/NolvusDashboard/releases/latest">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout with-toc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <ol>
+      <li><a href="#accounts">Accounts</a></li>
+      <li><a href="#software">Software</a></li>
+      <li><a href="#hardware">Hardware</a>
+        <ol>
+          <li><a href="#storage">Storage</a></li>
+          <li><a href="#awakening">Awakening (v6)</a></li>
+          <li><a href="#ascension">Ascension (v5)</a></li>
+        </ol>
+      </li>
+      <li><a href="#not-supported">Not supported</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <p class="eyebrow">Before you start</p>
+    <h1 class="page-title">Requirements</h1>
+    <p class="lede">Everything you need before installing. Some basic Linux knowledge is assumed: which package manager your distribution uses, and how to run a command in a terminal.</p>
+
+    <div class="callout warning">
+      <span class="label">Warning</span>
+      <p><strong>Never run the dashboard as root</strong> or with <code>sudo</code>, and the same goes for Fluorine, Wine and Proton. Running them as root creates files your normal user cannot change, and that breaks things in ways that are hard to undo.</p>
+    </div>
+
+    <h2 id="accounts">Accounts</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Account</th><th>Needed?</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://store.steampowered.com/">Steam</a>, with <strong>Skyrim Special Edition</strong> and the <strong>Anniversary Edition</strong> upgrade (or Skyrim Anniversary Edition)</td><td>Yes</td><td>Only the Steam version works. <strong>GOG and other versions are not supported.</strong></td></tr>
+          <tr><td><a href="https://users.nexusmods.com/register">Nexus Mods</a></td><td>Yes</td><td><strong>Premium is strongly recommended.</strong> Free accounts work, but you have to click a download button for every mod, and downloads are capped at about 3 MB/s.</td></tr>
+          <tr><td><a href="https://www.nolvus.net/account/register">Nolvus.net</a></td><td>Yes</td><td>A separate account from Nexus. A common mistake is entering your Nexus details where the dashboard asks for your Nolvus ones.</td></tr>
+          <tr><td><a href="https://mega.nz/register">Mega.nz</a></td><td>Recommended</td><td>Some mods are hosted on Mega. Without an account these downloads often fail, for example with error 402. A free account is enough.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>If you have just subscribed to Nexus Premium, Nexus can take a few minutes to recognise it. The dashboard shows your Premium status in its bottom-right corner.</p>
+
+    <h2 id="software">Software</h2>
+    <p>Install these with your distribution's package manager:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Software</th><th>Why you need it</th></tr></thead>
+        <tbody>
+          <tr><td><strong>.NET 10 Runtime</strong></td><td>The dashboard is built on it, and it will not start without it. Install it natively, not through Wine. Releases before 3.8.12 used .NET 9.</td></tr>
+          <tr><td><strong>xrandr</strong></td><td>Detects your screen resolution for the installer.</td></tr>
+          <tr><td><strong>XWayland</strong></td><td>Only needed on Wayland desktops, where xrandr depends on it. Most desktops already have it.</td></tr>
+          <tr><td><strong>glxinfo</strong> and <strong>lspci</strong></td><td>Detect your graphics card for the installer's performance screen.</td></tr>
+          <tr><td><strong>ProtonPlus</strong> or <strong>ProtonUp-Qt</strong></td><td>Installs the Proton version Fluorine uses to run the game. Installing either one as a Flatpak is fine.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Example commands for common distributions:</p>
+<pre><code># Arch, CachyOS, EndeavourOS, Manjaro
+sudo pacman -S --needed dotnet-runtime xorg-xrandr xorg-xwayland mesa-utils pciutils
+
+# Fedora
+sudo dnf install dotnet-runtime-10.0 xrandr xorg-x11-server-Xwayland glx-utils pciutils
+
+# Ubuntu, Linux Mint, Pop!_OS
+sudo apt install dotnet-runtime-10.0 x11-xserver-utils xwayland mesa-utils pciutils</code></pre>
+    <p>If your distribution can't find the .NET 10 runtime, follow Microsoft's <a href="https://learn.microsoft.com/dotnet/core/install/linux">.NET on Linux instructions</a>. To check that it worked, run:</p>
+<pre><code>dotnet --list-runtimes</code></pre>
+    <p>You should see a line starting with <code>Microsoft.NETCore.App 10.</code></p>
+    <p>You do <strong>not</strong> need winetricks, protontricks, or a Proton setting for Skyrim in Steam. Those were only needed for the old Mod Organizer 2 setup. Fluorine creates and manages its own Wine prefix. The Windows guide's .NET 5 SDK and Visual C++ Redistributable aren't needed either.</p>
+
+    <h2 id="hardware">Hardware</h2>
+
+    <h3 id="storage">Storage</h3>
+    <div class="callout caution">
+      <span class="label">Caution</span>
+      <p><strong>Do not install Nolvus on a hard drive (HDD). Use an SSD.</strong> On an HDD you get endless loading times, textures that don't load properly, corrupted saves, broken animations and misbehaving scripts. You <em>can</em> put the <strong>archive</strong> folder (your downloaded mod files) on an HDD to save SSD space.</p>
+    </div>
+    <p>The <strong>download size</strong> in the tables below is optional disk space. It is only kept if you leave archiving turned on. While it works, the installer also needs extra temporary space on top of the finished install.</p>
+    <p>Nolvus uses a lot of memory. Set up enough <a href="https://wiki.archlinux.org/title/Swap">swap</a> (the Linux equivalent of the Windows page file), especially if you have 16 GB of RAM, because too little swap can crash the game.</p>
+
+    <p>The installer's performance screen shows the requirements for the exact options you pick, and its <strong>View supported GPUs</strong> button lists the cards that meet them. The official tables are below for planning ahead. They list NVIDIA cards, but AMD cards with similar performance and the same amount of VRAM work too. In every table, 1080p is 1920×1080, 1440p is 2560×1440 and 4K is 3840×2160.</p>
+    <p class="source">Source: <a href="https://www.nolvus.net/appendix/installer/requirements">nolvus.net Auto Installer requirements</a></p>
+
+    <h3 id="awakening">Nolvus Awakening (v6)</h3>
+    <p>All four variants have the same gameplay and differ in graphics and performance cost. <strong>SR Exterior Cities</strong> is an optional mod that removes the loading screens when you enter major cities, at a large VRAM cost.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variant</th><th>CPU</th><th>Install size</th><th>Download size</th></tr></thead>
+        <tbody>
+          <tr><td>Ultimate</td><td>Core i7 10000 series or AMD equivalent</td><td>426 GB</td><td>193 GB</td></tr>
+          <tr><td>Ultra</td><td>Core i7 10000 series or AMD equivalent</td><td>406 GB</td><td>188 GB</td></tr>
+          <tr><td>Redux</td><td>Core i7 7000 series (10000 series with SR Exterior Cities)</td><td>372 GB</td><td>170 GB</td></tr>
+          <tr><td>Graphics Only</td><td>Core i7 10000 series or AMD equivalent</td><td>235 GB</td><td>105 GB</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details>
+      <summary>Ultimate: GPU requirements</summary>
+      <div class="details-body">
+        <h4>Without SR Exterior Cities</h4>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Resolution</th><th>VRAM</th><th>Minimum GPU</th><th>Recommended GPU</th></tr></thead>
+          <tbody>
+            <tr><td>1080p</td><td>14 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+            <tr><td>1440p</td><td>15 GB</td><td>RTX 4070 Ti Super</td><td>RTX 4070 Ti Super</td></tr>
+            <tr><td>4K</td><td>16 GB</td><td>RTX 4090</td><td>RTX 4090</td></tr>
+          </tbody>
+        </table></div>
+        <h4>With SR Exterior Cities</h4>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Resolution</th><th>VRAM</th><th>Minimum GPU</th><th>Recommended GPU</th></tr></thead>
+          <tbody>
+            <tr><td>1080p</td><td>16 GB</td><td>RTX 4080</td><td>RTX 4080 Super</td></tr>
+            <tr><td>1440p</td><td>17 GB</td><td>RTX 3090</td><td>RTX 4090</td></tr>
+            <tr><td>4K</td><td>18 GB</td><td>RTX 4090</td><td>RTX 4090</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Ultra: GPU requirements</summary>
+      <div class="details-body">
+        <h4>Without SR Exterior Cities</h4>
+        <div class="table-wrap"><table>
+          <thead><tr><th>LODs</th><th>Resolution</th><th>VRAM</th><th>Minimum GPU</th><th>Recommended GPU</th></tr></thead>
+          <tbody>
+            <tr><td>Performance</td><td>1080p</td><td>10 GB</td><td>RTX 3080</td><td>RTX 3080 Ti</td></tr>
+            <tr><td>Performance</td><td>1440p</td><td>11 GB</td><td>RTX 3060 (12 GB)</td><td>RTX 3080 Ti</td></tr>
+            <tr><td>Performance</td><td>4K</td><td>12 GB</td><td>RTX 4070 Ti</td><td>RTX 4080</td></tr>
+            <tr><td>Ultra</td><td>1080p</td><td>11 GB</td><td>RTX 3080 Ti</td><td>RTX 4070</td></tr>
+            <tr><td>Ultra</td><td>1440p</td><td>12 GB</td><td>RTX 3080 Ti</td><td>RTX 4070</td></tr>
+            <tr><td>Ultra</td><td>4K</td><td>13 GB</td><td>RTX 4070 Ti Super</td><td>RTX 4080 Super</td></tr>
+            <tr><td>Ultra Performance</td><td>1080p</td><td>10 GB</td><td>RTX 2080 Ti</td><td>RTX 3080</td></tr>
+            <tr><td>Ultra Performance</td><td>1440p</td><td>11 GB</td><td>RTX 2080 Ti</td><td>RTX 3060 (8 GB)</td></tr>
+            <tr><td>Ultra Performance</td><td>4K</td><td>12 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+          </tbody>
+        </table></div>
+        <h4>With SR Exterior Cities</h4>
+        <div class="table-wrap"><table>
+          <thead><tr><th>LODs</th><th>Resolution</th><th>VRAM</th><th>Minimum GPU</th><th>Recommended GPU</th></tr></thead>
+          <tbody>
+            <tr><td>Performance</td><td>1080p</td><td>13 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+            <tr><td>Performance</td><td>1440p</td><td>14 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+            <tr><td>Performance</td><td>4K</td><td>15 GB</td><td>RTX 4070 Ti Super</td><td>RTX 4080</td></tr>
+            <tr><td>Ultra</td><td>1080p</td><td>14 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+            <tr><td>Ultra</td><td>1440p</td><td>15 GB</td><td>RTX 4070 Ti Super</td><td>RTX 4080</td></tr>
+            <tr><td>Ultra</td><td>4K</td><td>16 GB</td><td>RTX 4080</td><td>RTX 4080 Super</td></tr>
+            <tr><td>Ultra Performance</td><td>1080p</td><td>13 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+            <tr><td>Ultra Performance</td><td>1440p</td><td>14 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+            <tr><td>Ultra Performance</td><td>4K</td><td>15 GB</td><td>RTX 4070 Ti Super</td><td>RTX 4080</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Redux: GPU requirements</summary>
+      <div class="details-body">
+        <h4>Without SR Exterior Cities</h4>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Resolution</th><th>VRAM</th><th>Minimum GPU</th><th>Recommended GPU</th></tr></thead>
+          <tbody>
+            <tr><td>1080p</td><td>8 GB</td><td>GTX 1080</td><td>RTX 2070</td></tr>
+            <tr><td>1440p</td><td>10 GB</td><td>GTX 1080 Ti</td><td>GTX 1080 Ti</td></tr>
+            <tr><td>4K</td><td>11 GB</td><td>RTX 2080 Ti</td><td>RTX 2080 Ti</td></tr>
+          </tbody>
+        </table></div>
+        <h4>With SR Exterior Cities</h4>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Resolution</th><th>VRAM</th><th>Minimum GPU</th><th>Recommended GPU</th></tr></thead>
+          <tbody>
+            <tr><td>1080p</td><td>10 GB</td><td>GTX 1080 Ti</td><td>RTX 3080</td></tr>
+            <tr><td>1440p</td><td>12 GB</td><td>RTX 4070</td><td>RTX 4070 Ti</td></tr>
+            <tr><td>4K</td><td>13 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Graphics Only: GPU requirements</summary>
+      <div class="details-body">
+        <h4>Without SR Exterior Cities</h4>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Resolution</th><th>VRAM</th><th>Minimum GPU</th><th>Recommended GPU</th></tr></thead>
+          <tbody>
+            <tr><td>1080p</td><td>11 GB</td><td>RTX 3080 Ti</td><td>RTX 4070</td></tr>
+            <tr><td>1440p</td><td>12 GB</td><td>RTX 3080 Ti</td><td>RTX 4070</td></tr>
+            <tr><td>4K</td><td>13 GB</td><td>RTX 4070 Ti Super</td><td>RTX 4080 Super</td></tr>
+          </tbody>
+        </table></div>
+        <h4>With SR Exterior Cities</h4>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Resolution</th><th>VRAM</th><th>Minimum GPU</th><th>Recommended GPU</th></tr></thead>
+          <tbody>
+            <tr><td>1080p</td><td>14 GB</td><td>RTX 4060 Ti</td><td>RTX 4070 Ti Super</td></tr>
+            <tr><td>1440p</td><td>15 GB</td><td>RTX 4070 Ti Super</td><td>RTX 4080</td></tr>
+            <tr><td>4K</td><td>16 GB</td><td>RTX 4080</td><td>RTX 4080 Super</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </details>
+
+    <h3 id="ascension">Nolvus Ascension (v5)</h3>
+    <p><strong>CPU:</strong> minimum Core i7 7000 series, recommended Core i7 10000 series, or AMD equivalents. <strong>RAM:</strong> 32 GB for every variant.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variant</th><th>LODs</th><th>GPU</th><th>VRAM</th><th>Install size</th></tr></thead>
+        <tbody>
+          <tr><td>Ultra</td><td>Ultra (distant grass, 3D LODs)</td><td>RTX 3080 Ti</td><td>12 GB at 1440p</td><td>392 GB</td></tr>
+          <tr><td>Ultra</td><td>Performance (less distant grass, 2D LODs)</td><td>RTX 3080</td><td>10 GB at 1440p</td><td>369 GB</td></tr>
+          <tr><td>Ultra</td><td>Ultra Performance (no distant grass, 2D LODs)</td><td>RTX 2080 Ti</td><td>10 GB at 1440p</td><td>365 GB</td></tr>
+          <tr><td>Redux</td><td>n/a</td><td>Minimum GTX 1080, recommended RTX 2070</td><td>8 GB at 1080p</td><td>345 GB</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Above 1440p (or above 1080p for Redux) you need a stronger GPU with more VRAM. For native 4K on Ultra, an RTX 4090 is recommended.</p>
+
+    <h2 id="not-supported">Not supported</h2>
+    <ul>
+      <li><strong>Non-Steam copies of Skyrim</strong>, including GOG.</li>
+      <li><strong>Immutable distributions</strong> such as Bazzite and SteamOS. They install software very differently. Nolvus may run on them, but they are not supported.</li>
+      <li><strong>Running the Windows dashboard under Wine.</strong> Use this native port instead.</li>
+      <li><strong>Mod Organizer 2 under Wine.</strong> It has been replaced by Fluorine. See <a href="play.html#mo2">Mod Organizer 2</a>.</li>
+    </ul>
+
+    <p><a class="button primary" href="install.html">Next: Install Nolvus</a></p>
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Sources: the <a href="https://github.com/sableeyed/NolvusDashboard/wiki">Linux wiki</a> and <a href="https://www.nolvus.net/appendix/installer/introduction">nolvus.net</a>. Not affiliated with Bethesda Softworks.</span>
+    <span><a href="https://github.com/sableeyed/NolvusDashboard">Source on GitHub</a> · <a href="https://github.com/sableeyed/NolvusDashboard/blob/main/LICENSE">GPL v3</a></span>
+  </div>
+</footer>
+</body>
+</html>

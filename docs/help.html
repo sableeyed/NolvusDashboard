@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troubleshooting · Nolvus Dashboard for Linux</title>
+<meta name="description" content="Fixes for common Nolvus on Linux problems: downloads, Fluorine, path length, Steam and in-game issues.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="./"><img src="assets/logo.svg" alt="Nolvus" width="82" height="30">for Linux</a>
+    <nav class="site-nav">
+      <a href="requirements.html">Requirements</a>
+      <a href="install.html">Install</a>
+      <a href="play.html">Playing</a>
+      <a href="help.html" aria-current="page">Troubleshooting</a>
+      <a class="button primary" href="https://github.com/sableeyed/NolvusDashboard/releases/latest">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout with-toc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <ol>
+      <li><a href="#quick-fixes">Quick fixes</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#downloads">Downloads</a></li>
+      <li><a href="#install-errors">Install errors</a></li>
+      <li><a href="#fluorine">Fluorine</a></li>
+      <li><a href="#path-length">Path length</a></li>
+      <li><a href="#steam">Steam and Skyrim</a></li>
+      <li><a href="#in-game">In game</a></li>
+      <li><a href="#ini">Advanced settings</a></li>
+      <li><a href="#asking">Asking for help</a></li>
+      <li><a href="#glossary">Glossary</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <p class="eyebrow">Help</p>
+    <h1 class="page-title">Troubleshooting</h1>
+    <p class="lede">Fixes for the most common problems. If yours isn't here, check the wiki's <a href="https://github.com/sableeyed/NolvusDashboard/wiki/Frequently-Asked-Questions">FAQ</a>, then <a href="#asking">ask for help</a>.</p>
+
+    <h2 id="quick-fixes">Quick fixes</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Problem</th><th>Likely cause</th><th>What to do</th></tr></thead>
+        <tbody>
+          <tr><td>Double-clicking the dashboard does nothing</td><td>.NET 10 Runtime missing</td><td><a href="requirements.html#software">Install it</a>. Run the dashboard from a terminal to see the error.</td></tr>
+          <tr><td><em>Skyrim Anniversary Edition not found</em></td><td>Auto Detect couldn't find Skyrim</td><td>Check Skyrim is installed in Steam, then use <strong>Browse…</strong> to select the folder containing <code>SkyrimSE.exe</code>. See <a href="#ae-not-installed">below</a>.</td></tr>
+          <tr><td>Resolution list empty or wrong, or downscaling doesn't work</td><td>xrandr or XWayland missing</td><td><a href="requirements.html#software">Install them</a>.</td></tr>
+          <tr><td>Graphics card not detected</td><td>glxinfo or lspci missing</td><td>Install <code>mesa-utils</code>/<code>glx-utils</code> and <code>pciutils</code>. On some laptops, see <a href="#ini"><code>ForceAA</code></a>.</td></tr>
+          <tr><td>Mega downloads fail, or error 402 on mods not hosted on Nexus</td><td>Anonymous Mega connection</td><td><a href="install.html#settings">Add your Mega account</a>.</td></tr>
+          <tr><td>A download is stuck or failed</td><td>Temporary server problem</td><td>Click <strong>Retry</strong>. Premium users can also try a different download location.</td></tr>
+          <tr><td>The ENB step fails</td><td>enbdev.com blocked the automatic download</td><td><a href="#enb-download">Download it manually</a>.</td></tr>
+          <tr><td>The install seems frozen at LODGen or DynDOLOD</td><td>It isn't frozen</td><td>Wait. These steps can take a long time with no visible progress.</td></tr>
+          <tr><td>The dashboard closed or crashed during the install</td><td></td><td>Reopen it and click <strong>Resume</strong>.</td></tr>
+          <tr><td>Errors while extracting mods</td><td>Almost always a full disk</td><td>See <a href="#disk-full">disk-full errors</a>.</td></tr>
+          <tr><td>Vanilla Skyrim starts instead of Nolvus</td><td>Started from Steam</td><td>Start Nolvus from the dashboard, Fluorine or a desktop shortcut.</td></tr>
+          <tr><td>Game crashes about 20 seconds after launch, before the main menu</td><td>Paths too long</td><td>See <a href="#path-length">path length</a>.</td></tr>
+          <tr><td>Game crashes immediately after choosing DLAA</td><td>DLAA needs an NVIDIA RTX card</td><td>Reinstall the instance with TAA.</td></tr>
+          <tr><td>Game crashes during play, especially with 16 GB of RAM</td><td>Not enough swap</td><td>Increase your <a href="https://wiki.archlinux.org/title/Swap">swap</a>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="dashboard">Dashboard</h2>
+
+    <h3>The dashboard doesn't open</h3>
+    <p>The <strong>.NET 10 Runtime</strong> is probably missing. Install it with your distribution's package manager, not through Wine. To see the actual error, start the dashboard from a terminal inside the <code>Nolvus</code> folder:</p>
+<pre><code>cd /path/to/Nolvus
+./NolvusDashboard</code></pre>
+    <p>If the error mentions the Nolvus website, it couldn't be reached during the dashboard's update check. Check the <a href="https://discord.gg/Zkh5PwD">official Nolvus Discord</a> for outages, or try a VPN.</p>
+
+    <h3>The installation progress screen is empty</h3>
+    <p>Restart the dashboard.</p>
+
+    <h3>"Error during Nexus connection - 500" or "503"</h3>
+    <p>Nexus is down. Wait until it's back. These outages are usually announced on the Nexus site and Discord.</p>
+
+    <h3>"Error during Nexus connection - 401 (Unauthorized)" or "Not logged in"</h3>
+    <p>Your saved login is no longer valid. Close the dashboard, delete <code>NolvusDashboard.ini</code> from the dashboard folder, and open the dashboard again. It runs the first-launch setup again, so you'll select Skyrim and sign in to Nexus and Nolvus again. Your instances aren't affected.</p>
+
+    <h3>"Error during instance checking" or "Root element is missing"</h3>
+    <p><code>Instances/InstancesData.xml</code> is damaged. That usually happens because it was edited by hand, or because the computer crashed or lost power during an install. Don't edit that file. If the problem doesn't go away, you may need to reinstall the instance.</p>
+
+    <h2 id="downloads">Downloads</h2>
+    <p>Whenever a single file won't download automatically, you can download it yourself in your browser. Put it, <strong>still compressed and with its exact original file name</strong>, in <code>Cache/Downloads</code> inside the dashboard folder, then resume the install.</p>
+
+    <h3>I can't download files hosted on Mega</h3>
+    <ul>
+      <li>Add your Mega account: <strong>settings cog</strong> (top right) → untick <strong>Anonymous Connection</strong> → enter your details → <strong>Save</strong>. Anonymous downloads fail often. If validation fails, log in to mega.nz in your browser once.</li>
+      <li>If you already use an account, make sure it isn't locked. A VPN, or switching to anonymous mode, can also get a stubborn file through.</li>
+      <li><strong>Error 509</strong> means you've reached Mega's daily transfer limit (about 5 GB). Wait 24 hours or use a VPN.</li>
+      <li><code>HashcashRequired</code> errors in the dashboard log are a known problem tracked in <a href="https://github.com/sableeyed/NolvusDashboard/issues/55">issue #55</a>.</li>
+    </ul>
+
+    <h3>Google Drive downloads fail (High Poly Head, Olivier Magic Casting, BDOR Nova Pack)</h3>
+    <p>Google Drive rate-limits automated downloads, and returns <strong>error 429</strong> when too many people download a file at once. Download the file yourself in your browser, and sign in to Google if it asks. Put it in <code>Cache/Downloads</code> and resume. If you got High Poly Head from vectoplexus, replace the underscores in its file name with spaces.</p>
+
+    <h3 id="enb-download">The ENB download fails</h3>
+    <p>enbdev.com sometimes blocks automated downloads. Download <a href="http://enbdev.com/mod_tesskyrimse_v0347.htm">ENB v0.347 for Skyrim SE</a> yourself with the download arrow at the bottom of the page, put the zip in <code>Cache/Downloads</code>, and resume. Both Ascension (v5) and Awakening (v6) use v0.347 as their base.</p>
+
+    <h3>Some files won't download at all</h3>
+    <p>Some files are blocked in some countries. Try again with a VPN.</p>
+
+    <h3>Downloads are only 2–3 MB/s</h3>
+    <p>The dashboard downloads several files in parallel, so your total speed is higher than any single file's. Free Nexus accounts are capped at about 3 MB/s in total.</p>
+
+    <h3>I have to click every download</h3>
+    <p>Automatic downloads need a Nexus <strong>Premium</strong> account. If you've just subscribed, wait a few minutes for Nexus to recognise it. The dashboard shows your Premium status in its bottom-right corner.</p>
+
+    <h2 id="install-errors">Install errors</h2>
+
+    <h3 id="disk-full">Disk-full or extraction errors</h3>
+    <p>The dashboard downloads and extracts several mods at once, so while it works it needs much more space than the finished install. Extraction errors are almost always a full disk, and only rarely a failing drive.</p>
+    <ol class="steps">
+      <li>Close the dashboard and delete the <code>Cache</code> folder inside the dashboard folder.</li>
+      <li>Open the dashboard, click the <strong>settings cog</strong>, and set <strong>Number of simultaneous mods installation</strong> to <code>1</code>.</li>
+      <li>Resume the install and choose to stop at the first error.</li>
+    </ol>
+    <p>The dashboard then installs one mod at a time and cleans up after each one.</p>
+
+    <h3>"Could not extract files! File is corrupted"</h3>
+    <p>Check the dashboard log for details, then delete that file from <code>Cache/Downloads</code> so it's downloaded again.</p>
+
+    <h3>"A file is being used by another process"</h3>
+    <p>Close the dashboard, clear <code>Cache/Downloads</code>, and open the dashboard again.</p>
+
+    <h3>"Could not find a part of the path" or "Directory name is invalid"</h3>
+    <p>The dashboard or instance folder was probably moved before the install finished. Click <strong>Cancel</strong> on the resume screen, then install the list again. Once an install has finished, use <strong>Manage → Remap Instance</strong> after moving it instead.</p>
+
+    <h3 id="ae-not-installed">"Skyrim Anniversary Edition is not installed" or "hash for game file does not match"</h3>
+    <p>The dashboard checks that your Skyrim is a legitimate, up-to-date Steam copy with all of the Anniversary content. Common causes:</p>
+    <ul>
+      <li>The Anniversary upgrade isn't owned, or its content isn't fully downloaded. <a href="install.html#prepare-skyrim">Download it again</a> from the main menu.</li>
+      <li>Skyrim isn't up to date. Let Steam update it, or run <strong>Verify integrity of game files</strong>.</li>
+      <li>The dashboard points at the wrong folder. Its path is stored as <code>GamePath</code> in <code>NolvusDashboard.ini</code>.</li>
+    </ul>
+    <p>Files that are often flagged include <code>ccasvsse001-almsivi.bsa</code>, <code>ccbgssse037-curios.bsa</code>, <code>SkyrimSE.exe</code> and <code>Skyrim.ccc</code>.</p>
+
+    <h2 id="fluorine">Fluorine</h2>
+
+    <h3>"Fluorine Manager is not installed" when I press Play</h3>
+    <p>You pressed <strong>Play</strong> on the instance <em>details</em> screen. Go back to the instance list and press <strong>Play</strong> there. The offer to install Fluorine only appears on the list.</p>
+
+    <h3>"An instance of Fluorine Manager is already running!"</h3>
+    <p>Fluorine is still open, possibly in the background. Close it and try again. The dashboard won't start a second copy, and its <strong>Play</strong> button stays disabled while Fluorine is running.</p>
+
+    <h3>Fluorine opens the wrong instance, or asks me to pick one</h3>
+    <p>Launch it with <strong>Play</strong> in the dashboard, which points Fluorine at the instance you chose. Desktop shortcuts are tied to one instance each.</p>
+
+    <h3>The game won't launch, and Fluorine mentions a missing prefix</h3>
+    <p>The Wine prefix hasn't been created yet. See <a href="play.html#prefix">Set up Fluorine's Wine prefix</a>. If prefix setup fails, check its log:</p>
+<pre><code>find ~/.local/share/fluorine -name prefix-setup-latest.log</code></pre>
+    <p>Running <strong>Initialize Wine Prefix</strong> again rebuilds the prefix from scratch. Trying a different <a href="play.html#proton">Proton version</a> can help too.</p>
+
+    <h3>Fluorine won't start at all</h3>
+    <p>Delete the program with <code>rm -rf ~/.local/share/fluorine/bin</code>, then press <strong>Play</strong> on any instance in the dashboard's list and accept the offer to install it. Your prefix, mods and downloads are kept. See <a href="play.html#fluorine">Fluorine Manager</a>.</p>
+
+    <h2 id="path-length">Path length (MAX_PATH)</h2>
+    <p>Skyrim and most of its tools are Windows programs, and Windows limits file paths to <strong>260 characters</strong>. Wine shows your Linux folders to those programs as <code>Z:\</code> followed by the full Linux path. A long install path therefore uses up much of that limit before any mod files are counted, and deeply nested mod files then go over it.</p>
+    <p>Typical symptoms:</p>
+    <ul>
+      <li>The game crashes about 20 seconds after launch, before the main menu.</li>
+      <li>Mods fail to load, or tools fail to write files, with confusing errors.</li>
+      <li>Paths in error messages look cut off.</li>
+      <li>Nolvus Awakening (v6) doesn't start at all.</li>
+    </ul>
+    <p>This became more common with the switch to Fluorine (<a href="https://github.com/sableeyed/NolvusDashboard/issues/59">issue #59</a>). The old MO2 setup mapped a short <code>X:</code> drive, but Fluorine uses full host paths. Installs on secondary drives mounted by UUID are the usual culprit.</p>
+
+    <h3>Check your paths</h3>
+    <p>Run this from your instance directory, the folder containing <code>STOCK GAME</code>, <code>MODS</code> and <code>TOOLS</code>:</p>
+<pre><code>cd "/path/to/your/instance"
+find "$PWD" | awk '{ print length($0) + 2, $0 }' | sort -rn | head</code></pre>
+    <p>It lists your ten longest paths, with their length as Windows sees them. If the top numbers are near or above 260, shorten your install path.</p>
+
+    <h3>Shorten the path with a symlink</h3>
+    <p>The simplest fix is to install to a short path in the first place, such as <code>~/Games/Nolvus</code>. For an existing install, you don't need to move anything:</p>
+    <ol class="steps">
+      <li>Create a short symlink at the root of your filesystem that points at your instance directory:
+<pre><code>sudo ln -s "/run/media/you/9c4e1f2a-…/Nolvus/Instances/Nolvus Awakening" /Nolvus</code></pre>
+        Any short name works, as long as nothing in <code>/</code> already has that name. The symlink doesn't move or copy anything.</li>
+      <li>Open Fluorine on your instance. In <strong>Edit Executables</strong>, change the binary paths of the game <strong>and every tool</strong> so they start with <code>/Nolvus/…</code>. If Fluorine asks whether to update the managed game's registry key, choose yes.</li>
+      <li>Check <strong>Settings → Paths</strong> and update anything that still uses the long path.</li>
+      <li>Run the length check again from <code>/Nolvus</code>.</li>
+    </ol>
+    <div class="callout warning">
+      <span class="label">Warning</span>
+      <p>To remove the symlink later, use <code>sudo rm /Nolvus</code> with <strong>no</strong> <code>-r</code> and <strong>no</strong> trailing slash. <code>rm -r /Nolvus/</code> deletes your actual Nolvus files.</p>
+    </div>
+
+    <h2 id="steam">Steam and Skyrim</h2>
+
+    <h3>Vanilla Skyrim starts instead of Nolvus</h3>
+    <p>Nolvus runs from its own copy of the game (<code>STOCK GAME</code>), so Steam's Play button always starts unmodded Skyrim. Start Nolvus with <strong>Play</strong> in the dashboard, from Fluorine, or with a desktop shortcut.</p>
+
+    <h3 id="steam-redirector">Steam's Play button still opens Mod Organizer 2</h3>
+    <p>The Steam Redirector from the old MO2 setup is still installed. In Steam, open Skyrim's <strong>Properties → Installed Files</strong> and click <strong>Verify integrity of game files</strong> to restore Skyrim's original launcher. To undo it by hand instead, go to Steam's Skyrim folder (not the Nolvus <code>STOCK GAME</code> folder), delete <code>SkyrimSELauncher.exe</code>, rename <code>SkyrimSELauncher.exe.bak</code> back to <code>SkyrimSELauncher.exe</code>, and delete <code>instancepath.txt</code>.</p>
+
+    <h3>The Anniversary Edition download never appears</h3>
+    <p>See <a href="install.html#prepare-skyrim">Prepare Skyrim</a>.</p>
+
+    <h3>Do my Steam launch options still work?</h3>
+    <p>No. Fluorine doesn't use them. Add environment variables in Fluorine instead; see <a href="play.html#launch-options">launch options</a>.</p>
+
+    <h2 id="in-game">In game</h2>
+
+    <h3>"KiLoader detected an unexpected unrecoverable exception from a plugin"</h3>
+    <ol>
+      <li>Install the latest version of <a href="https://www.nexusmods.com/skyrimspecialedition/mods/99404?tab=files">KiLoader ENB Satellite</a>.</li>
+      <li>If that doesn't fix it, choose a different Proton version in Fluorine's <strong>Settings → Wine/Proton</strong> and run <strong>Initialize Wine Prefix</strong> again.</li>
+    </ol>
+    <p>The cause is unknown. It has only been seen with MO2, and with Fluorine using USVFS, which MO2 also uses. Fluorine's FUSE mode doesn't have the problem.</p>
+
+    <h3>"rundll32.exe could not be started"</h3>
+    <p>Safe to ignore. Press <strong>No</strong>.</p>
+
+    <h3>ReShade or ENB shaders fail to compile</h3>
+    <p>The prefix setup normally takes care of this. If it didn't, find a copy of <code>d3dcompiler_47.dll</code> and put it in the <code>STOCK GAME</code> folder of your instance.</p>
+
+    <h3>The game crashes, and the crash log mentions winhttp or dxgi</h3>
+    <p>Add <code>RESHADE_DISABLE_NETWORK_HOOK=1</code> to Fluorine's <a href="play.html#launch-options">Per Wrapper Options</a> for SKSE.</p>
+
+    <h3>My controller doesn't work</h3>
+    <p>Add <code>PROTON_DISABLE_HIDRAW=1</code> to Fluorine's <a href="play.html#launch-options">Per Wrapper Options</a> for SKSE.</p>
+
+    <h3>The game crashes immediately after I chose DLAA</h3>
+    <p>DLAA only works on NVIDIA RTX cards, and anti-aliasing can't be changed after installation. Reinstall the instance with <strong>TAA</strong>. Your archive of downloads is kept, so nothing has to be downloaded again.</p>
+
+    <h3>Are there launch options that improve performance?</h3>
+    <p>These are optional. Add them to Fluorine's <a href="play.html#launch-options">Per Wrapper Options</a> for SKSE:</p>
+<pre><code>DXVK_CONFIG="dxgi.maxFrameLatency = 1; dxgi.syncInterval = 0; d3d11.maxTessFactor = 8; dxvk.tearFree = False" PROTON_LOG=0 PULSE_LATENCY_MSEC=60 MANGOHUD=0 PROTON_ENABLE_NVAPI=1 PROTON_DLSS_UPGRADE=1 PROTON_FSR4_UPGRADE=1 PROTON_FSR4_RDNA3_UPGRADE=1 PROTON_USE_NTSYNC=1 PROTON_ENABLE_WAYLAND=1 PROTON_DLSS_INDICATOR=0 PROTON_DXVK_GPLASYNC=1 DXVK_ASYNC=1</code></pre>
+    <p>For problems that aren't specific to Linux, see the nolvus.net <a href="https://www.nolvus.net/catalog/game">in-game issues</a>, <a href="https://www.nolvus.net/catalog/crashlog">crash logs</a> and <a href="https://www.nolvus.net/catalog/gamefaq">general FAQ</a> pages.</p>
+
+    <h2 id="ini">Advanced: dashboard settings file</h2>
+    <p>A few settings can only be changed in <code>NolvusDashboard.ini</code>, in the dashboard folder. Close the dashboard before you edit it, and add any lines that are missing.</p>
+<pre><code>[Process]
+Count = 4
+Retry = 3
+ErrorsThreshold = 50
+
+[Misc]
+ForceAA = True</code></pre>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Setting</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>Count</code></td><td>Your CPU core count</td><td>How many mods are processed at once. It's the same setting as <strong>Number of simultaneous mods installation</strong>. They share your bandwidth. Don't set it too high: on a 4-core CPU, use 6 at most.</td></tr>
+          <tr><td><code>Retry</code></td><td>3</td><td>How many times a failed download is retried. It doesn't help with dead links or unreachable servers, so a high value just means waiting longer.</td></tr>
+          <tr><td><code>ErrorsThreshold</code></td><td>50 (max 100)</td><td>How many errors the install tolerates before stopping. <code>1</code> stops at the first error, which is recommended for free Nexus accounts. <code>0</code> removes the limit, which isn't recommended.</td></tr>
+          <tr><td><code>ForceAA</code></td><td>not set</td><td>On some laptops the dashboard doesn't detect the NVIDIA GPU, so it hides the anti-aliasing choice. <code>True</code> shows it anyway. <strong>Only use this if you really have an NVIDIA RTX card</strong>, since DLAA on anything else crashes the game.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The same file also holds your Nolvus login, Nexus API key and Mega credentials, so don't share it.</p>
+    <p>Downloads go to <code>Cache/Downloads</code> and are extracted in <code>Cache/</code>, both inside the dashboard folder. After each mod is installed, its temporary files are removed and its archive is either moved to your archive directory or deleted.</p>
+
+    <h2 id="asking">Asking for help</h2>
+    <p>Ask in the <a href="https://discord.gg/Tazgf4Tr4u">Nolvus Linux Discord</a> or open a <a href="https://github.com/sableeyed/NolvusDashboard/issues">GitHub issue</a>. Search first, because your question may already have been answered. Don't ask the official Nolvus Discord about Linux problems. To get a useful answer quickly, include:</p>
+    <ul>
+      <li>Your <strong>Linux distribution</strong>, and whether you use <strong>Wayland or X11</strong>.</li>
+      <li>The <strong>dashboard version</strong>, which is part of the name of the file you downloaded.</li>
+      <li>What you were doing and what happened, including the <strong>exact error message</strong> or a screenshot.</li>
+      <li>The <strong>dashboard log</strong>, in the <code>Logs</code> folder inside the dashboard folder. It's named after the date, for example <code>Nolvus/Logs/2026-09-25.log</code>.</li>
+      <li>For problems with an installed instance, a <strong>Report to PDF</strong> from the Manage menu.</li>
+    </ul>
+    <p>Nolvus on Linux is maintained by one person in their spare time.</p>
+
+    <h2 id="glossary">Glossary</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Instance</strong></td><td>One installed copy of Nolvus, with its mods, settings and its own copy of the game. You can have more than one.</td></tr>
+          <tr><td><strong>Archive</strong></td><td>The downloaded mod files. Keeping them lets you reinstall without downloading everything again.</td></tr>
+          <tr><td><strong>STOCK GAME</strong></td><td>A clean copy of Skyrim inside your instance. Nolvus modifies this copy, never your Steam installation.</td></tr>
+          <tr><td><strong>Fluorine Manager</strong></td><td>The mod manager you play through. It's a native Linux version of Mod Organizer 2 (MO2).</td></tr>
+          <tr><td><strong>Proton</strong></td><td>Valve's compatibility layer for running Windows games on Linux. GE-Proton is a community build of it.</td></tr>
+          <tr><td><strong>Wine prefix</strong></td><td>A folder containing a Windows-like environment for Windows programs to run in. Fluorine creates one for you.</td></tr>
+          <tr><td><strong>ENB</strong></td><td>A graphics add-on that changes Skyrim's lighting and colours.</td></tr>
+          <tr><td><strong>LODs</strong></td><td>Low-detail versions of distant objects, trees and terrain. LODGen and DynDOLOD build them during the install.</td></tr>
+          <tr><td><strong>Swap</strong></td><td>Disk space that Linux uses when memory runs out. It's the Linux version of the Windows page file.</td></tr>
+          <tr><td><strong>Creation Club / Anniversary content</strong></td><td>Extra official content that comes with the Anniversary Edition. Nolvus requires all of it.</td></tr>
+          <tr><td><strong>Nexus Premium</strong></td><td>A paid Nexus Mods membership. It makes downloads automatic and removes the speed limit.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Sources: the <a href="https://github.com/sableeyed/NolvusDashboard/wiki/Frequently-Asked-Questions">Linux FAQ</a> and the <a href="https://www.nolvus.net/appendix/installer/faq">nolvus.net installer FAQ</a>. Not affiliated with Bethesda Softworks.</span>
+    <span><a href="https://github.com/sableeyed/NolvusDashboard">Source on GitHub</a> · <a href="https://github.com/sableeyed/NolvusDashboard/blob/main/LICENSE">GPL v3</a></span>
+  </div>
+</footer>
+</body>
+</html>

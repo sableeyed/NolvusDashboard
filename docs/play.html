@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playing · Nolvus Dashboard for Linux</title>
+<meta name="description" content="First launch, Fluorine Manager, everyday use, updating and uninstalling Nolvus on Linux.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="./"><img src="assets/logo.svg" alt="Nolvus" width="82" height="30">for Linux</a>
+    <nav class="site-nav">
+      <a href="requirements.html">Requirements</a>
+      <a href="install.html">Install</a>
+      <a href="play.html" aria-current="page">Playing</a>
+      <a href="help.html">Troubleshooting</a>
+      <a class="button primary" href="https://github.com/sableeyed/NolvusDashboard/releases/latest">Download</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout with-toc">
+  <nav class="toc" aria-label="On this page">
+    <p>On this page</p>
+    <ol>
+      <li><a href="#first-play">Playing for the first time</a>
+        <ol>
+          <li><a href="#proton">Install Proton</a></li>
+          <li><a href="#press-play">Press Play</a></li>
+          <li><a href="#prefix">Wine prefix</a></li>
+          <li><a href="#vfs-cache">Disable VFS cache</a></li>
+          <li><a href="#in-game">In the game</a></li>
+        </ol>
+      </li>
+      <li><a href="#everyday">Everyday use</a>
+        <ol>
+          <li><a href="#manage">The Manage menu</a></li>
+          <li><a href="#updating">Updating</a></li>
+          <li><a href="#instances">Instances</a></li>
+        </ol>
+      </li>
+      <li><a href="#fluorine">Fluorine Manager</a></li>
+      <li><a href="#mo2">Coming from Mod Organizer 2</a></li>
+      <li><a href="#uninstall">Uninstalling</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <p class="eyebrow">After the install</p>
+    <h1 class="page-title">Playing Nolvus</h1>
+    <p class="lede">You play Nolvus through <strong>Fluorine Manager</strong>, a native Linux build of Mod Organizer 2. The first launch needs a few one-time steps.</p>
+
+    <h2 id="first-play">Playing for the first time</h2>
+    <p>Start by clicking <strong>Manage → Instance</strong> on your new install. Make sure nothing is shown in <strong>red</strong>. If something is, sort it out before going further (see <a href="help.html">Troubleshooting</a>).</p>
+
+    <h3 id="proton">1. Install a Proton version</h3>
+    <p>Open <strong>ProtonPlus</strong> or ProtonUp-Qt and install one of these known-working Proton versions:</p>
+    <ul>
+      <li>GE-Proton 10.34</li>
+      <li>GE-Proton 10.15</li>
+      <li>GE-Proton 10.10</li>
+      <li>proton-cachyos-10.0-20260102-slr-x86_64_v3</li>
+      <li>proton-cachyos-11.0-20260602 (Steam Linux Runtime)</li>
+    </ul>
+    <p>If you're unsure, pick <strong>GE-Proton 10.34</strong>. GE-Proton 10.10 has the longest track record. If one version gives you trouble, try another.</p>
+
+    <h3 id="press-play">2. Press Play</h3>
+    <p>On the instance list, click <strong>Play</strong> on your Nolvus instance. If Fluorine isn't installed yet, the dashboard offers to install it. Accept. It's about 200 MB, and it's installed once for all of your instances.</p>
+    <div class="callout note">
+      <span class="label">Note</span>
+      <p>Use <strong>Play on the instance list</strong> for this. The <strong>Play</strong> button inside an instance's details doesn't offer to install Fluorine.</p>
+    </div>
+
+    <h3 id="prefix">3. Set up Fluorine's Wine prefix</h3>
+    <p>Fluorine opens on your Nolvus instance. Before the game can start, Fluorine needs a <strong>Wine prefix</strong>: a small Windows-like environment that Skyrim and the modding tools run in. Until it exists, Fluorine refuses to launch the game, with a message saying no prefix is configured.</p>
+    <ol class="steps">
+      <li>In Fluorine, open <strong>Settings → Wine/Proton</strong>.</li>
+      <li>Choose the Proton version you installed.</li>
+      <li>Click <strong>Initialize Wine Prefix</strong>.</li>
+      <li>Wait. The first run creates the prefix and applies Fluorine's compatibility setup, so it takes a few minutes.</li>
+    </ol>
+    <p>You only do this once, because every Nolvus instance shares the same prefix. Running <strong>Initialize Wine Prefix</strong> again rebuilds it from scratch.</p>
+
+    <h3 id="vfs-cache">4. Disable the VFS cache</h3>
+    <p>Open the <strong>Executables</strong> options in Fluorine. On older versions of Fluorine this part of the UI looks different.</p>
+    <img src="https://github.com/user-attachments/assets/5901c32a-a11f-4e17-bfd2-032766146207" alt="Fluorine's toolbar with the Executables options next to the Run button" width="1489" height="218" loading="lazy">
+    <p>Go to <strong>Compatibility</strong>, expand <strong>Advanced</strong>, and tick <strong>Disable VFS cache (diagnostic)</strong>.</p>
+    <img src="https://github.com/user-attachments/assets/4b282776-3f4e-422c-8760-19000037e0c7" alt="Fluorine's Compatibility settings with Disable VFS cache ticked under Advanced" width="818" height="580" loading="lazy">
+    <div class="callout warning">
+      <span class="label">Warning</span>
+      <p>If you skip this step, you'll get a lot of bugs.</p>
+    </div>
+
+    <h3 id="in-game">5. Read the player guide, then start the game</h3>
+    <div class="callout important">
+      <span class="label">Important</span>
+      <p>Before your first launch, read the Quick Player Guide for your version: <a href="https://www.nolvus.net/guide/awake/appendix/player-guide">Awakening (v6)</a> · <a href="https://www.nolvus.net/guide/asc/appendix/player-guide">Ascension (v5)</a>. Ascension players should also read the <a href="https://www.nolvus.net/guide/asc/appendix/knownissues">known issues</a>. They cover in-game steps that are easy to get wrong.</p>
+    </div>
+    <p>Start Nolvus from Fluorine, and Skyrim opens with the whole modlist. On Awakening, the first minutes go like this:</p>
+    <ul>
+      <li>The vanilla cart intro is skipped, and you go straight to character creation. To use a preset, load it from the preset tab and remember its name, then import the matching head sculpt from the sculpt tab.</li>
+      <li>You then appear in a room with starting gear. <strong>Don't leave right away.</strong> Wait until the mod initialisation messages in the top-right corner have gone, which can take a few minutes.</li>
+      <li>Talk to the dragon to pick a start scenario, then leave the room.</li>
+    </ul>
+    <p class="source">Source: <a href="https://www.nolvus.net/guide/awake/appendix/player-guide">nolvus.net Awakening player guide</a></p>
+
+    <h2 id="everyday">Everyday use</h2>
+    <p>Open the dashboard and click <strong>Play</strong>. Close Fluorine before you press Play again, because the dashboard won't start a second copy.</p>
+    <p>Once Nolvus is installed, you only need the dashboard to check for updates or change settings. To skip it, use <strong>Manage → Add Desktop Shortcut</strong> once. That puts a shortcut on your desktop that opens Fluorine directly on that instance.</p>
+    <p>Steam's own Play button always starts unmodded Skyrim, because Nolvus runs from its own copy of the game.</p>
+
+    <h3 id="manage">The Manage menu</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Instance</strong></td><td>Shows the instance's mod list, profile, load order and settings.</td></tr>
+          <tr><td><strong>Add Desktop Shortcut</strong></td><td>Creates a desktop shortcut that opens Fluorine on this instance.</td></tr>
+          <tr><td><strong>Report to PDF</strong></td><td>Saves a report of your instance. This is useful when you ask for help.</td></tr>
+          <tr><td><strong>Keybinds</strong></td><td>Shows Nolvus's key bindings.</td></tr>
+          <tr><td><strong>User Manual</strong></td><td>Opens the Nolvus user manual.</td></tr>
+          <tr><td><strong>Enb Manager</strong></td><td>Changes your ENB preset without reinstalling.</td></tr>
+          <tr><td><strong>Delete Instance</strong></td><td><strong>Deletes the instance folder and everything in it</strong>, and removes it from Fluorine. Your archive of downloaded files is kept.</td></tr>
+          <tr><td><strong>Remap Instance</strong></td><td>Updates the paths inside the instance after you've moved it to a different folder.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout caution">
+      <span class="label">Caution</span>
+      <p>The dashboard stores information about your installs in <code>Instances/InstancesData.xml</code> inside the dashboard folder. <strong>Don't edit or delete this file</strong>, or the dashboard loses track of your installs.</p>
+    </div>
+
+    <h3 id="updating">Updating</h3>
+    <ul>
+      <li><strong>The dashboard</strong> checks for updates every time it starts. When there's a new version, it downloads it, restarts itself and carries on.</li>
+      <li><strong>Nolvus itself:</strong> when a new version of the modlist comes out, an <strong>Update</strong> button appears on your instance. Click it, read the change log and follow the steps. You don't need to reinstall the whole list. The <a href="https://www.nolvus.net/appendix/history">Nolvus change log</a> lists every release.</li>
+      <li><strong>Fluorine</strong> updates itself (see <a href="#fluorine">below</a>).</li>
+    </ul>
+
+    <h3 id="instances">Adding, reinstalling and moving instances</h3>
+    <ul>
+      <li><strong>Another instance:</strong> click <strong>Add Instance</strong> on the instance list and <a href="install.html#installer">install</a> again.</li>
+      <li><strong>Reinstalling:</strong> use <strong>Manage → Delete Instance</strong>, then install again. The archive folder is kept, so if you point the new install at the same <strong>Archive Directory</strong>, nothing has to be downloaded again.</li>
+      <li><strong>Moving:</strong> move the folder, then use <strong>Manage → Remap Instance</strong>, enter the new path and click <strong>Remap</strong>. Never move anything while an install is in progress.</li>
+    </ul>
+
+    <h2 id="fluorine">Fluorine Manager</h2>
+    <p><a href="https://github.com/SulfurNitride/Fluorine-Manager">Fluorine Manager</a> is a native Linux mod manager based on Mod Organizer 2. It reads the same instances, profiles and downloads that MO2 did. It replaced MO2 because running MO2 under Wine caused too many bugs and setup problems. Fluorine itself runs natively. The game and the Windows modding tools still run through Proton, in the Wine prefix that Fluorine manages for you.</p>
+
+    <h3>Where Fluorine's files are</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>What</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td>Fluorine itself</td><td><code>~/.local/share/fluorine/bin</code></td></tr>
+          <tr><td>Wine prefix</td><td><code>~/.local/share/fluorine/Prefix</code></td></tr>
+          <tr><td>Instance registration</td><td><code>~/.config/Mod Organizer Team/Mod Organizer.conf</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Fluorine is installed once and shared by every instance. Your Nolvus instance stays wherever you installed it.</p>
+
+    <h3>How it's installed</h3>
+    <p>During a new install, the dashboard downloads Fluorine from <a href="https://www.nexusmods.com/site/mods/1997">Nexus</a> with the same account it uses for everything else. Premium accounts download it automatically, and free accounts get a browser window, as with any other mod. If Nexus can't provide the file, the dashboard falls back to <a href="https://github.com/SulfurNitride/Fluorine-Manager/releases/latest">Fluorine's GitHub releases</a> automatically.</p>
+
+    <h3>Updating Fluorine</h3>
+    <p>Fluorine updates itself and tells you when an update is available. To check by hand, use <strong>Check for updates now</strong> in its settings. <strong>Check for updates on startup</strong> controls whether it checks every time it opens. The dashboard never updates Fluorine, so it can't overwrite a newer version that Fluorine installed itself.</p>
+
+    <h3>Running Windows tools</h3>
+    <p>If Fluorine says a tool is a Windows executable, open <strong>Edit Executables</strong>, select the tool and enable <strong>Use Proton</strong>. Make sure a Proton version is selected in <strong>Settings → Wine/Proton</strong>.</p>
+
+    <h3 id="launch-options">Launch options and environment variables</h3>
+    <p>Steam's launch options don't apply to Fluorine. In Fluorine, open the <strong>Executables</strong> options, select <strong>SKSE</strong>, expand <strong>Advanced</strong> and add your variables to <strong>Per Wrapper Options</strong>. Leave out <code>%command%</code>.</p>
+
+    <h3>Repairing Fluorine</h3>
+    <p>If Fluorine won't start at all, delete the program and let the dashboard fetch it again:</p>
+<pre><code>rm -rf ~/.local/share/fluorine/bin</code></pre>
+    <p>Then press <strong>Play</strong> on any instance in the dashboard's list and accept the offer to install it. This only removes the program. Your Wine prefix, mods, profiles and downloads are all outside that folder, so they're kept.</p>
+
+    <h2 id="mo2">Coming from Mod Organizer 2</h2>
+    <p>Instances installed before the switch to Fluorine still have MO2 on disk and no Fluorine. You don't need to reinstall the modlist:</p>
+    <ol class="steps">
+      <li>Open the dashboard and press <strong>Play</strong> on your instance in the list.</li>
+      <li>The dashboard notices that Fluorine is missing and offers to install it. Accept.</li>
+      <li>Wait for the download, which is about 200 MB.</li>
+      <li>Fluorine opens on your instance. <a href="#prefix">Set up its Wine prefix</a> and <a href="#vfs-cache">disable the VFS cache</a>.</li>
+    </ol>
+    <ul>
+      <li><strong>Your mods, profiles, load order and downloads aren't touched.</strong> The old <code>MO2</code> folder stays in your instance, unused. You can delete it once everything works.</li>
+      <li>If the game worked under MO2 but now crashes before the main menu, your paths are probably too long for Fluorine. See <a href="help.html#path-length">path length</a>.</li>
+      <li>If you set up the Steam Redirector for MO2, Steam's Play button still opens MO2. See <a href="help.html#steam-redirector">how to remove it</a>.</li>
+    </ul>
+    <div class="callout caution">
+      <span class="label">Caution</span>
+      <p>Mod Organizer 2 under Wine is <strong>no longer supported</strong>, and you won't get help setting it up. If you really want it, the manual steps are on the wiki's <a href="https://github.com/sableeyed/NolvusDashboard/wiki/Switch-to-Mod-Organizer-2">Switch to Mod Organizer 2</a> page.</p>
+    </div>
+
+    <h2 id="uninstall">Uninstalling</h2>
+    <ol class="steps">
+      <li><strong>Delete the instance</strong> with <strong>Manage → Delete Instance</strong>. This deletes the instance folder and removes it from Fluorine. It keeps the archive of downloaded files, so delete the archive folder too if you no longer need it.</li>
+      <li><strong>Delete the <code>Nolvus</code> dashboard folder.</strong> If your instance and archive are inside it (the default), this removes them too.</li>
+      <li><strong>Remove Fluorine</strong> if you no longer need it. This also removes its Wine prefix:
+<pre><code>rm -rf ~/.local/share/fluorine</code></pre>
+        Fluorine's settings, including its list of instances, are in <code>~/.config/Mod Organizer Team/Mod Organizer.conf</code>. You can delete that file too.</li>
+    </ol>
+    <p>None of this touches Skyrim itself, which stays installed in Steam.</p>
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Sources: the <a href="https://github.com/sableeyed/NolvusDashboard/wiki/User-Guide">Linux user guide</a>, <a href="https://github.com/sableeyed/NolvusDashboard/wiki/Migrating-to-Fluorine">Migrating to Fluorine</a> and <a href="https://www.nolvus.net">nolvus.net</a>. Not affiliated with Bethesda Softworks.</span>
+    <span><a href="https://github.com/sableeyed/NolvusDashboard">Source on GitHub</a> · <a href="https://github.com/sableeyed/NolvusDashboard/blob/main/LICENSE">GPL v3</a></span>
+  </div>
+</footer>
+</body>
+</html>

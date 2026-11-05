@@ -233,16 +233,6 @@ namespace Nolvus.Instance.Core
             XMLWriter.WriteEndElement();
         }
 
-        public async Task DeleteGameSaveFiles()
-        {
-            await Task.Run(() =>
-            {
-                var SaveFilesDir = Path.Combine(SettingsManager.InstallDir, "MODS", "profiles", Name, "saves");
-
-                ServiceSingleton.Files.RemoveDirectory(SaveFilesDir, false);
-            });
-        }
-
         public async Task BackupGameSaveFiles()
         {
             await Task.Run(() =>
@@ -254,8 +244,16 @@ namespace Nolvus.Instance.Core
 
                 if (!ServiceSingleton.Files.IsDirectoryEmpty(SaveDir, SearchOption.TopDirectoryOnly))
                 {
-                    ServiceSingleton.Files.MoveFiles(SaveDir, BackupDir, SearchOption.TopDirectoryOnly);                    
-                }                                
+                    ServiceSingleton.Logger.Log(string.Format("Backuping game save files in {0}", BackupDir));
+
+                    ServiceSingleton.Files.MoveFiles(SaveDir, BackupDir, SearchOption.TopDirectoryOnly);
+
+                    ServiceSingleton.Logger.Log("Backup done");
+                }
+                else
+                {
+                    ServiceSingleton.Logger.Log(string.Format("No game save files to backup in {0}", SaveDir));
+                }
             });
         }
 

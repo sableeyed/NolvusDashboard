@@ -3,7 +3,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Nolvus.Components.Controls;assembly=Nolvus.Components"
-    Width="814" Height="206">
+    Width="884" Height="206">
 
     <Border Background="#363636" BorderBrush="Black" BorderThickness="1">
 
@@ -21,7 +21,7 @@
             <Border
                 Canvas.Left="16"
                 Canvas.Top="12"
-                Width="241"
+                Width="273"
                 Height="180"
                 ZIndex="999">
 
@@ -35,7 +35,7 @@
             <!-- Loading label overlay -->
             <Border Canvas.Left="16"
                     Canvas.Top="12"
-                    Width="241"
+                    Width="273"
                     Height="180"
                     Background="#363636">
                 <TextBlock x:Name="LblImageLoading"
@@ -48,9 +48,9 @@
 
             <!-- Instance name -->
             <TextBlock x:Name="LblInstanceName"
-                       Canvas.Left="261"
+                       Canvas.Left="292"
                        Canvas.Top="12"
-                       Width="538"
+                       Width="572"
                        Height="32"
                        Text="Nolvus Regular"
                        Foreground="White"
@@ -59,9 +59,9 @@
 
             <!-- Description -->
             <TextBlock x:Name="LblDesc"
-                       Canvas.Left="263"
+                       Canvas.Left="295"
                        Canvas.Top="42"
-                       Width="536"
+                       Width="574"
                        Height="56"
                        Text="[Description]"
                        FontSize="11"
@@ -73,16 +73,16 @@
 
             <!-- Version -->
             <TextBlock x:Name="LblVersion"
-                       Canvas.Left="263"
-                       Canvas.Top="103"
+                       Canvas.Left="295"
+                       Canvas.Top="96"
                        Text="5.0.2"
                        Foreground="White"/>
 
             <!-- Status -->
             <TextBlock x:Name="LblStatus"
-                       Canvas.Left="263"
-                       Canvas.Top="122"
-                       Width="536"
+                       Canvas.Left="295"
+                       Canvas.Top="115"
+                       Width="574"
                        Height="19"
                        Text="Loading status..."
                        Foreground="White"/>
@@ -90,7 +90,7 @@
 
             <!-- Update button -->
             <Button x:Name="BtnUpdate"
-                                 Canvas.Left="511"
+                                 Canvas.Left="581"
                                  Canvas.Top="157"
                                  Width="92"
                                  Height="35"
@@ -104,7 +104,7 @@
 
             <!-- Manage button -->
             <Button x:Name="BtnView"
-                                 Canvas.Left="609"
+                                 Canvas.Left="679"
                                  Canvas.Top="157"
                                  Width="92"
                                  Height="35"
@@ -117,7 +117,7 @@
 
             <!-- Play button -->
             <Button x:Name="BtnPlay"
-                                 Canvas.Left="707"
+                                 Canvas.Left="777"
                                  Canvas.Top="157"
                                  Width="92"
                                  Height="35"

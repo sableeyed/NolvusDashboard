@@ -28,7 +28,6 @@ namespace Nolvus.Core.Interfaces
         Task<IInstallPackageDTO> GetLatestPackage();
         Task<bool> LatestPackageRequireNewGame();
         Task<bool> LatestPackageRequireReInstall();
-        Task DeleteGameSaveFiles();
         Task BackupGameSaveFiles();
     }
 }

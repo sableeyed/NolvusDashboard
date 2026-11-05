@@ -99,15 +99,40 @@
                                    VerticalAlignment="Center"/>
                         <Panel Grid.Row="1" Grid.Column="1">
                             <ToggleSwitch x:Name="TglBtnNewValue"
-                                          IsVisible="False"/>
+                                          IsVisible="False"
+                                          IsCheckedChanged="TglBtnNewValue_ToggleStateChanged"/>
                             <ComboBox x:Name="DrpDwnLstNewValue"
                                       Width="214"
                                       DisplayMemberBinding="{Binding Value}"
+                                      SelectionChanged="DrpDwnLstNewValue_SelectedIndexChanged"
                                       IsVisible="False"
                                       Background="#2E2E2E"
                                       Foreground="White"/>
                         </Panel>
                     </Grid>
+
+                    <StackPanel x:Name="PnlLock"
+                                Margin="92,0,0,0"
+                                Spacing="12"
+                                IsVisible="False">
+                        <TextBlock x:Name="LblLockMessage"
+                                   Text="You can only change one option at a time, controls have been locked."
+                                   Foreground="White"/>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock x:Name="LblClick"
+                                       Text="Click on change to apply or"
+                                       Foreground="White"/>
+                            <TextBlock x:Name="LnkLblReInit"
+                                       Text="here"
+                                       Foreground="#FFA500"
+                                       Classes="link"
+                                       Cursor="Hand"
+                                       PointerPressed="LnkLblReInit_PointerPressed"/>
+                            <TextBlock x:Name="LblReInit"
+                                       Text="to reinitialize your selection."
+                                       Foreground="White"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>
@@ -121,7 +146,7 @@
                 BorderThickness="1"
                 Padding="8">
 
-            <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="10">
+            <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="10">
 
                 <TextBlock Grid.Row="0"
                            Text="Info"
@@ -133,11 +158,17 @@
                            Foreground="White"
                            FontSize="12"
                            TextWrapping="Wrap"
-                           Text="Select the option you want to change and click on Change. To cancel, click on Cancel"/>
+                           Text="Select the option you want to change, set a new value for your option and click on Change. To cancel, click on Cancel"/>
 
-                <Border Grid.Row="2"/>
+                <TextBlock Grid.Row="2"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           Text="Warning! You can only change one option at a time."/>
 
-                <StackPanel Grid.Row="3"
+                <Border Grid.Row="3"/>
+
+                <StackPanel Grid.Row="4"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             Spacing="8">
@@ -159,6 +190,7 @@
                             BorderBrush="Gray"
                             Foreground="#FFA500"
                             Content="Change"
+                            IsEnabled="False"
                             Click="BtnChange_Click"/>
                 </StackPanel>
 

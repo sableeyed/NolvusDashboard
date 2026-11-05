@@ -2,6 +2,8 @@ using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Enums;
 using Nolvus.Core.Services;
+using Vcc.Nolvus.Api.Installer.Services;
+using Vcc.Nolvus.Api.Installer.Library;
 using Nolvus.Instance.Core;
 using Nolvus.Dashboard.Core;
 using Avalonia.Interactivity;
@@ -27,9 +29,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
             TglFantasyMode.IsCheckedChanged += OnFantasyModeChanged;
         }
 
-        private int SkinTypeIndex(List<string> SkinTypes)
+        private int SkinTypeIndex(IEnumerable<INolvusOptionChoiceDTO> SkinTypes)
         {
-            var Index = SkinTypes.FindIndex(x => x == ServiceSingleton.Instances.WorkingInstance.Options.SkinType);
+            var Index = SkinTypes.ToList().FindIndex(x => x.Value == ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("SkinType"));
             return Index == -1 ? 0 : Index;   
         }
 
@@ -39,42 +41,40 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
 
             TglEnableNudity.IsChecked = false;
 
-            if (Instance.Options.Nudity == "TRUE")
+            if (Instance.OptionsManager.GetOptionValue("Nudity") == "TRUE")
             {
                 TglEnableNudity.IsChecked = true;
             }
 
             TglHardcoreMode.IsChecked = false;
 
-            if (Instance.Options.HardcoreMode == "TRUE")
+            if (Instance.OptionsManager.GetOptionValue("HardcoreMode") == "TRUE")
             {
                 TglHardcoreMode.IsChecked = true;
             }
 
             TglAlternateLeveling.IsChecked = false;
 
-            if (Instance.Options.AlternateLeveling == "TRUE")
+            if (Instance.OptionsManager.GetOptionValue("AlternateLeveling") == "TRUE")
             {
                 TglAlternateLeveling.IsChecked = true;
             }
 
             TglAlternateStart.IsChecked = false;
 
-            if (Instance.Options.AlternateStart == "TRUE")
+            if (Instance.OptionsManager.GetOptionValue("AlternateStart") == "TRUE")
             {
                 TglAlternateStart.IsChecked = true;
             }
 
             TglFantasyMode.IsChecked = false;
 
-            if (Instance.Options.FantasyMode == "TRUE")
+            if (Instance.OptionsManager.GetOptionValue("FantasyMode") == "TRUE")
             {
                 TglFantasyMode.IsChecked = true;
             }
 
-            List<string> SkinTypes = new List<string>();
-            SkinTypes.Add("Smooth");
-            SkinTypes.Add("Muscular");
+            var SkinTypes = await ApiManager.Service.Installer.GetOptionChoices("SkinType", Instance.SettingsManager.Variant, Instance.Id);
 
             DrpFemaleSkinType.ItemsSource = SkinTypes;
 
@@ -106,28 +106,28 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
         {
             if (TglEnableNudity.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.Nudity = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Nudity").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.Nudity = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Nudity").Value = "FALSE";
             }
         }
 
         private void OnSkinTypeChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Options.SkinType = DrpFemaleSkinType.SelectedItem.ToString();
+            ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("SkinType").Value = (DrpFemaleSkinType.SelectedItem as INolvusOptionChoiceDTO).Value;
         }
 
         private void OnHardcoreChanged(object? sender, RoutedEventArgs e)
         {
             if (TglHardcoreMode.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.HardcoreMode = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("HardcoreMode").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.HardcoreMode = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("HardcoreMode").Value = "FALSE";
             }
         }
 
@@ -135,11 +135,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
         {
             if (TglAlternateLeveling.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.AlternateLeveling = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AlternateLeveling").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.AlternateLeveling = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AlternateLeveling").Value = "FALSE";
             }
         }
 
@@ -147,11 +147,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
         {
             if (TglAlternateStart.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.AlternateStart = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AlternateStart").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.AlternateStart = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AlternateStart").Value = "FALSE";
             }
         }
 
@@ -159,11 +159,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v5
         {
             if (TglFantasyMode.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.FantasyMode = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("FantasyMode").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.FantasyMode = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("FantasyMode").Value = "FALSE";
             }
         }
 

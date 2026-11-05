@@ -62,26 +62,25 @@
                                             VerticalContentAlignment="Center"
                                             HorizontalContentAlignment="Center"
                                             Background="#363636"
-                                            BorderBrush="White"
+                                            BorderBrush="Gray"
                                             BorderThickness="1"
                                             Foreground="White"
                                             FontWeight="SemiBold"
                                             Cursor="Hand"/>
                                 </Grid>
-
-                                <TextBlock x:Name="LblGOWarning"
-                                           Grid.Row="1"
-                                           Grid.Column="1"
-                                           Text="Disabled and not used when selecting the Graphics Only variant"
-                                           Foreground="#FFA500"
-                                           FontSize="12"
-                                           VerticalAlignment="Center"
-                                           IsVisible="False"
-                                           TextWrapping="NoWrap"/>
                             </Grid>
 
                             <!-- OPTIONS GROUP -->
+                            <Border BorderBrush="#555"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="12">
                             <StackPanel Spacing="18">
+
+                                <TextBlock Text="Options"
+                                           Foreground="#FFA500"
+                                           FontSize="16"
+                                           FontWeight="Bold"/>
 
                                 <!-- Combat Scaling -->
                                 <StackPanel Spacing="4">
@@ -97,6 +96,7 @@
                                                   Grid.Column="0"
                                                   MinWidth="200"
                                                   SelectionChanged="OnScalingChanged"
+                                                  DisplayMemberBinding="{Binding Value}"
                                                   Background="#2E2E2E"
                                                   Foreground="White"/>
 
@@ -109,7 +109,7 @@
                                                 VerticalContentAlignment="Center"
                                                 HorizontalContentAlignment="Center"
                                                 Background="#363636"
-                                                BorderBrush="White"
+                                                BorderBrush="Gray"
                                                 BorderThickness="1"
                                                 Foreground="White"
                                                 FontWeight="SemiBold"
@@ -152,6 +152,7 @@
                                     <ComboBox x:Name="DrpDwnLstNerfPA"
                                               MinWidth="200"
                                               SelectionChanged="OnPAChanged"
+                                              DisplayMemberBinding="{Binding Value}"
                                               Background="#2E2E2E"
                                               Foreground="White"/>
                                     <TextBlock x:Name="PADesc"
@@ -218,7 +219,7 @@
                                                 VerticalContentAlignment="Center"
                                                 HorizontalContentAlignment="Center"
                                                 Background="#363636"
-                                                BorderBrush="White"
+                                                BorderBrush="Gray"
                                                 BorderThickness="1"
                                                 Foreground="White"
                                                 FontWeight="SemiBold"
@@ -252,6 +253,7 @@
                                 </StackPanel>
 
                             </StackPanel>
+                            </Border>
                         </StackPanel>
                     </ScrollViewer>
                 </Border>
@@ -265,23 +267,23 @@
                         CornerRadius="4"
                         Padding="12">
 
-                    <Grid RowDefinitions="Auto,*,Auto"
+                    <Grid RowDefinitions="Auto,Auto,*,Auto"
                           RowSpacing="16">
 
+                        <TextBlock Grid.Row="0"
+                                   Text="Info"
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
+
                         <TextBlock x:Name="TxtWarningIntro"
-                                   Grid.Row="0"
+                                   Grid.Row="1"
                                    Text="Select a difficulty preset. You can then enable/disable modifiers."
                                    TextWrapping="Wrap"
                                    Foreground="White"/>
 
-                        <TextBlock x:Name="TxtWarning"
-                                   Grid.Row="1"
-                                   Text="⚠ These difficulty options cannot be changed after installation!"
-                                   TextWrapping="Wrap"
-                                   Foreground="#FFA500"/>
-
                         <!-- Bottom Buttons -->
-                        <StackPanel Grid.Row="2"
+                        <StackPanel Grid.Row="3"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     Spacing="16">
@@ -293,7 +295,7 @@
                                     VerticalContentAlignment="Center"
                                     Background="#363636"
                                     Foreground="White"
-                                    BorderBrush="White"
+                                    BorderBrush="Gray"
                                     BorderThickness="1"/>
 
                             <Button x:Name="BtnContinue"
@@ -303,7 +305,7 @@
                                     VerticalContentAlignment="Center"
                                     Background="#363636"
                                     Foreground="#FFA500"
-                                    BorderBrush="#FFA500"
+                                    BorderBrush="Gray"
                                     BorderThickness="1"/>
                         </StackPanel>
 

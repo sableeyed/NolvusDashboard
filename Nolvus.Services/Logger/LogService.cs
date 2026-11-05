@@ -1,26 +1,16 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Globalization;
 using Nolvus.Core.Interfaces;
+using Nolvus.Core.Services;
 
 namespace Nolvus.Services.Logger
 {
     public class LogService : ILogService
     {
         private readonly object _sync = new();
-        private readonly string _logFilePath;
-
-        public LogService()
-        {
-            var baseDir = AppContext.BaseDirectory;
-            var logDir = Path.Combine(baseDir, "Logs");
-            if (!Directory.Exists(logDir))
-            {
-                Directory.CreateDirectory(logDir);
-            }
-
-            // Daily log file rotate
-            _logFilePath = Path.Combine(logDir, $"{DateTime.Now:yyyy-MM-dd}.log");
-        }
+        private static string Filename = string.Empty;
 
         public void Log(string message)
         {
@@ -29,7 +19,7 @@ namespace Nolvus.Services.Logger
             lock (_sync)
             {
                 Console.WriteLine(line);
-                File.AppendAllText(_logFilePath, line + Environment.NewLine);
+                File.AppendAllText(Path.Combine(ServiceSingleton.Folders.LogsDirectory, Filename), line + Environment.NewLine);
             }
         }
 
@@ -38,11 +28,18 @@ namespace Nolvus.Services.Logger
             Log("");
         }
 
-        public void ClearLog()
+        public void InitializeLog()
         {
-            lock (_sync)
+            Filename = string.Format("Log-{0}.txt", DateTime.Now.ToString("yyyydd-M-HHmmss"));
+        }
+
+        public void ClearLogs()
+        {
+            var LogsToDelete = ServiceSingleton.Files.GetFiles(ServiceSingleton.Folders.LogsDirectory).Where(x => x.Name != Filename).ToList();
+
+            foreach (var LogFile in LogsToDelete)
             {
-                File.Delete(_logFilePath);
+                LogFile.Delete();
             }
         }
     }

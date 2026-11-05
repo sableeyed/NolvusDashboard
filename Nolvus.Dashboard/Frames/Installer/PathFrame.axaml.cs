@@ -33,10 +33,10 @@ namespace Nolvus.Dashboard.Frames.Installer
 
                 var Instance = ServiceSingleton.Instances.WorkingInstance;
 
-                TxtInstanceDir.Text = Instance.InstallDir ?? "";
-                TxtArchiveDir.Text = Instance.ArchiveDir ?? "";
+                TxtInstanceDir.Text = Instance.SettingsManager.InstallDir ?? "";
+                TxtArchiveDir.Text = Instance.SettingsManager.ArchiveDir ?? "";
 
-                TglArchive.IsChecked = Instance.Settings.EnableArchiving;
+                TglArchive.IsChecked = Instance.SettingsManager.EnableArchiving;
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace Nolvus.Dashboard.Frames.Installer
         private void ToggleArchiving(object? sender, RoutedEventArgs e)
         {
             var Instance = ServiceSingleton.Instances.WorkingInstance;
-            Instance.Settings.EnableArchiving = TglArchive.IsChecked == true;
+            Instance.SettingsManager.EnableArchiving = TglArchive.IsChecked == true;
         }
 
         private async void BtnBrowseInstance_Click(object? sender, RoutedEventArgs e)
@@ -72,8 +72,8 @@ namespace Nolvus.Dashboard.Frames.Installer
                 TxtInstanceDir.Text = folderPath;
                 var Instance = ServiceSingleton.Instances.WorkingInstance;
 
-                Instance.InstallDir = TxtInstanceDir.Text;
-                Instance.StockGame = Path.Combine(Instance.InstallDir, "STOCK GAME");
+                Instance.SettingsManager.InstallDir = TxtInstanceDir.Text;
+                Instance.SettingsManager.StockGame = Path.Combine(Instance.SettingsManager.InstallDir, "STOCK GAME");
             }
             else
             {
@@ -99,7 +99,7 @@ namespace Nolvus.Dashboard.Frames.Installer
             var folderPath = folder.Path.LocalPath;
 
             TxtArchiveDir.Text = folderPath;
-            ServiceSingleton.Instances.WorkingInstance.ArchiveDir = folderPath;
+            ServiceSingleton.Instances.WorkingInstance.SettingsManager.ArchiveDir = folderPath;
         }
 
         private async void BtnPrevious_Click(object? sender, RoutedEventArgs e)

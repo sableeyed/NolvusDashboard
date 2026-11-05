@@ -12,7 +12,7 @@ namespace Nolvus.Package.Mods
             var instance = ServiceSingleton.Instances.WorkingInstance;
 
             // TOOLS/BSArch
-            var installDirectory = Path.Combine(instance.InstallDir, "TOOLS", Name);
+            var installDirectory = Path.Combine(instance.SettingsManager.InstallDir, "TOOLS", Name);
             Directory.CreateDirectory(installDirectory);
 
             // Extract root: .../Extract/<ExtractSubDir>
@@ -41,10 +41,10 @@ namespace Nolvus.Package.Mods
                 };
 
                 autoRule.Execute(
-                    instance.StockGame, // gamePath
+                    instance.SettingsManager.StockGame, // gamePath
                     extractDir,         // extractDir (root of extracted archive)
                     installDirectory,   // modDir (TOOLS/BSArch)
-                    instance.InstallDir // instanceDir
+                    instance.SettingsManager.InstallDir // instanceDir
                 );
 
                 // Single synthesized rule, so progress is trivially 1/1

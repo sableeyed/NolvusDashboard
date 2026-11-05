@@ -35,7 +35,7 @@
                     Width="90" Height="40"
                     Margin="5,0"
                     Background="#363636"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"/>
@@ -46,7 +46,7 @@
                     Width="90" Height="40"
                     Margin="5,0"
                     Background="#363636"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"/>
@@ -57,7 +57,7 @@
                     Width="90" Height="40"
                     Margin="5,0"
                     Background="#363636"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"/>
@@ -68,7 +68,7 @@
                     Width="90" Height="40"
                     Margin="5,0"
                     Background="#363636"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"/>
@@ -79,7 +79,7 @@
                     Width="114" Height="40"
                     Margin="5,0"
                     Background="#363636"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"/>

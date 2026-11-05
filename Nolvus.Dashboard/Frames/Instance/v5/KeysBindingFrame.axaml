@@ -9,14 +9,15 @@
              KEYBOARD GROUP (Border)
              ====================== -->
         <Border Grid.Row="0"
-                BorderBrush="White"
-                BorderThickness="2"
+                BorderBrush="Gray"
+                BorderThickness="1"
                 Padding="10"
                 Margin="0,0,0,10">
             <StackPanel>
                 <TextBlock Text="Keyboard"
-                           Foreground="White"
-                           FontSize="18"
+                           Foreground="#FFA500"
+                           FontSize="16"
+                           FontWeight="Bold"
                            Margin="0,0,0,10"/>
 
                 <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys.jpg"
@@ -30,14 +31,15 @@
              MOUSE GROUP (Border)
              ====================== -->
         <Border Grid.Row="1"
-                BorderBrush="White"
-                BorderThickness="2"
+                BorderBrush="Gray"
+                BorderThickness="1"
                 Padding="10"
                 Margin="0,0,0,10">
             <StackPanel>
                 <TextBlock Text="Mouse"
-                           Foreground="White"
-                           FontSize="18"
+                           Foreground="#FFA500"
+                           FontSize="16"
+                           FontWeight="Bold"
                            Margin="0,0,0,10"/>
 
                 <Image Source="avares://NolvusDashboard/Assets/DefaultMouseKey.png"
@@ -51,15 +53,16 @@
              SETTINGS GROUP (Border)
              ====================== -->
         <Border Grid.Row="2"
-                BorderBrush="White"
-                BorderThickness="2"
+                BorderBrush="Gray"
+                BorderThickness="1"
                 Padding="10"
                 Margin="0,0,0,10">
             <StackPanel Spacing="6">
 
                 <TextBlock Text="Settings"
-                           Foreground="White"
-                           FontSize="18"
+                           Foreground="#FFA500"
+                           FontSize="16"
+                           FontWeight="Bold"
                            Margin="0,0,0,10"/>
 
                 <!-- Simple text rows to replace labels -->
@@ -131,7 +134,7 @@
                 VerticalContentAlignment="Center"
                 MinWidth="90"
                 Background="#2E2E2E"
-                BorderBrush="White"
+                BorderBrush="Gray"
                 Foreground="White"
                 Margin="0,10,0,0"/>
     </Grid>

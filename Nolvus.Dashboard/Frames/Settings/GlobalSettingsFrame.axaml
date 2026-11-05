@@ -38,7 +38,12 @@
                               RowSpacing="10">
 
                             <!-- "Click here..." line -->
-                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4">
+                            <StackPanel Grid.Row="0" Spacing="10">
+                            <TextBlock Text="Mega Account"
+                                       Foreground="#FFA500"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" Spacing="4">
                                 <TextBlock Text="Click" Foreground="#CCCCCC"/>
 
                                 <TextBlock Text="here"
@@ -49,6 +54,7 @@
 
                                 <TextBlock Text="to create your free mega.nz account."
                                            Foreground="#CCCCCC"/>
+                            </StackPanel>
                             </StackPanel>
 
                             <!-- Anonymous toggle -->
@@ -67,14 +73,16 @@
                             </StackPanel>
 
                             <!-- Info text -->
-                            <TextBlock Grid.Row="2"
+                            <TextBlock x:Name="LblMegaMessage"
+                                       Grid.Row="2"
                                        Text="When created, please enter the email address and password you used to create your mega account."
                                        Foreground="#CCCCCC"
                                        TextWrapping="Wrap"/>
 
                             <!-- Email -->
                             <StackPanel Grid.Row="3" Spacing="4">
-                                <TextBlock Text="Email"
+                                <TextBlock x:Name="LblEmail"
+                                           Text="Email"
                                            Foreground="#CCCCCC"/>
                                 <TextBox x:Name="TxtBxUserName"
                                          Background="#2E2E2E"
@@ -84,7 +92,8 @@
 
                             <!-- Password -->
                             <StackPanel Grid.Row="4" Spacing="4">
-                                <TextBlock Text="Password"
+                                <TextBlock x:Name="LblPassword"
+                                           Text="Password"
                                            Foreground="#CCCCCC"/>
                                 <TextBox x:Name="TxtBxPassword"
                                          Background="#2E2E2E"
@@ -128,6 +137,7 @@
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 MinWidth="120"
+                                BorderBrush="Gray"
                                 Foreground="White"/>
                     </Grid>
                 </Border>
@@ -147,8 +157,9 @@
 
                     <StackPanel Spacing="12">
                         <TextBlock Text="Process"
-                                   Foreground="White"
-                                   FontSize="16"/>
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
 
                         <TextBlock x:Name="LblProcessCount"
                                    Text="Number of simultaneous mods installation"
@@ -162,9 +173,10 @@
                     </StackPanel>
                 </Border>
 
+                <StackPanel Grid.Column="4" Spacing="24">
+
                 <!-- BROWSER SETTINGS PANEL -->
                 <Border x:Name="GrpBxBrowser"
-                    Grid.Column="4"
                     Background="#363636"
                     BorderBrush="#444"
                     BorderThickness="1"
@@ -176,8 +188,9 @@
 
                     <StackPanel Spacing="12">
                         <TextBlock Text="Browser"
-                                   Foreground="White"
-                                   FontSize="16"/>
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
                     
                         <StackPanel Orientation="Horizontal"
                                     Spacing="12"
@@ -195,6 +208,58 @@
 
                 </Border>
 
+                <!-- ACTIONS PANEL -->
+                <Border x:Name="GrpBxActions"
+                    Background="#363636"
+                    BorderBrush="#444"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="16"
+                    Width="235"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Actions"
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
+
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="12">
+                            <TextBlock Grid.Row="0"
+                                       Text="Logs"
+                                       Foreground="#CCCCCC"
+                                       VerticalAlignment="Center"/>
+                            <Button x:Name="BtnCLearLogs"
+                                    Grid.Row="0" Grid.Column="1"
+                                    Content="Clear"
+                                    MinWidth="90"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#2E2E2E"
+                                    BorderBrush="Gray"
+                                    Foreground="White"/>
+
+                            <TextBlock Grid.Row="1"
+                                       Text="Cache"
+                                       Foreground="#CCCCCC"
+                                       VerticalAlignment="Center"/>
+                            <Button x:Name="BtnClearCache"
+                                    Grid.Row="1" Grid.Column="1"
+                                    Content="Clear"
+                                    MinWidth="90"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Background="#2E2E2E"
+                                    BorderBrush="Gray"
+                                    Foreground="White"/>
+                        </Grid>
+                    </StackPanel>
+
+                </Border>
+
+                </StackPanel>
+
             </Grid>
 
             <!-- BACK BUTTON -->
@@ -206,6 +271,7 @@
                     VerticalContentAlignment="Center"
                     MinWidth="120"
                     Background="#363636"
+                    BorderBrush="Gray"
                     Foreground="White"/>
 
         </Grid>

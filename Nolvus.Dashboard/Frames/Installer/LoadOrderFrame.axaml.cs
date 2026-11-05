@@ -26,7 +26,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                     var InstallList = ServiceSingleton.Packages.MO2List;
                     var Lines = ServiceSingleton.Game.GamePlugins;
 
-                    string ModListFile = Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "modlist.txt");
+                    string ModListFile = Path.Combine(Instance.SettingsManager.InstallDir, "MODS", "profiles", Instance.Name, "modlist.txt");
 
                     var Counter = 0;
 
@@ -60,8 +60,8 @@ namespace Nolvus.Dashboard.Frames.Installer
                     INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
                     var Package = ServiceSingleton.Packages;
 
-                    var LoadOrderFile = Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "loadorder.txt");
-                    var PluginsFile = Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "plugins.txt");
+                    var LoadOrderFile = Path.Combine(Instance.SettingsManager.InstallDir, "MODS", "profiles", Instance.Name, "loadorder.txt");
+                    var PluginsFile = Path.Combine(Instance.SettingsManager.InstallDir, "MODS", "profiles", Instance.Name, "plugins.txt");
 
                     var LoadOrderLines = new List<string>();
 
@@ -110,7 +110,7 @@ namespace Nolvus.Dashboard.Frames.Installer
 
                 ServiceSingleton.Logger.Log("Applying load order");
 
-                if (Instance.Status.InstallStatus == InstanceInstallStatus.Updating)
+                if (Instance.StatusManager.InstallStatus == InstanceInstallStatus.Updating)
                 {
                     ServiceSingleton.Logger.Log("Updating detected, package will be reloaded");
                     await ServiceSingleton.Packages.Load(await ApiManager.Service.Installer.GetPackage(Instance.Id, ServiceSingleton.Packages.LoadedVersion), (s, p) =>

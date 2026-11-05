@@ -291,7 +291,7 @@ namespace Nolvus.Dashboard.Frames
                 ServiceSingleton.Dashboard.Status("Checking instances...");
                 ServiceSingleton.Logger.Log("Checking instances...");
 
-                ServiceSingleton.Instances.Load();
+                await ServiceSingleton.Instances.Load();
 
                 if (!ServiceSingleton.Instances.Empty)
                 {

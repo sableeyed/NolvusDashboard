@@ -24,187 +24,6 @@ namespace Nolvus.Core.Services
         private static readonly string[] ReportFonts =
             { "Open Sans", "Noto Sans CJK SC", "Source Han Sans SC", "WenQuanYi Micro Hei", "Droid Sans Fallback" };
 
-        public Task<string> GenerateReportToClipBoard(ModObjectList ModObjects, Action<string, int> Progress)
-        {
-            return Task.Run(async () =>
-            {
-                var Instance = ServiceSingleton.Instances.WorkingInstance;
-
-                Progress?.Invoke("Generating report", 10);
-
-                var sb = new StringBuilder();
-
-                // HARDWARE
-                sb.AppendLine("HARDWARE");
-                sb.AppendLine();
-                sb.AppendLine($"CPU : {await ServiceSingleton.Globals.GetCPUInfo()}");
-                sb.AppendLine("GPU : " + string.Join(Environment.NewLine, ServiceSingleton.Globals.GetVideoAdapters().ToArray()));
-
-                var ram = await ServiceSingleton.Globals.GetRamCount();
-                sb.AppendLine(ram != "RAM count not found" ? $"RAM : {ram} GB" : ram);
-                sb.AppendLine().AppendLine();
-
-                // SYSTEM
-                sb.AppendLine("SYSTEM");
-                sb.AppendLine();
-                foreach (var (label, value) in GetSystemConfiguration())
-                    sb.AppendLine(label + value);
-                sb.AppendLine().AppendLine();
-
-                Progress?.Invoke("Generating report", 20);
-
-                // INSTANCE CONFIGURATION
-                sb.AppendLine("INSTANCE CONFIGURATION");
-                sb.AppendLine();
-                sb.AppendLine($"Name : {Instance.Name}, selected profile : {ModObjects.Profile}");
-                sb.AppendLine($"Version : {Instance.Version}");
-                sb.AppendLine($"Install directory : {Instance.InstallDir}");
-                sb.AppendLine($"Archive directory : {Instance.ArchiveDir}");
-                sb.AppendLine($"Enable archiving : {(Instance.Settings.EnableArchiving ? "Yes" : "No")}");
-                sb.AppendLine().AppendLine();
-
-                Progress?.Invoke("Generating report", 30);
-
-                // INSTANCE SETTINGS
-                sb.AppendLine("INSTANCE SETTINGS");
-                sb.AppendLine();
-                sb.AppendLine($"Resolution : {Instance.Settings.Width}x{Instance.Settings.Height}");
-                sb.AppendLine($"Screen ratio : {Instance.Settings.Ratio}");
-                sb.AppendLine($"CDN : {Instance.Settings.CDN}");
-                sb.AppendLine($"Language : {Instance.Settings.LgName}");
-                sb.AppendLine().AppendLine();
-
-                Progress?.Invoke("Generating report", 40);
-
-                // PERFORMANCE (V5 vs V6 logic preserved)
-                sb.AppendLine("PERFORMANCE SETTINGS");
-                sb.AppendLine();
-
-                if (Instance.Name == Strings.NolvusAscension)
-                {
-                    sb.AppendLine($"Variant : {Instance.Performance.Variant}");
-                    sb.AppendLine($"Anti aliasing : {Instance.Performance.AntiAliasing}");
-                    sb.AppendLine("Lods : " + (Instance.Performance.Variant == "Redux" ? "Redux" : Instance.Performance.LODs));
-
-                    sb.AppendLine("Ini level : " + Instance.Performance.IniSettings switch
-                    {
-                        "0" => "Low",
-                        "1" => "Medium",
-                        "2" => "High",
-                        _ => "Unknown"
-                    });
-
-                    sb.AppendLine($"Advanced Physics : {(Instance.Performance.AdvancedPhysics == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Ray tracing : {(Instance.Performance.RayTracing == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"FPS Stabilizer : {(Instance.Performance.FPSStabilizer == "TRUE" ? "Yes" : "No")}");
-                    if (Instance.Performance.DownScaling == "TRUE")
-                    {
-                        sb.AppendLine("Downscaling : Yes");
-                        sb.AppendLine($"Downscaling resolution : {Instance.Performance.DownWidth}x{Instance.Performance.DownHeight}");
-                    }
-                    else sb.AppendLine("Downscaling : No");
-                }
-                else if (Instance.Name == Strings.NolvusAwakening)
-                {
-                    sb.AppendLine($"Variant : {Instance.Performance.Variant}");
-                    sb.AppendLine($"Anti aliasing : {Instance.Performance.AntiAliasing}");
-                    if (Instance.Performance.Variant == "Redux")
-                        sb.AppendLine("Lods : Redux");
-                    else if (Instance.Performance.Variant == "Ultimate")
-                        sb.AppendLine("Lods : Ultimate");
-                    else
-                        sb.AppendLine($"Lods : {Instance.Performance.LODs}");
-
-                    sb.AppendLine("Ini level : " + Instance.Performance.IniSettings switch
-                    {
-                        "0" => "Low",
-                        "1" => "Medium",
-                        "2" => "High",
-                        _ => "Unknown"
-                    });
-
-                    sb.AppendLine($"SR Exterior Cities : {(Instance.Performance.SREX == "TRUE" ? "Yes" : "No")}");
-
-                    sb.AppendLine($"Frame Generation : {(Instance.Performance.FrameGeneration == "TRUE" ? "Yes" : "No")}");
-
-                    if (Instance.Performance.DownScaling == "TRUE")
-                    {
-                        sb.AppendLine("Downscaling : Yes");
-                        sb.AppendLine($"Downscaling resolution : {Instance.Performance.DownWidth}x{Instance.Performance.DownHeight}");
-                    }
-                    else sb.AppendLine("Downscaling : No");
-                }
-
-                sb.AppendLine().AppendLine();
-                Progress?.Invoke("Generating report", 50);
-
-                // ENB
-                sb.AppendLine("ENB SETTINGS");
-                sb.AppendLine();
-                sb.AppendLine("ENB Preset : " + ENBs.GetENBByCode(Instance.Options.AlternateENB));
-                sb.AppendLine().AppendLine();
-
-                Progress?.Invoke("Generating report", 60);
-
-                // OPTIONS
-                sb.AppendLine("INSTANCE OPTIONS");
-                sb.AppendLine();
-
-                if (Instance.Name == Strings.NolvusAscension)
-                {
-                    sb.AppendLine($"Hardcore mode : {(Instance.Options.HardcoreMode == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Alternate leveling : {(Instance.Options.AlternateLeveling == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Alternate start : {(Instance.Options.AlternateStart == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Fantasy mode : {(Instance.Options.FantasyMode == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Nudity : {(Instance.Options.Nudity == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Skin type : {Instance.Options.SkinType}");
-                }
-                else if (Instance.Name == Strings.NolvusAwakening)
-                {
-                    sb.AppendLine($"Combat Animations : {Instance.Options.CombatAnimation}");
-                    sb.AppendLine($"Alternate leveling : {(Instance.Options.AlternateLeveling == "TRUE" ? "Yes" : "No")}");
-                    //sb.AppendLine($"Alternate start : {(Instance.Options.AlternateStart == "TRUE" ? "Yes" : "No")}");
-                    //sb.AppendLine($"Stances Perks Tree : {(Instance.Options.StancesPerksTree == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Nudity : {(Instance.Options.Nudity == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Gore : {(Instance.Options.Gore == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Combat Scaling : {Instance.Options.CombatScaling}");
-                    sb.AppendLine($"Exhaustion : {(Instance.Options.Exhaustion == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Nerf Power Attacks : {Instance.Options.NerfPA}");
-                    //sb.AppendLine($"Enemies Resistance : {(Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Boss : {(Instance.Options.Boss == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Zone Level Indicator : {(Instance.Options.ZoneLevelIndicator == "TRUE" ? "Yes" : "No")}");
-                    //sb.AppendLine($"Poise : {(Instance.Options.Poise == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"Controller : {(Instance.Options.Controller == "TRUE" ? "Yes" : "No")}");
-                    sb.AppendLine($"User Interface : {Instance.Options.UI}");
-                }
-
-                sb.AppendLine().AppendLine();
-                Progress?.Invoke("Generating report", 70);
-
-                // STATUS
-                sb.AppendLine("INSTANCE STATUS");
-                sb.AppendLine();
-
-                var addedMods = ModObjects.AddedModsCount;
-                var removedMods = ModObjects.RemovedModsCount;
-                var versionMismatch = ModObjects.VersionMismatchCount;
-
-                if (addedMods > 0 || removedMods > 0)
-                    sb.AppendLine("List has been modified");
-                else
-                    sb.AppendLine("Vanilla Nolvus");
-
-                sb.AppendLine();
-                sb.AppendLine($"Added mods : {addedMods}");
-                sb.AppendLine($"Removed mods : {removedMods}");
-                sb.AppendLine($"Version changed : {versionMismatch}");
-
-                Progress?.Invoke("Generating report", 100);
-
-                return sb.ToString();
-            });
-        }
-
         public Task<byte[]> GenerateReportToPdf(ModObjectList ModObjects, string coverSvg, Action<string, int> Progress)
         {
             return Task.Run(async () =>
@@ -277,115 +96,36 @@ namespace Nolvus.Core.Services
                             AddHeader(col, "INSTANCE CONFIGURATION");
                             AddRow(col, "Name : ", $"{Instance.Name}, selected profile : {(ModObjects.Profile ?? "Default")}");
                             AddRow(col, "Version : ", Instance.Version);
-                            AddRow(col, "Install directory : ", Instance.InstallDir);
-                            AddRow(col, "Archive directory : ", Instance.ArchiveDir);
-                            AddRow(col, "Enable archiving : ", Instance.Settings.EnableArchiving ? "Yes" : "No");
+                            AddRow(col, "Variant : ", Instance.SettingsManager.Variant);
+                            AddRow(col, "Tag : ", Instance.Tag == string.Empty ? "-" : Instance.Tag);
+                            AddRow(col, "Install directory : ", Instance.SettingsManager.InstallDir);
+                            AddRow(col, "Archive directory : ", Instance.SettingsManager.ArchiveDir);
+                            AddRow(col, "Enable archiving : ", Instance.SettingsManager.EnableArchiving ? "Yes" : "No");
+                            AddRow(col, "Resolution : ", $"{Instance.SettingsManager.Width}x{Instance.SettingsManager.Height}");
+                            AddRow(col, "Downscaling : ", Instance.SettingsManager.DownScaling == "TRUE" ? "Yes" : "No");
+                            AddRow(col, "Resolution : ", Instance.SettingsManager.DownScaling == "TRUE" ? Instance.SettingsManager.DownScaledResolution : "-");
 
-                            col.Item().PaddingTop(12);
-                            AddHeader(col, "INSTANCE SETTINGS");
-                            AddRow(col, "Resolution : ", $"{Instance.Settings.Width}x{Instance.Settings.Height}");
-                            AddRow(col, "Screen ratio : ", Instance.Settings.Ratio);
-                            AddRow(col, "CDN : ", Instance.Settings.CDN);
-                            AddRow(col, "Language : ", Instance.Settings.LgName);
-
-                            Progress?.Invoke("Performance", 45);
-                            col.Item().PaddingTop(12);
-                            AddHeader(col, "PERFORMANCE SETTINGS");
-
-                            if (Instance.Name == Strings.NolvusAscension)
+                            AddRow(col, "Ini level : ", Instance.SettingsManager.IniSettings switch
                             {
-                                AddRow(col, "Variant : ", Instance.Performance.Variant);
-                                AddRow(col, "Anti aliasing : ", Instance.Performance.AntiAliasing);
-                                AddRow(col, "Lods : ", Instance.Performance.Variant == "Redux" ? "Redux" : Instance.Performance.LODs);
+                                "0" => "Low",
+                                "1" => "Medium",
+                                "2" => "High",
+                                _ => "Unknown"
+                            });
 
-                                AddRow(col, "Ini level : ", Instance.Performance.IniSettings switch
-                                {
-                                    "0" => "Low",
-                                    "1" => "Medium",
-                                    "2" => "High",
-                                    _ => "Unknown"
-                                });
-
-                                AddRow(col, "Advanced Physics : ", Instance.Performance.AdvancedPhysics == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Ray tracing : ", Instance.Performance.RayTracing == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "FPS Stabilizer : ", Instance.Performance.FPSStabilizer == "TRUE" ? "Yes" : "No");
-
-                                if (Instance.Performance.DownScaling == "TRUE")
-                                {
-                                    AddRow(col, "Downscaling : ", "Yes");
-                                    AddRow(col, "Downscaling resolution : ", $"{Instance.Performance.DownWidth}x{Instance.Performance.DownHeight}");
-                                }
-                                else
-                                    AddRow(col, "Downscaling : ", "No");
-                            }
-                            else if (Instance.Name == Strings.NolvusAwakening)
-                            {
-                                AddRow(col, "Variant : ", Instance.Performance.Variant);
-                                AddRow(col, "Anti aliasing : ", Instance.Performance.AntiAliasing);
-
-                                if (Instance.Performance.Variant == "Redux")
-                                    AddRow(col, "Lods : ", "Redux");
-                                else if (Instance.Performance.Variant == "Ultimate")
-                                    AddRow(col, "Lods : ", "Ultimate");
-                                else
-                                    AddRow(col, "Lods : ", Instance.Performance.LODs);
-
-                                AddRow(col, "Ini level : ", Instance.Performance.IniSettings switch
-                                {
-                                    "0" => "Low",
-                                    "1" => "Medium",
-                                    "2" => "High",
-                                    _ => "Unknown"
-                                });
-
-                                AddRow(col, "SR Exterior Cities : ", Instance.Performance.SREX == "TRUE" ? "Yes" : "No");
-                                
-                                AddRow(col, "Frame Generation : ", Instance.Performance.FrameGeneration == "TRUE" ? "Yes" : "No");
-
-                                if (Instance.Performance.DownScaling == "TRUE")
-                                {
-                                    AddRow(col, "Downscaling : ", "Yes");
-                                    AddRow(col, "Downscaling resolution : ", $"{Instance.Performance.DownWidth}x{Instance.Performance.DownHeight}");
-                                }
-                                else
-                                    AddRow(col, "Downscaling : ", "No");
-                            }
-
-                            Progress?.Invoke("ENB", 55);
-                            col.Item().PaddingTop(12);
-                            AddHeader(col, "ENB SETTINGS");
-                            AddRow(col, "ENB Preset : ", ENBs.GetENBByCode(Instance.Options.AlternateENB));
+                            AddRow(col, "CDN : ", Instance.SettingsManager.CDN);
+                            AddRow(col, "Language : ", Instance.SettingsManager.LgName);
 
                             Progress?.Invoke("Options", 65);
-                            col.Item().PaddingTop(12);
-                            AddHeader(col, "INSTANCE OPTIONS");
+                            col.Item().PageBreak();
 
-                            if (Instance.Name == Strings.NolvusAscension)
+                            foreach (var Category in Instance.OptionsManager.GetOptionCategories())
                             {
-                                AddRow(col, "Hardcore mode : ", Instance.Options.HardcoreMode == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Alternate leveling : ", Instance.Options.AlternateLeveling == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Alternate start : ", Instance.Options.AlternateStart == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Fantasy mode : ", Instance.Options.FantasyMode == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Nudity : ", Instance.Options.Nudity == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Skin type : ", Instance.Options.SkinType);
-                            }
-                            else if (Instance.Name == Strings.NolvusAwakening)
-                            {
-                                AddRow(col, "Combat Animations : ", Instance.Options.CombatAnimation);
-                                AddRow(col, "Alternate leveling : ", Instance.Options.AlternateLeveling == "TRUE" ? "Yes" : "No");
-                                //AddRow(col, "Alternate start : ", Instance.Options.AlternateStart == "TRUE" ? "Yes" : "No");
-                                //AddRow(col, "Stances Perks Tree : ", Instance.Options.StancesPerksTree == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Nudity : ", Instance.Options.Nudity == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Gore : ", Instance.Options.Gore == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Combat Scaling : ", Instance.Options.CombatScaling);
-                                AddRow(col, "Exhaustion : ", Instance.Options.Exhaustion == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Nerf power attacks : ", Instance.Options.NerfPA);
-                                //AddRow(col, "Enemies resistance : ", Instance.Options.EnemiesResistance == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Boss : ", Instance.Options.Boss == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Zone Level Indicator : ", Instance.Options.ZoneLevelIndicator == "TRUE" ? "Yes" : "No");
-                                //AddRow(col, "Poise system : ", Instance.Options.Poise == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "Controller : ", Instance.Options.Controller == "TRUE" ? "Yes" : "No");
-                                AddRow(col, "User Interface : ", Instance.Options.UI);
+                                col.Item().PaddingTop(12);
+                                AddHeader(col, string.Format("{0} Options", Category));
+
+                                foreach (var Option in Instance.OptionsManager.GetOptionsByCategory(Category))
+                                    AddRow(col, string.Format("{0} : ", Option.FriendlyName), Option.FormattedValue);
                             }
 
                             Progress?.Invoke("Status", 75);

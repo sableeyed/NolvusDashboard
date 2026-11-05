@@ -27,8 +27,9 @@
 
                     <StackPanel Spacing="10">
                         <TextBlock Text="Keyboard"
-                                   Foreground="White"
-                                   FontSize="16"/>
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
 
                         <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys_V6.0.21.jpg"
                                Stretch="Uniform"
@@ -44,8 +45,9 @@
                         Padding="12">
                     <StackPanel Spacing="10">
                         <TextBlock Text="Mouse"
-                                   Foreground="White"
-                                   FontSize="16"/>
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
 
                         <Image Source="avares://NolvusDashboard/Assets/DefaultMouseKey.png"
                                Stretch="Uniform"
@@ -62,8 +64,9 @@
                     <StackPanel Spacing="10">
 
                         <TextBlock Text="Settings"
-                                   Foreground="White"
-                                   FontSize="16"/>
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
 
                         <StackPanel>
                             <TextBlock Text="Everything can be setup in the base game controls menu, except"
@@ -126,6 +129,17 @@
                                        Foreground="#FFA500"/>
                         </StackPanel>
 
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="For a complete overview of all key bindings, click"
+                                       Foreground="White"/>
+                            <TextBlock x:Name="LnkLblFullGuide"
+                                       Text="here"
+                                       Foreground="#FFA500"
+                                       Classes="link"
+                                       Cursor="Hand"
+                                       PointerPressed="LnkLblFullGuide_PointerPressed"/>
+                        </StackPanel>
+
                     </StackPanel>
                 </Border>
 
@@ -139,22 +153,13 @@
                     HorizontalAlignment="Right"
                     Spacing="10">
 
-            <Button x:Name="BtnFullGuide"
-                    Content="Full Guide"
-                    MinWidth="90"
-                    VerticalContentAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Background="#2E2E2E"
-                    BorderBrush="White"
-                    Foreground="White"/>
-
             <Button x:Name="BtnController"
                     Content="Controller"
                     MinWidth="90"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Background="#2E2E2E"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"/>
 
             <Button x:Name="BtnBack"
@@ -163,7 +168,7 @@
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Background="#2E2E2E"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"/>
 
         </StackPanel>

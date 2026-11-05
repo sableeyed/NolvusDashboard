@@ -49,30 +49,6 @@ Changing ENB presets may impact intended visuals."
                                 </StackPanel>
                             </StackPanel>
 
-                            <!-- Cabbage ENB Warning -->
-                            <TextBlock Text="A preset with Cabbage ENB is also available, but must be installed manually. 
-It cannot be shipped with Nolvus automatically."
-                                       Foreground="White"
-                                       TextWrapping="Wrap"/>
-
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="Click"
-                                           Foreground="White"/>
-                                <TextBlock Text="here"
-                                           Foreground="#FFA500"
-                                           Classes="link"
-                                           Cursor="Hand"
-                                           PointerPressed="LnkCabbageTutorial_PointerPressed"
-                                           x:Name="LnkCabbageTutorial"/>
-                                <TextBlock Text="for the tutorial on installing Cabbage ENB."
-                                           Foreground="White"/>
-                            </StackPanel>
-
-                            <!-- Final Warning -->
-                            <TextBlock Text="BE SURE TO FOLLOW THIS TUTORIAL AFTER THE LIST IS INSTALLED."
-                                       Foreground="#FFA500"
-                                       TextWrapping="Wrap"/>
-
                         </StackPanel>
                     </ScrollViewer>
 
@@ -85,17 +61,23 @@ It cannot be shipped with Nolvus automatically."
                         CornerRadius="4"
                         Padding="16">
 
-                    <Grid RowDefinitions="*,Auto">
+                    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+
+                        <!-- Info header -->
+                        <TextBlock Text="Info"
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
 
                         <!-- Info -->
-                        <TextBlock Grid.Row="0"
+                        <TextBlock Grid.Row="1"
                                    Text="Select the ENB you want to install. 
 PI-CHO is the default and recommended preset for Nolvus."
                                    Foreground="#CCCCCC"
                                    TextWrapping="Wrap"/>
 
                         <!-- Buttons -->
-                        <StackPanel Grid.Row="1"
+                        <StackPanel Grid.Row="2"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     Spacing="8"
@@ -107,7 +89,7 @@ PI-CHO is the default and recommended preset for Nolvus."
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="White"
+                                    BorderBrush="Gray"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
@@ -116,7 +98,7 @@ PI-CHO is the default and recommended preset for Nolvus."
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="#FFA500"
+                                    BorderBrush="Gray"
                                     Foreground="#FFA500"/>
                         </StackPanel>
                     </Grid>

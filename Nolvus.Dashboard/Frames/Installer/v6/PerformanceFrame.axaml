@@ -40,7 +40,8 @@
 
                                 <TextBlock Text="Resolution"
                                            Foreground="#FFA500"
-                                           FontSize="16"/>
+                                           FontSize="16"
+                                           FontWeight="Bold"/>
 
 
                                 <!-- Screen Ratio -->
@@ -50,6 +51,7 @@
                                                VerticalAlignment="Center"/>
                                     <ComboBox Grid.Column="1"
                                               x:Name="DrpDwnLstRatios"
+                                              DisplayMemberBinding="{Binding Value}"
                                               MinWidth="180"
                                               Background="#2E2E2E"
                                               Foreground="White"/>
@@ -125,7 +127,8 @@
 
                                 <TextBlock Text="Graphics"
                                            Foreground="#FFA500"
-                                           FontSize="16"/>
+                                           FontSize="16"
+                                           FontWeight="Bold"/>
 
 
                                 <!-- Anti-Aliasing -->
@@ -136,6 +139,7 @@
 
                                     <ComboBox Grid.Column="1"
                                               x:Name="DrpDwnLstAntiAliasing"
+                                              DisplayMemberBinding="{Binding Value}"
                                               MinWidth="180"
                                               Background="#2E2E2E"
                                               Foreground="White"/>
@@ -163,11 +167,13 @@
 
                                 <!-- LODs -->
                                 <Grid ColumnDefinitions="150,*" RowDefinitions="Auto,Auto">
-                                    <TextBlock Text="LODs"
+                                    <TextBlock x:Name="LblLods"
+                                               Text="LODs"
                                                Foreground="White"
                                                VerticalAlignment="Center"/>
                                     <ComboBox Grid.Column="1"
                                               x:Name="DrpDwnLstLODs"
+                                              DisplayMemberBinding="{Binding Value}"
                                               MinWidth="180"
                                               Background="#2E2E2E"
                                               Foreground="White"/>
@@ -203,7 +209,8 @@
 
                                 <TextBlock Text="Variant"
                                            Foreground="#FFA500"
-                                           FontSize="16"/>
+                                           FontSize="16"
+                                           FontWeight="Bold"/>
 
 
                                 <!-- Variant Selection -->
@@ -277,6 +284,7 @@
                                             HorizontalContentAlignment="Center"
                                             VerticalContentAlignment="Center"
                                             Content="View variant differences"
+                                            BorderBrush="Gray"
                                             Foreground="White"/>
                                 </Grid>
 
@@ -312,7 +320,8 @@
 
                                 <TextBlock Text="Hardware Requirement"
                                            Foreground="#FFA500"
-                                           FontSize="16"/>
+                                           FontSize="16"
+                                           FontWeight="Bold"/>
 
                                 <TextBlock x:Name="LblSelRes"
                                            Foreground="White"
@@ -385,6 +394,11 @@
                         <ScrollViewer Grid.Row="0">
                             <StackPanel Spacing="12">
 
+                                <TextBlock Text="Info"
+                                           Foreground="#FFA500"
+                                           FontSize="16"
+                                           FontWeight="Bold"/>
+
                                 <TextBlock Text="This new Nolvus version has several performance-oriented options to better match your hardware."
                                            Foreground="#CCCCCC"
                                            TextWrapping="Wrap"/>
@@ -440,6 +454,7 @@
 
                                 <Button x:Name="BtnSupportedGPUs"
                                         Content="View supported GPUs"
+                                        BorderBrush="Gray"
                                         MinWidth="160"
                                         Foreground="White"
                                         HorizontalContentAlignment="Center"
@@ -461,7 +476,7 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
-                                    BorderBrush="White"
+                                    BorderBrush="Gray"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
@@ -470,7 +485,7 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
-                                    BorderBrush="#FFA500"
+                                    BorderBrush="Gray"
                                     Foreground="#FFA500"/>
 
                         </StackPanel>

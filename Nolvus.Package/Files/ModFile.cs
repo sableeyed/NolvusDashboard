@@ -25,7 +25,7 @@ namespace Nolvus.Package.Files
         {
             get
             {
-                return Found(ServiceSingleton.Instances.WorkingInstance.ArchiveDir);
+                return Found(ServiceSingleton.Instances.WorkingInstance.SettingsManager.ArchiveDir);
             }
         }
         public string LocationFileName
@@ -36,7 +36,7 @@ namespace Nolvus.Package.Files
                 {
                     string Path;
 
-                    Found(ServiceSingleton.Instances.WorkingInstance.ArchiveDir, out Path);
+                    Found(ServiceSingleton.Instances.WorkingInstance.SettingsManager.ArchiveDir, out Path);
 
                     return Path;
                 }
@@ -131,7 +131,7 @@ namespace Nolvus.Package.Files
 
         public bool Exist()
         {
-            return Found(ServiceSingleton.Folders.DownloadDirectory) || Found(ServiceSingleton.Instances.WorkingInstance.ArchiveDir);
+            return Found(ServiceSingleton.Folders.DownloadDirectory) || Found(ServiceSingleton.Instances.WorkingInstance.SettingsManager.ArchiveDir);
         }
 
         public FileInfo GetFileInfo()

@@ -6,6 +6,7 @@ using Nolvus.Core.Enums;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
+
 namespace Nolvus.Dashboard.Frames.Installer
 {
     public partial class CDNFrame : DashboardFrame
@@ -28,14 +29,14 @@ namespace Nolvus.Dashboard.Frames.Installer
 
         private void OnCDNLocationChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Settings.CDN = DrpDwnLstDownLoc.SelectedItem.ToString();
+            ServiceSingleton.Instances.WorkingInstance.SettingsManager.CDN = DrpDwnLstDownLoc.SelectedItem.ToString();
         }
 
         private int DownloadLocationIndex(List<string> Locations)
         {
-            if (ServiceSingleton.Instances.WorkingInstance.Settings.CDN != string.Empty)
+            if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.CDN != string.Empty)
             {
-                var Index = Locations.FindIndex(x => x == ServiceSingleton.Instances.WorkingInstance.Settings.CDN);
+                var Index = Locations.FindIndex(x => x == ServiceSingleton.Instances.WorkingInstance.SettingsManager.CDN);
 
                 return Index == -1 ? 0 : Index;
             }
@@ -50,15 +51,7 @@ namespace Nolvus.Dashboard.Frames.Installer
 
         private void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
-            switch (ServiceSingleton.Instances.WorkingInstance.Name)
-            {
-                case Strings.NolvusAscension:
-                    ServiceSingleton.Dashboard.LoadFrame<v5.SummaryFrame>();
-                    break;
-                case Strings.NolvusAwakening:
-                    ServiceSingleton.Dashboard.LoadFrame<v6.SummaryFrame>();
-                    break;
-            }
+            ServiceSingleton.Dashboard.LoadFrame<SummaryFrame>();
         }
     }
 }

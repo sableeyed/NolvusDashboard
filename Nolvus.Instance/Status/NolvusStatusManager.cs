@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Nolvus.Core.Enums;
 using Nolvus.Core.Interfaces;
 
-namespace Nolvus.Instance.Core
+namespace Nolvus.Instance.Status
 {
-    public class InstanceStatus : IInstanceStatus
+    public class NolvusStatusManager : INolvusStatusManager
     {
         #region Properties
 
@@ -20,6 +20,8 @@ namespace Nolvus.Instance.Core
         public List<IInstanceStatusField> Fields { get; set; } = new List<IInstanceStatusField>();
 
         #endregion
+
+        #region Methods
 
         public void Load(XmlNode Node)
         {
@@ -39,7 +41,7 @@ namespace Nolvus.Instance.Core
             {
                 foreach (XmlNode FieldNode in FieldsNode.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "Field"))
                 {
-                    IInstanceStatusField Field = new InstanceStatusField();
+                    InstanceStatusField Field = new InstanceStatusField();
 
                     Field.Key = FieldNode["Key"].InnerText;
                     Field.Value = FieldNode["Value"].InnerText;
@@ -91,6 +93,7 @@ namespace Nolvus.Instance.Core
 
             XMLWriter.WriteEndElement();
 
+
             XMLWriter.WriteEndElement();
         }
 
@@ -103,5 +106,7 @@ namespace Nolvus.Instance.Core
         {
             return Fields.Where(x => x.Key == Key).FirstOrDefault();
         }
+
+        #endregion
     }
 }

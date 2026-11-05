@@ -10,6 +10,7 @@ using Vcc.Nolvus.Api.Installer.Library;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Platform;
 using System.Linq.Expressions;
 using Nolvus.Dashboard.Controls;
@@ -19,8 +20,6 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 {
     public partial class PerformanceFrame : DashboardFrame
     {
-        private List<string> AntiAliasing = new List<string>();
-        private List<string> LODs = new List<string>();
         private List<string> IniSettings = new List<string>();
 
         private IEnumerable<INolvusVariantRequirementDTO> MinRequirements;
@@ -44,43 +43,55 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             BtnVariantPreview.Click += VariantPreview;
         }
 
-        private int RatioIndex(List<string> Ratios)
+        private int RatioIndex(IEnumerable<INolvusOptionChoiceDTO> Ratios)
         {
-            var Index = Ratios.FindIndex(x => x == ServiceSingleton.Instances.WorkingInstance.Settings.Ratio);
+            var Index = Ratios.ToList().FindIndex(x => x.Value == ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("Ratio"));
             return Index == -1 ? 0 : Index;
         }
 
         private int ResolutionIndex(List<string> Resolutions)
         {
             INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
-            var Index = Resolutions.FindIndex(x => x == WorkingInstance.Settings.Width + "x" + WorkingInstance.Settings.Height);
+            var Index = Resolutions.FindIndex(x => x == WorkingInstance.SettingsManager.Width + "x" + WorkingInstance.SettingsManager.Height);
             return Index == -1 ? 0 : Index;
         }
 
         private int DownscalingResolutionIndex(List<string> Resolutions)
         {
             INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
-            var Index = Resolutions.FindIndex(x => x == WorkingInstance.Performance.DownWidth + "x" + WorkingInstance.Performance.DownHeight);
+            var Index = Resolutions.FindIndex(x => x == WorkingInstance.SettingsManager.DownWidth + "x" + WorkingInstance.SettingsManager.DownHeight);
             return Index == -1 ? 0 : Index;
         }
 
         private int VariantIndex(IEnumerable<INolvusVariantDTO> Variants)
         {
             INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
-            var Index = Variants.ToList().FindIndex(x => x.Name == WorkingInstance.Performance.Variant);
+            var Index = Variants.ToList().FindIndex(x => x.Name == WorkingInstance.SettingsManager.Variant);
             return Index == -1 ? 0 : Index;
         }
 
-        private int AntiAliasingIndex(List<string> AntiAliasing)
+        private int AntiAliasingIndex(IEnumerable<INolvusOptionChoiceDTO> AntiAliasing)
         {
-            var Index = AntiAliasing.FindIndex(x => x == ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing);
+            var Index = AntiAliasing.ToList().FindIndex(x => x.Value == ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("AntiAliasing"));
             return Index == -1 ? 0 : Index;
         }
 
-        private int LODsIndex(List<string> LODs)
+        private int LODsIndex(IEnumerable<INolvusOptionChoiceDTO> LODs)
         {
-            var Index = LODs.FindIndex(x => x == ServiceSingleton.Instances.WorkingInstance.Performance.LODs);
+            var Index = LODs.ToList().FindIndex(x => x.Value == ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("LODs"));
             return Index == -1 ? 0 : Index;
+        }
+
+        private async Task LoadLODs()
+        {
+            var Instance = ServiceSingleton.Instances.WorkingInstance;
+
+            var LODs = await ApiManager.Service.Installer.GetOptionChoices("LODs", Instance.SettingsManager.Variant, Instance.Id);
+
+            DrpDwnLstLODs.ItemsSource = null;
+            DrpDwnLstLODs.ItemsSource = LODs;
+
+            DrpDwnLstLODs.SelectedIndex = LODsIndex(LODs);
         }
 
         private bool IsNvidiaRTX()
@@ -97,11 +108,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 #region Resolution
 
-                List<string> Ratios = new List<string>();
-
-                Ratios.Add("16:9");
-                Ratios.Add("21:9");
-                Ratios.Add("32:9");
+                var Ratios = await ApiManager.Service.Installer.GetOptionChoices("Ratio", Instance.SettingsManager.Variant, Instance.Id);
 
                 DrpDwnLstRatios.ItemsSource = Ratios;
 
@@ -110,13 +117,13 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 if (primary == null)
                 {
                     ServiceSingleton.Logger.Log("No primary screen detected... Falling back to 1920x1080");
-                    Instance.Settings.Height = "1080";
-                    Instance.Settings.Width = "1920";
+                    Instance.SettingsManager.Height = "1080";
+                    Instance.SettingsManager.Width = "1920";
                 }
                 else
                 {
-                    Instance.Settings.Height = primary.WorkingArea.Height.ToString();
-                    Instance.Settings.Width = primary.WorkingArea.Width.ToString();
+                    Instance.SettingsManager.Height = primary.WorkingArea.Height.ToString();
+                    Instance.SettingsManager.Width = primary.WorkingArea.Width.ToString();
                 }
 
                 DrpDwnLstScreenRes.ItemsSource = ServiceSingleton.Globals.WindowsResolutions;
@@ -131,7 +138,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 TglBtnDownScale.IsChecked = false;
 
-                if (Instance.Performance.DownScaling == "TRUE")
+                if (Instance.SettingsManager.DownScaling == "TRUE")
                 {
                     TglBtnDownScale.IsChecked = true;
                 }
@@ -140,32 +147,26 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 #region Graphics
 
-                AntiAliasing.Add("TAA");
-                AntiAliasing.Add("DLAA");
-                AntiAliasing.Add("FSR");
-
-                LODs.Add("Ultra");
-                LODs.Add("Performance");
-                LODs.Add("Ultra Performance");
-
                 IniSettings.Add("Low");
                 IniSettings.Add("Medium");
                 IniSettings.Add("High");
 
-                DrpDwnLstAntiAliasing.ItemsSource = AntiAliasing;
-                DrpDwnLstAntiAliasing.SelectedIndex = AntiAliasingIndex(AntiAliasing);
-
                 DrpDwnLstIni.ItemsSource = IniSettings;
-                DrpDwnLstIni.SelectedIndex = System.Convert.ToInt16(Instance.Performance.IniSettings);
+                DrpDwnLstIni.SelectedIndex = System.Convert.ToInt16(Instance.SettingsManager.IniSettings);
 
-                DrpDwnLstLODs.ItemsSource = LODs;
-                DrpDwnLstLODs.SelectedIndex = LODsIndex(LODs);
+                var AAs = await ApiManager.Service.Installer.GetOptionChoices("Antialiasing", Instance.SettingsManager.Variant, Instance.Id);
+
+                DrpDwnLstAntiAliasing.ItemsSource = AAs;
+
+                DrpDwnLstAntiAliasing.SelectedIndex = AntiAliasingIndex(AAs);
+
+                await LoadLODs();
 
                 LblCPU.Text = await ServiceSingleton.Globals.GetCPUInfo();
 
                 var Ram = await ServiceSingleton.Globals.GetRamCount();
 
-                if (Ram != "Ram count not found")
+                if (Ram != "RAM count not found")
                 {
                     LblRAM.Text = Ram + " GB";
                 }
@@ -192,14 +193,22 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 DrpDwnLstVariant.ItemsSource = Variants;
                 DrpDwnLstVariant.SelectedIndex = VariantIndex(Variants);
 
-                if (Instance.Performance.SREX == "TRUE")
+                // Detached like upstream's ToggleStateChanging, or restoring a saved value would ask
+                // the "are you sure" question that only applies when the user turns it on.
+                TglBtnSREX.IsCheckedChanged -= OnSREXChanged;
+
+                TglBtnSREX.IsChecked = false;
+
+                if (Instance.OptionsManager.GetOptionValue("SREX") == "TRUE")
                 {
                     TglBtnSREX.IsChecked = true;
                 }
 
+                TglBtnSREX.IsCheckedChanged += OnSREXChanged;
+
                 TglBtnFrameGen.IsChecked = false;
 
-                if (Instance.Performance.FrameGeneration == "TRUE")
+                if (Instance.OptionsManager.GetOptionValue("FrameGeneration") == "TRUE")
                 {
                     TglBtnFrameGen.IsChecked = true;
                 }
@@ -208,9 +217,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 ServiceSingleton.Dashboard.Info("Graphics and Performance Settings");
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                await ServiceSingleton.Dashboard.Error("Error during performance options loading", ex.Message, ex.StackTrace);
             }
         }
 
@@ -223,9 +232,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             var owner = TopLevel.GetTopLevel(this) as Window;
             var Instance = ServiceSingleton.Instances.WorkingInstance;
-            var Performance = Instance.Performance;            
+            var SettingsManager = Instance.SettingsManager;
 
-            if (Performance.DownScaling == "TRUE" && (Performance.DownScaling == "TRUE" && (Instance.Settings.Height == Performance.DownHeight || System.Convert.ToInt32(Performance.DownHeight) > System.Convert.ToInt32(Instance.Settings.Height)) && (Instance.Settings.Width == Performance.DownWidth || System.Convert.ToInt32(Performance.DownWidth) > System.Convert.ToInt32(Instance.Settings.Width))))
+            if (SettingsManager.DownScaling == "TRUE" && ((SettingsManager.Height == SettingsManager.DownHeight || System.Convert.ToInt32(SettingsManager.DownHeight) > System.Convert.ToInt32(SettingsManager.Height)) && (SettingsManager.Width == SettingsManager.DownWidth || System.Convert.ToInt32(SettingsManager.DownWidth) > System.Convert.ToInt32(SettingsManager.Width))))
             {
                 NolvusMessageBox.Show(owner, "Invalid Downscaling setting", "If downscaling is enabled, the downscaled resolution must be less than the monitor resolution!", MessageBoxType.Error);
             }
@@ -234,25 +243,25 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", "Remember, running the list without the right hardware requirement for the variant you choose can make the game unstable. The variant can not be changed after installation. Are you sure you want to continue?");
                 if (result == true)
                 {                    
-                    ServiceSingleton.Dashboard.LoadFrame<v6.OptionsFrame>();                    
+                    await ServiceSingleton.Dashboard.LoadFrameAsync<v6.OptionsFrame>();
                 }                
             }
         }
 
         private void OnDownscaleChanged(object? sender, RoutedEventArgs e)
         {
-            if (ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing != "DLAA" && ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing != "FSR" && ServiceSingleton.Instances.WorkingInstance.Performance.FrameGeneration != "TRUE")
+            if (ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("AntiAliasing") != "DLAA" && ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("AntiAliasing") != "FSR" && ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("FrameGeneration") != "TRUE")
             {
                 if (TglBtnDownScale.IsChecked == true)
                 {
                     DrpDwnLstDownscalingScreenRes.IsEnabled = TglBtnDownScale.IsChecked == true;
-                    ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling = "TRUE";
+                    ServiceSingleton.Instances.WorkingInstance.SettingsManager.DownScaling = "TRUE";
                     DrpDwnLstDownscalingScreenRes.SelectedIndex = DownscalingResolutionIndex(ServiceSingleton.Globals.GetDownscaleResolutions());
                 }
                 else
                 {
                     DrpDwnLstDownscalingScreenRes.IsEnabled = TglBtnDownScale.IsChecked == true;
-                    ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling = "FALSE";
+                    ServiceSingleton.Instances.WorkingInstance.SettingsManager.DownScaling = "FALSE";
                     DrpDwnLstAntiAliasing.IsEnabled = true;
                     TglBtnFrameGen.IsEnabled = true;
                 }
@@ -263,8 +272,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 DrpDwnLstAntiAliasing.IsEnabled = false;
                 TglBtnFrameGen.IsChecked = false;
                 TglBtnFrameGen.IsEnabled = false;
+                NolvusMessageBox.Show(TopLevel.GetTopLevel(this) as Window, "Antialiasing", "This option is not compatible with DLAA/FSR/Frame Generation. Antialiasing has been forced to TAA and Frame Generation has been disabled.", MessageBoxType.Info);
                 DrpDwnLstDownscalingScreenRes.IsEnabled = true;
-                ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.SettingsManager.DownScaling = "TRUE";
                 DrpDwnLstDownscalingScreenRes.SelectedIndex = DownscalingResolutionIndex(ServiceSingleton.Globals.GetDownscaleResolutions());
             }
 
@@ -277,20 +287,20 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             if (TglBtnSREX.IsChecked == true)
             {
                 var owner = TopLevel.GetTopLevel(this) as Window;
-                bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Warning", "The SR Exterior Cities option is very performance heavy. Don't try to run it at 4k without and tools like Framegen or Lossless Scaling. Are you sure?");
+                bool? result = await NolvusMessageBox.ShowConfirmation(owner, "Warning", "The SR Exterior Cities option is very performance heavy. Don't try to run it at 4K without any tools like Framegen or Lossless Scaling. Are you sure?");
                 if (result == false)
                 {
                     TglBtnSREX.IsChecked = false;
-                    ServiceSingleton.Instances.WorkingInstance.Performance.SREX = "FALSE";
+                    ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("SREX").Value = "FALSE";
                 }
                 else
                 {
-                    ServiceSingleton.Instances.WorkingInstance.Performance.SREX = "TRUE";
+                    ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("SREX").Value = "TRUE";
                 }
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Performance.SREX = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("SREX").Value = "FALSE";
             }
 
             UpdateHardwareConfiguration();
@@ -302,29 +312,43 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             {
                 var owner = TopLevel.GetTopLevel(this) as Window;
                 await NolvusMessageBox.Show(owner, "Frame Generation", "Warning, the ENB FPS counter will still show the normal FPS, to see the interpolated FPS, please use the NVIDIA or AMD integrated overlay.\n\nFramegen will not work out of the box if your monitor doesn't handle 120hz minimum.\n\nTo bypass that in game, open the ENB ui (shift+enter), on the left panel go under performance and check Force Framegen. Hit apply settings then save settings and restart the game.", MessageBoxType.Info);
-                ServiceSingleton.Instances.WorkingInstance.Performance.FrameGeneration = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("FrameGeneration").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Performance.FrameGeneration = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("FrameGeneration").Value = "FALSE";
             }
         }
 
         private async void OnVariantChanged(object? sender, SelectionChangedEventArgs e)
         {
+            var Instance = ServiceSingleton.Instances.WorkingInstance;
+
             var Variant = (INolvusVariantDTO)DrpDwnLstVariant.SelectedItem!;
-            ServiceSingleton.Instances.WorkingInstance.Performance.Variant = Variant.Name;
+            Instance.SettingsManager.Variant = Variant.Name;
+
+            await Instance.OptionsManager.SynchronizeOptions(Instance);
+
+            await LoadLODs();
 
             LblTextures.Text = Variant.Textures;
             LblTrees.Text = Variant.Trees;
             LblCities.Text = Variant.Cities;
 
-            if (ServiceSingleton.Instances.WorkingInstance.Performance.Variant == "Ultra")
+            if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.Variant == "Ultra")
             {
+                LblLods.Foreground = Brushes.White;
                 DrpDwnLstLODs.IsEnabled = true;
+            }
+            else if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.Variant == "Ultimate" || ServiceSingleton.Instances.WorkingInstance.SettingsManager.Variant == Strings.GO)
+            {
+                LblLods.Foreground = Brushes.Gray;
+                DrpDwnLstLODs.SelectedIndex = 0;
+                DrpDwnLstLODs.IsEnabled = false;
             }
             else
             {
+                LblLods.Foreground = Brushes.Gray;
                 DrpDwnLstLODs.SelectedIndex = 0;
                 DrpDwnLstLODs.IsEnabled = false;
             }
@@ -343,7 +367,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             NolvusMessageBox.Show(owner, "Anti Aliasing", Message, MessageBoxType.Error);
             DrpDwnLstAntiAliasing.SelectionChanged -= OnAntiAliasingChanged;
             DrpDwnLstAntiAliasing.SelectedIndex = 0;
-            ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = "TAA";
+            ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AntiAliasing").Value = "TAA";
             DrpDwnLstAntiAliasing.SelectionChanged += OnAntiAliasingChanged;
         }
 
@@ -351,23 +375,24 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             if (DrpDwnLstAntiAliasing.SelectedValue != null)
             {
-                if (DrpDwnLstAntiAliasing.SelectedItem is string value)
-                    ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = value;
+                var AAValue = (DrpDwnLstAntiAliasing.SelectedItem as INolvusOptionChoiceDTO).Value;
 
-                if (DrpDwnLstAntiAliasing.SelectedValue.ToString() == "DLAA")
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AntiAliasing").Value = AAValue;
+
+                if (AAValue == "DLAA")
                 {
                     if (!IsNvidiaRTX() && !ServiceSingleton.Settings.ForceAA)
                     {
                         ForceTAA("DLAA is only compatible with NVIDIA graphics cards!");
                     }
-                    else if (ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling == "TRUE")
+                    else if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.DownScaling == "TRUE")
                     {
                         ForceTAA("DLAA is not compatible with downscaling");
                     }
                 }
-                else if (DrpDwnLstAntiAliasing.SelectedValue.ToString() == "FSR")
+                else if (AAValue == "FSR")
                 {
-                    if (ServiceSingleton.Instances.WorkingInstance.Performance.DownScaling == "TRUE")
+                    if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.DownScaling == "TRUE")
                     {
                         ForceTAA("FSR is not compatible with downscaling");
                     }
@@ -383,21 +408,21 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             string[] Reso = Resolution.Split(['x']);
 
-            WorkingInstance.Settings.Width = Reso[0];
-            WorkingInstance.Settings.Height = Reso[1];
+            WorkingInstance.SettingsManager.Width = Reso[0];
+            WorkingInstance.SettingsManager.Height = Reso[1];
 
             if (
-                    (WorkingInstance.Settings.Width == "2560" && WorkingInstance.Settings.Height == "1080") ||
-                    (WorkingInstance.Settings.Width == "3440" && WorkingInstance.Settings.Height == "1440") ||
-                    (WorkingInstance.Settings.Width == "5120" && WorkingInstance.Settings.Height == "2160")
+                    (WorkingInstance.SettingsManager.Width == "2560" && WorkingInstance.SettingsManager.Height == "1080") ||
+                    (WorkingInstance.SettingsManager.Width == "3440" && WorkingInstance.SettingsManager.Height == "1440") ||
+                    (WorkingInstance.SettingsManager.Width == "5120" && WorkingInstance.SettingsManager.Height == "2160")
                 )
             {
                 DrpDwnLstRatios.SelectedIndex = 1;
             }
             else if (
-                        (WorkingInstance.Settings.Width == "3840" && WorkingInstance.Settings.Height == "1080") ||
-                        (WorkingInstance.Settings.Width == "5120" && WorkingInstance.Settings.Height == "1440") ||
-                        (WorkingInstance.Settings.Width == "7680" && WorkingInstance.Settings.Height == "2160")
+                        (WorkingInstance.SettingsManager.Width == "3840" && WorkingInstance.SettingsManager.Height == "1080") ||
+                        (WorkingInstance.SettingsManager.Width == "5120" && WorkingInstance.SettingsManager.Height == "1440") ||
+                        (WorkingInstance.SettingsManager.Width == "7680" && WorkingInstance.SettingsManager.Height == "2160")
                     )
             {
                 DrpDwnLstRatios.SelectedIndex = 2;
@@ -415,8 +440,8 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
                 string[] Reso = Resolution.Split(['x']);
 
-                ServiceSingleton.Instances.WorkingInstance.Performance.DownWidth = Reso[0];
-                ServiceSingleton.Instances.WorkingInstance.Performance.DownHeight = Reso[1];
+                ServiceSingleton.Instances.WorkingInstance.SettingsManager.DownWidth = Reso[0];
+                ServiceSingleton.Instances.WorkingInstance.SettingsManager.DownHeight = Reso[1];
 
                 UpdateHardwareConfiguration();
             }
@@ -424,17 +449,21 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private void OnRatioChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Settings.Ratio = DrpDwnLstRatios.SelectedValue!.ToString()!;
+            ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Ratio").Value = (DrpDwnLstRatios.SelectedItem as INolvusOptionChoiceDTO).Value;
         }
 
         private void OnIniChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Performance.IniSettings = DrpDwnLstIni.SelectedIndex!.ToString()!;
+            ServiceSingleton.Instances.WorkingInstance.SettingsManager.IniSettings = DrpDwnLstIni.SelectedIndex!.ToString()!;
         }
 
         private void OnLODsChanged(object? sender, SelectionChangedEventArgs e)
         {
-            ServiceSingleton.Instances.WorkingInstance.Performance.LODs = DrpDwnLstLODs.SelectedValue!.ToString()!;
+            // LoadLODs swaps the list, and Avalonia raises this with nothing selected while it does.
+            if (DrpDwnLstLODs.SelectedItem == null)
+                return;
+
+            ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("LODs").Value = (DrpDwnLstLODs.SelectedItem as INolvusOptionChoiceDTO).Value;
 
             UpdateHardwareConfiguration();
         }
@@ -443,14 +472,14 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             INolvusInstance WorkingInstance = ServiceSingleton.Instances.WorkingInstance;
 
-            LblSelRes.Text = WorkingInstance.GetSelectedResolution();
+            LblSelRes.Text = WorkingInstance.SettingsManager.GetSelectedResolution();
 
             if (MinRequirements != null)
             {
-                INolvusVariantRequirementDTO MinRequirement = MinRequirements.Where(x => x.Height.ToString() == WorkingInstance.GetSelectedHeight() &&
-                                                                                         x.Width.ToString() == WorkingInstance.GetSelectedWidth() &&
-                                                                                         x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX &&
-                                                                                         x.Lods == WorkingInstance.Performance.LODs).FirstOrDefault()!;                
+                INolvusVariantRequirementDTO MinRequirement = MinRequirements.Where(x => x.Height.ToString() == WorkingInstance.SettingsManager.GetSelectedHeight() &&
+                                                                                         x.Width.ToString() == WorkingInstance.SettingsManager.GetSelectedWidth() &&
+                                                                                         x.SREX.ToString().ToUpper() == WorkingInstance.OptionsManager.GetOptionValue("SREX") &&
+                                                                                         x.Lods == WorkingInstance.OptionsManager.GetOptionValue("LODs")).FirstOrDefault()!;                
 
                 if (MinRequirement != null)
                 {
@@ -463,7 +492,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 else
                 {
 
-                    MinRequirement = MinRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX && x.Lods == WorkingInstance.Performance.LODs).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.GetSelectedWidth()) - x.Width)).FirstOrDefault()!;
+                    MinRequirement = MinRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.OptionsManager.GetOptionValue("SREX") && x.Lods == WorkingInstance.OptionsManager.GetOptionValue("LODs")).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.SettingsManager.GetSelectedWidth()) - x.Width)).FirstOrDefault()!;
 
                     if ( MinRequirement != null)
                     {
@@ -486,10 +515,10 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             if (RecRequirements != null)
             {
-                INolvusVariantRequirementDTO RecRequirement = RecRequirements.Where(x => x.Height.ToString() == WorkingInstance.GetSelectedHeight() &&
-                                                                                         x.Width.ToString() == WorkingInstance.GetSelectedWidth() &&
-                                                                                         x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX &&
-                                                                                         x.Lods == WorkingInstance.Performance.LODs).FirstOrDefault()!;
+                INolvusVariantRequirementDTO RecRequirement = RecRequirements.Where(x => x.Height.ToString() == WorkingInstance.SettingsManager.GetSelectedHeight() &&
+                                                                                         x.Width.ToString() == WorkingInstance.SettingsManager.GetSelectedWidth() &&
+                                                                                         x.SREX.ToString().ToUpper() == WorkingInstance.OptionsManager.GetOptionValue("SREX") &&
+                                                                                         x.Lods == WorkingInstance.OptionsManager.GetOptionValue("LODs")).FirstOrDefault()!;
 
                 if (RecRequirement != null)
                 {
@@ -501,7 +530,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 }
                 else
                 {
-                    RecRequirement = RecRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX && x.Lods == WorkingInstance.Performance.LODs).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.GetSelectedWidth()) - x.Width)).FirstOrDefault()!;
+                    RecRequirement = RecRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.OptionsManager.GetOptionValue("SREX") && x.Lods == WorkingInstance.OptionsManager.GetOptionValue("LODs")).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.SettingsManager.GetSelectedWidth()) - x.Width)).FirstOrDefault()!;
 
                     if (RecRequirement != null)
                     {
@@ -531,9 +560,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 new FrameParameters(new FrameParameter()
                 {
                     Key = "VariantRequirement",
-                    Value = MinRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.Performance.SREX &&
-                                                  x.Lods == WorkingInstance.Performance.LODs
-                                                 ).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.GetSelectedWidth()) - x.Width)).FirstOrDefault()
+                    Value = MinRequirements.Where(x => x.SREX.ToString().ToUpper() == WorkingInstance.OptionsManager.GetOptionValue("SREX") &&
+                                                  x.Lods == WorkingInstance.OptionsManager.GetOptionValue("LODs")
+                                                 ).OrderBy(x => Math.Abs(System.Convert.ToInt32(WorkingInstance.SettingsManager.GetSelectedWidth()) - x.Width)).FirstOrDefault()
                 })
             );
         }

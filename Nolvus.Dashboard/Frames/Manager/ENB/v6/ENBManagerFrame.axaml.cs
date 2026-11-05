@@ -6,6 +6,7 @@ using Nolvus.Core.Enums;
 using Nolvus.Core.Frames;
 using Nolvus.Core.Interfaces;
 using Nolvus.Core.Services;
+using Nolvus.Package.Mods;
 using Nolvus.Dashboard.Controls;
 using Nolvus.Dashboard.Frames.Installer;
 using Nolvus.Dashboard.Frames.Instance;
@@ -50,56 +51,65 @@ namespace Nolvus.Dashboard.Frames.Manager.ENB.v6
         private async void BtnInstall_Click(object? sender, RoutedEventArgs e)
         {
             var window = TopLevel.GetTopLevel(this) as Window;
-            var Preset = ENBListBox.SelectedItem as IENBPreset;
 
-            if (Preset.GetFieldValueByKey("EnbCode") == ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB)
+            if (!ModOrganizer.IsRunning)
             {
-                NolvusMessageBox.Show(window, "Error", "This ENB is already installed!", MessageBoxType.Error);
-            }
-            else
-            {
-                bool? result = await NolvusMessageBox.ShowConfirmation(window, "Confirmation", string.Format("You are about to change ENB from {0} to {1}. Are you sure you want to continue?",
-                    ServiceSingleton.EnbManager.CurrentPreset(ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB), Preset));
-                
-                if (result == true)
+                var Preset = ENBListBox.SelectedItem as IENBPreset;
+
+                if (Preset.GetFieldValueByKey("EnbCode") == ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("AlternateENB"))
                 {
-                    try
+                    NolvusMessageBox.Show(window, "Error", "This ENB is already installed!", MessageBoxType.Error);
+                }
+                else
+                {
+                    bool? result = await NolvusMessageBox.ShowConfirmation(window, "Confirmation", string.Format("You are about to change ENB from {0} to {1}.\n\nWarning!!!\n\nIf you customized the list, all added mods will be placed at the end of the loadorder and left unchecked.\n\nAre you sure you want to continue?",
+                        ServiceSingleton.EnbManager.CurrentPreset(ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("AlternateENB")), Preset));
+
+                    if (result == true)
                     {
                         try
                         {
-                            DisableButtons();
-                            ServiceSingleton.Dashboard.DisableSettings();
-
-                            var ModsToUpdate = await ServiceSingleton.EnbManager.PrepareModsToUpdate(ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB, Preset.GetFieldValueByKey("EnbCode"));
-
-                            ServiceSingleton.Instances.WorkingInstance.Status.AddField("OldENB", ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB);
-                            ServiceSingleton.Instances.WorkingInstance.Status.AddField("NewENB", Preset.GetFieldValueByKey("EnbCode"));
-
-                            ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB = Preset.GetFieldValueByKey("EnbCode");
-
-                            await ServiceSingleton.EnbManager.DeleteENB((s, p) =>
+                            try
                             {
-                                ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
-                                ServiceSingleton.Dashboard.Progress(p);
-                            });
+                                DisableButtons();
 
-                            ServiceSingleton.Instances.PrepareInstanceForEnb();
+                                ServiceSingleton.Dashboard.DisableSettings();
 
-                            await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>(new FrameParameters(new FrameParameter() 
-                                { Key = "ModsToInstall", Value = ModsToUpdate.Cast<IInstallableElement>().ToList() }));
+                                var ModsToUpdate = await ServiceSingleton.EnbManager.PrepareModsToUpdate(ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("AlternateENB"), Preset.GetFieldValueByKey("EnbCode"));
+
+                                ServiceSingleton.Instances.WorkingInstance.StatusManager.AddField("OldENB", ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("AlternateENB"));
+                                ServiceSingleton.Instances.WorkingInstance.StatusManager.AddField("NewENB", Preset.GetFieldValueByKey("EnbCode"));
+
+                                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AlternateENB").Value = Preset.GetFieldValueByKey("EnbCode");
+
+                                await ServiceSingleton.EnbManager.DeleteENB((s, p) =>
+                                {
+                                    ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                                    ServiceSingleton.Dashboard.Progress(p);
+                                });
+
+                                ServiceSingleton.Instances.PrepareInstanceForEnb();
+
+                                await ServiceSingleton.Dashboard.LoadFrameAsync<InstallFrame>(new FrameParameters(new FrameParameter() 
+                                    { Key = "ModsToInstall", Value = ModsToUpdate.Cast<IInstallableElement>().ToList() }));
+                            }
+                            catch (Exception ex)
+                            {
+                                await ServiceSingleton.Dashboard.Error("Error during ENB update initialization", ex.Message, ex.StackTrace);
+                            }
                         }
-                        catch (Exception ex)
+                        finally
                         {
-                            await ServiceSingleton.Dashboard.Error("Error during ENB update initialization", ex.Message, ex.StackTrace);
+                            ServiceSingleton.Dashboard.EnableSettings();
+                            ServiceSingleton.Dashboard.NoStatus();
+                            ServiceSingleton.Dashboard.ProgressCompleted();
                         }
-                    }
-                    finally
-                    {
-                        ServiceSingleton.Dashboard.EnableSettings();
-                        ServiceSingleton.Dashboard.NoStatus();
-                        ServiceSingleton.Dashboard.ProgressCompleted();
                     }
                 }
+            }
+            else
+            {
+                NolvusMessageBox.Show(window, "Mod Organizer 2", "An instance of Mod Organizer 2 is running! Please close it first.", MessageBoxType.Error);
             }
         }
     }

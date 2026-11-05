@@ -6,7 +6,7 @@ using System.Xml;
 using System.Threading.Tasks;
 using Nolvus.Core.Interfaces;
 
-namespace Nolvus.Instance.Core
+namespace Nolvus.Instance.Status
 {
     public class InstanceStatusField : IInstanceStatusField
     {

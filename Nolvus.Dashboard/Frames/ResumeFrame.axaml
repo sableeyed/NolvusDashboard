@@ -49,8 +49,9 @@
                             <StackPanel>
 
                                 <TextBlock Text="Errors Management"
-                                           FontSize="14"
-                                           Foreground="White"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Foreground="#FFA500"
                                            Margin="0,0,0,10"/>
 
                                 <TextBlock Text="Action to take when an error occurs"
@@ -87,10 +88,16 @@
 
                 <Grid RowDefinitions="Auto, *, Auto" Margin="12">
 
-                    <TextBlock Text="A previous instance installation has not been completed."
-                               TextWrapping="Wrap"
-                               Foreground="White"
-                               Margin="0,0,0,10"/>
+                    <StackPanel Spacing="10" Margin="0,0,0,10">
+                        <TextBlock Text="Info"
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
+
+                        <TextBlock Text="A previous instance installation has not been completed."
+                                   TextWrapping="Wrap"
+                                   Foreground="White"/>
+                    </StackPanel>
 
                     <TextBlock Grid.Row="1"
                                Text="Select the instance you want to resume and click Resume."
@@ -110,7 +117,7 @@
                                              HorizontalContentAlignment="Center"
                                              VerticalContentAlignment="Center"
                                              Background="#2E2E2E"
-                                             BorderBrush="White"
+                                             BorderBrush="Gray"
                                              Foreground="White"
                                              Click="BtnCancel_Click"/>
 
@@ -121,7 +128,7 @@
                                              HorizontalContentAlignment="Center"
                                              VerticalContentAlignment="Center"
                                              Background="#2E2E2E"
-                                             BorderBrush="#FFA500"
+                                             BorderBrush="Gray"
                                              Foreground="#FFA500"
                                              Click="BtnResume_Click"/>
 

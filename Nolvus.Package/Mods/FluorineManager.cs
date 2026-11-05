@@ -319,7 +319,7 @@ namespace Nolvus.Package.Mods
 
                 // Fluorine can be installed from the play button, where there is no working
                 // instance to take a CDN preference from, so any link will do as a fallback.
-                var Cdn = ServiceSingleton.Instances.WorkingInstance?.Settings?.CDN;
+                var Cdn = ServiceSingleton.Instances.WorkingInstance?.SettingsManager?.CDN;
 
                 var Link = Links.FirstOrDefault(x => x.ShortName == Cdn) ?? Links.FirstOrDefault();
 

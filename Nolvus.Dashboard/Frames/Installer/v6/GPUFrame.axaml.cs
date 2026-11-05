@@ -25,9 +25,9 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             var variantRequirement = Parameters["VariantRequirement"] as INolvusVariantRequirementDTO;
             var instance = ServiceSingleton.Instances.WorkingInstance;
 
-            LblVariant.Text = instance.Performance.Variant;
-            LblResolution.Text = instance.GetSelectedResolution();
-            LblSREX.Text = instance.Performance.SREX == "TRUE" ? "Yes" : "No";
+            LblVariant.Text = instance.SettingsManager.Variant;
+            LblResolution.Text = instance.SettingsManager.GetSelectedResolution();
+            LblSREX.Text = instance.OptionsManager.GetOptionValue("SREX") == "TRUE" ? "Yes" : "No";
 
             var gpus = await ApiManager.Service.Installer.GetGPUs();
 
@@ -37,7 +37,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
                 GPU = $"{x.Vendor} {x.Name}",
                 Supported = x.VRAM >= variantRequirement.VRAM,
                 Image = null
-            }).ToList();
+            }).OrderBy(x => x.GPU).ToList();
 
             ServiceSingleton.Dashboard.Info("Supported GPUs");
         }

@@ -270,7 +270,9 @@ namespace Vcc.Nolvus.Api.Installer.Controllers
             Params.Add("Variant", Variant);
             Params.Add("NolvusVersionId", NolvusVersionId);
 
+            // The server requires a token here, which StartFrame.CheckForUpdates has put on the shared client by now.
             return await this._Service.GetUnRestricted<int>($"{_Api}/optionscount", Params);
+            //return await this._Service.GetPolyMorphic<int>($"{_Api}/optionscount", Params);
         }
     }
 }

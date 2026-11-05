@@ -170,7 +170,7 @@ namespace Nolvus.Dashboard.Frames
                 }
             } catch (Exception ex)
             {
-                ServiceSingleton.Logger.Log(ex.StackTrace);
+                await ServiceSingleton.Dashboard.Error("Error during initialization", ex.Message, ex.StackTrace);
             }
 
             ServiceSingleton.Dashboard.NoStatus();
@@ -255,6 +255,10 @@ namespace Nolvus.Dashboard.Frames
             {
                 ServiceSingleton.Logger.Log("Update check failed: " + ex);
             }
+
+            // Upstream's update check also puts the token on the shared client, and later unrestricted
+            // calls like OptionsCount rely on it. Ours goes to GitHub, so make the call here regardless.
+            await ApiManager.Service.Installer.GetLatestInstaller();
         }
 
         private async Task CheckNexus()

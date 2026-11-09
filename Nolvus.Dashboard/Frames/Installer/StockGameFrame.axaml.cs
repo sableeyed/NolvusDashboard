@@ -185,7 +185,7 @@ namespace Nolvus.Dashboard.Frames.Installer
             {
                 await Task.Run(() =>
                 {
-                    ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Instances.WorkingInstance.InstallDir, true);
+                    ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Instances.WorkingInstance.SettingsManager.InstallDir, true);
                 });
 
                 await AddItemToList("Rollback complete.");
@@ -216,7 +216,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                 {
                     try
                     {
-                        ServiceSingleton.Files.RemoveDirectory(Instance.InstallDir, true);
+                        ServiceSingleton.Files.RemoveDirectory(Instance.SettingsManager.InstallDir, true);
                     }
                     catch (Exception ex)
                     {

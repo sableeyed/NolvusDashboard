@@ -1,0 +1,276 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Instance.InstanceSettingsFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#363636">
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="7">
+
+        <Border Height="45" Background="#363636">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <Image Source="avares://NolvusDashboard/Assets/nolvus-ico.jpg"
+                       Width="32" Height="32"
+                       Margin="6"/>
+
+                <TextBlock x:Name="LblHeader"
+                           Grid.Column="1"
+                           VerticalAlignment="Center"
+                           FontSize="18"
+                           Foreground="White"
+                           Text="Instance"/>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,420" ColumnSpacing="10">
+
+            <!-- LEFT SIDE -->
+            <ScrollViewer Grid.Column="0">
+                <StackPanel Spacing="10">
+
+                    <!-- RESOLUTION -->
+                    <Border Background="#2E2E2E"
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            Padding="12">
+                        <StackPanel Spacing="12">
+
+                            <TextBlock Text="Resolution"
+                                       Foreground="#FFA500"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
+
+                            <Grid ColumnDefinitions="160,Auto,Auto" ColumnSpacing="10">
+                                <TextBlock Text="Resolution"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                                <ComboBox x:Name="DrpDwnLstScreenRes"
+                                          Grid.Column="1"
+                                          Width="220"
+                                          SelectionChanged="OnScreenResolutionChanged"/>
+                                <Button x:Name="BtnApplyRes"
+                                        Grid.Column="2"
+                                        Content="Apply"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Width="100"
+                                        Background="#2E2E2E"
+                                        BorderBrush="Gray"
+                                        Foreground="White"/>
+                            </Grid>
+
+                            <TextBlock Text="The resolution must match your screen resolution. If you want to play at lower resolution, use the downscaling feature below."
+                                       Foreground="#FFA500"
+                                       TextWrapping="Wrap"/>
+
+                            <Grid ColumnDefinitions="160,Auto,Auto" ColumnSpacing="10">
+                                <TextBlock Text="Downscaling"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                                <ToggleSwitch x:Name="TglBtnDownScale"
+                                              Grid.Column="1"
+                                              VerticalAlignment="Center"/>
+                                <TextBlock x:Name="LblDownscalingInfo"
+                                           Grid.Column="2"
+                                           Foreground="#FFA500"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="160,Auto,Auto" ColumnSpacing="10">
+                                <ComboBox x:Name="DrpDwnLstDownRes"
+                                          Grid.Column="1"
+                                          Width="220"
+                                          SelectionChanged="OnDownScaleResolutionChanged"
+                                          IsEnabled="False"/>
+                                <Button x:Name="BtnApplyDownScaling"
+                                        Grid.Column="2"
+                                        Content="Apply"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Width="100"
+                                        Background="#2E2E2E"
+                                        BorderBrush="Gray"
+                                        Foreground="White"/>
+                            </Grid>
+
+                            <TextBlock Text="Not compatible with DLAA/FSR/Frame Generation"
+                                       Foreground="#FFA500"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- PATHS -->
+                    <Border Background="#2E2E2E"
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            Padding="12">
+                        <StackPanel Spacing="12">
+
+                            <TextBlock Text="Paths"
+                                       Foreground="#FFA500"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
+
+                            <Grid ColumnDefinitions="160,*" ColumnSpacing="10">
+                                <TextBlock Text="Instance Directory"
+                                           Foreground="White"/>
+                                <TextBlock x:Name="LblInstallDir"
+                                           Grid.Column="1"
+                                           Foreground="#FFA500"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="160,*" ColumnSpacing="10">
+                                <TextBlock Text="Archive Directory"
+                                           Foreground="White"/>
+                                <TextBlock x:Name="LblArchiveDir"
+                                           Grid.Column="1"
+                                           Foreground="#FFA500"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="160,Auto" ColumnSpacing="10">
+                                <TextBlock Text="Enable Archiving"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                                <ToggleSwitch x:Name="TglBtnEnableArchive"
+                                              Grid.Column="1"
+                                              VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Click"
+                                           Foreground="White"/>
+                                <TextBlock x:Name="LnkLblRemap"
+                                           Text="here"
+                                           Foreground="#FFA500"
+                                           Classes="link"
+                                           Cursor="Hand"
+                                           PointerPressed="LnkLblRemap_PointerPressed"/>
+                                <TextBlock Text="to remap the instance into another directory"
+                                           Foreground="White"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- MISC SETTINGS -->
+                    <Border Background="#2E2E2E"
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            Padding="12">
+                        <StackPanel Spacing="12">
+
+                            <TextBlock Text="Misc Settings"
+                                       Foreground="#FFA500"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
+
+                            <Grid ColumnDefinitions="160,Auto" ColumnSpacing="10">
+                                <TextBlock Text="Download location"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                                <ComboBox x:Name="DrpDwnLstDownLoc"
+                                          Grid.Column="1"
+                                          Width="220"
+                                          SelectionChanged="OnDownloadLocationChanged"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="160,Auto" ColumnSpacing="10">
+                                <TextBlock Text="Skyrim Ini profile"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                                <ComboBox x:Name="DrpDwnLstIni"
+                                          Grid.Column="1"
+                                          Width="220"
+                                          SelectionChanged="OnIniChanged"/>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="160,Auto" ColumnSpacing="10">
+                                <TextBlock Text="Language"
+                                           Foreground="White"/>
+                                <TextBlock x:Name="LblLanguage"
+                                           Grid.Column="1"
+                                           Foreground="#FFA500"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- RIGHT SIDE: OPTIONS -->
+            <Border Grid.Column="1"
+                    Background="#2E2E2E"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    Padding="12">
+                <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10">
+
+                    <TextBlock Text="Options"
+                               Foreground="#FFA500"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="Available options. Click"
+                                   Foreground="White"/>
+                        <TextBlock x:Name="LnkLblOptionsManager"
+                                   Text="here"
+                                   Foreground="#FFA500"
+                                   Classes="link"
+                                   Cursor="Hand"
+                                   PointerPressed="LnkLblOptionsManager_PointerPressed"/>
+                        <TextBlock Text="to change options."
+                                   Foreground="White"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="OptionsGrid"
+                              Grid.Row="2"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserSortColumns="False"
+                              HeadersVisibility="None"
+                              GridLinesVisibility="None"
+                              CanUserResizeColumns="True"
+                              Background="#2E2E2E"
+                              Foreground="White">
+
+                        <DataGrid.Styles>
+                            <Style Selector="DataGridRowGroupHeader">
+                                <Setter Property="IsPropertyNameVisible" Value="False"/>
+                                <Setter Property="IsItemCountVisible" Value="True"/>
+                                <Setter Property="ItemCountFormat" Value="( {0} Options )"/>
+                            </Style>
+                            <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+                                <Setter Property="Fill" Value="#FFA500"/>
+                                <Setter Property="Opacity" Value="1"/>
+                            </Style>
+                        </DataGrid.Styles>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding FriendlyName}" Width="200"/>
+                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" IsVisible="False"/>
+                            <DataGridTextColumn Header="Value" Binding="{Binding FormattedValue}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+        </Grid>
+
+        <Button x:Name="BtnBack"
+                Grid.Row="2"
+                Content="Back"
+                HorizontalAlignment="Right"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Width="100"
+                Margin="0,10,0,0"
+                Background="#2E2E2E"
+                BorderBrush="Gray"
+                Foreground="White"/>
+
+    </Grid>
+</UserControl>

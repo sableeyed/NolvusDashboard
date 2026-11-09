@@ -1,8 +1,12 @@
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Data.Converters;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +27,22 @@ namespace Nolvus.Dashboard.Frames.Instance
 {
     public partial class InstanceDetailFrame : DashboardFrame
     {
+        public static readonly FuncValueConverter<ModObjectStatus, IBrush> StatusBrush = new(Status =>
+        {
+            if (Status == ModObjectStatus.OK)
+            {
+                return Brushes.LimeGreen;
+            }
+            else if (Status == ModObjectStatus.VersionMisMatch || Status == ModObjectStatus.InstalledIniMissing)
+            {
+                return Brushes.Orange;
+            }
+            else
+            {
+                return Brushes.Red;
+            }
+        });
+
         private ModObjectList ModListStatus = new ModObjectList();
         private string _CurrentProfile;
 
@@ -37,8 +57,10 @@ namespace Nolvus.Dashboard.Frames.Instance
             BtnSettings.Click += BtnSettings_Click;
             BtnLoadOrder.Click += BtnLoadOrder_Click;
             BtnReport.Click += BtnReport_Click;
+            BtnExpand.Click += BtnExpand_Click;
+            BtnCollapse.Click += BtnCollapse_Click;
 
-            SetupReportMenu();
+            ModsGrid.DoubleTapped += ModsGrid_DoubleTapped;
 
             DrpDwnLstProfiles.SelectionChanged += DrpDwnLstProfiles_SelectionChanged;
 
@@ -48,15 +70,22 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         protected override async Task OnLoadedAsync()
         {
-            var instance = ServiceSingleton.Instances.WorkingInstance;
+            try
+            {
+                var instance = ServiceSingleton.Instances.WorkingInstance;
 
-            LblHeader.Text = string.Format("{0} - {1} v{2}{3}", instance.Name, instance.Performance.Variant, instance.Version, instance.Tag != string.Empty ? string.Format(" - ({0})", instance.Tag) : string.Empty);
-            ServiceSingleton.Dashboard.Info($"Instance mods for {instance.Name} v{instance.Version}");
+                LblHeader.Text = instance.FullName;
+                ServiceSingleton.Dashboard.Info(string.Format("Instance mods for {0}", instance.FullName));
 
-            // Load profiles
-            var profiles = await ServiceSingleton.Packages.ModOrganizer2.GetProfilesAsync();
-            DrpDwnLstProfiles.ItemsSource = profiles;
-            DrpDwnLstProfiles.SelectedIndex = 0;
+                // Load profiles
+                var profiles = await ServiceSingleton.Packages.ModOrganizer2.GetProfilesAsync();
+                DrpDwnLstProfiles.ItemsSource = profiles;
+                DrpDwnLstProfiles.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                await ServiceSingleton.Dashboard.Error("Error during instance detail loading", ex.Message);
+            }
         }
 
         private void ShowLoading() =>
@@ -111,7 +140,13 @@ namespace Nolvus.Dashboard.Frames.Instance
         {
             Dispatcher.UIThread.Post(() =>
             {
-                ModsGrid.ItemsSource = mods.List;
+                var ModsView = new DataGridCollectionView(mods.List);
+                ModsView.GroupDescriptions.Add(new DataGridPathGroupDescription("Category"));
+
+                ModsGrid.ItemsSource = ModsView;
+
+                // The grid would otherwise select the first mod, upstream's starts with nothing.
+                ModsView.MoveCurrentToPosition(-1);
             });
         }
 
@@ -143,7 +178,7 @@ namespace Nolvus.Dashboard.Frames.Instance
         private void UpdateHeaderColor(ModObjectList list)
         {
             // Reset
-            LblHeader.Text = $"{ServiceSingleton.Instances.WorkingInstance.Name} v{ServiceSingleton.Instances.WorkingInstance.Version}";
+            LblHeader.Text = ServiceSingleton.Instances.WorkingInstance.FullName;
             // Default dark background
             LblHeader.Foreground = Brushes.White;
 
@@ -168,6 +203,54 @@ namespace Nolvus.Dashboard.Frames.Instance
             ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
         }
 
+        private void BtnExpand_Click(object? sender, RoutedEventArgs e)
+        {
+            if (ModsGrid.ItemsSource is DataGridCollectionView ModsView)
+            {
+                foreach (DataGridCollectionViewGroup Group in ModsView.Groups)
+                {
+                    ModsGrid.ExpandRowGroup(Group, true);
+                }
+            }
+        }
+
+        private void BtnCollapse_Click(object? sender, RoutedEventArgs e)
+        {
+            if (ModsGrid.ItemsSource is DataGridCollectionView ModsView && ModsView.Groups.Count > 0)
+            {
+                // Collapsing a group whose header is scrolled off but whose rows are on screen
+                // leaves the grid's displayed rows stale, and CollapseRowGroup then throws on the
+                // next header. From the top every header is on screen or below it.
+                ModsGrid.ScrollIntoView(ModsView.Groups[0], null);
+                ModsGrid.UpdateLayout();
+
+                foreach (DataGridCollectionViewGroup Group in ModsView.Groups)
+                {
+                    ModsGrid.CollapseRowGroup(Group, true);
+                }
+            }
+        }
+
+        private async void ModsGrid_DoubleTapped(object? sender, TappedEventArgs e)
+        {
+            // Unlike upstream's CellDoubleClick this also fires on the column and group headers,
+            // which have no mod row above them.
+            var Mod = (e.Source as Visual)?.FindAncestorOfType<DataGridRow>(true)?.DataContext as ModObject;
+            var Owner = TopLevel.GetTopLevel(this) as Window;
+
+            if (Mod == null || Owner == null)
+                return;
+
+            var Info = string.Format("Mod : {0}", Mod.Name, Mod.Version);
+
+            Info += Environment.NewLine;
+            Info += string.Format("Version : {0}", Mod.Version);
+            Info += Environment.NewLine;
+            Info += string.Format("Status : {0}", Mod.StatusText);
+
+            await NolvusMessageBox.Show(Owner, "Mod information", Info, MessageBoxType.Info);
+        }
+
         private void BtnPlay_Click(object? sender, RoutedEventArgs e)
         {
             // Without this an instance predating the Fluorine switch throws FileNotFoundException
@@ -185,13 +268,13 @@ namespace Nolvus.Dashboard.Frames.Instance
             {
                 var instance = ServiceSingleton.Instances.WorkingInstance;
 
-                ModOrganizer.EnsureInstanceIni(instance.InstallDir);
+                ModOrganizer.EnsureInstanceIni(instance.SettingsManager.InstallDir);
 
-                ModOrganizer.SelectInstance(instance.InstallDir);
+                ModOrganizer.SelectInstance(instance.SettingsManager.InstallDir);
 
-                Fluorine.InstallPlugins(instance.InstallDir);
+                Fluorine.InstallPlugins(instance.SettingsManager.InstallDir);
 
-                var mo2 = ModOrganizer.Start(instance.InstallDir);
+                var mo2 = ModOrganizer.Start(instance.SettingsManager.InstallDir);
                 BtnPlay.IsEnabled = false;
                 BtnPlay.Content = "Running...";
 
@@ -217,18 +300,7 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         private async void BtnSettings_Click(object? sender, RoutedEventArgs e)
         {
-            var inst = ServiceSingleton.Instances.WorkingInstance;
-
-            switch (inst.Name)
-            {
-                case Strings.NolvusAscension:
-                    await ServiceSingleton.Dashboard.LoadFrameAsync<v5.InstanceSettingsFrame>();
-                    break;
-
-                case Strings.NolvusAwakening:
-                    await ServiceSingleton.Dashboard.LoadFrameAsync<v6.InstanceSettingsFrame>();
-                    break;
-            }
+            await ServiceSingleton.Dashboard.LoadFrameAsync<InstanceSettingsFrame>();
         }
 
         private async void BtnLoadOrder_Click(object? sender, RoutedEventArgs e)
@@ -236,62 +308,7 @@ namespace Nolvus.Dashboard.Frames.Instance
             await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>();
         }
 
-        private void SetupReportMenu()
-        {
-            var Menu = new ContextMenu();
-
-            var MiClipboard = new MenuItem { Header = "Copy to clipboard" };
-            MiClipboard.Click += (_, __) => BrItmClipboardReport_Click();
-            Menu.Items.Add(MiClipboard);
-
-            var MiPdf = new MenuItem { Header = "Generate PDF" };
-            MiPdf.Click += (_, __) => BrItmPDFReport_Click();
-            Menu.Items.Add(MiPdf);
-
-            BtnReport.ContextMenu = Menu;
-        }
-
-        private void BtnReport_Click(object? sender, RoutedEventArgs e)
-        {
-            BtnReport.ContextMenu.Open();
-        }
-
-        private async void BrItmClipboardReport_Click()
-        {
-            var Window_ = TopLevel.GetTopLevel(this) as Window;
-
-            ShowLoading();
-
-            try
-            {
-                var Report = await ServiceSingleton.Report.GenerateReportToClipBoard(ModListStatus, (s, p) =>
-                {
-                    ServiceSingleton.Dashboard.Status($"{s} ({p}%)");
-                    ServiceSingleton.Dashboard.Progress(p);
-                });
-
-                var Clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
-
-                if (Clipboard == null)
-                    throw new Exception("No clipboard is available");
-
-                await Clipboard.SetTextAsync(Report);
-
-                ReportDone();
-
-                await NolvusMessageBox.Show(Window_, "Information", "Configuration has been copied to the clipboard", MessageBoxType.Info);
-            }
-            catch (Exception ex)
-            {
-                ReportDone();
-
-                ServiceSingleton.Logger.Log(ex.ToString());
-
-                await NolvusMessageBox.Show(Window_, "Error during report generation", ex.Message, MessageBoxType.Error);
-            }
-        }
-
-        private async void BrItmPDFReport_Click()
+        private async void BtnReport_Click(object? sender, RoutedEventArgs e)
         {
             var Window_ = TopLevel.GetTopLevel(this) as Window;
 

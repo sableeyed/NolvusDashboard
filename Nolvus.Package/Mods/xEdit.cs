@@ -23,7 +23,7 @@ namespace Nolvus.Package.Mods
                 {
                     var Instance = ServiceSingleton.Instances.WorkingInstance;
 
-                    var InstallDirectory = Path.Combine(Instance.InstallDir, "TOOLS", Name);
+                    var InstallDirectory = Path.Combine(Instance.SettingsManager.InstallDir, "TOOLS", Name);
                     var CacheDir = Path.Combine(InstallDirectory, "Cache");
 
                     Directory.CreateDirectory(InstallDirectory);
@@ -36,10 +36,10 @@ namespace Nolvus.Package.Mods
                     foreach (var rule in Rules)
                     {
                         rule.Execute(
-                            Instance.StockGame,     // GamePath
+                            Instance.SettingsManager.StockGame,     // GamePath
                             extractDir,             // ExtractDir
                             InstallDirectory,       // ModDir → tool root directory
-                            Instance.InstallDir     // InstanceDir
+                            Instance.SettingsManager.InstallDir     // InstanceDir
                         );
 
                         CopyingProgress(++counter, Rules.Count);

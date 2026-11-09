@@ -55,7 +55,7 @@
                             VerticalContentAlignment="Center"
                             HorizontalContentAlignment="Center"
                             Foreground="White"
-                            BorderBrush="White"
+                            BorderBrush="Gray"
                             Click="BtnGuide_Click"/>
 
                     <Button x:Name="BtnWiki"
@@ -66,7 +66,7 @@
                             VerticalContentAlignment="Center"
                             HorizontalContentAlignment="Center"
                             Foreground="White"
-                            BorderBrush="White"
+                            BorderBrush="Gray"
                             Click="BtnWiki_Click"/>
 
                     <Button x:Name="BtnDonate"
@@ -77,7 +77,7 @@
                             VerticalContentAlignment="Center"
                             HorizontalContentAlignment="Center"
                             Foreground="White"
-                            BorderBrush="White"
+                            BorderBrush="Gray"
                             Click="BtnDonate_Click"/>
 
                     <Button x:Name="BtnPatreon"
@@ -88,7 +88,7 @@
                             VerticalContentAlignment="Center"
                             HorizontalContentAlignment="Center"
                             Foreground="White"
-                            BorderBrush="White"
+                            BorderBrush="Gray"
                             Click="BtnPatreon_Click"/>
                 </StackPanel>
 
@@ -102,7 +102,7 @@
                         VerticalContentAlignment="Center"
                         HorizontalContentAlignment="Center"
                         Background="#2E2E2E"
-                        BorderBrush="#FFA500"
+                        BorderBrush="Gray"
                         Foreground="#FFA500"
                         Click="BtnContinue_Click"/>
 

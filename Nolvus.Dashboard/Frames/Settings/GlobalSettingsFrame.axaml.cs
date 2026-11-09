@@ -8,6 +8,7 @@ using Nolvus.Dashboard.Controls;
 using Avalonia.Threading;
 using System.Diagnostics;
 using Avalonia;
+using Avalonia.Media;
 
 namespace Nolvus.Dashboard.Frames.Settings
 {
@@ -19,6 +20,8 @@ namespace Nolvus.Dashboard.Frames.Settings
 
             BtnBack.Click += BtnBack_Click;
             BtnSaveMegaInfo.Click += BtnSaveMegaInfo_Click;
+            BtnCLearLogs.Click += BtnCLearLogs_Click;
+            BtnClearCache.Click += BtnClearCache_Click;
         }
 
         protected override void OnLoad()
@@ -170,13 +173,37 @@ namespace Nolvus.Dashboard.Frames.Settings
                 // Disable when anonymous, enable when not anonymous
                 TxtBxUserName.IsEnabled = !anonymous;
                 TxtBxPassword.IsEnabled = !anonymous;
-                PnlMessage.IsEnabled = !anonymous;
+
+                if (anonymous)
+                {
+                    LblMegaMessage.Foreground = Brushes.Gray;
+                    LblEmail.Foreground = Brushes.Gray;
+                    LblPassword.Foreground = Brushes.Gray;
+                }
+                else
+                {
+                    LblMegaMessage.Foreground = Brushes.White;
+                    LblEmail.Foreground = Brushes.White;
+                    LblPassword.Foreground = Brushes.White;
+                }
             }
         }
 
         private void OnProcessorCountChanged(object? sender, RoutedEventArgs e)
         {
             ServiceSingleton.Settings.ProcessCount = (int)DrpDwnLstProcessCount.SelectedItem!;
+        }
+
+        private void BtnCLearLogs_Click(object? sender, RoutedEventArgs e)
+        {
+            ServiceSingleton.Logger.ClearLogs();
+            NolvusMessageBox.Show(TopLevel.GetTopLevel(this) as Window, "Logs", "Logs have been cleaned", MessageBoxType.Info);
+        }
+
+        private void BtnClearCache_Click(object? sender, RoutedEventArgs e)
+        {
+            ServiceSingleton.Folders.ClearCache();
+            NolvusMessageBox.Show(TopLevel.GetTopLevel(this) as Window, "Cache", "Cache has been cleaned", MessageBoxType.Info);
         }
 
         private void TglBtnAutoClick_Changed(object? sender, RoutedEventArgs e)

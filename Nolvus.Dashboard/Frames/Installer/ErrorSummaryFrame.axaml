@@ -46,7 +46,7 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     Background="#2E2E2E"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"
                     Click="BtnFix_Click" />
 
@@ -57,7 +57,7 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     Background="#2E2E2E"
-                    BorderBrush="#FFA500"
+                    BorderBrush="Gray"
                     Foreground="#FFA500"
                     Click="BtnRetry_Click" />
         </Grid>

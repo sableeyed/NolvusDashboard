@@ -7,7 +7,7 @@
         <Grid RowDefinitions="Auto,*,Auto" RowSpacing="24">
 
             <!-- HEADER -->
-            <TextBlock Text="Performance Settings"
+            <TextBlock Text="Graphics and Performance Options"
                        Foreground="White"
                        FontSize="20"/>
 
@@ -16,212 +16,234 @@
                   ColumnDefinitions="*,350"
                   ColumnSpacing="24">
 
-                <!-- LEFT PANEL -->
-                <Border Background="#363636"
-                        BorderBrush="#444"
-                        CornerRadius="4"
-                        Padding="16">
+                <!-- LEFT SIDE -->
+                <ScrollViewer Grid.Column="0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
 
-                    <ScrollViewer>
-                        <StackPanel Spacing="20" VerticalAlignment="Top">
+                    <Grid ColumnDefinitions="*,*"
+                          RowDefinitions="Auto,Auto,Auto"
+                          ColumnSpacing="12"
+                          RowSpacing="12">
 
-                            <!-- TOP ROW: DROPDOWNS + HARDWARE PANEL -->
-                            <Grid ColumnDefinitions="Auto,Auto,*"
-                                  RowDefinitions="Auto,Auto,Auto,Auto"
-                                  ColumnSpacing="12"
-                                  RowSpacing="10"
-                                  HorizontalAlignment="Stretch">
+                        <!-- RESOLUTION -->
+                        <Border Grid.Row="0" Grid.Column="0"
+                                Background="#363636"
+                                BorderBrush="#444"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12">
 
-                                <!-- ===== Row 0: VARIANT ===== -->
-                                <TextBlock Grid.Row="0" Grid.Column="0"
-                                           Text="Variant"
-                                           Foreground="White" />
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Resolution" Foreground="#FFA500" FontSize="16" FontWeight="Bold"/>
 
-                                <ComboBox Grid.Row="0" Grid.Column="1"
-                                          x:Name="DrpDwnLstVariant"
-                                          MinWidth="180"
-                                          SelectionChanged="OnVariantChanged"
-                                          Background="#2E2E2E"
-                                          Foreground="White" />
+                                <Grid ColumnDefinitions="115,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
 
-                                <!-- Hardware panel -->
-                                <Border Grid.Row="0" Grid.Column="2"
-                                        Grid.RowSpan="4"
-                                        Background="#2E2E2E"
-                                        BorderBrush="#555"
-                                        BorderThickness="1"
-                                        CornerRadius="4"
-                                        Padding="8"
-                                        Margin="12,0,16,0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top">
+                                    <TextBlock x:Name="LblScreenRatio"
+                                               Grid.Row="0"
+                                               Text="Screen ratio"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpDwnLstRatios"
+                                              Grid.Row="0" Grid.Column="1"
+                                              SelectionChanged="OnListRatiosChanged"
+                                              DisplayMemberBinding="{Binding Value}"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
 
-                                    <StackPanel Spacing="6">
-                                        <TextBlock Text="Hardware Requirement"
-                                                   Foreground="White"
-                                                   FontSize="14"/>
+                                    <TextBlock x:Name="LblResolution"
+                                               Grid.Row="1"
+                                               Text="Resolution"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpDwnLstResolution"
+                                              Grid.Row="1" Grid.Column="1"
+                                              SelectionChanged="OnResolutionChanged"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
 
-                                        <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <TextBlock Text="GPU"
-                                                       Foreground="White"/>
-                                            <TextBlock x:Name="LblReqGpu" Foreground="#FFA500"/>
-                                        </StackPanel>
-
-                                        <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <TextBlock Text="VRAM"
-                                                       Foreground="White"/>
-                                            <TextBlock x:Name="LblReqVram" Foreground="#FFA500"/>
-                                        </StackPanel>
-
-                                        <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <TextBlock Text="Storage"
-                                                       Foreground="White"/>
-                                            <TextBlock x:Name="LblReqStorageTotal" Foreground="#FFA500"/>
-                                        </StackPanel>
-
-                                        <TextBlock x:Name="LblReqDisclaimer"
-                                                   Text="These recommendations are an estimation only. It will always vary depending on your computer. You can always tweak a bit more by selecting a lower Skyrim ini profile or disable other effects like Advanced Physics or Fake Ray tracing."
-                                                   Foreground="#CCCCCC"
-                                                   TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                </Border>
-
-                                <!-- ===== Row 1: ANTI-ALIASING ===== -->
-                                <TextBlock Grid.Row="1" Grid.Column="0"
-                                           Text="Anti-Aliasing"
-                                           Foreground="White" />
-
-                                <ComboBox Grid.Row="1" Grid.Column="1"
-                                          x:Name="DrpDwnLstAntiAliasing"
-                                          SelectionChanged="OnAntiAliasingChanged"
-                                          MinWidth="180"
-                                          Background="#2E2E2E"
-                                          Foreground="White" />
-
-                                <!-- ===== Row 2: INI PROFILE ===== -->
-                                <TextBlock Grid.Row="2" Grid.Column="0"
-                                           Text="Skyrim INI Profile"
-                                           Foreground="White"/>
-
-                                <ComboBox Grid.Row="2" Grid.Column="1"
-                                          x:Name="DrpDwnLstIni"
-                                          MinWidth="180"
-                                          SelectionChanged="OnIniChanged"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
-
-                                <!-- ===== Row 3: LODs ===== -->
-                                <TextBlock Grid.Row="3" Grid.Column="0"
-                                           Text="LODs"
-                                           Foreground="White"/>
-
-                                <ComboBox Grid.Row="3" Grid.Column="1"
-                                          x:Name="DrpDwnLstLODs"
-                                          SelectionChanged="OnLodsChanged"
-                                          MinWidth="180"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
-                            </Grid>
-                            <!-- Physics -->
-                            <StackPanel Spacing="8">
-                                <TextBlock x:Name="LblPhysics"
-                                           Text="Advanced Physics"
-                                           Foreground="White"/>
-                                <ToggleSwitch x:Name="TglBtnPhysics"/>
-                                <TextBlock Text="Physics on hair and armors (can be taxing on cities)"
-                                           Foreground="#FFA500"
-                                           TextWrapping="Wrap"/>
-                            </StackPanel>
-
-                            <!-- Global Illumination -->
-                            <StackPanel Spacing="8">
-                                <TextBlock x:Name="LblRaytracing"
-                                           Text="Global Illumination (Fake Raytracing)"
-                                           Foreground="White"/>
-                                <ToggleSwitch x:Name="TglBtnRayTracing"/>
-                                <TextBlock Text="Global Illumination will cost about 5–10 FPS."
-                                           Foreground="#FFA500"
-                                           TextWrapping="Wrap"/>
-                            </StackPanel>
-
-                            <!-- FPS Stabilizer -->
-                            <StackPanel Spacing="8">
-                                <TextBlock x:Name="LblFpsStabilizer"
-                                           Text="FPS Stabilizer"
-                                           Foreground="White"/>
-                                <ToggleSwitch x:Name="TglBtnFPSStabilizer"/>
-                                <TextBlock Text="Auto-reduces draw distance to maintain smooth FPS."
-                                           Foreground="#FFA500"
-                                           TextWrapping="Wrap"/>
-                            </StackPanel>
-
-                            <!-- Screen Ratio -->
-                            <StackPanel Spacing="4">
-                                <TextBlock x:Name="LblScreenRatio"
-                                           Text="Screen Ratio"
-                                           Foreground="White"/>
-                                <ComboBox x:Name="DrpDwnLstRatios"
-                                          SelectionChanged="OnListRatiosChanged"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
-                            </StackPanel>
-
-                            <!-- Resolution -->
-                            <StackPanel Spacing="4">
-                                <TextBlock x:Name="LblResolution"
-                                           Text="Resolution"
-                                           Foreground="White"/>
-                                <ComboBox x:Name="DrpDwnLstResolution"
-                                          SelectionChanged="OnResolutionChanged"
-                                          Background="#2E2E2E"
-                                          Foreground="White"/>
-                            </StackPanel>
-
-                            <!-- Downscaling -->
-                            <Border BorderBrush="#555"
-                                    BorderThickness="1"
-                                    CornerRadius="4"
-                                    Padding="12">
-
-                                <StackPanel Spacing="12">
-
-                                    <TextBlock x:Name="LblDownscaling"
-                                               Text="Resolution Downscaling (Not Compatible with DLAA)"
-                                               Foreground="White"/>
-
-                                    <TextBlock Text="Resolution downscaling allows you to play at a lower resolution than your monitor to improve performance."
-                                               Foreground="#FFFFFF"
-                                               TextWrapping="Wrap"/>
-
-                                    <TextBlock Text="With this option enabled you can play at 1080p on a 1440p monitor."
-                                               Foreground="#FFFFFF"
-                                               TextWrapping="Wrap"/>
-
-                                    <TextBlock Text="Recommended setup is 720p on 1080p, 1080p on 1440p."
+                                    <TextBlock Grid.Row="2" Grid.Column="1"
+                                               Text="The resolution must match your screen resolution. If you want to play at lower resolution, use the downscaling feature below."
                                                Foreground="#FFA500"
                                                TextWrapping="Wrap"/>
 
-                                    <ToggleSwitch x:Name="TglBtnDownScale"/>
+                                    <TextBlock x:Name="LblDownscaleResolution"
+                                               Grid.Row="3"
+                                               Text="Downscaled resolution"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglBtnDownScale"
+                                                  Grid.Row="3" Grid.Column="1"/>
 
-                                    <StackPanel Spacing="4">
-                                        <TextBlock x:Name="LblDownscaleResolution"
-                                                   Text="Downscaled Resolution"
-                                                   Foreground="White"/>
-                                        <ComboBox x:Name="DrpDwnLstScreenRes"
-                                                  Background="#2E2E2E"
-                                                  SelectionChanged="OnDownscaledResolutionChanged"
-                                                  Foreground="White"/>
-                                    </StackPanel>
+                                    <ComboBox x:Name="DrpDwnLstScreenRes"
+                                              Grid.Row="4" Grid.Column="1"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
 
-                                </StackPanel>
+                                    <TextBlock Grid.Row="5" Grid.Column="1"
+                                               Text="Not compatible with DLAA"
+                                               Foreground="#FFA500"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
 
-                            </Border>
+                        <!-- GRAPHICS -->
+                        <Border Grid.Row="1" Grid.Column="0"
+                                Background="#363636"
+                                BorderBrush="#444"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12">
 
-                        </StackPanel>
-                    </ScrollViewer>
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Graphics" Foreground="#FFA500" FontSize="16" FontWeight="Bold"/>
 
-                </Border>
+                                <Grid ColumnDefinitions="115,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="10">
+
+                                    <TextBlock Grid.Row="0"
+                                               Text="Anti-Aliasing"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpDwnLstAntiAliasing"
+                                              Grid.Row="0" Grid.Column="1"
+                                              SelectionChanged="OnAntiAliasingChanged"
+                                              DisplayMemberBinding="{Binding Value}"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                               Text="DLAA only for Nvidia RTX card"
+                                               Foreground="#FFA500"
+                                               TextWrapping="Wrap"/>
+
+                                    <TextBlock Grid.Row="2"
+                                               Text="Skyrim Ini profile"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpDwnLstIni"
+                                              Grid.Row="2" Grid.Column="1"
+                                              SelectionChanged="OnIniChanged"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+
+                                    <TextBlock x:Name="LblLods"
+                                               Grid.Row="3"
+                                               Text="LODs"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpDwnLstLODs"
+                                              Grid.Row="3" Grid.Column="1"
+                                              SelectionChanged="OnLodsChanged"
+                                              DisplayMemberBinding="{Binding Value}"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- PERFORMANCE -->
+                        <Border Grid.Row="0" Grid.Column="1"
+                                Grid.RowSpan="2"
+                                Background="#363636"
+                                BorderBrush="#444"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12">
+
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Performance" Foreground="#FFA500" FontSize="16" FontWeight="Bold"/>
+
+                                <Grid ColumnDefinitions="115,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+
+                                    <TextBlock Grid.Row="0"
+                                               Text="Variant"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpDwnLstVariant"
+                                              Grid.Row="0" Grid.Column="1"
+                                              SelectionChanged="OnVariantChanged"
+                                              DisplayMemberBinding="{Binding FullName}"
+                                              MinWidth="180"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+
+                                    <TextBlock x:Name="LblPhysics"
+                                               Grid.Row="1"
+                                               Text="Advanced Physics"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglBtnPhysics"
+                                                  Grid.Row="1" Grid.Column="1"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1"
+                                               Text="Physics on hair and armors (can be taxing on cities)"
+                                               Foreground="#FFA500"
+                                               TextWrapping="Wrap"/>
+
+                                    <TextBlock x:Name="LblRaytracing"
+                                               Grid.Row="3"
+                                               Text="Global Illumination"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglBtnRayTracing"
+                                                  Grid.Row="3" Grid.Column="1"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1"
+                                               Text="Global Illumination (fake ray tracing) will cost about 5-10 fps"
+                                               Foreground="#FFA500"
+                                               TextWrapping="Wrap"/>
+
+                                    <TextBlock x:Name="LblFpsStabilizer"
+                                               Grid.Row="5"
+                                               Text="FPS Stabilizer"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ToggleSwitch x:Name="TglBtnFPSStabilizer"
+                                                  Grid.Row="5" Grid.Column="1"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1"
+                                               Text="Auto-reduces draw distance to maintain smooth FPS."
+                                               Foreground="#FFA500"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- HARDWARE REQUIREMENT -->
+                        <Border Grid.Row="2" Grid.ColumnSpan="2"
+                                Background="#363636"
+                                BorderBrush="#444"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12">
+
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Hardware Requirement" Foreground="#FFA500" FontSize="16" FontWeight="Bold"/>
+
+                                <Grid ColumnDefinitions="75,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                                    <TextBlock Grid.Row="0" Text="GPU" Foreground="White"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="LblReqGpu" Foreground="#FFA500" TextWrapping="Wrap"/>
+
+                                    <TextBlock Grid.Row="1" Text="VRAM" Foreground="White"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblReqVram" Foreground="#FFA500" TextWrapping="Wrap"/>
+
+                                    <TextBlock Grid.Row="2" Text="Storage" Foreground="White"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblReqStorageTotal" Foreground="#FFA500" TextWrapping="Wrap"/>
+                                </Grid>
+
+                                <TextBlock x:Name="LblReqDisclaimer"
+                                           Text="These recommendations are an estimation only. It will always vary depending on your computer. You can always tweak a bit more by selecting a lower Skyrim ini profile or disable other effects like Advanced Physics or Fake Ray tracing."
+                                           Foreground="White"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                    </Grid>
+                </ScrollViewer>
 
                 <!-- RIGHT PANEL -->
                 <ScrollViewer Grid.Column="1"
@@ -237,6 +259,11 @@
 
                             <!-- INFO TEXT -->
                             <StackPanel Grid.Row="0" Spacing="12">
+
+                                <TextBlock Text="Info"
+                                           Foreground="#FFA500"
+                                           FontSize="16"
+                                           FontWeight="Bold"/>
 
                                 <TextBlock Text="This new Nolvus version has some performance options"
                                            Foreground="#CCCCCC"
@@ -281,6 +308,25 @@
                                     <TextBlock x:Name="LblRAM" Foreground="#FFA500"/>
                                 </StackPanel>
 
+                                <TextBlock Text="The displayed GPU is your integrated GPU and you can't select DLAA?"
+                                           Foreground="White"
+                                           TextWrapping="Wrap"/>
+
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="Click"
+                                               Foreground="White"/>
+                                    <TextBlock x:Name="LnkLblInfo"
+                                               Text="here"
+                                               Foreground="#FFA500"
+                                               Classes="link"
+                                               Cursor="Hand"
+                                               PointerPressed="LnkLblInfo_PointerPressed"/>
+                                </StackPanel>
+
+                                <TextBlock Text="The mentioned requirements are an estimation only, all computers configurations are always different from one user to another."
+                                           Foreground="#FFA500"
+                                           TextWrapping="Wrap"/>
+
                             </StackPanel>
 
                             <!-- BUTTONS -->
@@ -296,7 +342,7 @@
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Background="#2E2E2E"
-                                        BorderBrush="White"
+                                        BorderBrush="Gray"
                                         Foreground="White"/>
 
                                 <Button x:Name="BtnContinue"
@@ -305,7 +351,7 @@
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Background="#2E2E2E"
-                                        BorderBrush="#FFA500"
+                                        BorderBrush="Gray"
                                         Foreground="#FFA500"/>
 
                             </StackPanel>

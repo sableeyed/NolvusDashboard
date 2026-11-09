@@ -1,0 +1,183 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Installer.SummaryFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Styles>
+        <Style Selector="RadioButton">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="RadioButton /template/ ContentPresenter">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Border Background="#2E2E2E" Padding="16">
+
+        <Grid RowDefinitions="Auto,*" RowSpacing="12">
+
+            <TextBlock x:Name="LblStepText"
+                       Grid.Row="0"
+                       Text="Installation Summary"
+                       Foreground="White"
+                       FontSize="20"/>
+
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="*,431"
+                  ColumnSpacing="12">
+
+                <!-- LEFT SIDE -->
+                <ScrollViewer Grid.Column="0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+
+                    <StackPanel Spacing="16">
+
+                        <!-- SETTINGS -->
+                        <Border Background="#363636" BorderBrush="#444" BorderThickness="1" CornerRadius="4" Padding="12">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Settings" Foreground="#FFA500" FontSize="16" FontWeight="Bold"/>
+                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
+                                    <TextBlock Text="Instance Name" Foreground="White"/>
+                                    <TextBlock Grid.Column="1" x:Name="LblName" Foreground="#FFA500" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="1" Text="Resolution" Foreground="White"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="LblResolution" Foreground="#FFA500" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="2" Text="Variant" Foreground="White"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="LblVariant" Foreground="#FFA500" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="3" Text="Installation directory" Foreground="White"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LblInstallDir" Foreground="#FFA500" Margin="12,0,0,0" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Row="4" Text="Archive directory" Foreground="White"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="LblArchiveDir" Foreground="#FFA500" Margin="12,0,0,0" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Row="5" Text="Enable archiving" Foreground="White"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="LblEnableArchiving" Foreground="#FFA500" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="6" Text="Downscaling" Foreground="White"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1" x:Name="LblDownscaling" Foreground="#FFA500" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="7" Text="Skyrim Ini" Foreground="White"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="1" x:Name="LblIni" Foreground="#FFA500" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="8" Text="CDN" Foreground="White"/>
+                                    <TextBlock Grid.Row="8" Grid.Column="1" x:Name="LblCDN" Foreground="#FFA500" Margin="12,0,0,0"/>
+                                    <TextBlock Grid.Row="9" Text="Language" Foreground="White"/>
+                                    <TextBlock Grid.Row="9" Grid.Column="1" x:Name="LblLanguage" Foreground="#FFA500" Margin="12,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- MESSAGE BAR -->
+                        <Border x:Name="NotificationBanner"
+                                Background="#3BBF4B"
+                                BorderBrush="White"
+                                BorderThickness="1"
+                                CornerRadius="3"
+                                Padding="8">
+
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        Spacing="8">
+
+                                <Image Source="avares://NolvusDashboard/Assets/Warning-Message.png"
+                                       x:Name="NonPremiumImg"
+                                       Width="24" Height="24"
+                                       IsVisible="False"
+                                       Margin="4,0,0,0"/>
+
+                                <Image Source="avares://NolvusDashboard/Assets/Info.png"
+                                       x:Name="PremiumImg"
+                                       Width="24" Height="24"
+                                       Margin="4,0,0,0"/>
+
+                                <TextBlock x:Name="LblNotification"
+                                           Text="You are a Nexus Premium user. Download will be automatic and bandwidth will be unlimited."
+                                           Foreground="White"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- ERRORS -->
+                        <Border Background="#363636" BorderBrush="#444" BorderThickness="1" CornerRadius="4" Padding="12">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Errors Management" Foreground="#FFA500" FontSize="16" FontWeight="Bold"/>
+
+                                <TextBlock Text="Action to take when an error occurs" Foreground="White"/>
+
+                                <StackPanel Spacing="8" Margin="20,4,0,0">
+                                    <RadioButton x:Name="RdBtnOneError"
+                                                 Content="Stop installation and display the error message (recommended if you don't have a Nexus Premium account)"/>
+                                    <RadioButton x:Name="RdBtnThreshold"
+                                                 IsChecked="True"
+                                                 Content="radioButton2"/>
+                                    <RadioButton x:Name="RdBtnNoThreshold"
+                                                 Content="Don't stop installation and display all error messages at the end of the process (overnight)"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- RIGHT SIDE -->
+                <Border Grid.Column="1" Background="#363636" BorderBrush="#444" BorderThickness="1" CornerRadius="4" Padding="12">
+                    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+
+                        <TextBlock Text="Options" Foreground="#FFA500" FontSize="16" FontWeight="Bold"/>
+
+                        <DataGrid x:Name="OptionsGrid"
+                                  Grid.Row="1"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="None"
+                                  GridLinesVisibility="None"
+                                  CanUserResizeColumns="True"
+                                  Background="#363636"
+                                  Foreground="White">
+
+                            <DataGrid.Styles>
+                                <Style Selector="DataGridRowGroupHeader">
+                                    <Setter Property="IsPropertyNameVisible" Value="False"/>
+                                    <Setter Property="IsItemCountVisible" Value="True"/>
+                                    <Setter Property="ItemCountFormat" Value="( {0} Options )"/>
+                                </Style>
+                                <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+                                    <Setter Property="Fill" Value="#FFA500"/>
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Style>
+                            </DataGrid.Styles>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding FriendlyName}" Width="200"/>
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" IsVisible="False"/>
+                                <DataGridTextColumn Header="Value" Binding="{Binding FormattedValue}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Spacing="8">
+
+                            <Button x:Name="BtnPrevious"
+                                    Content="Previous"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    MinWidth="90"
+                                    Background="#2E2E2E"
+                                    BorderBrush="Gray"
+                                    Foreground="White"/>
+
+                            <Button x:Name="BtnStart"
+                                    Content="Start"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    MinWidth="90"
+                                    Background="#2E2E2E"
+                                    BorderBrush="Gray"
+                                    Foreground="#FFA500"/>
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

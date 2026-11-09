@@ -14,9 +14,11 @@ namespace Vcc.Nolvus.Api.Installer.Library
         bool NewGameRequired { get; }
         string Category { get; }
         bool Manageable { get; }
+        string DefaultValue { get; }
+        string DataType { get; }
     }
 
-    public class NolvusOptionsObject : InstallerApiObject
+    public class NolvusOptionObject : InstallerApiObject
     {
         public string Name { get; set; }
         public string FriendlyName { get; set; }
@@ -24,9 +26,11 @@ namespace Vcc.Nolvus.Api.Installer.Library
         public bool NewGameRequired { get; set; }
         public string Category { get; set; }
         public bool Manageable { get; set; }
+        public string DefaultValue { get; set; }
+        public string DataType { get; set; }
     }
 
-    public class NolvusOptionsDTO : NolvusOptionsObject, INolvusOptionDTO
+    public class NolvusOptionDTO : NolvusOptionObject, INolvusOptionDTO
     {
         public string Id { get; set; }
     }

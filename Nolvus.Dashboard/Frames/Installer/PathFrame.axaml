@@ -42,7 +42,7 @@
                                         VerticalContentAlignment="Center"
                                         MinWidth="90"
                                         Background="#2E2E2E"
-                                        BorderBrush="White"
+                                        BorderBrush="Gray"
                                         Foreground="White"/>
                             </Grid>
                         </StackPanel>
@@ -64,7 +64,7 @@
                                         VerticalContentAlignment="Center"
                                         MinWidth="90"
                                         Background="#2E2E2E"
-                                        BorderBrush="White"
+                                        BorderBrush="Gray"
                                         Foreground="White"/>
                             </Grid>
                         </StackPanel>
@@ -94,6 +94,10 @@
 
                         <!-- TOP INFO TEXT -->
                         <StackPanel Grid.Row="0" Spacing="16" VerticalAlignment="Top">
+                            <TextBlock Text="Info"
+                                       Foreground="#FFA500"
+                                       FontSize="16"
+                                       FontWeight="Bold"/>
                             <TextBlock Text="Select your Nolvus instance installation and archive directories. ALWAYS be sure you don't have the archive directory inside your instance directory. If you are not sure, use the default paths the application has setup for you."
                                         Foreground="#CCCCCC"
                                         TextWrapping="Wrap"/>
@@ -119,7 +123,7 @@
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="White"
+                                    BorderBrush="Gray"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
@@ -128,7 +132,7 @@
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="#FFA500"
+                                    BorderBrush="Gray"
                                     Foreground="#FFA500"/>
 
                         </StackPanel>

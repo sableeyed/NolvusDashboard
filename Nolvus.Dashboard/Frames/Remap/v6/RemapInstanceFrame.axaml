@@ -53,9 +53,10 @@
                         <Grid RowDefinitions="Auto,*"
                               RowSpacing="10">
 
-                            <!-- Group header text (WinForms GroupBox.Text = "Instance Info") -->
                             <TextBlock Text="Instance Info"
-                                       Foreground="White"
+                                       Foreground="#FFA500"
+                                       FontSize="16"
+                                       FontWeight="Bold"
                                        Margin="0,0,0,4"/>
 
                             <!-- Body -->
@@ -129,7 +130,7 @@
                                         Padding="0"
                                         Background="#2E2E2E"
                                         Foreground="White"
-                                        BorderBrush="White"
+                                        BorderBrush="Gray"
                                         BorderThickness="1"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"/>
@@ -180,7 +181,7 @@
                                 Padding="10,6"
                                 Background="#2E2E2E"
                                 Foreground="White"
-                                BorderBrush="White"
+                                BorderBrush="Gray"
                                 BorderThickness="1"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"/>
@@ -191,7 +192,7 @@
                                 Padding="10,6"
                                 Background="#2E2E2E"
                                 Foreground="#FFA500"
-                                BorderBrush="#FFA500"
+                                BorderBrush="Gray"
                                 BorderThickness="1"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"/>

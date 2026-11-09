@@ -317,7 +317,7 @@ namespace Nolvus.Services.Globals
         {
             var inst = ServiceSingleton.Instances.WorkingInstance;
 
-            if (!int.TryParse(inst.Settings.Width, out var w) || !int.TryParse(inst.Settings.Height, out var h) || w <= 0 || h <= 0)
+            if (!int.TryParse(inst.SettingsManager.Width, out var w) || !int.TryParse(inst.SettingsManager.Height, out var h) || w <= 0 || h <= 0)
                 return new List<string> { "1920x1080" };
 
             const int floorW = 1920;

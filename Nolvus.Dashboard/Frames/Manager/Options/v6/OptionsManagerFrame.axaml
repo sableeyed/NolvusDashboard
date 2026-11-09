@@ -1,0 +1,200 @@
+<UserControl
+    x:Class="Nolvus.Dashboard.Frames.Manager.Options.v6.OptionsManagerFrame"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Background="#363636"
+          RowDefinitions="Auto,*"
+          ColumnDefinitions="*,310"
+          ColumnSpacing="6">
+
+        <!-- Title -->
+        <Border Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Background="#363636"
+                Padding="6,2">
+            <TextBlock x:Name="LblStepText"
+                       Text="Available Options"
+                       Foreground="White"
+                       FontSize="12"
+                       VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis"/>
+        </Border>
+
+        <!-- Left: categories/options + values -->
+        <Grid Grid.Row="1"
+              Grid.Column="0"
+              Margin="4,6,0,4"
+              RowDefinitions="Auto,*"
+              RowSpacing="6">
+
+            <!-- CATEGORIES AND OPTIONS -->
+            <Border Grid.Row="0"
+                    Background="#363636"
+                    BorderBrush="#808080"
+                    BorderThickness="1"
+                    Padding="8">
+
+                <StackPanel Spacing="12">
+
+                    <TextBlock Text="Categories and Options"
+                               Foreground="#FFA500"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+
+                    <Grid ColumnDefinitions="92,Auto" RowDefinitions="Auto,Auto" RowSpacing="12">
+                        <TextBlock Grid.Row="0"
+                                   Text="Category"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"/>
+                        <ComboBox x:Name="DrpDwnLstCategory"
+                                  Grid.Row="0" Grid.Column="1"
+                                  Width="214"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  SelectionChanged="DrpDwnLstCategory_SelectedIndexChanged"
+                                  Background="#2E2E2E"
+                                  Foreground="White"/>
+
+                        <TextBlock Grid.Row="1"
+                                   Text="Option"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"/>
+                        <ComboBox x:Name="DrpDwnLstOption"
+                                  Grid.Row="1" Grid.Column="1"
+                                  Width="214"
+                                  DisplayMemberBinding="{Binding FriendlyName}"
+                                  SelectionChanged="DrpDwnLstOption_SelectedIndexChanged"
+                                  Background="#2E2E2E"
+                                  Foreground="White"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- VALUES -->
+            <Border Grid.Row="1"
+                    Background="#363636"
+                    BorderBrush="#808080"
+                    BorderThickness="1"
+                    Padding="8">
+
+                <StackPanel Spacing="12">
+
+                    <TextBlock Text="Values"
+                               Foreground="#FFA500"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+
+                    <Grid ColumnDefinitions="92,Auto" RowDefinitions="Auto,Auto" RowSpacing="12">
+                        <TextBlock Grid.Row="0"
+                                   Text="Current Value"
+                                   Foreground="White"/>
+                        <TextBlock x:Name="LblCurrentValue"
+                                   Grid.Row="0" Grid.Column="1"
+                                   Text="Loading..."
+                                   Foreground="#FFA500"/>
+
+                        <TextBlock Grid.Row="1"
+                                   Text="New Value"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"/>
+                        <Panel Grid.Row="1" Grid.Column="1">
+                            <ToggleSwitch x:Name="TglBtnNewValue"
+                                          IsVisible="False"
+                                          IsCheckedChanged="TglBtnNewValue_ToggleStateChanged"/>
+                            <ComboBox x:Name="DrpDwnLstNewValue"
+                                      Width="214"
+                                      DisplayMemberBinding="{Binding Value}"
+                                      SelectionChanged="DrpDwnLstNewValue_SelectedIndexChanged"
+                                      IsVisible="False"
+                                      Background="#2E2E2E"
+                                      Foreground="White"/>
+                        </Panel>
+                    </Grid>
+
+                    <StackPanel x:Name="PnlLock"
+                                Margin="92,0,0,0"
+                                Spacing="12"
+                                IsVisible="False">
+                        <TextBlock x:Name="LblLockMessage"
+                                   Text="You can only change one option at a time, controls have been locked."
+                                   Foreground="White"/>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock x:Name="LblClick"
+                                       Text="Click on change to apply or"
+                                       Foreground="White"/>
+                            <TextBlock x:Name="LnkLblReInit"
+                                       Text="here"
+                                       Foreground="#FFA500"
+                                       Classes="link"
+                                       Cursor="Hand"
+                                       PointerPressed="LnkLblReInit_PointerPressed"/>
+                            <TextBlock x:Name="LblReInit"
+                                       Text="to reinitialize your selection."
+                                       Foreground="White"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Right: info + buttons -->
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,6,4,4"
+                Background="#363636"
+                BorderBrush="#808080"
+                BorderThickness="1"
+                Padding="8">
+
+            <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="10">
+
+                <TextBlock Grid.Row="0"
+                           Text="Info"
+                           Foreground="#FFA500"
+                           FontSize="16"
+                           FontWeight="Bold"/>
+
+                <TextBlock Grid.Row="1"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           Text="Select the option you want to change, set a new value for your option and click on Change. To cancel, click on Cancel"/>
+
+                <TextBlock Grid.Row="2"
+                           Foreground="White"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           Text="Warning! You can only change one option at a time."/>
+
+                <Border Grid.Row="3"/>
+
+                <StackPanel Grid.Row="4"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Spacing="8">
+                    <Button x:Name="BtnCancel"
+                            MinWidth="90"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Background="#2E2E2E"
+                            Foreground="White"
+                            BorderBrush="Gray"
+                            Content="Cancel"
+                            Click="BtnCancel_Click"/>
+
+                    <Button x:Name="BtnChange"
+                            MinWidth="90"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Background="#2E2E2E"
+                            BorderBrush="Gray"
+                            Foreground="#FFA500"
+                            Content="Change"
+                            IsEnabled="False"
+                            Click="BtnChange_Click"/>
+                </StackPanel>
+
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

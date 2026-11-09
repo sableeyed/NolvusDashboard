@@ -27,9 +27,16 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             DrpDwnLstENB.SelectedIndex = 0;
         }
 
-        private void BtnPrevious_Click(object? sender, RoutedEventArgs e)
+        private async void BtnPrevious_Click(object? sender, RoutedEventArgs e)
         {
-            ServiceSingleton.Dashboard.LoadFrame<v6.DifficultyFrame>();
+            if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.Variant != Strings.GO)
+            {
+                await ServiceSingleton.Dashboard.LoadFrameAsync<v6.DifficultyFrame>();
+            }
+            else
+            {
+                await ServiceSingleton.Dashboard.LoadFrameAsync<v6.OptionsFrame>();
+            }
         }
 
         private void BtnContinue_Click(object? sender, RoutedEventArgs e)
@@ -52,7 +59,7 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
             LblENBDesc.Text = ENB.Description;
 
-            ServiceSingleton.Instances.WorkingInstance.Options.AlternateENB = ENB.Code;
+            ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AlternateENB").Value = ENB.Code;
 
             switch (ENB.Code)
             {

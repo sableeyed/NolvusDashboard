@@ -10,6 +10,9 @@ using Avalonia.Interactivity;
 using Avalonia.Controls;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Avalonia.Data;
+using Vcc.Nolvus.Api.Installer.Services;
+using Vcc.Nolvus.Api.Installer.Library;
 
 namespace Nolvus.Dashboard.Frames.Installer.v6
 {
@@ -25,18 +28,20 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
             TglGore.IsCheckedChanged += OnGoreChanged;
             TglController.IsCheckedChanged += OnControllerChanged;
             BtnShowUI.Click += BtnShowUI_Click;
+            BtnShowGore.Click += BtnShowGore_Click;
+            BtnShowController.Click += BtnShowController_Click;
         }
 
-        private int AnimsIndex(List<string> Anims)
+        private int AnimsIndex(IEnumerable<INolvusOptionChoiceDTO> Anims)
         {            
-            var Index = Anims.FindIndex(x => x == ServiceSingleton.Instances.WorkingInstance.Options.CombatAnimation);
+            var Index = Anims.ToList().FindIndex(x => x.Value == ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("CombatAnimation"));
 
             return Index == -1 ? 0 : Index;                            
         }
 
-        private int UIsIndex(List<string> UIs)
+        private int UIsIndex(IEnumerable<INolvusOptionChoiceDTO> UIs)
         {
-            var Index = UIs.FindIndex(x => x == ServiceSingleton.Instances.WorkingInstance.Options.UI);
+            var Index = UIs.ToList().FindIndex(x => x.Value == ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOptionValue("UI"));
 
             return Index == -1 ? 0 : Index;
         }
@@ -45,67 +50,67 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             var Instance = ServiceSingleton.Instances.WorkingInstance;
 
-            LblGOWarning.IsVisible = Instance.Performance.Variant == Strings.GO;
+            LblGOWarning.IsVisible = Instance.SettingsManager.Variant == Strings.GO;
 
             TglNudity.IsChecked = false;
 
-            if (Instance.Options.Nudity == "TRUE")
+            TglLeveling.IsChecked = false;
+            TglGore.IsChecked = false;
+            TglController.IsChecked = false;
+
+            TglLeveling.IsEnabled = Instance.SettingsManager.Variant != Strings.GO;
+            TglGore.IsEnabled = Instance.SettingsManager.Variant != Strings.GO;
+            TglController.IsEnabled = Instance.SettingsManager.Variant != Strings.GO;
+
+            LblALNotUsed.IsVisible = Instance.SettingsManager.Variant == Strings.GO;
+            LblCANotUsed.IsVisible = Instance.SettingsManager.Variant == Strings.GO;
+            LblGoreNotUsed.IsVisible = Instance.SettingsManager.Variant == Strings.GO;
+            LblCSNotUsed.IsVisible = Instance.SettingsManager.Variant == Strings.GO;
+
+            DrpCombat.IsEnabled = Instance.SettingsManager.Variant != Strings.GO;
+
+            if (Instance.OptionsManager.GetOptionValue("Nudity") == "TRUE")
             {
                 TglNudity.IsChecked = true;
             }
 
-            TglLeveling.IsChecked = false;
-
-            if (Instance.Options.AlternateLeveling == "TRUE")
+            if (Instance.SettingsManager.Variant != Strings.GO)
             {
-                TglLeveling.IsChecked = true;
+                if (Instance.OptionsManager.GetOptionValue("AlternateLeveling") == "TRUE")
+                {
+                    TglLeveling.IsChecked = true;
+                }
+
+                if (Instance.OptionsManager.GetOptionValue("Gore") == "TRUE")
+                {
+                    TglGore.IsChecked = true;
+                }
+
+                if (Instance.OptionsManager.GetOptionValue("Controller") == "TRUE")
+                {
+                    TglController.IsChecked = true;
+                }
+
+                var CombatAnims = await ApiManager.Service.Installer.GetOptionChoices("CombatAnimation", Instance.SettingsManager.Variant, Instance.Id);
+
+                DrpCombat.ItemsSource = CombatAnims;
+                DrpCombat.DisplayMemberBinding = new Binding("Value");
+
+                DrpCombat.SelectedIndex = AnimsIndex(CombatAnims);
+            }
+            else
+            {
+                var GOCombatAnims = new List<string>();
+                GOCombatAnims.Add("Not used");
+                DrpCombat.ItemsSource = GOCombatAnims;
+                DrpCombat.SelectedIndex = 0;
             }
 
-            TglLeveling.IsEnabled = Instance.Performance.Variant != Strings.GO;
-
-            TglGore.IsChecked = false;
-
-            if (Instance.Options.Gore == "TRUE")
-            {
-                TglGore.IsChecked = true;
-            }
-
-            TglGore.IsEnabled = Instance.Performance.Variant != Strings.GO;
-
-            if (Instance.Options.Controller == "TRUE")
-            {
-                TglController.IsChecked = true;
-            }
-
-            TglController.IsEnabled = Instance.Performance.Variant != Strings.GO;
-
-            List<string> CombatAnims = new List<string>();
-
-            CombatAnims.Add("Conventional");
-            CombatAnims.Add("Fantasy");
-
-            DrpCombat.ItemsSource = CombatAnims;
-
-            DrpCombat.SelectedIndex = AnimsIndex(CombatAnims);
-
-            DrpCombat.IsEnabled = Instance.Performance.Variant != Strings.GO;
-
-            List<string> UIs = new List<string>();
-
-            UIs.Add("Untarnished UI");
-            UIs.Add("Edge UI");
-            UIs.Add("Oathvein UI");
-            UIs.Add("Norden UI");
-            UIs.Add("Vel'dun UI");
+            var UIs = await ApiManager.Service.Installer.GetOptionChoices("UI", Instance.SettingsManager.Variant, Instance.Id);
 
             DrpUI.ItemsSource = UIs;
 
             DrpUI.SelectedIndex = UIsIndex(UIs);
-
-            LblALNotUsed.IsVisible = Instance.Performance.Variant == Strings.GO;
-            LblCANotUsed.IsVisible = Instance.Performance.Variant == Strings.GO;
-            LblGoreNotUsed.IsVisible = Instance.Performance.Variant == Strings.GO;
-            LblCSNotUsed.IsVisible = Instance.Performance.Variant == Strings.GO;
 
             ServiceSingleton.Dashboard.Info("Options");
         }
@@ -117,11 +122,13 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
 
         private async void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
-            var owner = TopLevel.GetTopLevel(this) as Window;
-            bool? result = await NolvusMessageBox.ShowConfirmation(owner!, "Confirmation", "The options you selected can not be changed after installation. Are you sure you want to continue?");
-            if (result == true)
+            if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.Variant != Strings.GO)
             {
-                ServiceSingleton.Dashboard.LoadFrame<v6.DifficultyFrame>();
+                await ServiceSingleton.Dashboard.LoadFrameAsync<v6.DifficultyFrame>();
+            }
+            else
+            {
+                ServiceSingleton.Dashboard.LoadFrame<v6.ENBFrame>();
             }
         }
 
@@ -129,11 +136,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             if (TglNudity.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.Nudity = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Nudity").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.Nudity = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Nudity").Value = "FALSE";
             }
         }
 
@@ -141,11 +148,11 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             if (TglLeveling.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.AlternateLeveling = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AlternateLeveling").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.AlternateLeveling = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("AlternateLeveling").Value = "FALSE";
             }
         }
 
@@ -153,35 +160,38 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         {
             if (TglGore.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.Gore = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Gore").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.Gore = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Gore").Value = "FALSE";
             }
         }
 
         private void OnAnimationsChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (DrpCombat.SelectedItem is string value)
-                ServiceSingleton.Instances.WorkingInstance.Options.CombatAnimation = value;
+            if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.Variant != Strings.GO)
+            {
+                if (DrpCombat.SelectedItem is INolvusOptionChoiceDTO Choice)
+                    ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("CombatAnimation").Value = Choice.Value;
+            }
         }
 
         private void OnUIChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (DrpUI.SelectedItem is string value)
-                ServiceSingleton.Instances.WorkingInstance.Options.UI = value;
+            if (DrpUI.SelectedItem is INolvusOptionChoiceDTO Choice)
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("UI").Value = Choice.Value;
         }
 
         private void OnControllerChanged(object? sender, RoutedEventArgs e)
         {
             if (TglController.IsChecked == true)
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.Controller = "TRUE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Controller").Value = "TRUE";
             }
             else
             {
-                ServiceSingleton.Instances.WorkingInstance.Options.Controller = "FALSE";
+                ServiceSingleton.Instances.WorkingInstance.OptionsManager.GetOption("Controller").Value = "FALSE";
             }
         }
 
@@ -193,6 +203,16 @@ namespace Nolvus.Dashboard.Frames.Installer.v6
         private void BtnShowAlternateLeveling_Click(object? sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/game/leveling") { UseShellExecute = true });
+        }
+
+        private void BtnShowGore_Click(object? sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/combat/gore") { UseShellExecute = true });
+        }
+
+        private void BtnShowController_Click(object? sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://www.nolvus.net/guide/awake/appendix/player-guide/keybinds/controller") { UseShellExecute = true });
         }
 
     }

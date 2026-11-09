@@ -57,20 +57,28 @@
                     Background="#2E2E2E"
                     Padding="12">
 
-                <Grid RowDefinitions="Auto, * , Auto"
+                <Grid RowDefinitions="Auto,Auto,*,Auto"
                       RowSpacing="10">
+
+                    <!-- Info Header -->
+                    <TextBlock Grid.Row="0"
+                               Text="Info"
+                               Foreground="#FFA500"
+                               FontSize="16"
+                               FontWeight="Bold"/>
 
                     <!-- Info Label -->
                     <TextBlock x:Name="LblInfo"
+                               Grid.Row="1"
                                Text="Click on the Delete button to delete your instance. WARNING, this will not be reversible."
                                Foreground="White"
                                FontSize="13"
                                TextWrapping="Wrap"/>
 
-                    <Border/>
+                    <Border Grid.Row="2"/>
 
                     <!-- Buttons Row -->
-                    <StackPanel Grid.Row="2"
+                    <StackPanel Grid.Row="3"
                                 Orientation="Horizontal"
                                 HorizontalAlignment="Right"
                                 Spacing="10">
@@ -81,7 +89,7 @@
                                 MinWidth="90"
                                 Padding="10,6"
                                 Background="#2E2E2E"
-                                BorderBrush="White"
+                                BorderBrush="Gray"
                                 Foreground="White"
                                 Content="Back"/>
 
@@ -91,7 +99,7 @@
                                 MinWidth="90"
                                 Padding="10,6"
                                 Background="#2E2E2E"
-                                BorderBrush="#FFA500"
+                                BorderBrush="Gray"
                                 Foreground="#FFA500"
                                 Content="[Action]"/>
                     </StackPanel>

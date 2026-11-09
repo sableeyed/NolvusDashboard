@@ -28,6 +28,7 @@ using Avalonia.Interactivity;
 using Nolvus.Core.Utils;
 using Avalonia.Platform.Storage;
 using Nolvus.Dashboard.Frames.Remap.v6;
+using Nolvus.Dashboard.Frames.Manager.Options;
 
 namespace Nolvus.Dashboard.Controls
 {
@@ -79,7 +80,7 @@ namespace Nolvus.Dashboard.Controls
             _instance = instance;
 
             LblInstanceName.Text = _instance.Tag == string.Empty ? _instance.Name : string.Format("{0} - {1}", _instance.Name, _instance.Tag);
-            LblVersion.Text = $"{_instance.Performance.Variant} v{_instance.Version}";
+            LblVersion.Text = $"{_instance.SettingsManager.Variant} v{_instance.Version}";
             LblDesc.Text = _instance.Description;
 
             if (await _instance.IsBeta())
@@ -150,12 +151,12 @@ namespace Nolvus.Dashboard.Controls
             try
             {
                 // An instance installed with Mod Organizer 2 still has its ini under MO2/.
-                ModOrganizer.EnsureInstanceIni(_instance.InstallDir);
+                ModOrganizer.EnsureInstanceIni(_instance.SettingsManager.InstallDir);
 
                 // Fluorine opens whatever CurrentInstance names, so point it at this one first.
-                ModOrganizer.SelectInstance(_instance.InstallDir);
+                ModOrganizer.SelectInstance(_instance.SettingsManager.InstallDir);
 
-                Fluorine.InstallPlugins(_instance.InstallDir);
+                Fluorine.InstallPlugins(_instance.SettingsManager.InstallDir);
 
                 var Manager = Fluorine.Start();
 
@@ -306,18 +307,23 @@ namespace Nolvus.Dashboard.Controls
             miEnbManager.Click += (_, __) => BrItmENBManager_Click();
             menu.Items.Add(miEnbManager);
 
-            menu.Items.Add(new Separator());
-
-            // Delete Instance
-            var miDelete = new MenuItem { Header = "Delete Instance", Icon = MenuIcon("BrItmDelete") };
-            miDelete.Click += (_, __) => BrItmDelete_Click();
-            menu.Items.Add(miDelete);
+            // Options Manager
+            var miOptionManager = new MenuItem { Header = "Options Manager", Icon = MenuIcon("BrItmOptionManager") };
+            miOptionManager.Click += BrItmOptionManager_Click;
+            menu.Items.Add(miOptionManager);
 
             menu.Items.Add(new Separator());
 
             var miRemap = new MenuItem { Header = "Remap Instance", Icon = MenuIcon("BrItmRemap") };
             miRemap.Click += (_, __) => BrItmRemap_Click();
             menu.Items.Add(miRemap);
+
+            menu.Items.Add(new Separator());
+
+            // Delete Instance
+            var miDelete = new MenuItem { Header = "Delete Instance", Icon = MenuIcon("BrItmDelete") };
+            miDelete.Click += (_, __) => BrItmDelete_Click();
+            menu.Items.Add(miDelete);
 
             BtnView.ContextMenu = menu;
         }
@@ -444,7 +450,7 @@ namespace Nolvus.Dashboard.Controls
                 // --instance opens this instance directly, so the shortcut is not at the mercy of
                 // whichever instance Fluorine happened to have selected last. Fluorine is a native
                 // binary, so there is no wine involved.
-                var ModsDir = Path.Combine(_instance.InstallDir, "MODS");
+                var ModsDir = Path.Combine(_instance.SettingsManager.InstallDir, "MODS");
                 var Exec = $"\"{Fluorine.Executable}\" --instance \"{ModsDir}\"";
 
                 var name = _instance.Name;
@@ -496,6 +502,29 @@ namespace Nolvus.Dashboard.Controls
             else
             {
                 NolvusMessageBox.Show(window, "Mod Organizer 2", "An instance of Mod Organizer 2 is running! Close it first.", MessageBoxType.Error);
+            }
+        }
+
+        private async void BrItmOptionManager_Click(object? sender, RoutedEventArgs e)
+        {
+            var window = TopLevel.GetTopLevel(this) as Window;
+            if (!ModOrganizer.IsRunning && !Fluorine.IsRunning)
+            {
+                switch (_instance.Name)
+                {
+                    case Strings.NolvusAscension:
+                        await NolvusMessageBox.Show(window, "Options Manager", string.Format("This feature is not available for {0}.", _instance.Name), MessageBoxType.Info);
+                        break;
+                    
+                    case Strings.NolvusAwakening:
+                        ServiceSingleton.Instances.WorkingInstance = _instance;
+                        await ServiceSingleton.Dashboard.LoadFrameAsync<PackageFrame>(new FrameParameters(new FrameParameter() { Key = "Mode", Value = InstanceMode.Options }));
+                        break;
+                }
+            }
+            else
+            {
+                await NolvusMessageBox.Show(window, "Mod Organizer 2", "An instance of Mod Organizer 2 or Fluorine is running! Close it first.", MessageBoxType.Error);
             }
         }
 

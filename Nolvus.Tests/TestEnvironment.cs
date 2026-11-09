@@ -44,7 +44,9 @@ namespace Nolvus.Tests
 
         public void LineBreak() { }
 
-        public void ClearLog() => Messages.Clear();
+        public void InitializeLog() { }
+
+        public void ClearLogs() => Messages.Clear();
     }
 
     /// <summary>

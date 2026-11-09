@@ -52,7 +52,7 @@ namespace Nolvus.Dashboard.Frames
                 Version = Instance.Version;
             }
 
-            LblInstance.Text = string.Format("{0} - {1} v{2}{3}", Instance.Name, Instance.Performance.Variant, Version, Instance.Tag != string.Empty ? string.Format(" - ({0})", Instance.Tag) : string.Empty);
+            LblInstance.Text = Instance.FullName;
         }
 
         public INolvusInstance Instance
@@ -71,7 +71,7 @@ namespace Nolvus.Dashboard.Frames
             {
                 int counter = 0;
 
-                var Files = ServiceSingleton.Files.GetFiles(Instance.InstallDir);
+                var Files = ServiceSingleton.Files.GetFiles(Instance.SettingsManager.InstallDir);
 
                 foreach (var f in Files)
                 {
@@ -97,7 +97,7 @@ namespace Nolvus.Dashboard.Frames
 
                 try
                 {
-                    ServiceSingleton.Files.RemoveDirectory(Instance.InstallDir, true);
+                    ServiceSingleton.Files.RemoveDirectory(Instance.SettingsManager.InstallDir, true);
                 }
                 catch (Exception ex)
                 {
@@ -108,7 +108,7 @@ namespace Nolvus.Dashboard.Frames
                 {
                     // Otherwise Fluorine keeps listing the instance, and opens it on next launch if
                     // it was the selected one.
-                    ModOrganizer.UnregisterInstance(Instance.InstallDir);
+                    ModOrganizer.UnregisterInstance(Instance.SettingsManager.InstallDir);
                 }
                 catch (Exception ex)
                 {
@@ -125,7 +125,7 @@ namespace Nolvus.Dashboard.Frames
 
             if (Action == InstanceAction.Delete)
             {
-                Message = string.Format("Are you sure you want to delete {0} and everything inside {1}?", Instance.Name, Instance.InstallDir);
+                Message = string.Format("Are you sure you want to delete {0} and everything inside {1}?", Instance.Name, Instance.SettingsManager.InstallDir);
             }            
             else
             {

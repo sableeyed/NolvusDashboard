@@ -14,23 +14,45 @@
                 Padding="12"
                 Margin="0,0,0,10">
 
-            <Grid ColumnDefinitions="*,Auto" RowDefinitions="*">
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,*" RowSpacing="10">
+
+                <TextBlock Grid.Row="0"
+                           Grid.ColumnSpan="2"
+                           Text="Controller"
+                           Foreground="#FFA500"
+                           FontSize="16"
+                           FontWeight="Bold"/>
 
                 <!-- IMAGE -->
                 <Image x:Name="ImgController"
+                       Grid.Row="1"
                        Grid.Column="0"
                        Stretch="Uniform"
                        Source="avares://NolvusDashboard/Assets/Nolvus-v6-controller-setup.png"/>
 
                 <!-- LABEL -->
-                <TextBlock x:Name="LblInstructions"
-                           Grid.Column="1"
-                           TextWrapping="Wrap"
-                           Foreground="White"
-                           FontSize="16"
-                           Margin="20,0,0,0"
-                           Width="320"
-                           Text="To change the layout, go into Mod Organizer 2, right click on the Mod Complete Controller Setup and select &quot;Reinstall&quot;"/>
+                <StackPanel Grid.Row="1"
+                            Grid.Column="1"
+                            Spacing="12"
+                            Margin="20,0,0,0"
+                            Width="320">
+                    <TextBlock x:Name="LblInstructions"
+                               TextWrapping="Wrap"
+                               Foreground="White"
+                               FontSize="16"
+                               Text="To change the layout, go into Mod Organizer 2, right click on the Mod Complete Controller Setup and select &quot;Reinstall&quot;"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="For a complete overview of all key bindings, click"
+                                   Foreground="White"/>
+                        <TextBlock x:Name="LnkLblFullGuide"
+                                   Text="here"
+                                   Foreground="#FFA500"
+                                   Classes="link"
+                                   Cursor="Hand"
+                                   PointerPressed="LnkLblFullGuide_PointerPressed"/>
+                    </StackPanel>
+                </StackPanel>
             </Grid>
 
         </Border>
@@ -42,22 +64,13 @@
                     Spacing="10"
                     Margin="0,0,6,6">
 
-            <Button x:Name="BtnFullGuide"
-                    Content="Full Guide"
-                    MinWidth="90"
-                    VerticalContentAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Background="#2E2E2E"
-                    BorderBrush="White"
-                    Foreground="White"/>
-
             <Button x:Name="BtnKeyboard"
                     MinWidth="90"
                     Content="Keyboard"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Background="#2E2E2E"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"/>
 
             <Button x:Name="BtnBack"
@@ -66,7 +79,7 @@
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Background="#2E2E2E"
-                    BorderBrush="White"
+                    BorderBrush="Gray"
                     Foreground="White"/>
         </StackPanel>
 

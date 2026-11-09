@@ -125,7 +125,6 @@
                                      Foreground="White"
                                      SelectionMode="Single"
                                      ItemTemplate="{StaticResource InstanceCardTemplate}"
-                                     SelectionChanged="NolvusListBox_SelectionChanged"
                                      IsVisible="False">
 								<!-- ITEM STYLING -->
 								<ListBox.Styles>
@@ -157,6 +156,10 @@
 					<Grid RowDefinitions="*,Auto">
 						<!-- TOP TEXT BLOCKS -->
 						<StackPanel Grid.Row="0" Spacing="16" VerticalAlignment="Top">
+							<TextBlock Text="Info"
+										Foreground="#FFA500"
+										FontSize="16"
+										FontWeight="Bold"/>
 							<TextBlock Text="Welcome to Nolvus mod list installation."
 										Foreground="#CCCCCC"
 										TextWrapping="Wrap"/>
@@ -180,7 +183,7 @@
                     				HorizontalContentAlignment="Center"
                     				MinWidth="90"
                     				Background="#2E2E2E"
-        							BorderBrush="White"
+        							BorderBrush="Gray"
         							Foreground="White"/>
 							<Button x:Name="BtnContinue"
                     				Content="Continue"
@@ -188,7 +191,7 @@
                     				HorizontalContentAlignment="Center"
                     				MinWidth="90"
                     				Background="#2E2E2E"
-        							BorderBrush="#FFA500"
+        							BorderBrush="Gray"
         							Foreground="#FFA500"/>
 						</StackPanel>
 					</Grid>

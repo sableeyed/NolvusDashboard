@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:gif="clr-namespace:Avalonia.Labs.Gif;assembly=Avalonia.Labs.Gif"
+    xmlns:local="clr-namespace:Nolvus.Dashboard.Frames.Instance"
     mc:Ignorable="d"
     Background="#363636">
 
@@ -74,10 +75,40 @@
                           Background="#363636"
                           Foreground="White"
                           AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserSortColumns="False"
                           RowHeight="28"
                           HeadersVisibility="Column"
                           GridLinesVisibility="All"
                           CanUserResizeColumns="True">
+
+                    <DataGrid.Resources>
+                        <!-- Sorting is off, and the room kept for the sort arrow clips "Priority" at upstream's column width. -->
+                        <x:Double x:Key="DataGridSortIconMinWidth">0</x:Double>
+                    </DataGrid.Resources>
+
+                    <DataGrid.Styles>
+                        <Style Selector="DataGridRowGroupHeader">
+                            <Setter Property="IsPropertyNameVisible" Value="False"/>
+                            <Setter Property="IsItemCountVisible" Value="True"/>
+                            <Setter Property="ItemCountFormat" Value="( {0} Mods )"/>
+                        </Style>
+                        <!-- Neutral, or the orange warning text disappears on the accent colored selection. -->
+                        <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+                            <Setter Property="Fill" Value="#4D4D4D"/>
+                            <Setter Property="Opacity" Value="1"/>
+                        </Style>
+                        <Style Selector="DataGridCell.status">
+                            <Setter Property="Foreground" Value="{Binding Status, Converter={x:Static local:InstanceDetailFrame.StatusBrush}}"/>
+                        </Style>
+                        <Style Selector="DataGridCell:current">
+                            <Setter Property="Background" Value="Orange"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Style>
+                        <Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
+                            <Setter Property="IsVisible" Value="False"/>
+                        </Style>
+                    </DataGrid.Styles>
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Priority"
@@ -94,6 +125,7 @@
                                             IsVisible="False" />
                         <DataGridTextColumn Header="Status"
                                             Binding="{Binding StatusText}"
+                                            CellStyleClasses="status"
                                             Width="200" />
                     </DataGrid.Columns>
                 </DataGrid>
@@ -126,46 +158,72 @@
                 <Button x:Name="BtnPlay"
                         Content="Play"
                         Height="40"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="#363636"
+                        BorderBrush="Gray"
                         Foreground="#FFA500" />
 
-                <!--
                 <Button x:Name="BtnExpand"
                         Content="Expand"
                         Height="40"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="#363636"
+                        BorderBrush="Gray"
                         Foreground="#FFA500" />
 
                 <Button x:Name="BtnCollapse"
                         Content="Collapse"
                         Height="40"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="#363636"
+                        BorderBrush="Gray"
                         Foreground="#FFA500" />
-                -->
 
                 <Button x:Name="BtnSettings"
                         Content="Settings"
                         Height="40"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="#363636"
+                        BorderBrush="Gray"
                         Foreground="#FFA500" />
 
                 <Button x:Name="BtnReport"
                         Content="Report"
                         Height="40"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="#363636"
+                        BorderBrush="Gray"
                         Foreground="#FFA500" />
 
                 <Button x:Name="BtnLoadOrder"
                         Content="Apply Order"
                         Height="40"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="#363636"
+                        BorderBrush="Gray"
                         Foreground="#FFA500" />
 
                 <Button x:Name="BtnBack"
                         Content="Back to instances"
                         Margin="0,30,0,0"
                         Height="40"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="#363636"
+                        BorderBrush="Gray"
                         Foreground="#FFA500" />
             </StackPanel>
         </Grid>

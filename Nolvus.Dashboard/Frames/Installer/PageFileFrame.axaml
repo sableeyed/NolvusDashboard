@@ -68,15 +68,22 @@
                         CornerRadius="4"
                         Padding="16">
 
-                    <Grid RowDefinitions="*,Auto">
+                    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+
+                        <!-- Info header -->
+                        <TextBlock Text="Info"
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
 
                         <!-- Info text on the right -->
-                        <TextBlock Text="Configure your swap size according to the tutorial to ensure system stability while running Nolvus."
+                        <TextBlock Grid.Row="1"
+                                   Text="Configure your swap size according to the tutorial to ensure system stability while running Nolvus."
                                    Foreground="#CCCCCC"
                                    TextWrapping="Wrap"/>
 
                         <!-- Buttons -->
-                        <StackPanel Grid.Row="1"
+                        <StackPanel Grid.Row="2"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     Spacing="8"
@@ -88,7 +95,7 @@
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="White"
+                                    BorderBrush="Gray"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
@@ -97,7 +104,7 @@
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="#FFA500"
+                                    BorderBrush="Gray"
                                     Foreground="#FFA500"/>
 
                         </StackPanel>

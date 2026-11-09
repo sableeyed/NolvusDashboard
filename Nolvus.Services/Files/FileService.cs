@@ -102,6 +102,22 @@ namespace Nolvus.Services.Files
             }
         }
 
+        public void MoveFiles(string SourcePath, string TargetPath, SearchOption SearchOption = SearchOption.AllDirectories)
+        {
+            if (SearchOption == SearchOption.AllDirectories)
+            {
+                foreach (var DirPath in Directory.GetDirectories(SourcePath, "*", SearchOption.AllDirectories))
+                {
+                    Directory.CreateDirectory(DirPath.Replace(SourcePath, TargetPath));
+                }
+            }
+
+            foreach (var SourceFile in Directory.GetFiles(SourcePath, "*.*", SearchOption))
+            {
+                MoveFile(SourceFile, SourceFile.Replace(SourcePath, TargetPath));
+            }
+        }
+
         public void MoveFile(string SourceFilePath, string TargetFilePath)
         {
             FileInfo SourceFile = new FileInfo(SourceFilePath);
@@ -241,9 +257,9 @@ namespace Nolvus.Services.Files
             }
         }
 
-        public bool IsDirectoryEmpty(string Dir)
+        public bool IsDirectoryEmpty(string Dir, SearchOption SearchOption = SearchOption.AllDirectories)
         {
-            return Directory.GetFiles(Dir, "*.*", SearchOption.AllDirectories).Length == 0;            
-        }        
+            return Directory.GetFiles(Dir, "*.*", SearchOption).Length == 0;
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace Nolvus.Core.Interfaces
 {
     public interface IFolderService : INolvusService
     {
-        string CacheDirectory { get; }       
+        string CacheDirectory { get; }
         string DownloadDirectory { get; }
         string ExtractDirectory { get; }
         string LibDirectory { get; }
@@ -20,6 +20,8 @@ namespace Nolvus.Core.Interfaces
         string InstancesDirectory { get; }
         string GameDirectory { get; }
         string ReportDirectory { get; }
-        string UpdaterExe { get; }       
+        string LogsDirectory { get; }
+        string UpdaterExe { get; }
+        void ClearCache();
     }
 }

@@ -53,14 +53,13 @@ namespace Nolvus.Dashboard.Frames.Installer
                     ServiceSingleton.Dashboard.Title("Nolvus Dashboard - [Instance Auto Installer]");
                     ServiceSingleton.Dashboard.Status(string.Format(
                         "{0} {1} - {2} (v{3})", 
-                        Instance.Status.InstallStatus == InstanceInstallStatus.Installing ? "Installing" : "Updating", 
-                        Instance.Name, 
-                        Instance.Performance.Variant, 
+                        Instance.StatusManager.InstallStatus == InstanceInstallStatus.Installing ? "Installing" : "Updating",
+                        Instance.Name,
+                        Instance.SettingsManager.Variant,
                         ServiceSingleton.Packages.LoadedVersion));
-
+                    ServiceSingleton.Dashboard.Info("Installing mods (0%)");
+                    ServiceSingleton.Dashboard.AdditionalInfo("Mods {0}/0");
                     ServiceSingleton.Dashboard.AdditionalSecondaryInfo("Error(s) : 0");
-
-                    GlobalProgress();
 
                     ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Folders.NexusCacheDirectory, false);
 
@@ -68,11 +67,12 @@ namespace Nolvus.Dashboard.Frames.Installer
                     {
                         OnStartInstalling = () =>
                         {
+                            GlobalProgress();
                             ServiceSingleton.Dashboard.Status(string.Format(
                                     "{0} {1} - {2} (v{3})",
-                                    Instance.Status.InstallStatus == InstanceInstallStatus.Installing ? "Installing" : "Updating",
+                                    Instance.StatusManager.InstallStatus == InstanceInstallStatus.Installing ? "Installing" : "Updating",
                                     Instance.Name,
-                                    Instance.Performance.Variant,
+                                    Instance.SettingsManager.Variant,
                                     ServiceSingleton.Packages.LoadedVersion));
                             ServiceSingleton.Dashboard.ProgressCompleted();
                             
@@ -142,8 +142,8 @@ namespace Nolvus.Dashboard.Frames.Installer
 
             ServiceSingleton.Dashboard.AdditionalInfo(
                 string.Format("Mods {0}/{1}",
-                ServiceSingleton.Instances.WorkingInstance.Status.InstalledMods.Count,
-                ModsToInstall == null ? ServiceSingleton.Packages.ModsCount : ModsToInstall.Count));
+                ServiceSingleton.Instances.WorkingInstance.StatusManager.InstalledMods.Count,
+                ServiceSingleton.Packages.ModsCount));
         }
 
         private void RefreshBox()

@@ -39,24 +39,6 @@
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
-                            <!-- === OPTION: FEMALE SKIN TYPE === -->
-                            <StackPanel Spacing="6">
-                                <Grid ColumnDefinitions="Auto,10,Auto">
-                                    <TextBlock Text="Female Skin Type" Foreground="White" VerticalAlignment="Center"/>
-                                    <ComboBox x:Name="DrpFemaleSkinType"
-                                              SelectionChanged="OnSkinTypeChanged"
-                                              VerticalAlignment="Center"
-                                              Grid.Column="2"
-                                              Width="140"
-                                              Background="#2E2E2E"
-                                              Foreground="White"/>
-                                </Grid>
-
-                                <TextBlock Text="Choose between 'babe' type or 'muscular' type skins."
-                                           Foreground="#FFA500"
-                                           TextWrapping="Wrap"/>
-                            </StackPanel>
-
                             <!-- === OPTION: HARDCORE MODE === -->
                             <StackPanel Spacing="6">
                                 <Grid ColumnDefinitions="Auto,10,Auto">
@@ -113,6 +95,25 @@
                                            TextWrapping="Wrap"/>
                             </StackPanel>
 
+                            <!-- === OPTION: FEMALE SKIN TYPE === -->
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="Auto,10,Auto">
+                                    <TextBlock Text="Female Skin Type" Foreground="White" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="DrpFemaleSkinType"
+                                              SelectionChanged="OnSkinTypeChanged"
+                                              DisplayMemberBinding="{Binding Value}"
+                                              VerticalAlignment="Center"
+                                              Grid.Column="2"
+                                              Width="140"
+                                              Background="#2E2E2E"
+                                              Foreground="White"/>
+                                </Grid>
+
+                                <TextBlock Text="Choose between 'babe' type or 'muscular' type skins."
+                                           Foreground="#FFA500"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
                         </StackPanel>
                     </ScrollViewer>
 
@@ -125,15 +126,21 @@
                         CornerRadius="4"
                         Padding="16">
 
-                    <Grid RowDefinitions="*,Auto">
+                    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
 
-                        <TextBlock Grid.Row="0"
+                        <!-- Info header -->
+                        <TextBlock Text="Info"
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
+
+                        <TextBlock Grid.Row="1"
                                    Text="Customize additional options that affect gameplay, visuals, and immersion. Some options affect balance significantly."
                                    Foreground="#CCCCCC"
                                    TextWrapping="Wrap"/>
 
                         <!-- BUTTONS -->
-                        <StackPanel Grid.Row="1"
+                        <StackPanel Grid.Row="2"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     Spacing="8"
@@ -145,7 +152,7 @@
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="White"
+                                    BorderBrush="Gray"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
@@ -154,7 +161,7 @@
                                     VerticalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="#FFA500"
+                                    BorderBrush="Gray"
                                     Foreground="#FFA500"/>
 
                         </StackPanel>

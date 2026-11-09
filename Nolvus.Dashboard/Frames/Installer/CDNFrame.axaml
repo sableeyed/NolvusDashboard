@@ -60,15 +60,22 @@
                         CornerRadius="4"
                         Padding="16">
 
-                    <Grid RowDefinitions="*,Auto">
+                    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+
+                        <!-- Info header -->
+                        <TextBlock Text="Info"
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
 
                         <!-- Info text -->
-                        <TextBlock Text="Select your preferred download area. This can improve download speed and stability depending on your location."
+                        <TextBlock Grid.Row="1"
+                                   Text="Select your preferred download area. This can improve download speed and stability depending on your location."
                                    Foreground="#CCCCCC"
                                    TextWrapping="Wrap"/>
 
                         <!-- Buttons -->
-                        <StackPanel Grid.Row="1"
+                        <StackPanel Grid.Row="2"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
                                     Spacing="8"
@@ -80,7 +87,7 @@
                                     HorizontalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="White"
+                                    BorderBrush="Gray"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
@@ -89,7 +96,7 @@
                                     HorizontalContentAlignment="Center"
                                     MinWidth="90"
                                     Background="#2E2E2E"
-                                    BorderBrush="#FFA500"
+                                    BorderBrush="Gray"
                                     Foreground="#FFA500"/>
 
                         </StackPanel>

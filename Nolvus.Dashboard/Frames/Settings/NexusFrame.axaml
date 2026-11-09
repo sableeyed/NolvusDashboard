@@ -44,6 +44,7 @@
               Margin="20,0,0,0"
               HorizontalContentAlignment="Center"
               VerticalContentAlignment="Center"
+              BorderBrush="Gray"
               Padding="12" />
 
       <!-- MESSAGE PANEL -->
@@ -81,7 +82,7 @@
               HorizontalContentAlignment="Center"
               VerticalContentAlignment="Center"
               Background="#2E2E2E"
-              BorderBrush="White"
+              BorderBrush="Gray"
               Foreground="White"
               MinWidth="90"/>
 
@@ -90,7 +91,7 @@
               HorizontalContentAlignment="Center"
               VerticalContentAlignment="Center"
               Background="#2E2E2E"
-              BorderBrush="#FFA500"
+              BorderBrush="Gray"
               Foreground="#FFA500"
               MinWidth="90"/>
 

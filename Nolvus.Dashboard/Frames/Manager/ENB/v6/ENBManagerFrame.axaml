@@ -73,18 +73,24 @@
                 BorderThickness="1"
                 Padding="8">
 
-            <Grid RowDefinitions="Auto,*,Auto">
+            <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="10">
+
+                <TextBlock Grid.Row="0"
+                           Text="Info"
+                           Foreground="#FFA500"
+                           FontSize="16"
+                           FontWeight="Bold"/>
 
                 <TextBlock x:Name="LblInstructions"
-                           Grid.Row="0"
+                           Grid.Row="1"
                            Foreground="White"
                            FontSize="12"
                            TextWrapping="Wrap"
                            Text="Select the ENB you want to install and click on Install. To cancel, click on Cancel"/>
 
-                <Border Grid.Row="1"/>
+                <Border Grid.Row="2"/>
 
-                <StackPanel Grid.Row="2"
+                <StackPanel Grid.Row="3"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             Spacing="8">
@@ -94,7 +100,7 @@
                             HorizontalContentAlignment="Center"
                             Background="#2E2E2E"
                             Foreground="White"
-                            BorderBrush="White"
+                            BorderBrush="Gray"
                             Content="Cancel"
                             Click="BtnCancel_Click"/>
 
@@ -103,7 +109,7 @@
                             VerticalContentAlignment="Center"
                             HorizontalContentAlignment="Center"
                             Background="#2E2E2E"
-                            BorderBrush="#FFA500"
+                            BorderBrush="Gray"
                             Foreground="#FFA500"
                             Content="Install"
                             Click="BtnInstall_Click"/>

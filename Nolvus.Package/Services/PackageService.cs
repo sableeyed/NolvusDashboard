@@ -137,7 +137,7 @@ namespace Nolvus.Package.Services
             {
                 if (ModsCount != 0) 
                 {
-                    return Math.Floor(((double)ServiceSingleton.Instances.WorkingInstance.Status.InstalledMods.Count / ModsCount) * 100);
+                    return Math.Floor(((double)ServiceSingleton.Instances.WorkingInstance.StatusManager.InstalledMods.Count / ModsCount) * 100);
                 }
                 else
                 {
@@ -389,7 +389,7 @@ namespace Nolvus.Package.Services
 
         private void SaveInstance(InstallableElement Mod)
         {
-            ServiceSingleton.Instances.WorkingInstance.Status.InstalledMods.Add(Mod.Name);
+            ServiceSingleton.Instances.WorkingInstance.StatusManager.InstalledMods.Add(Mod.Name);
             ServiceSingleton.Instances.Save();
         }
 
@@ -418,8 +418,6 @@ namespace Nolvus.Package.Services
                     await Category.Install(_ErrorHandler.Token);
                 }
 
-                Settings.OnStartInstalling();
-
                 ModsToProcess = ModsToInstall;
 
                 if (Mods != null)
@@ -427,7 +425,9 @@ namespace Nolvus.Package.Services
                     ModsToProcess = Mods.Cast<InstallableElement>().ToList();
                 }
 
-                var Tasks = ModsToProcess.Where(x => !ServiceSingleton.Instances.WorkingInstance.Status.InstalledMods.Any(y => y == x.Name)).OrderBy(i => i.Index).ToList().Select(async Mod =>
+                Settings.OnStartInstalling();
+
+                var Tasks = ModsToProcess.Where(x => !ServiceSingleton.Instances.WorkingInstance.StatusManager.InstalledMods.Any(y => y == x.Name)).OrderBy(i => i.Index).ToList().Select(async Mod =>
                 {
                     await SemaphoreSlim.WaitAsync();
 

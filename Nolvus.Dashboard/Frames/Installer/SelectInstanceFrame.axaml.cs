@@ -35,7 +35,6 @@ namespace Nolvus.Dashboard.Frames.Installer
 
             BtnContinue.Click += BtnContinue_Click;
             BtnCancel.Click += BtnCancel_Click;
-            NolvusListBox.SelectionChanged += NolvusListBox_SelectionChanged;
         }
 
         private int InstanceIndex(IEnumerable<INolvusVersionDTO> Versions)
@@ -85,17 +84,45 @@ namespace Nolvus.Dashboard.Frames.Installer
                 }).ToList();
             });
             NolvusListBox.ItemsSource = items;
+            NolvusListBox.SelectedIndex = InstanceIndex(items);
+            PicLoading.IsVisible = false;
             NolvusListBox.IsVisible = true;
         }
 
-        private void SwitchInstance(INolvusVersionDTO NolvusInstance)
+        private void LoadingData(bool Loading)
         {
-            if (NolvusInstance == null)
-                return; //They have not installed yet?
-            if (ServiceSingleton.Instances.WorkingInstance == null || ServiceSingleton.Instances.WorkingInstance.Name != NolvusInstance.Name)
+            if (!Dispatcher.UIThread.CheckAccess())
             {
-                ServiceSingleton.Instances.WorkingInstance = new NolvusInstance(NolvusInstance);                
+                Dispatcher.UIThread.Invoke(() => LoadingData(Loading));
+                return;
             }
+
+            if(Loading)
+            {
+                BtnContinue.IsEnabled = false;
+                BtnContinue.Content = "Loading";
+            }
+            else
+            {
+                BtnContinue.IsEnabled = true;
+                BtnContinue.Content = "Continue";
+            }
+
+        }
+
+        private async Task SwitchInstance(INolvusVersionDTO NolvusInstanceDTO)
+        {
+            if (NolvusInstanceDTO == null)
+                return; //They have not installed yet?
+
+            LoadingData(true);
+
+            if (ServiceSingleton.Instances.WorkingInstance == null || ServiceSingleton.Instances.WorkingInstance.Name != NolvusInstanceDTO.Name)
+            {
+                ServiceSingleton.Instances.WorkingInstance = await NolvusInstance.CreateFromDTO(NolvusInstanceDTO) as INolvusInstance;
+            }
+
+            LoadingData(false);
         }
 
         private void LoadLanguages()
@@ -115,7 +142,7 @@ namespace Nolvus.Dashboard.Frames.Installer
             var inst = ServiceSingleton.Instances.WorkingInstance;
 
             if (inst != null)
-                DrpDwnLg.SelectedItem = languages.FirstOrDefault(x => x.Code == inst.Settings.LgCode) ?? languages[0];
+                DrpDwnLg.SelectedItem = languages.FirstOrDefault(x => x.Code == inst.SettingsManager.LgCode) ?? languages[0];
             else
                 DrpDwnLg.SelectedIndex = 0;
         }
@@ -132,11 +159,15 @@ namespace Nolvus.Dashboard.Frames.Installer
 
                 LoadLanguages();
 
+                LoadingData(true);
+
                 await LoadAvailableLists(await ApiManager.Service.Installer.GetNolvusVersions());
 
-                SwitchInstance(NolvusListBox.SelectedItem as INolvusVersionDTO);
+                await SwitchInstance(NolvusListBox.SelectedItem as INolvusVersionDTO);
 
-                //NolvusListBox.SelectionChanged += NolvusListBox_SelectedIndexChanged;                
+                LoadingData(false);
+
+                NolvusListBox.SelectionChanged += NolvusListBox_SelectionChanged;
             }
             catch (Exception ex)
             {
@@ -192,8 +223,8 @@ namespace Nolvus.Dashboard.Frames.Installer
             {
                 if (DrpDwnLg.SelectedItem is LgCode selectedLg)
                 {
-                    WorkingInstance.Settings.LgCode = selectedLg.Code;
-                    WorkingInstance.Settings.LgName = selectedLg.Name;
+                    WorkingInstance.SettingsManager.LgCode = selectedLg.Code;
+                    WorkingInstance.SettingsManager.LgName = selectedLg.Name;
                 }
             }
             ServiceSingleton.Dashboard.LoadFrame<PathFrame>();
@@ -204,9 +235,9 @@ namespace Nolvus.Dashboard.Frames.Installer
             ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
         }
 
-        private void NolvusListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private async void NolvusListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            SwitchInstance(NolvusListBox.SelectedItem as INolvusVersionDTO);            
+            await SwitchInstance(NolvusListBox.SelectedItem as INolvusVersionDTO);
         }    
 
     }

@@ -68,7 +68,7 @@
                                             VerticalContentAlignment="Center"
                                             HorizontalContentAlignment="Center"
                                             Background="#363636"
-                                            BorderBrush="White"
+                                            BorderBrush="Gray"
                                             BorderThickness="1"
                                             Foreground="White"
                                             Click="BtnShowAlternateLeveling_Click"
@@ -138,7 +138,27 @@
                                                IsVisible="False"
                                                VerticalAlignment="Center"/>
                                 </Grid>
-                                <ToggleSwitch x:Name="TglGore"/>
+                                <Grid ColumnDefinitions="Auto,Auto"
+                                      ColumnSpacing="6">
+                                    <ToggleSwitch x:Name="TglGore"
+                                                  Grid.Column="0"/>
+
+                                    <Button x:Name="BtnShowGore"
+                                            Grid.Column="1"
+                                            Content="?"
+                                            Width="28"
+                                            Height="28"
+                                            Padding="0"
+                                            VerticalAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            Background="#363636"
+                                            BorderBrush="Gray"
+                                            BorderThickness="1"
+                                            Foreground="White"
+                                            FontWeight="SemiBold"
+                                            Cursor="Hand"/>
+                                </Grid>
                                 <TextBlock Text="Dismember your enemies"
                                            Foreground="#FFA500"
                                            FontSize="12"/>
@@ -155,7 +175,27 @@
                                                IsVisible="False"
                                                VerticalAlignment="Center"/>
                                 </Grid>
-                                <ToggleSwitch x:Name="TglController"/>
+                                <Grid ColumnDefinitions="Auto,Auto"
+                                      ColumnSpacing="6">
+                                    <ToggleSwitch x:Name="TglController"
+                                                  Grid.Column="0"/>
+
+                                    <Button x:Name="BtnShowController"
+                                            Grid.Column="1"
+                                            Content="?"
+                                            Width="28"
+                                            Height="28"
+                                            Padding="0"
+                                            VerticalAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            HorizontalContentAlignment="Center"
+                                            Background="#363636"
+                                            BorderBrush="Gray"
+                                            BorderThickness="1"
+                                            Foreground="White"
+                                            FontWeight="SemiBold"
+                                            Cursor="Hand"/>
+                                </Grid>
                                 <TextBlock Text="Enable controller support. You can view the controller layout in the MCM menu when the list is installed. It is not recommended to play with mouse and keyboard when the controller mods are installed."
                                            Foreground="#FFA500"
                                            TextWrapping="Wrap"
@@ -176,6 +216,7 @@
                                     <ComboBox x:Name="DrpUI"
                                               Grid.Column="0"
                                               SelectionChanged="OnUIChanged"
+                                              DisplayMemberBinding="{Binding Value}"
                                               MinWidth="180"
                                               Background="#2E2E2E"
                                               Foreground="White"/>
@@ -189,14 +230,14 @@
                                             VerticalContentAlignment="Center"
                                             HorizontalContentAlignment="Center"
                                             Background="#363636"
-                                            BorderBrush="White"
+                                            BorderBrush="Gray"
                                             BorderThickness="1"
                                             Foreground="White"
                                             FontWeight="SemiBold"
                                             Cursor="Hand"/>
                                 </Grid>
 
-                                <TextBlock Text="Select between Untarnished UI, Edge UI, Oathvein UI, Norden UI or Vel'dun UI"
+                                <TextBlock Text="Select your user interface theme"
                                            Foreground="#FFA500"
                                            FontSize="12"/>
                             </StackPanel>
@@ -217,14 +258,15 @@
                           RowSpacing="18">
 
                         <TextBlock Grid.Row="0"
+                                   Text="Info"
+                                   Foreground="#FFA500"
+                                   FontSize="16"
+                                   FontWeight="Bold"/>
+
+                        <TextBlock Grid.Row="1"
                                    Text="Setup some additional options."
                                    Foreground="White"
                                    FontSize="14"/>
-
-                        <TextBlock Grid.Row="1"
-                                   Text="Warning these options can't be changed after installation!!!"
-                                   Foreground="White"
-                                   TextWrapping="Wrap"/>
 
                         <TextBlock x:Name="LblGOWarning"
                                    Grid.Row="2"
@@ -246,7 +288,7 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
-                                    BorderBrush="White"
+                                    BorderBrush="Gray"
                                     Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
@@ -256,7 +298,7 @@
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
-                                    BorderBrush="#FFA500"
+                                    BorderBrush="Gray"
                                     Foreground="#FFA500"/>
                         </StackPanel>
 

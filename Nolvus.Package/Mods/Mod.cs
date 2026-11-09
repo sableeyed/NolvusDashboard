@@ -43,7 +43,7 @@ namespace Nolvus.Package.Mods
         {
             get
             {
-                return Path.Combine(ServiceSingleton.Instances.WorkingInstance.ArchiveDir, Category.Name);
+                return Path.Combine(ServiceSingleton.Instances.WorkingInstance.SettingsManager.ArchiveDir, Category.Name);
             }
         }
 
@@ -251,6 +251,11 @@ namespace Nolvus.Package.Mods
             return true;
         }
 
+        public override bool IsInstallable(string Data, string Value)
+        {
+            return InstallConditions.Cast<EnvironmentCondition>().ToList().Where(x => x.DataToCompare == Data && x.IsValid(Data, Value)).FirstOrDefault() != null;
+        }
+
         protected virtual async Task PrepareDirectory()
         {
             var Tsk = Task.Run(() =>
@@ -270,7 +275,7 @@ namespace Nolvus.Package.Mods
         }
         protected string GetInstallFileName()
         {
-            if (ServiceSingleton.Instances.WorkingInstance.Settings.EnableArchiving)
+            if (ServiceSingleton.Instances.WorkingInstance.SettingsManager.EnableArchiving)
             {
                 return Path.Combine(ArchiveFolder, Files.First().FileName);
             }
@@ -402,10 +407,10 @@ namespace Nolvus.Package.Mods
 
                         foreach (var Rule in Rules)
                         {
-                            Rule.Execute(ServiceSingleton.Instances.WorkingInstance.StockGame, 
+                            Rule.Execute(ServiceSingleton.Instances.WorkingInstance.SettingsManager.StockGame, 
                                          Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), 
                                          MoDirectoryFullName, 
-                                         ServiceSingleton.Instances.WorkingInstance.InstallDir);
+                                         ServiceSingleton.Instances.WorkingInstance.SettingsManager.InstallDir);
 
                             CopyingProgress(++Counter, Rules.Count);
                         }
@@ -436,7 +441,7 @@ namespace Nolvus.Package.Mods
                     PatchingProgress(string.Empty, 0, 0);
 
                     await Patcher.PatchFiles(MoDirectoryFullName, 
-                                            ServiceSingleton.Instances.WorkingInstance.StockGame, 
+                                            ServiceSingleton.Instances.WorkingInstance.SettingsManager.StockGame, 
                                             DownloadingProgress, 
                                             ExtractingProgress, 
                                             PatchingProgress);
@@ -476,6 +481,13 @@ namespace Nolvus.Package.Mods
             var Field = Fields.Where(x => x.Key == Key).FirstOrDefault();
 
             return Field == null ? string.Empty : Field.Value;
+        }
+
+        public bool HasFieldValueByKey(string Key, string Value)
+        {
+            var Field = Fields.Where(x => x.Key == Key && x.Value == Value).FirstOrDefault();
+
+            return Field == null ? false : true;
         }
 
         #endregion

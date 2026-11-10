@@ -38,7 +38,7 @@ namespace Vcc.Nolvus.Api.Installer.Controllers
         Task<bool> LatestPackageRequireReInstall(string GuideId, string CurrentVersion);
         Task<IEnumerable<INolvusOptionDTO>> GetVariantOptions(string Variant, string NolvusVersionId);
         Task<IEnumerable<INolvusOptionChoiceDTO>> GetOptionChoices(string Option, string Variant, string NolvusVersionId);
-        Task<IEnumerable<INolvusOptionCategoryDTO>> GetOptionCategories();
+        Task<IEnumerable<INolvusOptionCategoryDTO>> GetOptionCategories(string Variant, string NolvusVersionId);
         Task<IEnumerable<INolvusOptionDTO>> GetOptionsByCategory(string Variant, string Category, string NolvusVersionId);
         Task<int> OptionsCount(string Variant, string NolvusVersionId);
     }

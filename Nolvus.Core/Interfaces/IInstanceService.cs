@@ -26,8 +26,8 @@ namespace Nolvus.Core.Interfaces
         void PrepareInstanceForEnb();
         void PrepareInstanceForOption();
         void FinalizeInstance();
+        bool PropertyExists(string Name);
         string GetValueFromKey(string Key);
-        bool WorkingOnInstance { get; }
         void UnloadWorkingIntance();
     }
 }

@@ -138,7 +138,8 @@ namespace Nolvus.Dashboard.Frames.Manager.Options.v6
 
         protected override async Task OnLoadedAsync()
         {
-            var Categories = await ApiManager.Service.Installer.GetOptionCategories();
+            var Instance = ServiceSingleton.Instances.WorkingInstance;
+            var Categories = await ApiManager.Service.Installer.GetOptionCategories(Instance.SettingsManager.Variant, Instance.Id);
 
             DrpDwnLstCategory.ItemsSource = Categories;
 

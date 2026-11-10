@@ -77,12 +77,6 @@ namespace Nolvus.Instance.Options
             _List.TryAdd(Option.Name, Option);
         }
 
-        private void RemoveOption(INolvusOption Option)
-        {
-            INolvusOption Ignored;
-            _List.TryRemove(Option.Name, out Ignored);
-        }
-
         private void AddOption(INolvusOptionDTO Option)
         {
             NolvusOption NewOption = new NolvusOption();
@@ -100,6 +94,18 @@ namespace Nolvus.Instance.Options
                 DataType = DataType,
                 Value = Value                
             });
+        }
+
+        private void RemoveOption(INolvusOption Option)
+        {
+            INolvusOption Ignored;
+            _List.TryRemove(Option.Name, out Ignored);
+        }
+
+        public bool OptionExists(string Name)
+        {
+            INolvusOption Ignored;
+            return _List.TryGetValue(Name, out Ignored);
         }
 
         public string GetOptionValue(string Name)

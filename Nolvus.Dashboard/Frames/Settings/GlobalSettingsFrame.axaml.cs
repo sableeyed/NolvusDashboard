@@ -200,10 +200,30 @@ namespace Nolvus.Dashboard.Frames.Settings
             NolvusMessageBox.Show(TopLevel.GetTopLevel(this) as Window, "Logs", "Logs have been cleaned", MessageBoxType.Info);
         }
 
-        private void BtnClearCache_Click(object? sender, RoutedEventArgs e)
+        private async void BtnClearCache_Click(object? sender, RoutedEventArgs e)
         {
-            ServiceSingleton.Folders.ClearCache();
-            NolvusMessageBox.Show(TopLevel.GetTopLevel(this) as Window, "Cache", "Cache has been cleaned", MessageBoxType.Info);
+            try
+            {
+                await ServiceSingleton.Folders.ClearDownloadCache((s, p) =>
+                {
+                    ServiceSingleton.Dashboard.Status(string.Format("Clearing download cache ({0}%)...", p));
+                    ServiceSingleton.Dashboard.Progress(p);
+                });
+
+                await ServiceSingleton.Folders.ClearExtractCache((s, p) =>
+                {
+                    ServiceSingleton.Dashboard.Status(string.Format("Clearing extract cache ({0}%)...", p));
+                    ServiceSingleton.Dashboard.Progress(p);
+                });
+                
+                var window = TopLevel.GetTopLevel(this) as Window;
+                await NolvusMessageBox.Show(window, "Cache", "Cache has been cleared", MessageBoxType.Info);
+            }
+            finally
+            {
+                ServiceSingleton.Dashboard.NoStatus();
+                ServiceSingleton.Dashboard.ProgressCompleted();
+            }
         }
 
         private void TglBtnAutoClick_Changed(object? sender, RoutedEventArgs e)

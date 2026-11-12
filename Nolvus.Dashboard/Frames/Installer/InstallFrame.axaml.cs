@@ -58,7 +58,7 @@ namespace Nolvus.Dashboard.Frames.Installer
                         Instance.SettingsManager.Variant,
                         ServiceSingleton.Packages.LoadedVersion));
                     ServiceSingleton.Dashboard.Info("Installing mods (0%)");
-                    ServiceSingleton.Dashboard.AdditionalInfo("Mods {0}/0");
+                    ServiceSingleton.Dashboard.AdditionalInfo("Mods 0/0");
                     ServiceSingleton.Dashboard.AdditionalSecondaryInfo("Error(s) : 0");
 
                     ServiceSingleton.Files.RemoveDirectory(ServiceSingleton.Folders.NexusCacheDirectory, false);

@@ -233,7 +233,15 @@ namespace Nolvus.Dashboard.Frames.Manager.Options.v6
                     if (BackupSaveFiles)
                     {
                         ServiceSingleton.Logger.Log("New game required, about to backup game save files");
-                        await Instance.BackupGameSaveFiles();
+                        
+                        await Instance.BackupGameSaveFiles((p) =>
+                        {
+                            ServiceSingleton.Dashboard.Status(string.Format("Backing up game save files ({0}%)...", p));
+                            ServiceSingleton.Dashboard.Progress(p);
+                        });
+
+                        ServiceSingleton.Dashboard.NoStatus();
+                        ServiceSingleton.Dashboard.ProgressCompleted();
                     }
 
                     ServiceSingleton.Instances.PrepareInstanceForOption();
@@ -289,6 +297,8 @@ namespace Nolvus.Dashboard.Frames.Manager.Options.v6
                     {
                         EnableButtons();
                         ServiceSingleton.Dashboard.EnableSettings();
+                        ServiceSingleton.Dashboard.NoStatus();
+                        ServiceSingleton.Dashboard.ProgressCompleted();
                     }
                 }
             }

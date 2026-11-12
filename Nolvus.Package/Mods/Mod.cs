@@ -27,7 +27,9 @@ namespace Nolvus.Package.Mods
 
         #endregion
 
-        #region Properties              
+        #region Properties
+
+        public InstallConditionType InstallConditionType { get; set; } = InstallConditionType.AND;
 
         public ICategory Category { get; set; }        
 
@@ -84,6 +86,11 @@ namespace Nolvus.Package.Mods
             if (Node["Tag"] != null)
             {
                 Tag = Node["Tag"].InnerText;
+            }
+
+            if (Node["InstallConditionType"] != null)
+            {
+                InstallConditionType = (InstallConditionType)System.Convert.ToInt16(Node["InstallConditionType"].InnerText);
             }
 
             #region Rules
@@ -233,15 +240,28 @@ namespace Nolvus.Package.Mods
 
         public override bool IsInstallable()
         {
-            foreach (var Condition in GetConditions())
+            if (InstallConditionType == InstallConditionType.AND)
             {
-                if (!Condition.IsValid())
+                foreach (var Condition in GetConditions())
                 {
-                    return false;
+                    if (!Condition.IsValid())
+                    {
+                        return false;
+                    }
                 }
+                return true;
             }
-
-            return true;
+            else
+            {
+                foreach (var Condition in GetConditions())
+                {
+                    if (Condition.IsValid())
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
         public override bool IsInstallable(string Value)
@@ -264,13 +284,13 @@ namespace Nolvus.Package.Mods
 
         protected virtual async Task PrepareDirectory()
         {
-            var Tsk = Task.Run(() =>
+            var Tsk = Task.Run(async () =>
             {
                 if (Display)
                 {
                     if (Directory.Exists(MoDirectoryFullName))
                     {
-                        ServiceSingleton.Files.RemoveDirectory(MoDirectoryFullName, true);
+                        await ServiceSingleton.Files.RemoveDirectory(MoDirectoryFullName, true, CleaningProgress);
                     }
 
                     Directory.CreateDirectory(MoDirectoryFullName);
@@ -425,8 +445,8 @@ namespace Nolvus.Package.Mods
                     }
                     finally
                     {
-                        ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
-                    }                                          
+                        await ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true, CleaningProgress);
+                    }
                 }
                 catch
                 {
@@ -459,13 +479,14 @@ namespace Nolvus.Package.Mods
 
         public override async Task Remove()
         {
-            var Tsk = Task.Run(() =>
+            var Tsk = Task.Run(async () =>
             {
                 try
                 {
                     if (Directory.Exists(MoDirectoryFullName))
                     {
-                        ServiceSingleton.Files.RemoveDirectory(MoDirectoryFullName, true);
+                        ServiceSingleton.Logger.Log(string.Format("Deleting mod {0}", Name));
+                        await ServiceSingleton.Files.RemoveDirectory(MoDirectoryFullName, true, DeletingProgress);
                     }
                 }
                 catch (Exception ex)

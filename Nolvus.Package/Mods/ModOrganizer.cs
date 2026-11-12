@@ -3082,7 +3082,7 @@ ccafdsse001-dwesanctuary.esm";
 
         protected override async Task DoCopy()
         {
-            var Tsk = Task.Run(() =>
+            var Tsk = Task.Run(async () =>
             {
                 try
                 {
@@ -3116,10 +3116,7 @@ ccafdsse001-dwesanctuary.esm";
                 }
                 finally
                 {
-                    ServiceSingleton.Files.RemoveDirectory(
-                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir),
-                        true
-                    );
+                    await ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true, CleaningProgress);
                 }
             });
 

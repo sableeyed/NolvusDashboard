@@ -86,7 +86,7 @@
                                                   x:Name="TglBtnDownScale"/>
 
                                     <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
-                                               Text="Not compatible with DLAA/FSR/Frame Generation"
+                                               Text="Not compatible with DLAA/FSR/Neural Rendering/Frame Generation"
                                                Foreground="#FFA500"
                                                TextWrapping="Wrap"
                                                Margin="0,8,0,0"/>
@@ -145,7 +145,7 @@
                                               Foreground="White"/>
 
                                     <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
-                                               Text="DLAA only available on Nvidia RTX."
+                                               Text="DLAA/DLSS only available on Nvidia RTX."
                                                Foreground="#FFA500"
                                                TextWrapping="Wrap"
                                                Margin="0,8,0,0"/>
@@ -187,6 +187,16 @@
                                                VerticalAlignment="Center"/>
                                     <ToggleSwitch Grid.Column="1"
                                                   x:Name="TglBtnFrameGen"/>
+                                </Grid>
+
+
+                                <!-- Neural Rendering -->
+                                <Grid ColumnDefinitions="150,*">
+                                    <TextBlock Text="Neural Rendering"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"/>
+                                    <ToggleSwitch Grid.Column="1"
+                                                  x:Name="TglBtnNeuralRendering"/>
                                 </Grid>
 
                             </StackPanel>
@@ -285,7 +295,7 @@
                                             VerticalContentAlignment="Center"
                                             Content="View variant differences"
                                             BorderBrush="Gray"
-                                            Foreground="White"/>
+                                            Foreground="#FFA500"/>
                                 </Grid>
 
 
@@ -456,7 +466,7 @@
                                         Content="View supported GPUs"
                                         BorderBrush="Gray"
                                         MinWidth="160"
-                                        Foreground="White"
+                                        Foreground="#FFA500"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Margin="0,12,0,0"/>
@@ -477,7 +487,7 @@
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
                                     BorderBrush="Gray"
-                                    Foreground="White"/>
+                                    Foreground="#FFA500"/>
 
                             <Button x:Name="BtnContinue"
                                     Content="Continue"

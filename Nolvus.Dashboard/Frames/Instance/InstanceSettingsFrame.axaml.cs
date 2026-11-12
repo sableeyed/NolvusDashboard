@@ -417,7 +417,18 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         private async void LnkLblOptionsManager_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            await ServiceSingleton.Dashboard.LoadFrameAsync<OptionsManagerFrame>();
+            var Instance = ServiceSingleton.Instances.WorkingInstance;
+
+            if (Instance.Name == Strings.NolvusAwakening)
+            {
+                await ServiceSingleton.Dashboard.LoadFrameAsync<OptionsManagerFrame>();
+            }
+            else
+            {
+                var window = TopLevel.GetTopLevel(this) as Window;
+                await NolvusMessageBox.Show(window, "Options Manager", string.Format("This feature is not available for {0}.", Instance.Name), MessageBoxType.Info);
+            }
+            
         }
 
         private void LnkLblRemap_PointerPressed(object? sender, PointerPressedEventArgs e)

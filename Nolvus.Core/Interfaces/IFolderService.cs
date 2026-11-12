@@ -23,5 +23,7 @@ namespace Nolvus.Core.Interfaces
         string LogsDirectory { get; }
         string UpdaterExe { get; }
         void ClearCache();
+        Task ClearDownloadCache(Action<string, int> Progress);
+        Task ClearExtractCache(Action<string, int> Progress);
     }
 }

@@ -266,12 +266,32 @@ namespace Nolvus.Dashboard.Frames.Manager.Options.v6
             ServiceSingleton.Dashboard.LoadFrame<InstancesFrame>();
         }
 
+        private bool ValidateOptionChange(IEnumerable<INolvusOptionCheckerDTO> Checkers, out string Message)
+        {
+            Message = string.Empty;
+
+            INolvusOptionsManager OptionsManager = ServiceSingleton.Instances.WorkingInstance.OptionsManager;
+
+            foreach(var OptionChecker in Checkers)
+            {
+                if (OptionsManager.GetOption(OptionChecker.OptionName).Value == OptionChecker.Value && !OptionChecker.Accept)
+                {
+                    Message = string.Format("{0} cannot be changed to {1} when {2} is {3}.", CurrentOption.FriendlyName, GetFormatedValue(false), OptionChecker.OptionFriendlyName, OptionChecker.FormattedValue);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private async void BtnChange_Click(object? sender, RoutedEventArgs e)
         {
             var owner = TopLevel.GetTopLevel(this) as Window;
 
             if (!ModOrganizer.IsRunning)
             {
+                BtnChange.Content = "Running...";
+
                 if (GetNewValue() == CurrentOption.Value)
                 {
                     NolvusMessageBox.Show(owner, "Error", string.Format("New value ({0}) for {1} didn't change!", CurrentOption.Value, CurrentOption.Name), MessageBoxType.Error);
@@ -280,22 +300,32 @@ namespace Nolvus.Dashboard.Frames.Manager.Options.v6
                 {
                     try
                     {
-                        bool? Result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", string.Format("You are about to change {0} from {1} to {2}.\n\nWarning!!!\n\nIf you customized the list, all added mods will be placed at the end of the loadorder and left unchecked.\n\nAre you sure you want to continue?", CurrentOption.FriendlyName, GetFormatedValue(true), GetFormatedValue(false)));
+                        string ValidationMessage;
 
-                        if (Result == true)
+                        if (ValidateOptionChange(await ApiManager.Service.Installer.GetOptionCheckers(CurrentOption.Name, GetNewValue()), out ValidationMessage))
                         {
-                            if (!SelectedOption.NewGameRequired || (SelectedOption.NewGameRequired && await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", string.Format("Changing {0} will require a new game!\n\nTo prevent issues, your save files will be removed from the saves directory and will be backed up!\n\nAre you sure you want to continue?", CurrentOption.FriendlyName)) == true))
-                            {
-                                DisableButtons();
-                                ServiceSingleton.Dashboard.DisableSettings();
+                            bool? Result = await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", string.Format("You are about to change {0} from {1} to {2}.\n\nWarning!!!\n\nIf you customized the list, all added mods will be placed at the end of the loadorder and left unchecked.\n\nAre you sure you want to continue?", CurrentOption.FriendlyName, GetFormatedValue(true), GetFormatedValue(false)));
 
-                                DoChangeOption(CurrentOption, GetNewValue(), SelectedOption.NewGameRequired);
+                            if (Result == true)
+                            {
+                                if (!SelectedOption.NewGameRequired || (SelectedOption.NewGameRequired && await NolvusMessageBox.ShowConfirmation(owner, "Confirmation", string.Format("Changing {0} will require a new game!\n\nTo prevent issues, your save files will be removed from the saves directory and will be backed up!\n\nAre you sure you want to continue?", CurrentOption.FriendlyName)) == true))
+                                {
+                                    DisableButtons();
+                                    ServiceSingleton.Dashboard.DisableSettings();
+
+                                    DoChangeOption(CurrentOption, GetNewValue(), SelectedOption.NewGameRequired);
+                                }
                             }
+                        }
+                        else
+                        {
+                            await NolvusMessageBox.Show(owner, "Error", ValidationMessage, MessageBoxType.Error);
                         }
                     }
                     finally
                     {
                         EnableButtons();
+                        BtnChange.Content = "Change";
                         ServiceSingleton.Dashboard.EnableSettings();
                         ServiceSingleton.Dashboard.NoStatus();
                         ServiceSingleton.Dashboard.ProgressCompleted();

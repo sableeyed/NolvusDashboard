@@ -295,7 +295,7 @@
                                             VerticalContentAlignment="Center"
                                             Content="View variant differences"
                                             BorderBrush="Gray"
-                                            Foreground="#FFA500"/>
+                                            Foreground="White"/>
                                 </Grid>
 
 
@@ -466,7 +466,7 @@
                                         Content="View supported GPUs"
                                         BorderBrush="Gray"
                                         MinWidth="160"
-                                        Foreground="#FFA500"
+                                        Foreground="White"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Margin="0,12,0,0"/>
@@ -487,7 +487,7 @@
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
                                     BorderBrush="Gray"
-                                    Foreground="#FFA500"/>
+                                    Foreground="White"/>
 
                             <Button x:Name="BtnContinue"
                                     Content="Continue"
@@ -496,7 +496,7 @@
                                     VerticalContentAlignment="Center"
                                     Background="#2E2E2E"
                                     BorderBrush="Gray"
-                                    Foreground="#FFA500"/>
+                                    Foreground="White"/>
 
                         </StackPanel>
 

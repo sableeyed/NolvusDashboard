@@ -24,6 +24,28 @@ namespace Nolvus.Tests.Mods
             Assert.Equal(@"Z:\\home\\user\\Nolvus", ModOrganizer.ToWineIniPath("/home/user/Nolvus"));
         }
 
+        [Theory]
+        [InlineData("/Nolvus", 7)]
+        [InlineData("/home/test/Games/Nolvus", 23)]
+        [InlineData("/home/test/Games/Nolvus/", 23)]
+        [InlineData("/home//test/Games/Nolvus", 23)]
+        [InlineData("", 0)]
+        public void InstallDirLength_CountsTheLinuxPathWithoutTheWineDrive(string InstallDir, int Expected)
+        {
+            Assert.Equal(Expected, ModOrganizer.InstallDirLength(InstallDir));
+        }
+
+        [Fact]
+        public void MaxInstallDirLength_KeepsTheLongestModFileWithinMaxPath()
+        {
+            const string LongestModFile = "/MODS/mods/SIGMA - Sword animations - 1st person/meshes/actors/character/_1stperson/animations/OpenAnimationReplacer/Nolvus OAR Stance 1st Person Combat Framework/Sword Mid/_variants_1hm_attackrightdiagonal/1hm_attackright_combat_diagonal_3.hkx";
+
+            var InstallDir = "/" + new string('N', ModOrganizer.MaxInstallDirLength - 1);
+
+            // MAX_PATH is 260 including the terminating NUL.
+            Assert.Equal(259, ModOrganizer.ToWinePath(InstallDir + LongestModFile).Length);
+        }
+
         /// <summary>A Nolvus root with an instance under Instances/, the layout the dashboard creates.</summary>
         private sealed class Instance : IDisposable
         {

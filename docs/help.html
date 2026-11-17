@@ -132,7 +132,7 @@
     <p>Close the dashboard, clear <code>Cache/Downloads</code>, and open the dashboard again.</p>
 
     <h3>"Could not find a part of the path" or "Directory name is invalid"</h3>
-    <p>The dashboard or instance folder was probably moved before the install finished. Click <strong>Cancel</strong> on the resume screen, then install the list again. Once an install has finished, use <strong>Manage → Remap Instance</strong> after moving it instead.</p>
+    <p>The dashboard or instance folder was probably moved before the install finished. Click <strong>Cancel</strong> on the resume screen, then install the list again. If you moved a finished instance yourself, move it back to where it was, then move it with <strong>Manage → Remap Instance</strong> instead (see <a href="play.html#instances">moving instances</a>).</p>
 
     <h3 id="ae-not-installed">"Skyrim Anniversary Edition is not installed" or "hash for game file does not match"</h3>
     <p>The dashboard checks that your Skyrim is a legitimate, up-to-date Steam copy with all of the Anniversary content. Common causes:</p>
@@ -162,6 +162,7 @@
     <h3>Fluorine won't start at all</h3>
     <p>Delete the program with <code>rm -rf ~/.local/share/fluorine/bin</code>, then press <strong>Play</strong> on any instance in the dashboard's list and accept the offer to install it. Your prefix, mods and downloads are kept. See <a href="play.html#fluorine">Fluorine Manager</a>.</p>
 
+    <!-- The dashboard's path length warning opens help.html#path-length. Keep this id. -->
     <h2 id="path-length">Path length (MAX_PATH)</h2>
     <p>Skyrim and most of its tools are Windows programs, and Windows limits file paths to <strong>260 characters</strong>. Wine shows your Linux folders to those programs as <code>Z:\</code> followed by the full Linux path. A long install path therefore uses up much of that limit before any mod files are counted, and deeply nested mod files then go over it.</p>
     <p>Typical symptoms:</p>
@@ -171,16 +172,17 @@
       <li>Paths in error messages look cut off.</li>
       <li>Nolvus Awakening (v6) doesn't start at all.</li>
     </ul>
-    <p>This became more common with the switch to Fluorine (<a href="https://github.com/sableeyed/NolvusDashboard/issues/59">issue #59</a>). The old MO2 setup mapped a short <code>X:</code> drive, but Fluorine uses full host paths. Installs on secondary drives mounted by UUID are the usual culprit.</p>
+    <p>This became more common with the switch to Fluorine (<a href="https://github.com/sableeyed/NolvusDashboard/issues/59">issue #59</a>). The old MO2 setup mapped a short <code>X:</code> drive, but Fluorine uses full host paths.</p>
+    <p>The longest mod file in Nolvus sits 244 characters below the instance directory. Add the <code>Z:</code> and the instance directory itself can be at most <strong>13 characters</strong> long. Almost any folder is longer than that, including the dashboard's default, so most installs need the symlink below. Your files stay where they are, and the game and its tools reach them through a short path such as <code>/Nolvus</code>. The dashboard warns you about this when you choose the instance directory, and when you remap an instance.</p>
 
     <h3>Check your paths</h3>
     <p>Run this from your instance directory, the folder containing <code>STOCK GAME</code>, <code>MODS</code> and <code>TOOLS</code>:</p>
 <pre><code>cd "/path/to/your/instance"
 find "$PWD" | awk '{ print length($0) + 2, $0 }' | sort -rn | head</code></pre>
-    <p>It lists your ten longest paths, with their length as Windows sees them. If the top numbers are near or above 260, shorten your install path.</p>
+    <p>It lists your ten longest paths, with their length as Windows sees them. If the top numbers are near or above 260, shorten the path with a symlink.</p>
 
     <h3>Shorten the path with a symlink</h3>
-    <p>The simplest fix is to install to a short path in the first place, such as <code>~/Games/Nolvus</code>. For an existing install, you don't need to move anything:</p>
+    <p>You don't need to move or reinstall anything. A short symlink gives the game and its tools a path that fits:</p>
     <ol class="steps">
       <li>Create a short symlink at the root of your filesystem that points at your instance directory:
 <pre><code>sudo ln -s "/run/media/you/9c4e1f2a-…/Nolvus/Instances/Nolvus Awakening" /Nolvus</code></pre>

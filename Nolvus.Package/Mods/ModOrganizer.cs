@@ -3274,6 +3274,29 @@ ccafdsse001-dwesanctuary.esm";
             return ToWinePath(path).Replace("\\", "\\\\");
         }
 
+        // The game, SKSE plugins and MO2 run under Wine and still use MAX_PATH buffers: 260
+        // characters including the terminating NUL, so 259 usable. The longest file in the
+        // modlist adds 244 characters below the instance directory:
+        // /MODS/mods/SIGMA - Sword animations - 1st person/meshes/actors/character/_1stperson/animations/OpenAnimationReplacer/Nolvus OAR Stance 1st Person Combat Framework/Sword Mid/_variants_1hm_attackrightdiagonal/1hm_attackright_combat_diagonal_3.hkx
+        // Wine also puts "Z:" in front of the Linux path, which leaves 13 characters for the
+        // instance directory. That file is from Awakening; Ascension uses the same limit.
+        private const int MaxPath = 259;
+        private const int LongestModPath = 244;
+
+        public const int MaxInstallDirLength = MaxPath - LongestModPath - 2;
+
+        public static int InstallDirLength(string InstallDir)
+        {
+            // Measured on the Wine path, so a trailing or doubled slash isn't counted, then
+            // without the "Z:", since that is the length of the path the user picked.
+            var WinePath = ToWinePath(InstallDir);
+
+            if (WinePath.StartsWith("Z:", StringComparison.Ordinal))
+                return WinePath.Length - 2;
+
+            return WinePath.Length;
+        }
+
         private static void NormalizeLineEndings(string path, string content)
         {
             content = CRLF(content);

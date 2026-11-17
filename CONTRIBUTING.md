@@ -36,7 +36,7 @@ This document explains how to report problems, set up a development environment,
 | Report a bug in the Linux dashboard                  | [GitHub Issues](https://github.com/sableeyed/NolvusDashboard/issues)   |
 | Ask a question or discuss an idea                    | [GitHub Discussions](https://github.com/sableeyed/NolvusDashboard/discussions) or the [Nolvus Linux Discord](https://discord.gg/Tazgf4Tr4u) |
 | Get help with the modlist itself (not Linux-specific) | [Official Nolvus Discord](https://discord.gg/Zkh5PwD)                 |
-| Read setup guides and troubleshooting                | [Wiki](https://github.com/sableeyed/NolvusDashboard/wiki)              |
+| Read setup guides and troubleshooting                | [Wiki](https://sableeyed.github.io/NolvusDashboard)                    |
 
 ---
 

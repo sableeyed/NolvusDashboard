@@ -101,13 +101,13 @@
       <span class="label">Choose the location carefully</span>
       <ul>
         <li>By default, Nolvus is installed <strong>inside</strong> this folder, in <code>Nolvus/Instances</code>, so put it on an <strong>SSD</strong> with plenty of free space. You can pick a different install location later.</li>
-        <li>Keep the path <strong>short</strong>. Skyrim's tools are Windows programs, and Windows limits how long a file path can be. <strong>Nolvus Awakening (v6) won't start from a long path.</strong> <code>~/Games/Nolvus</code> is good. A drive mounted by UUID, such as <code>/run/media/you/9c4e1f2a-…/Stuff/Modding/Nolvus</code>, is asking for trouble. See <a href="help.html#path-length">path length</a> if you can't avoid a long one.</li>
+        <li>Expect to set up a <strong>symlink</strong> after installing. Skyrim's tools are Windows programs, and Windows limits how long a file path can be, so <strong>Nolvus won't start from an instance directory longer than 13 characters</strong>. Almost any folder is longer, including the default. Install wherever you have the space, then point a short symlink such as <code>/Nolvus</code> at it. See <a href="#paths">Where to install</a>.</li>
         <li>Don't put it inside your Steam library or your Skyrim folder.</li>
       </ul>
     </div>
     <div class="callout caution">
       <span class="label">Caution</span>
-      <p><strong>Never move the dashboard folder while an install is in progress.</strong> Doing so breaks the install. If you move an instance after it has finished installing, use <strong>Manage → Remap Instance</strong> to fix its paths.</p>
+      <p><strong>Never move the dashboard folder while an install is in progress.</strong> Doing so breaks the install. To move an instance after it has finished installing, don't move the folder yourself: use <strong>Manage → Remap Instance</strong>, which moves the files and updates the paths (see <a href="play.html#instances">moving instances</a>).</p>
     </div>
 
     <h2 id="first-launch">3. First launch</h2>
@@ -183,7 +183,12 @@
         </tbody>
       </table>
     </div>
+    <p>Choose an instance directory on an SSD with enough free space for the variant you want (see <a href="requirements.html#storage">Storage</a>). The default is fine if the dashboard folder is on such a drive. How long the path is doesn't matter for the install itself. The game needs a path of <strong>13 characters or fewer</strong>, though, and almost no folder is that short. So once the install is done, you create a short symlink, such as <code>/Nolvus</code>, that points at the instance directory, and the game and its tools go through it. The symlink takes up no space, and your files stay where you installed them. See <a href="help.html#path-length">path length</a> for the steps.</p>
     <p>If you already have a folder of Nolvus downloads from an earlier install, point <strong>Archive Directory</strong> at it. The installer checks each file and reuses the ones that match, so they aren't downloaded again.</p>
+    <div class="callout important">
+      <span class="label">Instance Path Too Long</span>
+      <p>When you click <strong>Continue</strong>, the dashboard warns you if the instance directory is longer than 13 characters, which it almost always is. Click <strong>Yes</strong> to keep it: the install carries on, and the <a href="help.html#path-length">path length</a> instructions open in your browser so you can set up the symlink once the install is done. Click <strong>No</strong> to choose a different directory.</p>
+    </div>
 
     <h3 id="performance">Performance</h3>
     <p>This screen decides how Nolvus looks and runs. The right-hand side shows the graphics card, CPU and memory the dashboard detected, and the requirements for what you've picked. <strong>View supported GPUs</strong> lists the cards that meet them. If you're unsure about anything here, the defaults are a sensible starting point.</p>

@@ -22,7 +22,7 @@ import re, sys
 text = open(sys.argv[1], encoding="utf-8-sig", newline="").read()
 lines = text.splitlines(keepends=True)
 
-for method in ["EnsureInstanceIni", "RepairIniDriveLetters", "ToWinePath", "ToWineIniPath"]:
+for method in ["EnsureInstanceIni", "RepairIniDriveLetters", "ToWinePath", "ToWineIniPath", "InstallDirLength"]:
     start = next(i for i, l in enumerate(lines) if re.search(rf"public static \w+ {method}\(", l))
     end = next(i for i in range(start + 1, len(lines)) if lines[i].rstrip("\r\n") == "        }")
     print(f"{sum(map(len, lines[:start]))}..{sum(map(len, lines[:end + 1]))}")

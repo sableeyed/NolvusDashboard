@@ -1,0 +1,132 @@
+name: Bug report
+description: Report a bug in the Nolvus Dashboard for Linux software.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This form is only for bugs in the Nolvus Dashboard for Linux**: the installer and manager app in this repository.
+
+        It is **not** the place to get help with the game. Issues like these will be closed:
+
+        - Skyrim crashes or freezes in game (CTDs)
+        - Problems with a mod, the load order, ENB, performance or graphics
+        - Questions about the Nolvus modlist, its features or its settings
+
+        For those, ask in the [Official Nolvus Discord](https://discord.gg/Zkh5PwD).
+        If you're not sure whether your problem is a dashboard bug, ask in the [Nolvus Linux Discord](https://discord.gg/Tazgf4Tr4u) first.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: This is a bug in the dashboard software, not a problem with Skyrim, the Nolvus modlist or a mod.
+          required: true
+        - label: I searched the [existing issues](https://github.com/sableeyed/NolvusDashboard/issues?q=is%3Aissue) and this hasn't been reported yet.
+          required: true
+        - label: I'm using the [latest release](https://github.com/sableeyed/NolvusDashboard/releases/latest) of the dashboard.
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does the problem happen?
+      options:
+        - Starting the dashboard
+        - Logging in, or the Nexus download browser window
+        - Choosing the install folder or settings before installing
+        - Installing (downloading, extracting or patching mods)
+        - Pressing Play, or setting up Fluorine
+        - Managing an existing instance (update, remap, settings, delete)
+        - Updating the dashboard
+        - Somewhere else
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect to happen, and what happened instead? Include the exact text of any error message.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: If you can make it happen again, list the steps.
+      placeholder: |
+        1. Open the dashboard
+        2. Click ...
+        3. ...
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Attach the newest `Log-*.txt` file from the `Logs` folder next to the `NolvusDashboard` executable (drag the file into this box). If the dashboard crashes before writing a log, run `./NolvusDashboard` from a terminal and paste the output in a code block.
+
+        **Never attach `NolvusDashboard.ini`.** It contains your Nexus account details.
+    validations:
+      required: true
+
+  - type: input
+    id: dashboard-version
+    attributes:
+      label: Dashboard version
+      description: Shown at the top of the dashboard window, before your username.
+      placeholder: v4.0.2.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: modlist
+    attributes:
+      label: Nolvus version
+      options:
+        - Nolvus Awakening (v6)
+        - Nolvus Ascension (v5)
+        - None installed yet
+    validations:
+      required: true
+
+  - type: input
+    id: distro
+    attributes:
+      label: Linux distribution and version
+      placeholder: Fedora 43, Arch, Bazzite, SteamOS 3.7, ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: session
+    attributes:
+      label: Display session
+      options:
+        - Wayland
+        - X11
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: steam
+    attributes:
+      label: Steam install type
+      options:
+        - Native package
+        - Flatpak
+        - Snap
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, your desktop environment, GPU, or anything else that might help.

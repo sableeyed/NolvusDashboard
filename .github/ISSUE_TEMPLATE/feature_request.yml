@@ -1,0 +1,61 @@
+name: Feature request
+description: Suggest an improvement to the Nolvus Dashboard for Linux software.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This form is only for changes to the Nolvus Dashboard for Linux**: the installer and manager app in this repository.
+
+        Requests about the Nolvus modlist itself, such as adding, removing or changing mods, belong in the [Official Nolvus Discord](https://discord.gg/Zkh5PwD). This project can't change what the modlist contains.
+
+        This port aims to work the same way as the official Windows dashboard. Features that the Windows dashboard also lacks are usually better requested from the [original project](https://github.com/vektor9999/NolvusDashboard), so both versions get them.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: This is about the dashboard software, not about Skyrim, the Nolvus modlist or a mod.
+          required: true
+        - label: I searched the [existing issues](https://github.com/sableeyed/NolvusDashboard/issues?q=is%3Aissue) and this hasn't been suggested yet.
+          required: true
+
+  - type: dropdown
+    id: linux-specific
+    attributes:
+      label: Is this specific to Linux?
+      options:
+        - Yes, it's something only the Linux version needs
+        - No, the Windows dashboard doesn't have it either
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe what you're trying to do and what gets in the way, not only the solution you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Other solutions or workarounds you've tried.
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, mockups, or links to related issues.

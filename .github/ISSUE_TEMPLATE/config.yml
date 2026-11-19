@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Help with Nolvus, Skyrim or a mod
+    url: https://discord.gg/Zkh5PwD
+    about: In-game crashes, mod problems, performance, ENB, load order or anything else about the modlist itself. Ask in the Official Nolvus Discord. These issues are only for bugs in the Linux dashboard.
+  - name: Help running Nolvus on Linux
+    url: https://discord.gg/Tazgf4Tr4u
+    about: Setup questions, or not sure whether your problem is a dashboard bug? Ask in the Nolvus Linux Discord first.
+  - name: Wiki
+    url: https://github.com/sableeyed/NolvusDashboard/wiki
+    about: Setup guides and troubleshooting for the Linux dashboard.

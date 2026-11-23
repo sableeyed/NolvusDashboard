@@ -35,12 +35,7 @@ namespace Nolvus.Services.Logger
 
         public void ClearLogs()
         {
-            var LogsToDelete = ServiceSingleton.Files.GetFiles(ServiceSingleton.Folders.LogsDirectory).Where(x => x.Name != Filename).ToList();
-
-            foreach (var LogFile in LogsToDelete)
-            {
-                LogFile.Delete();
-            }
+            ServiceSingleton.Files.GetFiles(ServiceSingleton.Folders.LogsDirectory).Where(x => x.Name != Filename).ToList().ForEach(x => x.Delete());
         }
     }
 }

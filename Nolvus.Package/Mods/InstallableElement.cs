@@ -147,6 +147,16 @@ namespace Nolvus.Package.Mods
             Notify(new ModInstallProgressEvent(new CopyProgress() { ItemNumber = Value, MaxItem = Max }));
         }
 
+        protected void DeletingProgress(string FileName, int PercentDone)
+        {
+            Notify(new ModInstallProgressEvent(new DeleteProgress() { FileName = FileName, ProgressPercentage = PercentDone }));
+        }
+
+        protected void CleaningProgress(string FileName, int PercentDone)
+        {
+            Notify(new ModInstallProgressEvent(new CleaningProgress() { FileName = FileName, ProgressPercentage = PercentDone }));
+        }
+
         protected void UnpackingProgress(string FileName, int Value, int Max)
         {
             Notify(new ModInstallProgressEvent(new UnPackProgress() {FileName = FileName, ItemNumber = Value, MaxItem = Max }));
@@ -184,7 +194,6 @@ namespace Nolvus.Package.Mods
                     Progress.PercentDone = Event.DownloadInfo.PercentDone;
                     break;
                 case ModInstallStatus.Hashing:                    
-                    
                     Progress.Status = string.Format("Hashing {0}", Event.HashInfo.FileName);
                     Progress.PercentDone = Event.HashInfo.PercentDone;
                     break;
@@ -195,6 +204,14 @@ namespace Nolvus.Package.Mods
                 case ModInstallStatus.Installing:                    
                     Progress.Status = "Installing files...";
                     Progress.PercentDone = Event.CopyInfo.PercentDone;
+                    break;
+                case ModInstallStatus.Deleting:
+                    Progress.Status = "Deleting files...";
+                    Progress.PercentDone = Event.DeleteInfo.PercentDone;
+                    break;
+                case ModInstallStatus.Cleaning:
+                    Progress.Status = "Cleaning temporary files...";
+                    Progress.PercentDone = Event.CleaningInfo.PercentDone;
                     break;
                 case ModInstallStatus.UnPacking:                    
                     Progress.Status = "Unpacking files...";
@@ -236,8 +253,7 @@ namespace Nolvus.Package.Mods
             {
                 try
                 {
-                    ServiceSingleton.Files.RemoveDirectory(
-                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+                    await ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true, CleaningProgress);
 
                     foreach (var File in Files)
                     {
@@ -246,8 +262,7 @@ namespace Nolvus.Package.Mods
                 }
                 catch(Exception)
                 {
-                    ServiceSingleton.Files.RemoveDirectory(
-                        Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true);
+                    await ServiceSingleton.Files.RemoveDirectory(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir), true, CleaningProgress);
                     throw;
                 }
             });

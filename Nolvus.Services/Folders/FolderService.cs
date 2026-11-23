@@ -139,6 +139,16 @@ namespace Nolvus.Services.Folders
             ServiceSingleton.Files.RemoveDirectory(ExtractDirectory, false);
         }
 
+        public async Task ClearDownloadCache(Action<string, int> Progress)
+        {
+            await ServiceSingleton.Files.RemoveDirectory(DownloadDirectory, false, Progress);
+        }
+
+        public async Task ClearExtractCache(Action<string, int> Progress)
+        {
+            await ServiceSingleton.Files.RemoveDirectory(ExtractDirectory, false, Progress);
+        }
+
         public FolderService()
         {            
             Directory.CreateDirectory(CacheDirectory);

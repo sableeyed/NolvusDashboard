@@ -102,8 +102,8 @@ namespace Nolvus.Core.Services
                             AddRow(col, "Archive directory : ", Instance.SettingsManager.ArchiveDir);
                             AddRow(col, "Enable archiving : ", Instance.SettingsManager.EnableArchiving ? "Yes" : "No");
                             AddRow(col, "Resolution : ", $"{Instance.SettingsManager.Width}x{Instance.SettingsManager.Height}");
-                            AddRow(col, "Downscaling : ", Instance.SettingsManager.DownScaling == "TRUE" ? "Yes" : "No");
-                            AddRow(col, "Resolution : ", Instance.SettingsManager.DownScaling == "TRUE" ? Instance.SettingsManager.DownScaledResolution : "-");
+                            AddRow(col, "Downscaling : ", Instance.OptionsManager.GetOptionValue("DownScaling") == "TRUE" ? "Yes" : "No");
+                            AddRow(col, "Resolution : ", Instance.OptionsManager.GetOptionValue("DownScaling") == "TRUE" ? Instance.SettingsManager.DownScaledResolution : "-");
 
                             AddRow(col, "Ini level : ", Instance.SettingsManager.IniSettings switch
                             {

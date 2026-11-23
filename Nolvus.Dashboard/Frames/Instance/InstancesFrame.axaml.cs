@@ -98,7 +98,7 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         private void BtnWiki_Click(object? sender, RoutedEventArgs e)
         {
-            var url = "https://github.com/sableeyed/NolvusDashboard/wiki";
+            var url = "https://sableeyed.github.io/NolvusDashboard";
             try
             {
                 Process.Start(new ProcessStartInfo

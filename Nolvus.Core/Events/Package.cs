@@ -76,6 +76,25 @@ namespace Nolvus.Core.Events
             _MaxValue = MaxItem;
         }
     }
+
+    public class DeleteInfo : ProgressInfo
+    {
+        public DeleteInfo(string FileName, int PercentDone)
+            : base(FileName, PercentDone)
+        {
+            
+        }
+    }
+
+    public class CleaningInfo : ProgressInfo
+    {
+        public CleaningInfo(string FileName, int PercentDone)
+            : base(FileName, PercentDone)
+        {
+            
+        }
+    }
+
     public class UnPackInfo : CopyInfo
     {
         public UnPackInfo(string FileName, int PercentDone, int ItemNumber, int MaxItem)
@@ -106,6 +125,8 @@ namespace Nolvus.Core.Events
         private HashInfo _HashInfo;
         private ExtractInfo _ExtractInfo;
         private CopyInfo _CopyInfo;
+        private DeleteInfo _DeleteInfo;
+        private CleaningInfo _CleaningInfo;
         private UnPackInfo _UnPackInfo;
         private PatchingInfo _PatchingInfo;
         private ArchivingInfo _ArchivingInfo;
@@ -117,6 +138,8 @@ namespace Nolvus.Core.Events
         public HashInfo HashInfo { get { return _HashInfo; } }
         public ExtractInfo ExtractInfo { get { return _ExtractInfo; } }
         public CopyInfo CopyInfo { get { return _CopyInfo; } }
+        public DeleteInfo DeleteInfo { get { return _DeleteInfo; } }
+        public CleaningInfo CleaningInfo { get { return _CleaningInfo; } }
         public UnPackInfo UnPackInfo { get { return _UnPackInfo; } }
         public PatchingInfo PatchingInfo { get { return _PatchingInfo; } }
         public ArchivingInfo ArchivingInfo { get { return _ArchivingInfo; } }
@@ -129,6 +152,8 @@ namespace Nolvus.Core.Events
             _HashInfo = new HashInfo(string.Empty, 0);
             _ExtractInfo = new ExtractInfo(string.Empty, 0);
             _CopyInfo = new CopyInfo(string.Empty, 0, 0, 0);
+            _DeleteInfo = new DeleteInfo(string.Empty, 0);
+            _CleaningInfo = new CleaningInfo(string.Empty, 0);
             _UnPackInfo = new UnPackInfo(string.Empty, 0, 0, 0);
             _PatchingInfo = new PatchingInfo(string.Empty, 0, 0, 0);
             _ArchivingInfo = new ArchivingInfo(string.Empty, 0);
@@ -140,6 +165,8 @@ namespace Nolvus.Core.Events
             _HashInfo = new HashInfo(Progress.FileName, Progress.ProgressPercentage);
             _ExtractInfo = new ExtractInfo(string.Empty, 0);
             _CopyInfo = new CopyInfo(string.Empty, 0, 0, 0);
+            _DeleteInfo = new DeleteInfo(string.Empty, 0);
+            _CleaningInfo = new CleaningInfo(string.Empty, 0);
             _UnPackInfo = new UnPackInfo(string.Empty, 0, 0, 0);
             _PatchingInfo = new PatchingInfo(string.Empty, 0, 0, 0);
             _ArchivingInfo = new ArchivingInfo(string.Empty, 0);
@@ -151,6 +178,8 @@ namespace Nolvus.Core.Events
             _HashInfo = new HashInfo(string.Empty, 0);
             _ExtractInfo = new ExtractInfo(Progress.FileName, Progress.ProgressPercentage);
             _CopyInfo = new CopyInfo(string.Empty, 0, 0, 0);
+            _DeleteInfo = new DeleteInfo(string.Empty, 0);
+            _CleaningInfo = new CleaningInfo(string.Empty, 0);
             _UnPackInfo = new UnPackInfo(string.Empty, 0, 0, 0);
             _PatchingInfo = new PatchingInfo(string.Empty, 0, 0, 0);
             _ArchivingInfo = new ArchivingInfo(string.Empty, 0);
@@ -162,6 +191,34 @@ namespace Nolvus.Core.Events
             _HashInfo = new HashInfo(string.Empty, 0);
             _ExtractInfo = new ExtractInfo(string.Empty, 0);
             _CopyInfo = new CopyInfo(Progress.FileName, Progress.ProgressPercentage, Progress.ItemNumber, Progress.MaxItem);
+            _DeleteInfo = new DeleteInfo(string.Empty, 0);
+            _CleaningInfo = new CleaningInfo(string.Empty, 0);
+            _UnPackInfo = new UnPackInfo(string.Empty, 0, 0, 0);
+            _PatchingInfo = new PatchingInfo(string.Empty, 0, 0, 0);
+            _ArchivingInfo = new ArchivingInfo(string.Empty, 0);
+        }
+        public ModInstallProgressEvent(DeleteProgress Progress)
+        {
+            _Status = ModInstallStatus.Deleting;
+            _DownloadInfo = new DownloadInfo(string.Empty, 0, 0, "0", "0", 0, 0);
+            _HashInfo = new HashInfo(string.Empty, 0);
+            _ExtractInfo = new ExtractInfo(string.Empty, 0);
+            _CopyInfo = new CopyInfo(string.Empty, 0, 0, 0);
+            _DeleteInfo = new DeleteInfo(Progress.FileName, Progress.ProgressPercentage);
+            _CleaningInfo = new CleaningInfo(string.Empty, 0);
+            _UnPackInfo = new UnPackInfo(string.Empty, 0, 0, 0);
+            _PatchingInfo = new PatchingInfo(string.Empty, 0, 0, 0);
+            _ArchivingInfo = new ArchivingInfo(string.Empty, 0);
+        }
+        public ModInstallProgressEvent(CleaningProgress Progress)
+        {
+            _Status = ModInstallStatus.Cleaning;
+            _DownloadInfo = new DownloadInfo(string.Empty, 0, 0, "0", "0", 0, 0);
+            _HashInfo = new HashInfo(string.Empty, 0);
+            _ExtractInfo = new ExtractInfo(string.Empty, 0);
+            _CopyInfo = new CopyInfo(string.Empty, 0, 0, 0);
+            _DeleteInfo = new DeleteInfo(string.Empty, 0);
+            _CleaningInfo = new CleaningInfo(Progress.FileName, Progress.ProgressPercentage);
             _UnPackInfo = new UnPackInfo(string.Empty, 0, 0, 0);
             _PatchingInfo = new PatchingInfo(string.Empty, 0, 0, 0);
             _ArchivingInfo = new ArchivingInfo(string.Empty, 0);
@@ -173,6 +230,8 @@ namespace Nolvus.Core.Events
             _HashInfo = new HashInfo(string.Empty, 0);
             _ExtractInfo = new ExtractInfo(string.Empty, 0);
             _CopyInfo = new CopyInfo(string.Empty, 0, 0, 0);
+            _DeleteInfo = new DeleteInfo(string.Empty, 0);
+            _CleaningInfo = new CleaningInfo(string.Empty, 0);
             _UnPackInfo = new UnPackInfo(Progress.FileName, Progress.ProgressPercentage, Progress.ItemNumber, Progress.MaxItem);
             _PatchingInfo = new PatchingInfo(string.Empty, 0, 0, 0);
             _ArchivingInfo = new ArchivingInfo(string.Empty, 0);
@@ -184,6 +243,8 @@ namespace Nolvus.Core.Events
             _HashInfo = new HashInfo(string.Empty, 0);
             _ExtractInfo = new ExtractInfo(string.Empty, 0);
             _CopyInfo = new CopyInfo(string.Empty, 0, 0, 0);
+            _DeleteInfo = new DeleteInfo(string.Empty, 0);
+            _CleaningInfo = new CleaningInfo(string.Empty, 0);
             _UnPackInfo = new UnPackInfo(string.Empty, 0, 0, 0);
             _PatchingInfo = new PatchingInfo(string.Empty, Progress.ProgressPercentage, Progress.ItemNumber, Progress.MaxItem);
             _ArchivingInfo = new ArchivingInfo(string.Empty, 0);
@@ -195,6 +256,8 @@ namespace Nolvus.Core.Events
             _HashInfo = new HashInfo(string.Empty, 0);
             _ExtractInfo = new ExtractInfo(string.Empty, 0);
             _CopyInfo = new CopyInfo(string.Empty, 0, 0, 0);
+            _DeleteInfo = new DeleteInfo(string.Empty, 0);
+            _CleaningInfo = new CleaningInfo(string.Empty, 0);
             _UnPackInfo = new UnPackInfo(string.Empty, 0, 0, 0);
             _PatchingInfo = new PatchingInfo(string.Empty, 0, 0, 0);
             _ArchivingInfo = new ArchivingInfo(Progress.FileName, Progress.ProgressPercentage);

@@ -15,7 +15,6 @@ namespace Nolvus.Core.Interfaces
         string Variant { get; set; }
         string Height { get; set; }
         string Width { get; set; }
-        string DownScaling { get; set; }
         string DownHeight { get; set; }
         string DownWidth { get; set; }
         string IniSettings { get; set; }

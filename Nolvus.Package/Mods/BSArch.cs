@@ -53,7 +53,7 @@ namespace Nolvus.Package.Mods
             finally
             {
                 // Always clean up the extracted cache directory
-                ServiceSingleton.Files.RemoveDirectory(extractDir, true);
+                await ServiceSingleton.Files.RemoveDirectory(extractDir, true, CleaningProgress);
             }
 
             // Method is logically sync, but override is async

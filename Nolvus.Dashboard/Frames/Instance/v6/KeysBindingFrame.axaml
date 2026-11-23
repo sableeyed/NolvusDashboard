@@ -31,7 +31,7 @@
                                    FontSize="16"
                                    FontWeight="Bold"/>
 
-                        <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys_V6.0.21.jpg"
+                        <Image Source="avares://NolvusDashboard/Assets/DefaultKeyboardKeys_V6.0.22.jpg"
                                Stretch="Uniform"
                                HorizontalAlignment="Center"
                                MaxHeight="320"/>

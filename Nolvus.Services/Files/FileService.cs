@@ -102,7 +102,7 @@ namespace Nolvus.Services.Files
             }
         }
 
-        public void MoveFiles(string SourcePath, string TargetPath, SearchOption SearchOption = SearchOption.AllDirectories)
+        public void MoveFiles(string SourcePath, string TargetPath, Action<int> Progress = null, SearchOption SearchOption = SearchOption.AllDirectories)
         {
             if (SearchOption == SearchOption.AllDirectories)
             {
@@ -112,9 +112,20 @@ namespace Nolvus.Services.Files
                 }
             }
 
-            foreach (var SourceFile in Directory.GetFiles(SourcePath, "*.*", SearchOption))
+            var Files = Directory.GetFiles(SourcePath, "*.*", SearchOption);
+            var Counter = 0;
+
+            foreach (var SourceFile in Files)
             {
                 MoveFile(SourceFile, SourceFile.Replace(SourcePath, TargetPath));
+
+                Counter++;
+
+                if (Progress != null)
+                {
+                    int Percent = System.Convert.ToInt16(Math.Round(((double)Counter / Files.Length * 100)));
+                    Progress(Percent);
+                }
             }
         }
 
@@ -155,7 +166,9 @@ namespace Nolvus.Services.Files
             {
                 SetAttributesNormal(_Directory);
 
-                foreach (FileInfo File in _Directory.GetFiles())
+                var Files = _Directory.GetFiles("*.*", SearchOption.AllDirectories);
+
+                foreach (FileInfo File in Files)
                 {
                     File.Delete();
                 }
@@ -170,6 +183,50 @@ namespace Nolvus.Services.Files
                     _Directory.Delete();
                 }
             }            
+        }
+
+        public async Task RemoveDirectory(string DirectoryPath, bool RemoveDirectory, Action<string, int> Progress)
+        {
+            var Tsk = Task.Run(() =>
+            {
+                DirectoryInfo _Directory = new DirectoryInfo(DirectoryPath);
+
+                if (_Directory.Exists)
+                {
+                    Progress(string.Empty, 0);
+
+                    SetAttributesNormal(_Directory);
+
+                    var Files = _Directory.GetFiles("*.*", SearchOption.AllDirectories);
+                    var Counter = 0;
+
+                    foreach (FileInfo File in Files)
+                    {
+                        File.Delete();
+
+                        Counter++;
+
+                        if (Progress != null)
+                        {
+                            int Percent = System.Convert.ToInt16(Math.Round(((double)Counter / Files.Length * 100)));
+
+                            Progress(File.Name, Percent);
+                        }
+                    }
+
+                    foreach (DirectoryInfo Directory in _Directory.GetDirectories())
+                    {
+                        Directory.Delete(true);
+                    }
+
+                    if (RemoveDirectory)
+                    {
+                        _Directory.Delete();
+                    }
+                }
+            });
+
+            await Tsk;
         }
 
         public async Task<string> GetCRC32(FileInfo File, Action<string, int> Progress)

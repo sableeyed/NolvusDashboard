@@ -74,7 +74,7 @@ namespace Nolvus.Dashboard.Frames.Installer
         {
             try
             {
-                var url = "https://github.com/sableeyed/NolvusDashboard/wiki";
+                var url = "https://sableeyed.github.io/NolvusDashboard";
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = url,

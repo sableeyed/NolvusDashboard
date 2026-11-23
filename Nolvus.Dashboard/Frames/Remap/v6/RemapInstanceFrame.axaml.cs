@@ -183,6 +183,19 @@ namespace Nolvus.Dashboard.Frames.Remap.v6
             {
                 if (TxtBxInstancePath.Text.Trim() != string.Empty)
                 {
+                    // MAX_PATH under Wine, see ModOrganizer.MaxInstallDirLength. Only a warning, unlike
+                    // the installer's confirmation: the move and the ini rewrite work at any length,
+                    // and the user can still shorten the path with a symlink afterwards.
+                    var Length = ModOrganizer.InstallDirLength(TxtBxInstancePath.Text);
+
+                    if (Length > ModOrganizer.MaxInstallDirLength && owner != null)
+                    {
+                        await NolvusMessageBox.Show(owner, "Instance Path Too Long",
+                            string.Format("The new instance directory is {0} characters long. Windows paths are limited to 260 characters, so Nolvus only runs from an instance directory of {1} characters or fewer.\n\n" +
+                                          "After the move, you WILL need to create a symlink to a shorter path, such as /Nolvus, or your game will NOT run. See the Path length (MAX_PATH) section of the troubleshooting guide.",
+                                          Length, ModOrganizer.MaxInstallDirLength), MessageBoxType.Warning);
+                    }
+
                     try
                     {
                         try

@@ -183,7 +183,7 @@ namespace Nolvus.Instance.Core
             return InstanceCheckStatus.OK;
         }
 
-        public async Task Load(XmlNode Node)
+        public async Task Load(XmlNode Node, bool Synchronize = true)
         {
             Id = Node["Id"].InnerText.Trim();
             Name = Node["Name"].InnerText.Trim();
@@ -198,7 +198,7 @@ namespace Nolvus.Instance.Core
 
 
             _SettingsManager.Load(Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "Settings").FirstOrDefault());
-            await _OptionsManager.Load(Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "Options").FirstOrDefault(), this);
+            await _OptionsManager.Load(Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "Options").FirstOrDefault(), this, Synchronize);
             _StatusManager.Load(Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "Status").FirstOrDefault());
         }
 
@@ -233,7 +233,7 @@ namespace Nolvus.Instance.Core
             XMLWriter.WriteEndElement();
         }
 
-        public async Task BackupGameSaveFiles()
+        public async Task BackupGameSaveFiles(Action<int> Progress)
         {
             await Task.Run(() =>
             {
@@ -246,7 +246,7 @@ namespace Nolvus.Instance.Core
                 {
                     ServiceSingleton.Logger.Log(string.Format("Backuping game save files in {0}", BackupDir));
 
-                    ServiceSingleton.Files.MoveFiles(SaveDir, BackupDir, SearchOption.TopDirectoryOnly);
+                    ServiceSingleton.Files.MoveFiles(SaveDir, BackupDir, Progress, SearchOption.TopDirectoryOnly);
 
                     ServiceSingleton.Logger.Log("Backup done");
                 }

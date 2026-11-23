@@ -7,6 +7,8 @@ using Avalonia.Platform.Storage;
 using Nolvus.Dashboard.Controls;
 using Nolvus.Core.Enums;
 using Nolvus.Core.Misc;
+using Nolvus.Package.Mods;
+using System.Diagnostics;
 
 namespace Nolvus.Dashboard.Frames.Installer
 {
@@ -109,6 +111,36 @@ namespace Nolvus.Dashboard.Frames.Installer
 
         private async void BtnContinue_Click(object? sender, RoutedEventArgs e)
         {
+            var owner = TopLevel.GetTopLevel(this) as Window;
+            if (owner == null)
+                return;
+
+            // MAX_PATH under Wine, see ModOrganizer.MaxInstallDirLength.
+            var Length = ModOrganizer.InstallDirLength(ServiceSingleton.Instances.WorkingInstance.SettingsManager.InstallDir);
+
+            if (Length > ModOrganizer.MaxInstallDirLength)
+            {
+                bool? Acknowledged = await NolvusMessageBox.ShowConfirmation(owner, "Instance Path Too Long",
+                    string.Format("Your instance directory is {0} characters long. Windows paths are limited to 260 characters, so Nolvus only runs from an instance directory of {1} characters or fewer.\n\n" +
+                                  "After installation, you WILL need to create a symlink to a shorter path, such as /Nolvus, or your game will NOT run.\n\n" +
+                                  "Do you want to keep this directory and open the symlink guide in your browser? Choose No to pick a different directory.",
+                                  Length, ModOrganizer.MaxInstallDirLength));
+
+                if (Acknowledged != true)
+                    return;
+
+                try
+                {
+                    var url = "https://sableeyed.github.io/NolvusDashboard/help.html#path-length";
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
+                catch { }
+            }
+
             switch (ServiceSingleton.Instances.WorkingInstance.Name)
             {
                 case Strings.NolvusAscension:

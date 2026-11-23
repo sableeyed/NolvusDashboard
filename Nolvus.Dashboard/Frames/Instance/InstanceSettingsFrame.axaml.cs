@@ -175,7 +175,7 @@ namespace Nolvus.Dashboard.Frames.Instance
 
                 TglBtnDownScale.IsChecked = false;
 
-                if (Instance.SettingsManager.DownScaling == "TRUE")
+                if (Instance.OptionsManager.GetOptionValue("DownScaling") == "TRUE")
                 {
                     TglBtnDownScale.IsChecked = true;
                     DrpDwnLstDownRes.IsEnabled = TglBtnDownScale.IsChecked == true;
@@ -204,11 +204,11 @@ namespace Nolvus.Dashboard.Frames.Instance
 
                 OptionsGrid.ItemsSource = Options;
 
-                TglBtnDownScale.IsEnabled = Instance.OptionsManager.GetOptionValue("AntiAliasing") != "DLAA" && Instance.OptionsManager.GetOptionValue("AntiAliasing") != "FSR";
+                TglBtnDownScale.IsEnabled = Instance.OptionsManager.GetOptionValue("AntiAliasing") != "DLAA" && Instance.OptionsManager.GetOptionValue("AntiAliasing") != "FSR" && Instance.OptionsManager.GetOptionValue("AntiAliasing") != "DLSS" && Instance.OptionsManager.GetOptionValue("FrameGeneration") != "TRUE" && Instance.OptionsManager.GetOptionValue("NR") != "TRUE";
 
                 if (!TglBtnDownScale.IsEnabled)
                 {
-                    LblDownscalingInfo.Text = " (Disabled when using DLAA/FSR/Frame Generation)";
+                    LblDownscalingInfo.Text = " (Disabled when using DLAA/DLSS/FSR/Frame Generation/Neural Rendering)";
                 }
                 else
                 {
@@ -334,11 +334,11 @@ namespace Nolvus.Dashboard.Frames.Instance
 
                 if (TglBtnDownScale.IsChecked == true)
                 {
-                    Instance.SettingsManager.DownScaling = "TRUE";
+                    Instance.OptionsManager.SetOptionValue("DownScaling", "TRUE");
                 }
                 else
                 {
-                    Instance.SettingsManager.DownScaling = "FALSE";
+                    Instance.OptionsManager.SetOptionValue("DownScaling", "FALSE");
                 }
 
                 Instance.SettingsManager.DownWidth = Reso[0];
@@ -365,7 +365,7 @@ namespace Nolvus.Dashboard.Frames.Instance
 
                         if (Line.Contains("Resolution") && Line.Substring(0, 1) != "# " && !FoundResolution)
                         {
-                            if (Instance.SettingsManager.DownScaling == "TRUE")
+                            if (Instance.OptionsManager.GetOptionValue("DownScaling") == "TRUE")
                             {
                                 _Line = "Resolution" + "=" + Instance.SettingsManager.DownScaledResolution;
                             }
@@ -378,7 +378,7 @@ namespace Nolvus.Dashboard.Frames.Instance
                         }
                         else if (Line.Contains("BorderlessUpscale") && Line.Substring(0, 1) != "# " && !FoundUpscale)
                         {
-                            if (Instance.SettingsManager.DownScaling == "TRUE")
+                            if (Instance.OptionsManager.GetOptionValue("DownScaling") == "TRUE")
                             {
                                 _Line = "BorderlessUpscale" + "=true";
                             }
@@ -417,7 +417,18 @@ namespace Nolvus.Dashboard.Frames.Instance
 
         private async void LnkLblOptionsManager_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            await ServiceSingleton.Dashboard.LoadFrameAsync<OptionsManagerFrame>();
+            var Instance = ServiceSingleton.Instances.WorkingInstance;
+
+            if (Instance.Name == Strings.NolvusAwakening)
+            {
+                await ServiceSingleton.Dashboard.LoadFrameAsync<OptionsManagerFrame>();
+            }
+            else
+            {
+                var window = TopLevel.GetTopLevel(this) as Window;
+                await NolvusMessageBox.Show(window, "Options Manager", string.Format("This feature is not available for {0}.", Instance.Name), MessageBoxType.Info);
+            }
+            
         }
 
         private void LnkLblRemap_PointerPressed(object? sender, PointerPressedEventArgs e)
